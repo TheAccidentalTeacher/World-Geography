@@ -592,6 +592,39 @@
                         <p class="subtitle">Navigate through the complete Geographic Detective Academy presentation</p>
                         ${this.createPresentationInterface()}
                     `;
+                    
+                    // Force immediate slide initialization after DOM is ready
+                    setTimeout(() => {
+                        this.initializeSlideDisplay();
+                    }, 100);
+                }
+            }
+
+            initializeSlideDisplay() {
+                const slideImage = document.getElementById('current-slide-image');
+                const placeholder = document.getElementById('current-slide-placeholder');
+                
+                if (slideImage && placeholder) {
+                    console.log('🎬 Initializing presentation with 60 slides from MongoDB GridFS');
+                    
+                    // Set up error handling first
+                    slideImage.onerror = () => {
+                        console.warn(`⚠️ Slide ${this.currentSlide} failed to load, showing placeholder`);
+                        slideImage.style.display = 'none';
+                        placeholder.style.display = 'flex';
+                    };
+                    
+                    // Set up success handling
+                    slideImage.onload = () => {
+                        console.log(`✅ Slide ${this.currentSlide} loaded successfully`);
+                        slideImage.style.display = 'block';
+                        placeholder.style.display = 'none';
+                    };
+                    
+                    // Start with first slide
+                    this.updateSlide();
+                } else {
+                    console.error('❌ Presentation elements not found');
                 }
             }
 
@@ -637,28 +670,9 @@
                 // Update the slide image source
                 if (slideImage) {
                     const slideFilename = `${this.currentSlide}_Geographic-Detective-Academy.png`;
+                    console.log(`🔄 Loading slide: ${slideFilename}`);
                     slideImage.src = `/slides/${slideFilename}`;
                     slideImage.alt = `Geographic Detective Academy - Slide ${this.currentSlide}`;
-                    
-                    // Show image, hide placeholder
-                    slideImage.style.display = 'block';
-                    const placeholder = document.getElementById('current-slide-placeholder');
-                    if (placeholder) {
-                        placeholder.style.display = 'none';
-                    }
-                    
-                    // Handle loading errors - fall back to placeholder
-                    slideImage.onerror = () => {
-                        slideImage.style.display = 'none';
-                        if (placeholder) {
-                            placeholder.style.display = 'flex';
-                            // Update placeholder slide number
-                            const placeholderNumber = placeholder.querySelector('#current-slide-number');
-                            if (placeholderNumber) {
-                                placeholderNumber.textContent = this.currentSlide;
-                            }
-                        }
-                    };
                 }
 
                 this.updateSlideNotes();

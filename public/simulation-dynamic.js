@@ -95,7 +95,8 @@ class SimulationInterface {
                 await this.loadStudentMaterials();
                 break;
             case 'gamma-prompts':
-                await this.loadGammaPrompts();
+                // Skip loading - embedded presentation system handles this panel
+                console.log('📽️ Presentation panel handled by embedded system');
                 break;
             case 'complete-package':
                 await this.loadCompletePackage();
