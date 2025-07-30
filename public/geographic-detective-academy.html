@@ -278,8 +278,8 @@
             <span class="label">Student Materials</span>
         </div>
         <div class="nav-item" data-panel="gamma-prompts">
-            <span class="icon">🎮</span>
-            <span class="label">Gamma Prompts</span>
+            <span class="icon">📽️</span>
+            <span class="label">Presentation</span>
         </div>
         <div class="nav-item" data-panel="complete-package">
             <span class="icon">📦</span>
@@ -431,9 +431,9 @@
             <p>Handouts, worksheets, and student resources will be loaded here...</p>
         </div>
 
-        <!-- GAMMA PROMPTS PANEL -->
+        <!-- PRESENTATION PANEL -->
         <div id="gamma-prompts" class="content-panel hidden">
-            <h2>🎮 Gamma Prompts</h2>
+            <h2>📽️ Interactive Presentation</h2>
             <p>Interactive elements and prompts will be loaded here...</p>
         </div>
 
@@ -499,6 +499,8 @@
                 this.createPresentationInterface();
                 this.setupKeyboardNavigation();
                 this.loadSlideNotes();
+                // Initialize the first slide
+                this.updateSlide();
             }
 
             createPresentationInterface() {
@@ -524,7 +526,14 @@
 
                         <div class="presentation-viewer">
                         <div class="slide-container">
-                            <div id="current-slide-placeholder" class="slide-placeholder">
+                            <!-- Actual slide image for GridFS slides -->
+                            <img id="current-slide-image" 
+                                 src="/slides/1_Geographic-Detective-Academy.png" 
+                                 alt="Geographic Detective Academy - Slide 1"
+                                 class="slide-image">
+                            
+                            <!-- Fallback placeholder if slides don't load -->
+                            <div id="current-slide-placeholder" class="slide-placeholder" style="display: none;">
                                 <div class="placeholder-content">
                                     <div class="placeholder-icon">🕵️</div>
                                     <h3>Geographic Detective Academy</h3>
@@ -579,7 +588,7 @@
                 const presentationPanel = document.getElementById('gamma-prompts');
                 if (presentationPanel) {
                     presentationPanel.innerHTML = `
-                        <h2>🎮 Interactive Presentation</h2>
+                        <h2>📽️ Interactive Presentation</h2>
                         <p class="subtitle">Navigate through the complete Geographic Detective Academy presentation</p>
                         ${this.createPresentationInterface()}
                     `;
@@ -611,6 +620,7 @@
                 const slideNumber = document.getElementById('current-slide-number');
                 const slideCounter = document.getElementById('current-slide');
                 const progressFill = document.querySelector('.progress-fill');
+                const slideImage = document.getElementById('current-slide-image');
 
                 if (slideNumber) {
                     slideNumber.textContent = this.currentSlide;
@@ -622,6 +632,33 @@
 
                 if (progressFill) {
                     progressFill.style.width = `${(this.currentSlide / this.totalSlides) * 100}%`;
+                }
+
+                // Update the slide image source
+                if (slideImage) {
+                    const slideFilename = `${this.currentSlide}_Geographic-Detective-Academy.png`;
+                    slideImage.src = `/slides/${slideFilename}`;
+                    slideImage.alt = `Geographic Detective Academy - Slide ${this.currentSlide}`;
+                    
+                    // Show image, hide placeholder
+                    slideImage.style.display = 'block';
+                    const placeholder = document.getElementById('current-slide-placeholder');
+                    if (placeholder) {
+                        placeholder.style.display = 'none';
+                    }
+                    
+                    // Handle loading errors - fall back to placeholder
+                    slideImage.onerror = () => {
+                        slideImage.style.display = 'none';
+                        if (placeholder) {
+                            placeholder.style.display = 'flex';
+                            // Update placeholder slide number
+                            const placeholderNumber = placeholder.querySelector('#current-slide-number');
+                            if (placeholderNumber) {
+                                placeholderNumber.textContent = this.currentSlide;
+                            }
+                        }
+                    };
                 }
 
                 this.updateSlideNotes();
