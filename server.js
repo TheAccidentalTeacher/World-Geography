@@ -728,9 +728,9 @@ app.get('/lesson-companion', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'lesson-companion.html'));
 });
 
-// Q1 Geographic Detectives Simulation Route
+// Q1 Geographic Detectives Simulation Route - Redirect to new system
 app.get('/simulation', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'simulation-viewer.html'));
+  res.redirect('/simulation/geographic-detective-academy');
 });
 
 // Redirect browse to PDF lessons
