@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Q1 Geographic Detectives - Simulation Viewer</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .detective-theme {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+        }
+        .case-file {
+            background: linear-gradient(145deg, #2c3e50, #34495e);
+            border: 2px solid #f39c12;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        .evidence-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .nav-active {
+            background: #f39c12;
+            color: #1a1a2e;
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+        .markdown-content {
+            line-height: 1.6;
+        }
+        .markdown-content h1 { 
+            font-size: 1.875rem; 
+            font-weight: bold; 
+            color: #fbbf24; 
+            margin-bottom: 1rem; 
+        }
+        .markdown-content h2 { 
+            font-size: 1.5rem; 
+            font-weight: 600; 
+            color: #93c5fd; 
+            margin-bottom: 0.75rem; 
+            margin-top: 1.5rem; 
+        }
+        .markdown-content h3 { 
+            font-size: 1.25rem; 
+            font-weight: 600; 
+            color: #86efac; 
+            margin-bottom: 0.5rem; 
+            margin-top: 1rem; 
+        }
+        .markdown-content p { 
+            margin-bottom: 1rem; 
+            color: #e5e7eb; 
+        }
+        .markdown-content ul { 
+            list-style-type: disc; 
+            list-style-position: inside; 
+            margin-bottom: 1rem; 
+            color: #e5e7eb; 
+        }
+        .markdown-content li { 
+            margin-bottom: 0.5rem; 
+        }
+        .markdown-content strong { 
+            font-weight: bold; 
+            color: #fcd34d; 
+        }
+        .markdown-content code { 
+            background-color: #1f2937; 
+            padding: 0.25rem 0.5rem; 
+            border-radius: 0.25rem; 
+            color: #4ade80; 
+        }
+        .markdown-content blockquote { 
+            border-left: 4px solid #fbbf24; 
+            padding-left: 1rem; 
+            font-style: italic; 
+            color: #bfdbfe; 
+        }
+    </style>
+</head>
+<body class="detective-theme min-h-screen text-white">
+    <!-- Header -->
+    <header class="bg-black bg-opacity-50 shadow-lg">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <i class="fas fa-search text-yellow-400 text-3xl"></i>
+                    <div>
+                        <h1 class="text-2xl font-bold text-yellow-400">Geographic Detective Academy</h1>
+                        <p class="text-blue-300">Q1 Simulation - The Mystery of the Missing Maps</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="bg-red-600 px-3 py-1 rounded-full text-sm font-bold">CLASSIFIED</span>
+                    <span class="bg-green-600 px-3 py-1 rounded-full text-sm font-bold">ACTIVE CASE</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="bg-black bg-opacity-30 shadow-lg">
+        <div class="container mx-auto px-6">
+            <div class="flex space-x-0 overflow-x-auto">
+                <button onclick="showSection('overview')" class="nav-btn nav-active px-4 py-3 whitespace-nowrap transition-colors duration-200">
+                    <i class="fas fa-file-alt mr-2"></i>Overview
+                </button>
+                <button onclick="showSection('daily-structure')" class="nav-btn px-4 py-3 whitespace-nowrap transition-colors duration-200">
+                    <i class="fas fa-calendar-day mr-2"></i>Daily Structure
+                </button>
+                <button onclick="showSection('team-roles')" class="nav-btn px-4 py-3 whitespace-nowrap transition-colors duration-200">
+                    <i class="fas fa-users mr-2"></i>Team Roles
+                </button>
+                <button onclick="showSection('events')" class="nav-btn px-4 py-3 whitespace-nowrap transition-colors duration-200">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>Investigation Events
+                </button>
+                <button onclick="showSection('assessments')" class="nav-btn px-4 py-3 whitespace-nowrap transition-colors duration-200">
+                    <i class="fas fa-clipboard-check mr-2"></i>Assessments
+                </button>
+                <button onclick="showSection('teacher-guide')" class="nav-btn px-4 py-3 whitespace-nowrap transition-colors duration-200">
+                    <i class="fas fa-chalkboard-teacher mr-2"></i>Teacher Guide
+                </button>
+                <button onclick="showSection('student-materials')" class="nav-btn px-4 py-3 whitespace-nowrap transition-colors duration-200">
+                    <i class="fas fa-folder-open mr-2"></i>Student Materials
+                </button>
+                <button onclick="showSection('gamma-prompts')" class="nav-btn px-4 py-3 whitespace-nowrap transition-colors duration-200">
+                    <i class="fas fa-presentation mr-2"></i>Gamma Prompts
+                </button>
+                <button onclick="showSection('complete-package')" class="nav-btn px-4 py-3 whitespace-nowrap transition-colors duration-200">
+                    <i class="fas fa-box mr-2"></i>Complete Package
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-8">
+        <!-- Loading Message -->
+        <div id="loading" class="text-center py-12">
+            <i class="fas fa-spinner fa-spin text-4xl text-yellow-400 mb-4"></i>
+            <p class="text-xl">Loading simulation files...</p>
+        </div>
+
+        <!-- Content Sections -->
+        <div id="overview" class="content-section case-file rounded-lg p-8">
+            <div class="markdown-content" id="overview-content">
+                <!-- Content will be loaded here -->
+            </div>
+        </div>
+
+        <div id="daily-structure" class="content-section case-file rounded-lg p-8">
+            <div class="markdown-content" id="daily-structure-content">
+                <!-- Content will be loaded here -->
+            </div>
+        </div>
+
+        <div id="team-roles" class="content-section case-file rounded-lg p-8">
+            <div class="markdown-content" id="team-roles-content">
+                <!-- Content will be loaded here -->
+            </div>
+        </div>
+
+        <div id="events" class="content-section case-file rounded-lg p-8">
+            <div class="markdown-content" id="events-content">
+                <!-- Content will be loaded here -->
+            </div>
+        </div>
+
+        <div id="assessments" class="content-section case-file rounded-lg p-8">
+            <div class="markdown-content" id="assessments-content">
+                <!-- Content will be loaded here -->
+            </div>
+        </div>
+
+        <div id="teacher-guide" class="content-section case-file rounded-lg p-8">
+            <div class="markdown-content" id="teacher-guide-content">
+                <!-- Content will be loaded here -->
+            </div>
+        </div>
+
+        <div id="student-materials" class="content-section case-file rounded-lg p-8">
+            <div class="markdown-content" id="student-materials-content">
+                <!-- Content will be loaded here -->
+            </div>
+        </div>
+
+        <div id="gamma-prompts" class="content-section case-file rounded-lg p-8">
+            <div class="markdown-content" id="gamma-prompts-content">
+                <!-- Content will be loaded here -->
+            </div>
+        </div>
+
+        <div id="complete-package" class="content-section case-file rounded-lg p-8">
+            <div class="markdown-content" id="complete-package-content">
+                <!-- Content will be loaded here -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-black bg-opacity-50 text-center py-6 mt-12">
+        <p class="text-gray-400">
+            <i class="fas fa-shield-alt mr-2"></i>
+            International Geographic Bureau - Detective Training Division
+        </p>
+        <p class="text-sm text-gray-500 mt-2">Classified Training Materials - For Authorized Personnel Only</p>
+    </footer>
+
+    <script>
+        // File mapping
+        const fileMap = {
+            'overview': '/simulation-files/OVERVIEW.md',
+            'daily-structure': '/simulation-files/DAILY-STRUCTURE.md',
+            'team-roles': '/simulation-files/TEAM-ROLES.md',
+            'events': '/simulation-files/INVESTIGATION-EVENTS.md',
+            'assessments': '/simulation-files/ASSESSMENT-SYSTEM.md',
+            'teacher-guide': '/simulation-files/TEACHER-GUIDE.md',
+            'student-materials': '/simulation-files/STUDENT-MATERIALS.md',
+            'gamma-prompts': '/simulation-files/GAMMA-PRESENTATION-PROMPTS.md',
+            'complete-package': '/simulation-files/COMPLETE-PACKAGE.md'
+        };
+
+        // Convert markdown to HTML (simple conversion)
+        function markdownToHtml(markdown) {
+            return markdown
+                // Headers
+                .replace(/^### (.*$)/gm, '<h3>$1</h3>')
+                .replace(/^## (.*$)/gm, '<h2>$1</h2>')
+                .replace(/^# (.*$)/gm, '<h1>$1</h1>')
+                // Bold and italic
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                // Code blocks
+                .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>')
+                .replace(/`(.*?)`/g, '<code>$1</code>')
+                // Lists
+                .replace(/^\* (.*$)/gm, '<li>$1</li>')
+                .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
+                // Line breaks
+                .replace(/\n\n/g, '</p><p>')
+                .replace(/^(.+)$/gm, '<p>$1</p>')
+                // Clean up
+                .replace(/<p><\/p>/g, '')
+                .replace(/<p>(<h[123]>)/g, '$1')
+                .replace(/(<\/h[123]>)<\/p>/g, '$1')
+                .replace(/<p>(<ul>)/g, '$1')
+                .replace(/(<\/ul>)<\/p>/g, '$1');
+        }
+
+        // Load file content
+        async function loadContent(section) {
+            const contentDiv = document.getElementById(section + '-content');
+            const filePath = fileMap[section];
+            
+            if (!filePath) {
+                contentDiv.innerHTML = '<p class="text-red-400">File not found for this section.</p>';
+                return;
+            }
+
+            try {
+                const response = await fetch(filePath);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const markdown = await response.text();
+                contentDiv.innerHTML = markdownToHtml(markdown);
+            } catch (error) {
+                console.error('Error loading content:', error);
+                contentDiv.innerHTML = `<p class="text-red-400">Error loading content: ${error.message}</p>`;
+            }
+        }
+
+        // Show section
+        function showSection(section) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(s => {
+                s.classList.remove('active');
+            });
+            
+            // Remove active class from all nav buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('nav-active');
+            });
+            
+            // Show selected section
+            document.getElementById(section).classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.classList.add('nav-active');
+            
+            // Load content if not already loaded
+            const contentDiv = document.getElementById(section + '-content');
+            if (!contentDiv.innerHTML.trim()) {
+                loadContent(section);
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Hide loading message
+            document.getElementById('loading').style.display = 'none';
+            
+            // Show overview by default
+            document.getElementById('overview').classList.add('active');
+            loadContent('overview');
+        });
+    </script>
+</body>
+</html>

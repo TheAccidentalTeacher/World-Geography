@@ -1,0 +1,3679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geography Lesson Companion</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c5aa0 0%, #1e3c72 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .navigation {
+            background: #f8f9fa;
+            padding: 20px 30px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .lesson-selector {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .lesson-selector label {
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .lesson-selector select {
+            padding: 8px 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+            min-width: 120px;
+        }
+
+        .lesson-selector button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+
+        .lesson-selector button:hover {
+            background: #0056b3;
+        }
+
+        .content-area {
+            display: flex;
+            min-height: 600px;
+        }
+
+        .sidebar {
+            width: 350px;
+            background: #f8f9fa;
+            border-right: 1px solid #e9ecef;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            max-height: 80vh;
+        }
+
+        .lesson-info {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+        }
+
+        .lesson-info h3 {
+            color: #2c5aa0;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 8px;
+        }
+
+        .lesson-info ul {
+            list-style: none;
+        }
+
+        .lesson-info li {
+            background: #f8f9fa;
+            margin: 8px 0;
+            padding: 10px;
+            border-radius: 6px;
+            border-left: 4px solid #007bff;
+            font-size: 0.9rem;
+        }
+
+        .lesson-info .vocab-term {
+            background: #e7f3ff;
+            border-left-color: #17a2b8;
+            font-weight: 600;
+        }
+
+        .lesson-reading {
+            background: white;
+            line-height: 1.8;
+        }
+
+        .lesson-reading h1 {
+            color: #2c5aa0;
+            font-size: 2.2rem;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #007bff;
+            padding-bottom: 15px;
+        }
+
+        .lesson-reading h2 {
+            color: #495057;
+            font-size: 1.6rem;
+            margin: 30px 0 15px;
+            padding: 10px 0;
+            border-left: 4px solid #17a2b8;
+            padding-left: 15px;
+            background: #f8f9fa;
+        }
+
+        .lesson-reading h3 {
+            color: #6c757d;
+            font-size: 1.3rem;
+            margin: 25px 0 12px;
+            font-weight: 600;
+        }
+
+        .lesson-reading p {
+            margin-bottom: 15px;
+            color: #495057;
+            font-size: 1.05rem;
+        }
+
+        .lesson-reading ul {
+            margin: 15px 0;
+            padding-left: 20px;
+        }
+
+        .lesson-reading li {
+            margin: 8px 0;
+            color: #495057;
+        }
+
+        .lesson-reading strong {
+            color: #2c5aa0;
+            font-weight: 600;
+        }
+
+        .big-idea {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .main-ideas {
+            background: #e7f3ff;
+            border: 1px solid #b3d9ff;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .key-terms {
+            background: #f0f8f0;
+            border: 1px solid #c3e6c3;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .assessment {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: #6c757d;
+            font-size: 1.2rem;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 1px solid #f5c6cb;
+        }
+
+        .tab-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab-button {
+            background: #e9ecef;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .tab-button.active {
+            background: #007bff;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .content-area {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #e9ecef;
+            }
+            
+            .navigation {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .lesson-selector {
+                justify-content: center;
+            }
+        }
+
+        /* Cross-Curricular Section Styles */
+        .cross-curricular-section {
+            margin-top: 3rem;
+            padding: 2rem;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+        }
+        
+        .cross-curricular-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: #2d3748;
+            font-size: 1.75rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 3px solid #e2e8f0;
+        }
+        
+        .cross-curricular-title .icon {
+            font-size: 2rem;
+        }
+        
+        .subject-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .subject-tab {
+            padding: 0.75rem 1.5rem;
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #4a5568;
+        }
+        
+        .subject-tab:hover {
+            background: #edf2f7;
+            transform: translateY(-1px);
+        }
+        
+        .subject-tab.active {
+            background: #4299e1;
+            color: white;
+            border-color: #4299e1;
+        }
+        
+        .subject-content {
+            display: none;
+        }
+        
+        .subject-content.active {
+            display: block;
+        }
+        
+        .cross-curricular-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .activity-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .activity-card:hover {
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+            transform: translateY(-2px);
+        }
+        
+        .activity-card h3 {
+            color: #2d3748;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .activity-content {
+            color: #4a5568;
+            line-height: 1.8;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .activity-content ul {
+            margin: 0.5rem 0;
+            padding-left: 1.5rem;
+        }
+        
+        .activity-content ol {
+            margin: 0.5rem 0;
+            padding-left: 1.5rem;
+        }
+        
+        .activity-content li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .activity-content h4 {
+            color: #2d3748;
+            margin: 1rem 0 0.5rem 0;
+            font-size: 1.1rem;
+        }
+        
+        .activity-content strong {
+            color: #2d3748;
+            font-weight: 600;
+        }
+        
+        .print-section {
+            text-align: center;
+            padding-top: 1rem;
+            border-top: 2px solid #e2e8f0;
+        }
+        
+        .print-button {
+            background: #48bb78;
+            color: white;
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .print-button:hover {
+            background: #38a169;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
+        }
+        
+        /* Substitute Guide Button Styles */
+        .substitute-guide-section {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 12px;
+            text-align: center;
+            border: 2px solid #e2e8f0;
+        }
+        
+        .substitute-print-button {
+            background: #e53e3e;
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            box-shadow: 0 4px 12px rgba(229, 62, 62, 0.3);
+        }
+        
+        .substitute-print-button:hover {
+            background: #c53030;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(229, 62, 62, 0.4);
+        }
+        
+        .substitute-description {
+            margin: 0.75rem 0 0 0;
+            color: white;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+        
+        .loading-message {
+            color: #718096;
+            font-style: italic;
+        }
+        
+        
+        /* Calendar System Styles */
+        .calendar-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+            border: 1px solid #e9ecef;
+        }
+        
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 15px;
+        }
+        
+        .calendar-header h3 {
+            margin: 0;
+            color: #2c5aa0;
+            font-size: 1.4rem;
+        }
+        
+        .calendar-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .calendar-nav {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.3s;
+        }
+        
+        .calendar-nav:hover {
+            background: #0056b3;
+        }
+        
+        .date-range {
+            font-weight: 600;
+            color: #495057;
+            font-size: 1.1rem;
+        }
+        
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 2px;
+            margin-bottom: 15px;
+        }
+        
+        .calendar-day {
+            aspect-ratio: 1;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 8px;
+            font-size: 0.8rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 80px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .calendar-day:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+        
+        .calendar-day.weekend {
+            background: #f8f9fa;
+            color: #6c757d;
+        }
+        
+        .calendar-day.holiday {
+            background: #ffe6e6;
+            color: #dc3545;
+        }
+        
+        .calendar-day.orientation {
+            background: #e3f2fd;
+            color: #1976d2;
+            border-color: #2196f3;
+        }
+        
+        .calendar-day.available {
+            background: #e8f5e8;
+            border-color: #28a745;
+        }
+        
+        .calendar-day.assigned {
+            background: #fff3cd;
+            border-color: #ffc107;
+        }
+        
+        .calendar-day.completed {
+            background: #d1ecf1;
+            border-color: #17a2b8;
+        }
+        
+        .calendar-day.simulation {
+            background: #e2e3e5;
+            border-color: #6c757d;
+        }
+        
+        .day-number {
+            font-weight: bold;
+            color: #495057;
+        }
+        
+        .day-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+        }
+        
+        .lesson-title {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 4px;
+            line-height: 1.2;
+        }
+        
+        .lesson-checkbox {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            transform: scale(1.2);
+        }
+        
+        .calendar-legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.85rem;
+        }
+        
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .legend-color.available { background: #e8f5e8; }
+        .legend-color.assigned { background: #fff3cd; }
+        .legend-color.completed { background: #d1ecf1; }
+        .legend-color.holiday { background: #ffe6e6; }
+        .legend-color.orientation { background: #e3f2fd; }
+        .legend-color.simulation { background: #e2e3e5; }
+
+        @media print {
+            /* Hide navigation elements */
+            .navigation, .sidebar, .subject-tabs, .print-section, .header {
+                display: none !important;
+            }
+            
+            /* Reset page styles for printing */
+            body {
+                background: white !important;
+                color: black !important;
+                font-family: Arial, sans-serif !important;
+                margin: 0 !important;
+                padding: 20px !important;
+            }
+            
+            .container {
+                background: white !important;
+                box-shadow: none !important;
+                border-radius: 0 !important;
+                max-width: none !important;
+            }
+            
+            /* Cross-curricular section print styles */
+            .cross-curricular-section {
+                page-break-before: always;
+                background: white !important;
+                box-shadow: none !important;
+                border-radius: 0 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            
+            .cross-curricular-title {
+                font-size: 24px !important;
+                margin-bottom: 20px !important;
+                color: black !important;
+                border-bottom: 2px solid black !important;
+                padding-bottom: 10px !important;
+            }
+            
+            /* Activity cards for printing */
+            .cross-curricular-grid {
+                display: block !important;
+                grid-template-columns: none !important;
+                gap: 0 !important;
+            }
+            
+            .activity-card {
+                background: white !important;
+                border: 1px solid #ccc !important;
+                border-radius: 0 !important;
+                margin-bottom: 20px !important;
+                padding: 15px !important;
+                page-break-inside: avoid;
+                box-shadow: none !important;
+            }
+            
+            .activity-card h3 {
+                font-size: 18px !important;
+                margin-bottom: 10px !important;
+                color: black !important;
+            }
+            
+            .activity-content {
+                color: black !important;
+                line-height: 1.6 !important;
+                max-height: none !important;
+                overflow: visible !important;
+            }
+            
+            .activity-content h4 {
+                font-size: 16px !important;
+                color: black !important;
+                margin: 15px 0 8px 0 !important;
+            }
+            
+            .activity-content ul, .activity-content ol {
+                margin: 10px 0 !important;
+                padding-left: 20px !important;
+            }
+            
+            .activity-content li {
+                margin-bottom: 8px !important;
+                line-height: 1.4 !important;
+            }
+            
+            .activity-content p {
+                margin: 10px 0 !important;
+                line-height: 1.5 !important;
+            }
+            
+            .activity-content strong {
+                font-weight: bold !important;
+                color: black !important;
+            }
+            
+            /* Print title styles */
+            .print-title {
+                font-size: 28px !important;
+                font-weight: bold !important;
+                margin-bottom: 20px !important;
+                text-align: center !important;
+                color: black !important;
+                border-bottom: 3px solid black !important;
+                padding-bottom: 15px !important;
+            }
+            
+            /* Hide elements that shouldn't print */
+            .loading-message {
+                display: none !important;
+            }
+            
+            /* Ensure proper page breaks */
+            .activity-card:nth-child(2) {
+                page-break-before: auto;
+            }
+            
+            /* Footer for each page */
+            @page {
+                margin: 1in;
+                @bottom-center {
+                    content: "Geography Cross-Curricular Lesson - Page " counter(page);
+                }
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .cross-curricular-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .subject-tabs {
+                flex-direction: column;
+            }
+            
+            .subject-tab {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌍 Geography Lesson Companion</h1>
+            <p>Interactive Teacher & Student Resources</p>
+        </div>
+
+        <!-- Dynamic 2-Week Calendar System -->
+        <div class="calendar-section" id="calendar-section">
+            <div class="calendar-header">
+                <h3>📅 2-Week Lesson Calendar</h3>
+                <div class="calendar-controls">
+                    <button onclick="moveCalendar(-14)" class="calendar-nav">⬅️ Previous 2 Weeks</button>
+                    <span id="calendar-date-range" class="date-range">Loading...</span>
+                    <button onclick="moveCalendar(14)" class="calendar-nav">Next 2 Weeks ➡️</button>
+                </div>
+            </div>
+            
+            <div class="calendar-grid" id="calendar-grid">
+                <!-- Calendar will be dynamically generated here -->
+            </div>
+            
+            <div class="calendar-legend">
+                <div class="legend-item"><span class="legend-color available"></span> Available for lessons</div>
+                <div class="legend-item"><span class="legend-color assigned"></span> Lesson assigned</div>
+                <div class="legend-item"><span class="legend-color completed"></span> Lesson completed</div>
+                <div class="legend-item"><span class="legend-color holiday"></span> No school</div>
+                <div class="legend-item"><span class="legend-color orientation"></span> Orientation</div>
+                <div class="legend-item"><span class="legend-color simulation"></span> Simulation day</div>
+            </div>
+            
+            <div class="calendar-management" style="margin-top: 15px; text-align: center; padding-top: 15px; border-top: 1px solid #e9ecef;">
+                <button onclick="autoAssignLessons()" style="background: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 6px; margin: 0 5px; cursor: pointer; font-weight: 600;">
+                    🚀 Auto-Assign Next 10 Lessons
+                </button>
+                <button onclick="clearAllAssignments()" style="background: #dc3545; color: white; border: none; padding: 8px 16px; border-radius: 6px; margin: 0 5px; cursor: pointer; font-weight: 600;">
+                    🗑️ Clear All Assignments
+                </button>
+                <span id="assignment-status" style="margin-left: 15px; font-weight: 600; color: #495057;"></span>
+            </div>
+        </div>
+
+        <div class="navigation">
+            <div class="lesson-selector">
+                <label for="moduleSelect">Module:</label>
+                <select id="moduleSelect">
+                    <option value="">Loading modules...</option>
+                </select>
+                
+                <label for="lessonSelect">Lesson:</label>
+                <select id="lessonSelect">
+                    <option value="">Select module first</option>
+                </select>
+                
+                <button onclick="loadLesson()">Load Lesson</button>
+            </div>
+            
+            <div style="margin-left: auto; display: flex; gap: 10px; align-items: center;">
+                <a href="/simulation" style="background: #28a745; color: white; border: none; padding: 10px 15px; border-radius: 8px; text-decoration: none; font-weight: 600; transition: background-color 0.3s; display: inline-flex; align-items: center; gap: 5px;">
+                    🔍 Q1 Simulation
+                </a>
+                <button onclick="previousLesson()" id="prevBtn" disabled>← Previous</button>
+                <button onclick="nextLesson()" id="nextBtn" style="margin-left: 10px;">Next →</button>
+            </div>
+        </div>
+
+        <div class="content-area">
+            <div class="sidebar">
+                <div class="tab-buttons">
+                    <button class="tab-button active" onclick="showTab('teacher')">Teacher Guide</button>
+                    <button class="tab-button" onclick="showTab('overview')">Overview</button>
+                </div>
+
+                <div id="teacher-tab" class="tab-content active">
+                    <div class="lesson-info">
+                        <h3>📋 Learning Objectives</h3>
+                        <ul id="objectives-list">
+                            <li class="loading">Loading objectives...</li>
+                        </ul>
+                    </div>
+
+                    <div class="lesson-info">
+                        <h3>📚 Materials Needed</h3>
+                        <ul id="materials-list">
+                            <li class="loading">Loading materials...</li>
+                        </ul>
+                    </div>
+
+                    <div class="lesson-info">
+                        <h3>🔧 Teaching Procedures</h3>
+                        <ul id="procedures-list">
+                            <li class="loading">Loading procedures...</li>
+                        </ul>
+                    </div>
+
+                    <div class="lesson-info">
+                        <h3>📝 Assessment Methods</h3>
+                        <ul id="assessments-list">
+                            <li class="loading">Loading assessments...</li>
+                        </ul>
+                    </div>
+
+                    <div class="lesson-info">
+                        <h3>🎯 Student Activities</h3>
+                        <ul id="activities-list">
+                            <li class="loading">Loading activities...</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Substitute Guide Print Button -->
+                    <div class="substitute-guide-section">
+                        <button onclick="printSubstituteGuide()" class="substitute-print-button">
+                            🖨️ Print Substitute Teacher Guide
+                        </button>
+                        <p class="substitute-description">Complete lesson plan with student reading and teacher instructions</p>
+                    </div>
+                </div>
+
+                <div id="overview-tab" class="tab-content">
+                    <div class="lesson-info">
+                        <h3>⏱️ Lesson Details</h3>
+                        <div id="lesson-overview">
+                            <p><strong>Time:</strong> <span id="time-estimate">Loading...</span></p>
+                            <p><strong>Module:</strong> <span id="module-title">Loading...</span></p>
+                            <p><strong>Lesson:</strong> <span id="lesson-title">Loading...</span></p>
+                        </div>
+                    </div>
+
+                    <div class="lesson-info">
+                        <h3>📖 Key Vocabulary</h3>
+                        <ul id="vocabulary-list">
+                            <li class="loading">Loading vocabulary...</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="main-content">
+                <div id="lesson-content">
+                    <div class="loading">
+                        <h2>👋 Welcome to Geography Lesson Companion</h2>
+                        <p>Select a module and lesson from the navigation above to begin exploring detailed curriculum content.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Cross-Curricular Integration Section -->
+        <div class="cross-curricular-section" id="cross-curricular-section" style="display: none;">
+            <h2 class="cross-curricular-title">
+                <span class="icon">🔗</span>
+                Cross-Curricular Connections
+            </h2>
+            
+            <div class="subject-tabs">
+                <button class="subject-tab active" onclick="showSubjectContent('ela')">
+                    📚 English Language Arts (7th Grade)
+                </button>
+                <button class="subject-tab" onclick="showSubjectContent('science')">
+                    🔬 Science Integration
+                </button>
+            </div>
+            
+            <div id="ela-content" class="subject-content active">
+                <div class="cross-curricular-grid">
+                    <div class="activity-card">
+                        <h3>📖 Reading Comprehension</h3>
+                        <div id="ela-reading-content" class="activity-content">
+                            <p class="loading-message">Loading ELA reading content...</p>
+                        </div>
+                    </div>
+                    
+                    <div class="activity-card">
+                        <h3>✍️ Writing Prompts</h3>
+                        <div id="ela-writing-content" class="activity-content">
+                            <p class="loading-message">Loading writing prompts...</p>
+                        </div>
+                    </div>
+                    
+                    <div class="activity-card">
+                        <h3>📝 Vocabulary Practice</h3>
+                        <div id="ela-vocabulary-content" class="activity-content">
+                            <p class="loading-message">Loading vocabulary exercises...</p>
+                        </div>
+                    </div>
+                    
+                    <div class="activity-card">
+                        <h3>💭 Critical Thinking</h3>
+                        <div id="ela-critical-content" class="activity-content">
+                            <p class="loading-message">Loading discussion questions...</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="print-section">
+                    <button onclick="printELALesson()" class="print-button">
+                        🖨️ Print Complete ELA Lesson
+                    </button>
+                </div>
+            </div>
+            
+            <div id="science-content" class="subject-content">
+                <div class="cross-curricular-grid">
+                    <div class="activity-card">
+                        <h3>🌍 Earth Science Connections</h3>
+                        <div id="science-earth-content" class="activity-content">
+                            <p class="loading-message">Loading earth science content...</p>
+                        </div>
+                    </div>
+                    
+                    <div class="activity-card">
+                        <h3>🌡️ Scientific Concepts</h3>
+                        <div id="science-concepts-content" class="activity-content">
+                            <p class="loading-message">Loading scientific concepts...</p>
+                        </div>
+                    </div>
+                    
+                    <div class="activity-card">
+                        <h3>🔬 Lab Activities</h3>
+                        <div id="science-lab-content" class="activity-content">
+                            <p class="loading-message">Loading lab activities...</p>
+                        </div>
+                    </div>
+                    
+                    <div class="activity-card">
+                        <h3>📊 Data Analysis</h3>
+                        <div id="science-data-content" class="activity-content">
+                            <p class="loading-message">Loading data exercises...</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="print-section">
+                    <button onclick="printScienceLesson()" class="print-button">
+                        🖨️ Print Complete Science Lesson
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentLessonDay = 1;
+        let modules = [];
+        let allLessons = [];
+        
+        // Calendar system variables
+        let currentCalendarStart = new Date();
+        let lessonAssignments = JSON.parse(localStorage.getItem('lessonAssignments') || '{}');
+        let completedLessons = JSON.parse(localStorage.getItem('completedLessons') || '{}');
+        let lastAction = null; // Track last action for undo functionality
+        
+        // Official Copper River School District Calendar 2025-2026 (from PDF)
+        const schoolCalendar = {
+            schoolYear: '2025-2026',
+            schoolOpens: new Date('2025-08-18'),
+            lastDay: new Date('2026-05-21'),
+            
+            // First 2 weeks are orientation (no direct curriculum)
+            curriculumStart: new Date('2025-09-02'), // After Labor Day
+            curriculumEnd: new Date('2026-05-16'),   // Before graduation activities
+            
+            // Official holidays from PDF
+            holidays: [
+                '2025-09-01', // Labor Day
+                '2025-10-12', '2025-10-13', '2025-10-14', '2025-10-15', // Fall Break
+                '2025-10-21', // Parent/Teacher Conferences
+                '2025-11-27', '2025-11-28', // Thanksgiving Break
+                '2025-12-22', '2025-12-23', '2025-12-24', '2025-12-25', '2025-12-26',
+                '2025-12-27', '2025-12-28', '2025-12-29', '2025-12-30', '2025-12-31',
+                '2026-01-01', '2026-01-02', // Winter Break (Dec 22 - Jan 2)
+                '2026-01-12', // Parent/Teacher Conferences
+                '2026-03-09', '2026-03-10', '2026-03-11', '2026-03-12', '2026-03-13', // Spring Break
+                '2026-04-01', // Parent/Teacher Conferences
+                '2026-05-12', // Slana Graduation
+                '2026-05-13', // Upstream Learning Graduation
+                '2026-05-14', // Kenny Lake Graduation
+                '2026-05-15'  // Glennallen Graduation
+            ],
+            
+            // Early Release days from PDF
+            earlyRelease: [
+                '2025-08-17', // Early release before school opens
+                '2025-10-17', // October early release
+                '2025-12-19', // Before winter break
+                '2026-02-13', // February early release
+                '2026-05-16'  // Before last day
+            ]
+        };
+        
+        // Quarter system for simulation day planning (aligned with actual school calendar)
+        const quarters = {
+            q1: { start: new Date('2025-09-02'), end: new Date('2025-10-11') }, // Before Fall Break
+            q2: { start: new Date('2025-10-16'), end: new Date('2025-12-19') }, // After Fall Break to Winter Break
+            q3: { start: new Date('2026-01-06'), end: new Date('2026-03-07') }, // After Winter Break to Spring Break
+            q4: { start: new Date('2026-03-17'), end: new Date('2026-05-09') }  // After Spring Break, before graduation activities
+        };
+        
+        // Get current quarter for simulation planning
+        function getCurrentQuarter(date = new Date()) {
+            for (const [quarter, dates] of Object.entries(quarters)) {
+                if (date >= dates.start && date <= dates.end) {
+                    return quarter;
+                }
+            }
+            return null;
+        }
+        
+        // Check if a date is a school day (for calendar display)
+        function isSchoolDay(date) {
+            const dateStr = date.toISOString().split('T')[0];
+            const dayOfWeek = date.getDay();
+            
+            // Not weekend
+            if (dayOfWeek === 0 || dayOfWeek === 6) return false;
+            
+            // Not a holiday
+            if (schoolCalendar.holidays.includes(dateStr)) return false;
+            
+            // Within school year (from school opens to last day)
+            if (date < schoolCalendar.schoolOpens || date > schoolCalendar.lastDay) return false;
+            
+            return true;
+        }
+        
+        // Check if a date is available for curriculum lessons (not orientation)
+        function isLessonDay(date) {
+            const dateStr = date.toISOString().split('T')[0];
+            const dayOfWeek = date.getDay();
+            
+            // Not weekend
+            if (dayOfWeek === 0 || dayOfWeek === 6) return false;
+            
+            // Not a holiday
+            if (schoolCalendar.holidays.includes(dateStr)) return false;
+            
+            // Within curriculum period (after orientation)
+            if (date < schoolCalendar.curriculumStart || date > schoolCalendar.curriculumEnd) return false;
+            
+            return true;
+        }
+        
+        // Initialize calendar to current date or start of school year
+        function initializeCalendar() {
+            const today = new Date();
+            const schoolStart = schoolCalendar.curriculumStart;
+            
+            // If we're before August 2025, start at school beginning
+            // If we're in the school year, start at current week
+            if (today < new Date('2025-08-01')) {
+                currentCalendarStart = getWeekStart(schoolStart);
+            } else if (today >= schoolStart && today <= schoolCalendar.curriculumEnd) {
+                currentCalendarStart = getWeekStart(today);
+            } else {
+                // After school year or before, default to school start
+                currentCalendarStart = getWeekStart(schoolStart);
+            }
+            
+            generateCalendar();
+        }
+        
+        // Get the Monday of a given week
+        function getWeekStart(date) {
+            const d = new Date(date);
+            const day = d.getDay();
+            const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Adjust for Sunday
+            d.setDate(diff);
+            return d;
+        }
+        
+        // Move calendar by specified number of days
+        function moveCalendar(days) {
+            currentCalendarStart.setDate(currentCalendarStart.getDate() + days);
+            generateCalendar();
+        }
+        
+        // Generate the 2-week calendar grid
+        function generateCalendar() {
+            const grid = document.getElementById('calendar-grid');
+            const dateRange = document.getElementById('calendar-date-range');
+            
+            grid.innerHTML = '';
+            
+            // Add day headers
+            const dayHeaders = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            dayHeaders.forEach(day => {
+                const header = document.createElement('div');
+                header.className = 'calendar-day-header';
+                header.textContent = day;
+                header.style.fontWeight = 'bold';
+                header.style.textAlign = 'center';
+                header.style.padding = '10px';
+                header.style.background = '#f8f9fa';
+                grid.appendChild(header);
+            });
+            
+            // Generate 14 days starting from currentCalendarStart
+            const endDate = new Date(currentCalendarStart);
+            endDate.setDate(endDate.getDate() + 13);
+            
+            // Update date range display
+            dateRange.textContent = `${currentCalendarStart.toLocaleDateString()} - ${endDate.toLocaleDateString()}`;
+            
+            const current = new Date(currentCalendarStart);
+            for (let i = 0; i < 14; i++) {
+                const dayElement = createCalendarDay(current);
+                grid.appendChild(dayElement);
+                current.setDate(current.getDate() + 1);
+            }
+            
+            // Update assignment status
+            updateAssignmentStatus();
+        }
+        
+        // Push lesson back by one school day
+        function pushLessonBack(dateStr) {
+            const assignment = lessonAssignments[dateStr];
+            if (!assignment) return;
+            
+            const confirmed = confirm(`Move "${assignment.title}" to the next available day?\n\nThis action can be undone.`);
+            if (!confirmed) return;
+            
+            const currentDate = new Date(dateStr);
+            let nextDate = new Date(currentDate);
+            nextDate.setDate(nextDate.getDate() + 1);
+            
+            // Find next available lesson day
+            let attempts = 0;
+            while (attempts < 30) { // Max 30 days ahead
+                const nextDateStr = nextDate.toISOString().split('T')[0];
+                
+                if (isLessonDay(nextDate) && !lessonAssignments[nextDateStr]) {
+                    // Store action for undo
+                    lastAction = {
+                        type: 'move',
+                        fromDate: dateStr,
+                        toDate: nextDateStr,
+                        assignment: assignment,
+                        hadCompletion: completedLessons[dateStr] || false
+                    };
+                    
+                    // Move assignment
+                    delete lessonAssignments[dateStr];
+                    lessonAssignments[nextDateStr] = assignment;
+                    
+                    // Move completion status if exists
+                    if (completedLessons[dateStr]) {
+                        delete completedLessons[dateStr];
+                        completedLessons[nextDateStr] = true;
+                    }
+                    
+                    localStorage.setItem('lessonAssignments', JSON.stringify(lessonAssignments));
+                    localStorage.setItem('completedLessons', JSON.stringify(completedLessons));
+                    generateCalendar();
+                    
+                    const formattedDate = nextDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                    showUndoNotification(`Moved "${assignment.title}" to ${formattedDate}`);
+                    return;
+                }
+                
+                nextDate.setDate(nextDate.getDate() + 1);
+                attempts++;
+            }
+            
+            alert('❌ No available days found within 30 days to move lesson');
+        }
+        
+        // Remove lesson assignment
+        function removeLessonAssignment(dateStr) {
+            const assignment = lessonAssignments[dateStr];
+            if (!assignment) return;
+            
+            const confirmed = confirm(`Remove "${assignment.title}" from this date?\n\nThis will free up the lesson to be reassigned later.\nThis action can be undone.`);
+            if (!confirmed) return;
+            
+            // Store action for undo
+            lastAction = {
+                type: 'remove',
+                date: dateStr,
+                assignment: assignment,
+                hadCompletion: completedLessons[dateStr] || false
+            };
+            
+            delete lessonAssignments[dateStr];
+            if (completedLessons[dateStr]) {
+                delete completedLessons[dateStr];
+            }
+            
+            localStorage.setItem('lessonAssignments', JSON.stringify(lessonAssignments));
+            localStorage.setItem('completedLessons', JSON.stringify(completedLessons));
+            generateCalendar();
+            
+            showUndoNotification(`Removed "${assignment.title}" from schedule`);
+        }
+        
+        // Create a single calendar day element
+        function createCalendarDay(date) {
+            const dateStr = date.toISOString().split('T')[0];
+            const dayElement = document.createElement('div');
+            dayElement.className = 'calendar-day';
+            
+            const dayNumber = document.createElement('div');
+            dayNumber.className = 'day-number';
+            dayNumber.textContent = date.getDate();
+            
+            const dayContent = document.createElement('div');
+            dayContent.className = 'day-content';
+            
+            // Determine day type and styling
+            if (!isSchoolDay(date)) {
+                dayElement.classList.add('holiday');
+                dayContent.textContent = 'No School';
+            } else if (!isLessonDay(date)) {
+                // School day but not lesson day (orientation period)
+                dayElement.classList.add('orientation');
+                dayContent.textContent = 'Orientation';
+            } else if (lessonAssignments[dateStr]) {
+                const assignment = lessonAssignments[dateStr];
+                if (completedLessons[dateStr]) {
+                    dayElement.classList.add('completed');
+                    
+                    // Add checkbox
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.className = 'lesson-checkbox';
+                    checkbox.checked = true;
+                    checkbox.onchange = () => toggleLessonCompletion(dateStr);
+                    dayElement.appendChild(checkbox);
+                } else {
+                    dayElement.classList.add('assigned');
+                    
+                    // Add checkbox
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.className = 'lesson-checkbox';
+                    checkbox.onchange = () => toggleLessonCompletion(dateStr);
+                    dayElement.appendChild(checkbox);
+                }
+                
+                const lessonTitle = document.createElement('div');
+                lessonTitle.className = 'lesson-title';
+                lessonTitle.textContent = assignment.title;
+                dayContent.appendChild(lessonTitle);
+                
+                // Add management buttons for assigned lessons
+                const managementDiv = document.createElement('div');
+                managementDiv.className = 'lesson-management';
+                managementDiv.style.cssText = `
+                    display: flex;
+                    gap: 2px;
+                    margin-top: 4px;
+                    font-size: 0.6rem;
+                `;
+                
+                // Load lesson button
+                const loadBtn = document.createElement('button');
+                loadBtn.textContent = '📖';
+                loadBtn.title = 'Load Lesson';
+                loadBtn.style.cssText = `
+                    background: #007bff;
+                    color: white;
+                    border: none;
+                    border-radius: 3px;
+                    padding: 2px 4px;
+                    cursor: pointer;
+                    font-size: 0.6rem;
+                `;
+                loadBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    selectLessonFromCalendar(assignment.moduleNumber, assignment.lessonNumber);
+                };
+                
+                // Push back button
+                const pushBtn = document.createElement('button');
+                pushBtn.textContent = '⏭️';
+                pushBtn.title = 'Push Back 1 Day';
+                pushBtn.style.cssText = `
+                    background: #ffc107;
+                    color: #212529;
+                    border: none;
+                    border-radius: 3px;
+                    padding: 2px 4px;
+                    cursor: pointer;
+                    font-size: 0.6rem;
+                `;
+                pushBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    pushLessonBack(dateStr);
+                };
+                
+                // Remove button
+                const removeBtn = document.createElement('button');
+                removeBtn.textContent = '❌';
+                removeBtn.title = 'Remove Assignment';
+                removeBtn.style.cssText = `
+                    background: #dc3545;
+                    color: white;
+                    border: none;
+                    border-radius: 3px;
+                    padding: 2px 4px;
+                    cursor: pointer;
+                    font-size: 0.6rem;
+                `;
+                removeBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    removeLessonAssignment(dateStr);
+                };
+                
+                managementDiv.appendChild(loadBtn);
+                managementDiv.appendChild(pushBtn);
+                managementDiv.appendChild(removeBtn);
+                dayContent.appendChild(managementDiv);
+            } else if (isLessonDay(date)) {
+                dayElement.classList.add('available');
+                dayContent.textContent = 'Available';
+                // Remove click functionality - manage through auto-assign tools
+            } else {
+                // School day but not available for lessons (e.g., orientation)
+                dayContent.textContent = date < schoolCalendar.curriculumStart ? 'Orientation' : 'School Day';
+            }
+            
+            // Weekend styling
+            if (date.getDay() === 0 || date.getDay() === 6) {
+                dayElement.classList.add('weekend');
+            }
+            
+            dayElement.appendChild(dayNumber);
+            dayElement.appendChild(dayContent);
+            
+            return dayElement;
+        }
+        
+        // Toggle lesson completion
+        function toggleLessonCompletion(dateStr) {
+            if (completedLessons[dateStr]) {
+                delete completedLessons[dateStr];
+            } else {
+                completedLessons[dateStr] = true;
+                // Auto-assign next lesson to next available day
+                assignNextLessonToNextDay();
+            }
+            
+            localStorage.setItem('completedLessons', JSON.stringify(completedLessons));
+            generateCalendar();
+        }
+        
+        // Assign next lesson to next available day
+        function assignNextLessonToNextDay() {
+            // Find next unassigned lesson
+            const nextLesson = findNextUnassignedLesson();
+            if (!nextLesson) return;
+            
+            // Find next available school day
+            const nextAvailableDay = findNextAvailableDay();
+            if (!nextAvailableDay) return;
+            
+            // Assign lesson
+            lessonAssignments[nextAvailableDay] = nextLesson;
+            localStorage.setItem('lessonAssignments', JSON.stringify(lessonAssignments));
+        }
+        
+        // Get the next lesson that should be assigned (in sequence)
+        function getNextSequentialLesson() {
+            const assignedLessons = Object.values(lessonAssignments);
+            let expectedModuleNumber = 1;
+            let expectedLessonNumber = 1;
+            
+            // Find the next lesson in sequence
+            for (const module of modules) {
+                const lessonCount = module.totalLessons || module.lessonCount || 0;
+                for (let i = 1; i <= lessonCount; i++) {
+                    const isAssigned = assignedLessons.some(assigned => 
+                        assigned.moduleNumber === module.moduleNumber && assigned.lessonNumber === i
+                    );
+                    
+                    if (!isAssigned) {
+                        return {
+                            moduleNumber: module.moduleNumber,
+                            lessonNumber: i,
+                            title: `M${module.moduleNumber}L${i}: ${module.title}`,
+                            sequenceNumber: this.getSequenceNumber(module.moduleNumber, i)
+                        };
+                    }
+                }
+            }
+            return null;
+        }
+        
+        // Get sequence number for a lesson (for ordering)
+        function getSequenceNumber(moduleNumber, lessonNumber) {
+            let sequence = 0;
+            for (const module of modules) {
+                if (module.moduleNumber < moduleNumber) {
+                    sequence += module.totalLessons || module.lessonCount || 0;
+                } else if (module.moduleNumber === moduleNumber) {
+                    sequence += lessonNumber;
+                    break;
+                }
+            }
+            return sequence;
+        }
+        
+        // Check if a lesson can be assigned (is it the next in sequence?)
+        function canAssignLesson(targetModuleNumber, targetLessonNumber) {
+            const nextLesson = getNextSequentialLesson();
+            if (!nextLesson) return false;
+            
+            return nextLesson.moduleNumber === targetModuleNumber && 
+                   nextLesson.lessonNumber === targetLessonNumber;
+        }
+        
+        // Find next lesson that hasn't been assigned (updated to use sequential logic)
+        function findNextUnassignedLesson() {
+            return getNextSequentialLesson();
+        }
+        
+        // Find next available school day for lessons
+        function findNextAvailableDay() {
+            const today = new Date();
+            const current = new Date(Math.max(today, schoolCalendar.curriculumStart));
+            
+            for (let i = 0; i < 365; i++) { // Look ahead up to a year
+                const dateStr = current.toISOString().split('T')[0];
+                
+                if (isLessonDay(current) && !lessonAssignments[dateStr]) {
+                    return dateStr;
+                }
+                current.setDate(current.getDate() + 1);
+            }
+            return null;
+        }
+        
+        // Assign a specific lesson to a date (with sequence protection)
+        function assignNextLesson(dateStr) {
+            const date = new Date(dateStr);
+            
+            // Only allow assignment to lesson days
+            if (!isLessonDay(date)) {
+                alert('Lessons can only be assigned to curriculum days!');
+                return;
+            }
+            
+            const nextLesson = findNextUnassignedLesson();
+            if (!nextLesson) {
+                console.log('No next lesson found. Modules count:', modules.length);
+                if (modules.length === 0) {
+                    alert('Modules are still loading. Please wait and try again.');
+                } else {
+                    alert('All lessons have been assigned!');
+                }
+                return;
+            }
+            
+            // Check if there are any existing assignments for this date
+            if (lessonAssignments[dateStr]) {
+                const existing = lessonAssignments[dateStr];
+                const confirmed = confirm(
+                    `This date already has "${existing.title}" assigned.\n\n` +
+                    `Do you want to replace it with "${nextLesson.title}"?`
+                );
+                if (!confirmed) return;
+            }
+            
+            // Confirm assignment
+            const formatted = new Date(dateStr).toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            
+            const confirmed = confirm(
+                `Assign "${nextLesson.title}" to ${formatted}?\n\n` +
+                `This will be lesson #${nextLesson.sequenceNumber || 'Unknown'} in the sequence.`
+            );
+            
+            if (!confirmed) return;
+            
+            lessonAssignments[dateStr] = nextLesson;
+            localStorage.setItem('lessonAssignments', JSON.stringify(lessonAssignments));
+            generateCalendar();
+            
+            // Show success message with undo option
+            showUndoNotification(dateStr, nextLesson);
+        }
+        
+        // Show undo notification - flexible function to handle different call patterns
+        function showUndoNotification(messageOrDateStr, lesson = null) {
+            // Remove any existing notification
+            const existing = document.getElementById('undo-notification');
+            if (existing) existing.remove();
+            
+            let message;
+            let undoFunction;
+            
+            // Handle both old style (dateStr, lesson) and new style (message) calls
+            if (lesson) {
+                // Old style call for lesson assignments
+                const date = new Date(messageOrDateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                message = `Assigned "${lesson.title}" to ${date}`;
+                undoFunction = `undoAssignment('${messageOrDateStr}')`;
+            } else {
+                // New style call with custom message
+                message = messageOrDateStr;
+                undoFunction = 'undoLastAction()';
+            }
+            
+            // Create notification
+            const notification = document.createElement('div');
+            notification.id = 'undo-notification';
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #28a745;
+                color: white;
+                padding: 15px 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                z-index: 1000;
+                font-weight: 600;
+                max-width: 400px;
+                display: flex;
+                align-items: center;
+                gap: 15px;
+            `;
+            
+            notification.innerHTML = `
+                <span>✅ ${message}</span>
+                <button onclick="${undoFunction}" style="
+                    background: white;
+                    color: #28a745;
+                    border: none;
+                    padding: 5px 10px;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    font-weight: 600;
+                    margin-right: 10px;
+                ">Undo</button>
+                <button onclick="document.getElementById('undo-notification').remove(); lastAction = null;" style="
+                    background: transparent;
+                    color: white;
+                    border: 1px solid white;
+                    padding: 5px 10px;
+                    border-radius: 4px;
+                    cursor: pointer;
+                ">Dismiss</button>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Auto-remove after 15 seconds
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                    if (!lesson) lastAction = null; // Clear lastAction for new style calls
+                }
+            }, 15000);
+        }
+        
+        // Undo last action (new system)
+        function undoLastAction() {
+            if (!lastAction) {
+                alert('No action to undo');
+                return;
+            }
+            
+            try {
+                switch (lastAction.type) {
+                    case 'move':
+                        // Move lesson back to original date
+                        delete lessonAssignments[lastAction.toDate];
+                        lessonAssignments[lastAction.fromDate] = lastAction.assignment;
+                        
+                        // Restore completion status
+                        delete completedLessons[lastAction.toDate];
+                        if (lastAction.hadCompletion) {
+                            completedLessons[lastAction.fromDate] = true;
+                        }
+                        break;
+                        
+                    case 'remove':
+                        // Restore removed lesson
+                        lessonAssignments[lastAction.date] = lastAction.assignment;
+                        if (lastAction.hadCompletion) {
+                            completedLessons[lastAction.date] = true;
+                        }
+                        break;
+                        
+                    case 'assign':
+                        // Remove auto-assigned lesson
+                        delete lessonAssignments[lastAction.date];
+                        delete completedLessons[lastAction.date];
+                        break;
+                        
+                    default:
+                        alert('Cannot undo this type of action');
+                        return;
+                }
+                
+                // Save changes and update display
+                localStorage.setItem('lessonAssignments', JSON.stringify(lessonAssignments));
+                localStorage.setItem('completedLessons', JSON.stringify(completedLessons));
+                generateCalendar();
+                
+                // Remove notification and clear action
+                const notification = document.getElementById('undo-notification');
+                if (notification) notification.remove();
+                lastAction = null;
+                
+                alert('✅ Action undone successfully!');
+                
+            } catch (error) {
+                console.error('Error undoing action:', error);
+                alert('❌ Error undoing action. Please refresh the page.');
+            }
+        }
+        
+        // Undo assignment (legacy system for auto-assign)
+        function undoAssignment(dateStr) {
+            if (lessonAssignments[dateStr]) {
+                const lesson = lessonAssignments[dateStr];
+                delete lessonAssignments[dateStr];
+                localStorage.setItem('lessonAssignments', JSON.stringify(lessonAssignments));
+                generateCalendar();
+                
+                // Remove notification
+                const notification = document.getElementById('undo-notification');
+                if (notification) notification.remove();
+                
+                // Show confirmation
+                const date = new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                alert(`✅ Removed "${lesson.title}" from ${date}`);
+            }
+        }
+        
+        // Auto-assign next N lessons to available days
+        function autoAssignLessons(count = 10) {
+            const confirmed = confirm(
+                `Auto-assign the next ${count} lessons in sequence?\n\n` +
+                `This will assign lessons to the next available school days.`
+            );
+            
+            if (!confirmed) return;
+            
+            let assigned = 0;
+            const maxAttempts = 100; // Prevent infinite loop
+            let attempts = 0;
+            
+            while (assigned < count && attempts < maxAttempts) {
+                attempts++;
+                
+                const nextLesson = findNextUnassignedLesson();
+                if (!nextLesson) break;
+                
+                const nextDay = findNextAvailableDay();
+                if (!nextDay) break;
+                
+                lessonAssignments[nextDay] = nextLesson;
+                assigned++;
+            }
+            
+            if (assigned > 0) {
+                localStorage.setItem('lessonAssignments', JSON.stringify(lessonAssignments));
+                generateCalendar();
+                updateAssignmentStatus();
+                alert(`✅ Assigned ${assigned} lessons automatically!`);
+            } else {
+                alert('No lessons available to assign.');
+            }
+        }
+        
+        // Clear all assignments
+        function clearAllAssignments() {
+            const assignedCount = Object.keys(lessonAssignments).length;
+            if (assignedCount === 0) {
+                alert('No assignments to clear.');
+                return;
+            }
+            
+            const confirmed = confirm(
+                `⚠️ This will remove ALL ${assignedCount} lesson assignments!\n\n` +
+                `Are you sure? This action cannot be undone.`
+            );
+            
+            if (!confirmed) return;
+            
+            lessonAssignments = {};
+            completedLessons = {};
+            localStorage.setItem('lessonAssignments', JSON.stringify(lessonAssignments));
+            localStorage.setItem('completedLessons', JSON.stringify(completedLessons));
+            generateCalendar();
+            updateAssignmentStatus();
+            alert('✅ All assignments cleared.');
+        }
+        
+        // Update assignment status display
+        function updateAssignmentStatus() {
+            const statusElement = document.getElementById('assignment-status');
+            if (!statusElement) return;
+            
+            const assignedCount = Object.keys(lessonAssignments).length;
+            const completedCount = Object.keys(completedLessons).length;
+            const totalLessons = modules.reduce((sum, module) => sum + (module.totalLessons || 0), 0);
+            
+            statusElement.textContent = `📊 ${assignedCount} assigned | ${completedCount} completed | ${totalLessons} total`;
+        }
+        
+        // Select lesson from calendar click
+        function selectLessonFromCalendar(moduleNumber, lessonNumber) {
+            // Set the module dropdown
+            document.getElementById('moduleSelect').value = moduleNumber;
+            
+            // Load lessons for the module and then select the specific lesson
+            loadLessonsForModule(moduleNumber).then(() => {
+                // Find the lesson with matching module and lesson numbers
+                const targetLesson = allLessons.find(lesson => 
+                    lesson.module && 
+                    lesson.module.moduleNumber === parseInt(moduleNumber) && 
+                    lesson.lessonNumber === parseInt(lessonNumber)
+                );
+                
+                if (targetLesson) {
+                    document.getElementById('lessonSelect').value = targetLesson._id;
+                    loadLesson();
+                }
+            }).catch(error => {
+                console.error('Error loading lesson from calendar:', error);
+                alert('Could not load the selected lesson. Please try selecting it manually from the dropdowns.');
+            });
+        }
+
+        // Load modules on page load
+        async function loadModules() {
+            try {
+                console.log('Loading modules...');
+                const response = await fetch('/api/modules');
+                modules = await response.json();
+                console.log('Modules loaded:', modules.length, modules);
+                
+                const moduleSelect = document.getElementById('moduleSelect');
+                moduleSelect.innerHTML = '<option value="">Select a module...</option>';
+                
+                modules.forEach(module => {
+                    const option = document.createElement('option');
+                    option.value = module.moduleNumber;
+                    option.textContent = `Module ${module.moduleNumber}: ${module.title}`;
+                    moduleSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading modules:', error);
+                document.getElementById('moduleSelect').innerHTML = '<option value="">Error loading modules</option>';
+            }
+        }
+
+        // Load lessons for selected module
+        async function loadLessonsForModule(moduleNumber) {
+            try {
+                console.log('Loading lessons for module:', moduleNumber);
+                const response = await fetch(`/api/lessons`);
+                allLessons = await response.json();
+                console.log('All lessons loaded:', allLessons.length);
+                
+                // Filter lessons for this module
+                const moduleLessons = allLessons.filter(lesson => lesson.module && lesson.module.moduleNumber === parseInt(moduleNumber));
+                console.log('Filtered lessons for module', moduleNumber, ':', moduleLessons.length);
+                
+                const lessonSelect = document.getElementById('lessonSelect');
+                lessonSelect.innerHTML = '<option value="">Select a lesson...</option>';
+                
+                // Sort lessons by lesson number
+                moduleLessons.sort((a, b) => a.lessonNumber - b.lessonNumber);
+                
+                moduleLessons.forEach(lesson => {
+                    const option = document.createElement('option');
+                    option.value = lesson._id;
+                    option.textContent = `Lesson ${lesson.lessonNumber}: ${lesson.title}`;
+                    lessonSelect.appendChild(option);
+                });
+                
+                console.log('Lesson dropdown updated with', moduleLessons.length, 'lessons');
+                return Promise.resolve();
+            } catch (error) {
+                console.error('Error loading lessons:', error);
+                document.getElementById('lessonSelect').innerHTML = '<option value="">Error loading lessons</option>';
+                return Promise.reject(error);
+            }
+        }
+
+        // Module selection handler
+        document.getElementById('moduleSelect').addEventListener('change', function() {
+            const moduleNumber = this.value;
+            console.log('Module changed to:', moduleNumber);
+            if (moduleNumber) {
+                loadLessonsForModule(moduleNumber);
+            } else {
+                const lessonSelect = document.getElementById('lessonSelect');
+                lessonSelect.innerHTML = '<option value="">Select module first</option>';
+                console.log('Module selection cleared, lesson dropdown reset');
+            }
+        });
+
+        // Load specific lesson
+        async function loadLesson() {
+            const lessonId = document.getElementById('lessonSelect').value;
+            console.log('Loading lesson with ID:', lessonId);
+            if (!lessonId) {
+                alert('Please select a lesson first');
+                return;
+            }
+
+            try {
+                // Find the lesson in our local array
+                const lesson = allLessons.find(l => l._id === lessonId);
+                console.log('Found lesson:', lesson ? lesson.title : 'not found');
+                if (!lesson) {
+                    throw new Error('Lesson not found');
+                }
+
+                // Use the lesson data directly instead of fetching by day number
+                const lessonData = {
+                    schoolDay: lesson.lessonNumber,
+                    moduleNumber: lesson.module.moduleNumber,
+                    moduleTitle: lesson.module.title,
+                    lessonNumber: lesson.lessonNumber,
+                    lessonTitle: lesson.title,
+                    pdfFile: lesson.module.pdfFileName || `module_${lesson.module.moduleNumber}.pdf`,
+                    lesson: lesson
+                };
+                
+                console.log('Displaying lesson data:', lessonData);
+                displayLesson(lessonData);
+                
+                // Set current lesson day for navigation
+                currentLessonDay = lesson.lessonNumber;
+                updateNavigationButtons();
+                
+            } catch (error) {
+                console.error('Error loading lesson:', error);
+                document.getElementById('lesson-content').innerHTML = 
+                    `<div class="error">Error loading lesson: ${error.message}</div>`;
+            }
+        }
+
+        // Display lesson content
+        function displayLesson(lessonData) {
+            const lesson = lessonData.lesson;
+            
+            // Update lesson overview
+            document.getElementById('time-estimate').textContent = lesson.estimatedTime || '45 minutes';
+            document.getElementById('module-title').textContent = lessonData.moduleTitle || 'Unknown Module';
+            document.getElementById('lesson-title').textContent = lesson.title || 'Unknown Lesson';
+
+            // Update objectives (check both possible structures)
+            const objectives = lesson.teacherContent?.objectives || lesson.objectives || [];
+            updateList('objectives-list', objectives, 'No objectives available');
+
+            // Update materials (check both possible structures)
+            const materials = lesson.teacherContent?.materials || lesson.materials || [];
+            updateList('materials-list', materials, 'No materials listed');
+
+            // Update procedures (check both possible structures)
+            const procedures = lesson.teacherContent?.procedures || lesson.procedures || [];
+            updateList('procedures-list', procedures, 'No procedures available');
+
+            // Update assessments (check both possible structures)
+            const assessments = lesson.teacherContent?.assessments || lesson.assessments || [];
+            updateList('assessments-list', assessments, 'No assessments listed');
+
+            // Update activities (check both possible structures)
+            const activities = lesson.studentContent?.activities || lesson.activities || [];
+            updateList('activities-list', activities, 'No activities listed');
+
+            // Update vocabulary (check both possible structures)
+            const vocabulary = lesson.teacherContent?.vocabulary || lesson.vocabulary || [];
+            updateVocabulary(vocabulary);
+
+            // Display main lesson content (check multiple possible structures)
+            let studentContent = null;
+            if (lesson.studentReading?.content) {
+                studentContent = { content: lesson.studentReading.content };
+            } else if (lesson.studentContent?.readings && lesson.studentContent.readings.length > 0) {
+                studentContent = { content: lesson.studentContent.readings[0] };
+            } else if (lesson.rawText) {
+                studentContent = { content: lesson.rawText };
+            }
+            
+            displayLessonReading(studentContent);
+            
+            // Generate cross-curricular content and show the section
+            generateCrossCurricularContent(lesson);
+            document.getElementById('cross-curricular-section').style.display = 'block';
+        }
+
+        // Update list helper function
+        function updateList(elementId, items, emptyMessage) {
+            const list = document.getElementById(elementId);
+            if (items.length === 0) {
+                list.innerHTML = `<li style="color: #6c757d; font-style: italic;">${emptyMessage}</li>`;
+                return;
+            }
+
+            list.innerHTML = items.map(item => `<li>${item}</li>`).join('');
+        }
+
+        // Update vocabulary with special formatting
+        function updateVocabulary(vocabulary) {
+            const list = document.getElementById('vocabulary-list');
+            if (vocabulary.length === 0) {
+                list.innerHTML = '<li style="color: #6c757d; font-style: italic;">No vocabulary terms available</li>';
+                return;
+            }
+
+            list.innerHTML = vocabulary.map(item => {
+                if (typeof item === 'object' && item.term && item.definition) {
+                    return `<li class="vocab-term"><strong>${item.term}:</strong> ${item.definition}</li>`;
+                } else if (typeof item === 'string') {
+                    // Handle string format like "term: definition"
+                    const parts = item.split(':');
+                    if (parts.length >= 2) {
+                        const term = parts[0].trim();
+                        const definition = parts.slice(1).join(':').trim();
+                        return `<li class="vocab-term"><strong>${term}:</strong> ${definition}</li>`;
+                    } else {
+                        return `<li class="vocab-term">${item}</li>`;
+                    }
+                } else {
+                    return `<li class="vocab-term">${item}</li>`;
+                }
+            }).join('');
+        }
+
+        // Display the main lesson reading content from MD files
+        function displayLessonReading(studentReading) {
+            const contentDiv = document.getElementById('lesson-content');
+            
+            if (!studentReading || !studentReading.content) {
+                contentDiv.innerHTML = '<div class="error">No lesson content available</div>';
+                return;
+            }
+
+            // Convert markdown content to HTML
+            const htmlContent = convertMarkdownToHTML(studentReading.content);
+            contentDiv.innerHTML = `<div class="lesson-reading">${htmlContent}</div>`;
+        }
+
+        // Simple markdown to HTML converter
+        function convertMarkdownToHTML(markdown) {
+            let html = markdown;
+            
+            // Convert headers
+            html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
+            html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
+            html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+            
+            // Convert bold text
+            html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            
+            // Convert bullet points
+            html = html.replace(/^- (.*$)/gim, '<li>$1</li>');
+            
+            // Wrap consecutive list items in ul tags
+            html = html.replace(/(<li>.*<\/li>)/gs, function(match) {
+                return '<ul>' + match + '</ul>';
+            });
+            
+            // Convert line breaks to paragraphs
+            html = html.split('\n\n').map(paragraph => {
+                paragraph = paragraph.trim();
+                if (paragraph && !paragraph.startsWith('<h') && !paragraph.startsWith('<ul') && !paragraph.startsWith('<li')) {
+                    return `<p>${paragraph}</p>`;
+                }
+                return paragraph;
+            }).join('\n');
+
+            // Add special styling for key sections
+            html = html.replace(/<h2>The Big Idea<\/h2>\s*<p>(.*?)<\/p>/gi, 
+                '<h2>The Big Idea</h2><div class="big-idea">$1</div>');
+            
+            html = html.replace(/<h2>Main Ideas<\/h2>(.*?)(?=<h2>|$)/gis, 
+                '<h2>Main Ideas</h2><div class="main-ideas">$1</div>');
+            
+            html = html.replace(/<h2>Key Terms and Places<\/h2>(.*?)(?=<h2>|$)/gis, 
+                '<h2>Key Terms and Places</h2><div class="key-terms">$1</div>');
+            
+            html = html.replace(/<h2>Assessment<\/h2>(.*?)(?=<h2>|$)/gis, 
+                '<h2>Assessment</h2><div class="assessment">$1</div>');
+            
+            return html;
+        }
+
+        // Tab switching
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName + '-tab').classList.add('active');
+            
+            // Activate corresponding button
+            event.target.classList.add('active');
+        }
+
+        // Navigation functions
+        function previousLesson() {
+            const moduleSelect = document.getElementById('moduleSelect');
+            const currentModuleNumber = parseInt(moduleSelect.value);
+            if (!currentModuleNumber) return;
+            
+            const currentModuleLessons = allLessons.filter(lesson => 
+                lesson.module && lesson.module.moduleNumber === currentModuleNumber
+            ).sort((a, b) => a.lessonNumber - b.lessonNumber);
+            
+            const currentIndex = currentModuleLessons.findIndex(lesson => lesson.lessonNumber === currentLessonDay);
+            if (currentIndex > 0) {
+                const prevLesson = currentModuleLessons[currentIndex - 1];
+                loadLessonById(prevLesson._id);
+            }
+        }
+
+        function nextLesson() {
+            const moduleSelect = document.getElementById('moduleSelect');
+            const currentModuleNumber = parseInt(moduleSelect.value);
+            if (!currentModuleNumber) return;
+            
+            const currentModuleLessons = allLessons.filter(lesson => 
+                lesson.module && lesson.module.moduleNumber === currentModuleNumber
+            ).sort((a, b) => a.lessonNumber - b.lessonNumber);
+            
+            const currentIndex = currentModuleLessons.findIndex(lesson => lesson.lessonNumber === currentLessonDay);
+            if (currentIndex < currentModuleLessons.length - 1) {
+                const nextLesson = currentModuleLessons[currentIndex + 1];
+                loadLessonById(nextLesson._id);
+            }
+        }
+
+        async function loadLessonById(lessonId) {
+            try {
+                // Find the lesson in our local array
+                const lesson = allLessons.find(l => l._id === lessonId);
+                if (!lesson) {
+                    throw new Error('Lesson not found');
+                }
+
+                // Update the lesson selector to match
+                document.getElementById('lessonSelect').value = lessonId;
+
+                // Use the lesson data directly
+                const lessonData = {
+                    schoolDay: lesson.lessonNumber,
+                    moduleNumber: lesson.module.moduleNumber,
+                    moduleTitle: lesson.module.title,
+                    lessonNumber: lesson.lessonNumber,
+                    lessonTitle: lesson.title,
+                    pdfFile: lesson.module.pdfFileName || `module_${lesson.module.moduleNumber}.pdf`,
+                    lesson: lesson
+                };
+                
+                displayLesson(lessonData);
+                currentLessonDay = lesson.lessonNumber;
+                updateNavigationButtons();
+                
+            } catch (error) {
+                console.error('Error loading lesson:', error);
+                document.getElementById('lesson-content').innerHTML = 
+                    `<div class="error">Error loading lesson: ${error.message}</div>`;
+            }
+        }
+
+        function updateNavigationButtons() {
+            const moduleSelect = document.getElementById('moduleSelect');
+            const currentModuleNumber = parseInt(moduleSelect.value);
+            
+            if (!currentModuleNumber) {
+                document.getElementById('prevBtn').disabled = true;
+                document.getElementById('nextBtn').disabled = true;
+                return;
+            }
+            
+            const currentModuleLessons = allLessons.filter(lesson => 
+                lesson.module && lesson.module.moduleNumber === currentModuleNumber
+            ).sort((a, b) => a.lessonNumber - b.lessonNumber);
+            
+            const currentIndex = currentModuleLessons.findIndex(lesson => lesson.lessonNumber === currentLessonDay);
+            
+            document.getElementById('prevBtn').disabled = currentIndex <= 0;
+            document.getElementById('nextBtn').disabled = currentIndex >= currentModuleLessons.length - 1;
+        }
+
+        // Initialize the page
+        // Initialize the application
+        loadModules();
+        initializeCalendar();
+
+        // Load first lesson by default after modules are loaded
+        setTimeout(() => {
+            if (allLessons.length > 0) {
+                const firstLesson = allLessons.find(lesson => 
+                    lesson.module && lesson.module.moduleNumber === 1 && lesson.lessonNumber === 1
+                );
+                if (firstLesson) {
+                    // Set the selectors to Module 1, Lesson 1
+                    document.getElementById('moduleSelect').value = 1;
+                    loadLessonsForModule(1);
+                    setTimeout(() => {
+                        document.getElementById('lessonSelect').value = firstLesson._id;
+                        loadLesson();
+                    }, 500);
+                }
+            }
+        }, 1000);
+        
+        // Navigation functions for Previous/Next buttons
+        function previousLesson() {
+            const moduleSelect = document.getElementById('moduleSelect');
+            const currentModuleNumber = parseInt(moduleSelect.value);
+            if (!currentModuleNumber) return;
+            
+            const currentModuleLessons = allLessons.filter(lesson => 
+                lesson.module && lesson.module.moduleNumber === currentModuleNumber
+            ).sort((a, b) => a.lessonNumber - b.lessonNumber);
+            
+            const currentIndex = currentModuleLessons.findIndex(lesson => lesson.lessonNumber === currentLessonDay);
+            
+            if (currentIndex > 0) {
+                const prevLesson = currentModuleLessons[currentIndex - 1];
+                document.getElementById('lessonSelect').value = prevLesson._id;
+                loadLesson();
+            }
+        }
+        
+        function nextLesson() {
+            const moduleSelect = document.getElementById('moduleSelect');
+            const currentModuleNumber = parseInt(moduleSelect.value);
+            if (!currentModuleNumber) return;
+            
+            const currentModuleLessons = allLessons.filter(lesson => 
+                lesson.module && lesson.module.moduleNumber === currentModuleNumber
+            ).sort((a, b) => a.lessonNumber - b.lessonNumber);
+            
+            const currentIndex = currentModuleLessons.findIndex(lesson => lesson.lessonNumber === currentLessonDay);
+            
+            if (currentIndex < currentModuleLessons.length - 1) {
+                const nextLesson = currentModuleLessons[currentIndex + 1];
+                document.getElementById('lessonSelect').value = nextLesson._id;
+                loadLesson();
+            }
+        }
+
+        // Cross-Curricular Functions
+        let currentLesson = null;
+
+        // Function to switch between subject tabs
+        function showSubjectContent(subject) {
+            console.log('Switching to subject:', subject); // Debug log
+            
+            // Remove active class from all tabs and content
+            document.querySelectorAll('.subject-tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.subject-content').forEach(content => content.classList.remove('active'));
+            
+            // Add active class to selected tab and content
+            if (subject === 'ela') {
+                const elaTab = document.querySelector('.subject-tab:nth-child(1)');
+                const elaContent = document.getElementById('ela-content');
+                if (elaTab) elaTab.classList.add('active');
+                if (elaContent) elaContent.classList.add('active');
+                console.log('ELA tab activated'); // Debug log
+            } else if (subject === 'science') {
+                const scienceTab = document.querySelector('.subject-tab:nth-child(2)');
+                const scienceContent = document.getElementById('science-content');
+                if (scienceTab) scienceTab.classList.add('active');
+                if (scienceContent) scienceContent.classList.add('active');
+                console.log('Science tab activated'); // Debug log
+            }
+        }
+
+        // Function to generate cross-curricular content based on current lesson
+        function generateCrossCurricularContent(lesson) {
+            currentLesson = lesson;
+            generateELAContent(lesson);
+            generateScienceContent(lesson);
+        }
+
+        // Function to generate ELA content based on current lesson
+        function generateELAContent(lesson) {
+            if (!lesson) return;
+            
+            const vocabulary = lesson.teacherContent?.vocabulary || lesson.vocabulary || [];
+            const lessonTitle = lesson.title || '';
+            
+            // Extract key concepts for more sophisticated lesson planning
+            const lessonContent = lesson.studentReading?.content || lesson.studentContent?.rawText || '';
+            const isPhysicalGeography = lessonContent.toLowerCase().includes('climate') || lessonContent.toLowerCase().includes('weather') || lessonContent.toLowerCase().includes('landform');
+            const isHumanGeography = lessonContent.toLowerCase().includes('culture') || lessonContent.toLowerCase().includes('population') || lessonContent.toLowerCase().includes('city');
+            const isRegionalStudy = lessonTitle.toLowerCase().includes('africa') || lessonTitle.toLowerCase().includes('asia') || lessonTitle.toLowerCase().includes('europe');
+            
+            // Generate comprehensive reading comprehension with scaffolded questions
+            const readingContent = `
+                <h4>📖 Close Reading Lesson Plan (45 minutes)</h4>
+                
+                <div class="lesson-objective">
+                    <strong>Learning Target:</strong> Students will analyze geographic text using close reading strategies and demonstrate comprehension through written responses.
+                </div>
+                
+                <h5>Pre-Reading (10 minutes)</h5>
+                <div class="activity-section">
+                    <p><strong>Teacher Do:</strong> Lead vocabulary preview and activate prior knowledge</p>
+                    <ol>
+                        <li><strong>Vocabulary Preview:</strong> Display and pronounce key terms. Have students create quick sketches or gestures for each term.</li>
+                        <li><strong>Text Walk:</strong> Preview headings, bold terms, and any visual elements in the lesson.</li>
+                        <li><strong>Purpose Setting:</strong> "Today we'll read about ${lessonTitle} and analyze how geographic factors influence human life."</li>
+                    </ol>
+                </div>
+                
+                <h5>First Reading - Gist (15 minutes)</h5>
+                <div class="activity-section">
+                    <p><strong>Student Task:</strong> Read silently for general understanding</p>
+                    <ul>
+                        <li>Mark words you don't know with a "?"</li>
+                        <li>Circle geographic locations mentioned</li>
+                        <li>After reading, discuss with a partner: "What is this text mostly about?"</li>
+                    </ul>
+                    <p><strong>Exit Ticket:</strong> In one sentence, what is the main idea of this lesson?</p>
+                </div>
+                
+                <h5>Second Reading - Text-Dependent Questions (15 minutes)</h5>
+                <div class="activity-section">
+                    <p><strong>Teacher-Led Analysis:</strong> Guide students through these questions</p>
+                    <ol>
+                        <li><strong>Literal:</strong> What specific geographic features are mentioned in the text?</li>
+                        <li><strong>Inferential:</strong> How do these geographic features affect the way people live? Use evidence from the text.</li>
+                        <li><strong>Analytical:</strong> Why did the author choose to organize the information this way?</li>
+                        <li><strong>Synthesis:</strong> How does this connect to other regions we've studied?</li>
+                    </ol>
+                </div>
+                
+                <h5>Post-Reading - Response (5 minutes)</h5>
+                <div class="activity-section">
+                    <p><strong>Written Response:</strong> Choose one strategy</p>
+                    <ul>
+                        <li><strong>Quick Write:</strong> Explain one cause-and-effect relationship from the text</li>
+                        <li><strong>Text Evidence:</strong> Find three details that support the main idea</li>
+                        <li><strong>Connection:</strong> Compare this region to where you live</li>
+                    </ul>
+                </div>
+                
+                <h4>📊 Assessment Rubric</h4>
+                <table style="border-collapse: collapse; width: 100%; margin: 10px 0;">
+                    <tr style="background: #f0f0f0;">
+                        <th style="border: 1px solid #ccc; padding: 8px;">Skill</th>
+                        <th style="border: 1px solid #ccc; padding: 8px;">Developing</th>
+                        <th style="border: 1px solid #ccc; padding: 8px;">Proficient</th>
+                        <th style="border: 1px solid #ccc; padding: 8px;">Advanced</th>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #ccc; padding: 8px;"><strong>Text Evidence</strong></td>
+                        <td style="border: 1px solid #ccc; padding: 8px;">Uses minimal evidence</td>
+                        <td style="border: 1px solid #ccc; padding: 8px;">Uses relevant evidence</td>
+                        <td style="border: 1px solid #ccc; padding: 8px;">Uses strong, specific evidence</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #ccc; padding: 8px;"><strong>Vocabulary</strong></td>
+                        <td style="border: 1px solid #ccc; padding: 8px;">Basic understanding</td>
+                        <td style="border: 1px solid #ccc; padding: 8px;">Accurate use in context</td>
+                        <td style="border: 1px solid #ccc; padding: 8px;">Sophisticated application</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #ccc; padding: 8px;"><strong>Analysis</strong></td>
+                        <td style="border: 1px solid #ccc; padding: 8px;">Literal responses</td>
+                        <td style="border: 1px solid #ccc; padding: 8px;">Makes connections</td>
+                        <td style="border: 1px solid #ccc; padding: 8px;">Deep analysis with insights</td>
+                    </tr>
+                </table>
+            `;
+            document.getElementById('ela-reading-content').innerHTML = readingContent;
+            
+            // Generate comprehensive writing workshop lesson
+            const writingContent = `
+                <h4>✍️ Writing Workshop: Geographic Analysis Essay (45 minutes)</h4>
+                
+                <div class="lesson-objective">
+                    <strong>Learning Target:</strong> Students will write a well-organized explanatory essay analyzing geographic impact using text evidence and domain-specific vocabulary.
+                </div>
+                
+                <h5>Writing Prompt (Common Core Aligned)</h5>
+                <div class="prompt-box" style="background: #e8f4fd; padding: 15px; border-left: 4px solid #2196f3; margin: 10px 0;">
+                    <p><strong>Task:</strong> After reading about ${lessonTitle}, write an explanatory essay that analyzes how geographic factors influence human activities in this region. Use specific evidence from the text and include relevant geographic vocabulary.</p>
+                    
+                    <p><strong>Audience:</strong> A student from another school who hasn't studied this region</p>
+                    <p><strong>Purpose:</strong> To explain and analyze geographic relationships</p>
+                </div>
+                
+                <h5>Pre-Writing - Planning (10 minutes)</h5>
+                <div class="activity-section">
+                    <p><strong>Step 1: Evidence Collection</strong></p>
+                    <ul>
+                        <li>Reread the lesson and highlight 3-4 specific examples of geographic influence</li>
+                        <li>For each example, note: What geographic factor? → What human activity?</li>
+                    </ul>
+                    
+                    <p><strong>Step 2: Thesis Development</strong></p>
+                    <p><em>Sentence Frame:</em> "The geography of ${lessonTitle.includes('and') ? 'this region' : lessonTitle} significantly impacts human activities through _______, _______, and _______."</p>
+                    
+                    <p><strong>Step 3: Essay Outline</strong></p>
+                    <ul>
+                        <li><strong>Introduction:</strong> Hook + Background + Thesis</li>
+                        <li><strong>Body Paragraph 1:</strong> Geographic Factor #1 + Evidence + Analysis</li>
+                        <li><strong>Body Paragraph 2:</strong> Geographic Factor #2 + Evidence + Analysis</li>
+                        <li><strong>Conclusion:</strong> Synthesis + Broader Implications</li>
+                    </ul>
+                </div>
+                
+                <h5>Drafting (25 minutes)</h5>
+                <div class="activity-section">
+                    <p><strong>Introduction Strategies:</strong></p>
+                    <ul>
+                        <li><strong>Hook Options:</strong> Surprising fact, thought-provoking question, vivid description</li>
+                        <li><strong>Background:</strong> 2-3 sentences introducing the region and its significance</li>
+                        <li><strong>Thesis:</strong> Clear statement of your main argument</li>
+                    </ul>
+                    
+                    <p><strong>Body Paragraph Structure (PEAL):</strong></p>
+                    <ul>
+                        <li><strong>P</strong>oint: Topic sentence stating the geographic factor</li>
+                        <li><strong>E</strong>vidence: Specific details from the text</li>
+                        <li><strong>A</strong>nalysis: Explain HOW/WHY this evidence supports your point</li>
+                        <li><strong>L</strong>ink: Connect to thesis and transition to next idea</li>
+                    </ul>
+                    
+                    <p><strong>Academic Language Starters:</strong></p>
+                    <ul>
+                        <li>"According to the text..." / "The lesson explains that..."</li>
+                        <li>"This demonstrates..." / "As a result of..."</li>
+                        <li>"Furthermore..." / "Additionally..." / "In contrast..."</li>
+                        <li>"This evidence reveals..." / "The significance of this is..."</li>
+                    </ul>
+                </div>
+                
+                <h5>Revision Focus (10 minutes)</h5>
+                <div class="activity-section">
+                    <p><strong>Peer Review Checklist:</strong></p>
+                    <ul>
+                        <li>□ Clear thesis statement that directly answers the prompt</li>
+                        <li>□ Each body paragraph focuses on one geographic factor</li>
+                        <li>□ Specific evidence from the text in each paragraph</li>
+                        <li>□ Analysis explains the connection between geography and human activity</li>
+                        <li>□ Uses at least 5 vocabulary terms correctly</li>
+                        <li>□ Conclusion synthesizes main points without just repeating</li>
+                    </ul>
+                </div>
+                
+                <h4>📝 Student Writing Scaffold</h4>
+                <div style="background: #f9f9f9; padding: 15px; border: 1px solid #ddd; margin: 10px 0;">
+                    <p><strong>Introduction Template (Remove after planning):</strong></p>
+                    <p><em>Hook sentence about geography's power._________. ${lessonTitle} is a region where _________. The geography of this area significantly impacts human activities through _______, _______, and _______.</em></p>
+                    
+                    <p><strong>Body Paragraph Template:</strong></p>
+                    <p><em>One way geography influences human activity in ${lessonTitle} is through _______. According to the text, "_______" (specific quote or evidence). This shows that _______. As a result, people in this region must _______. The significance of this geographic factor is _______.</em></p>
+                </div>
+                
+                <h4>🎯 Writing Standards Addressed</h4>
+                <ul>
+                    <li><strong>CCSS.ELA-LITERACY.WHST.6-8.2</strong>: Write explanatory texts to examine and convey complex ideas</li>
+                    <li><strong>CCSS.ELA-LITERACY.WHST.6-8.1</strong>: Write arguments using valid reasoning and evidence</li>
+                    <li><strong>CCSS.ELA-LITERACY.RST.6-8.7</strong>: Integrate quantitative or technical information</li>
+                </ul>
+            `;
+            document.getElementById('ela-writing-content').innerHTML = writingContent;
+            
+            // Generate sophisticated vocabulary instruction
+            let vocabContent = `
+                <h4>🔤 Academic Vocabulary Development (25 minutes)</h4>
+                
+                <div class="lesson-objective">
+                    <strong>Learning Target:</strong> Students will understand and use academic vocabulary from the lesson through multiple modalities and context analysis.
+                </div>
+                
+                <h5>Tier 2 & 3 Vocabulary Focus (8-10 Key Terms)</h5>
+                <div class="vocab-section">
+                    <p><strong>Word Selection Strategy:</strong> Words essential for understanding geographic concepts AND useful across subjects</p>
+                    
+                    <div style="background: #f0f8ff; padding: 15px; border-radius: 8px; margin: 10px 0;">
+                        <h6>📚 Vocabulary Learning Cycle</h6>
+                        
+                        <p><strong>Phase 1: Word Discovery (8 minutes)</strong></p>
+                        <ol>
+                            <li><strong>Context Hunting:</strong> Students locate each vocabulary word in the lesson text</li>
+                            <li><strong>Initial Hypothesis:</strong> Write what you think the word means based on context clues</li>
+                            <li><strong>Word Parts Analysis:</strong> Break down prefixes, roots, suffixes if applicable</li>
+                        </ol>
+                        
+                        <p><strong>Phase 2: Deep Understanding (12 minutes)</strong></p>
+                        <ol>
+                            <li><strong>Precise Definition:</strong> Learn the academic definition with geographic application</li>
+                            <li><strong>Visual Association:</strong> Connect each word to an image, map, or diagram from the lesson</li>
+                            <li><strong>Example Web:</strong> Generate 3 examples: from lesson, from real world, from personal experience</li>
+                        </ol>
+                        
+                        <p><strong>Phase 3: Active Application (5 minutes)</strong></p>
+                        <ol>
+                            <li><strong>Synonym/Antonym Bridge:</strong> Connect to words students already know</li>
+                            <li><strong>Academic Sentence Creation:</strong> Use each word in a sentence about today's lesson</li>
+                            <li><strong>Cross-Curricular Connection:</strong> Identify where this word might appear in other subjects</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <h5>📋 Vocabulary Analysis Template</h5>
+                <div style="background: #fafafa; padding: 15px; border: 1px solid #ddd; margin: 10px 0;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <tr style="background: #e3f2fd;">
+                            <th style="padding: 8px; border: 1px solid #ddd;">Word</th>
+                            <th style="padding: 8px; border: 1px solid #ddd;">Context Clues</th>
+                            <th style="padding: 8px; border: 1px solid #ddd;">Definition</th>
+                            <th style="padding: 8px; border: 1px solid #ddd;">Visual/Example</th>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #ddd;"><strong>Example:</strong><br/>Topography</td>
+                            <td style="padding: 8px; border: 1px solid #ddd;">"...the topography includes mountains and valleys..."</td>
+                            <td style="padding: 8px; border: 1px solid #ddd;">The arrangement of natural and artificial features of an area</td>
+                            <td style="padding: 8px; border: 1px solid #ddd;">Mountain range diagram from lesson</td>
+                        </tr>
+                    </table>
+                </div>
+            `;
+            
+            if (vocabulary.length > 0) {
+                const vocabTerms = vocabulary.slice(0, 10).map(term => {
+                    if (typeof term === 'object' && term.term) {
+                        return term.term;
+                    } else if (typeof term === 'string') {
+                        return term.split(':')[0].trim();
+                    }
+                    return term;
+                });
+                
+                vocabContent += `
+                    <h5>🎯 Today's Focus Vocabulary</h5>
+                    <div style="background: #e8f5e8; padding: 15px; border-left: 4px solid #4caf50; margin: 10px 0;">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+                            ${vocabTerms.map(term => `
+                                <div style="background: white; padding: 10px; border-radius: 5px; border: 1px solid #ddd;">
+                                    <strong>${term}</strong><br/>
+                                    <small>Context: ________________</small><br/>
+                                    <small>Definition: ________________</small><br/>
+                                    <small>My Example: ________________</small>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            vocabContent += `
+                <h5>🎯 Vocabulary Learning Strategies</h5>
+                <div class="activity-section">
+                    <p><strong>Memory Techniques:</strong></p>
+                    <ul>
+                        <li><strong>Geographic Anchoring:</strong> Connect abstract terms to specific places from the lesson</li>
+                        <li><strong>Root Word Building:</strong> "Geography" = geo (earth) + graphy (writing) = writing about Earth</li>
+                        <li><strong>Action Associations:</strong> Connect vocabulary to specific actions or processes</li>
+                        <li><strong>Compare & Contrast:</strong> How is this term similar to/different from related words?</li>
+                    </ul>
+                    
+                    <p><strong>Practice Applications:</strong></p>
+                    <ul>
+                        <li><strong>Academic Conversation:</strong> Explain lesson concept to partner using all vocabulary words</li>
+                        <li><strong>Question Generation:</strong> Write geographic questions using vocabulary terms</li>
+                        <li><strong>Real-World Connections:</strong> Find examples of each concept in local geography</li>
+                    </ul>
+                </div>
+                
+                <h5>📊 Vocabulary Assessment Strategies</h5>
+                <div style="background: #e8f5e8; padding: 15px; border-left: 4px solid #4caf50; margin: 10px 0;">
+                    <p><strong>Formative Assessment Options:</strong></p>
+                    <ul>
+                        <li><strong>Context Application:</strong> Use vocabulary word correctly in new geographic context</li>
+                        <li><strong>Explanation Tasks:</strong> Explain how vocabulary word relates to lesson's main idea</li>
+                        <li><strong>Visual Matching:</strong> Connect vocabulary terms to appropriate maps/images</li>
+                        <li><strong>Analogies:</strong> "Migration is to movement as _____ is to _____"</li>
+                    </ul>
+                    
+                    <p><strong>Exit Ticket Vocabulary Check:</strong></p>
+                    <p><em>"Choose 3 vocabulary words from today's lesson. For each word: 1) Write the definition, 2) Give an example from the lesson, 3) Explain how it connects to the main geographic concept we studied."</em></p>
+                </div>
+                
+                <h4>🎯 Language Standards Addressed</h4>
+                <ul>
+                    <li><strong>CCSS.ELA-LITERACY.L.7.4</strong>: Determine meaning of unknown words using context clues</li>
+                    <li><strong>CCSS.ELA-LITERACY.L.7.6</strong>: Acquire and use grade-appropriate academic vocabulary</li>
+                    <li><strong>CCSS.ELA-LITERACY.RST.6-8.4</strong>: Determine meaning of technical terms and phrases</li>
+                </ul>
+            `;
+            document.getElementById('ela-vocabulary-content').innerHTML = vocabContent;
+            
+            // Generate Critical Thinking Questions
+            const criticalContent = `
+                <h4>Discussion & Analysis Questions</h4>
+                <ol>
+                    <li>How might the geography described in this lesson affect the culture and lifestyle of people in this region?</li>
+                    <li>Compare and contrast this region with where you live. What are three similarities and three differences?</li>
+                    <li>What predictions can you make about future changes in this region based on the geographic factors discussed?</li>
+                    <li>How do the geographic features influence economic activities and trade in this area?</li>
+                    <li>What role does this region play in global geography and world events?</li>
+                    <li>How might climate change affect the geography and people of this region?</li>
+                </ol>
+                <h4>Socratic Seminar Topics</h4>
+                <ul>
+                    <li>The role of geography in shaping human civilization</li>
+                    <li>Environmental challenges and solutions in the region</li>
+                    <li>How geography influences political boundaries and conflicts</li>
+                    <li>The relationship between natural resources and economic development</li>
+                </ul>
+                <h4>Creative Thinking Exercises</h4>
+                <ul>
+                    <li>Design an ideal city for this geographic region</li>
+                    <li>Create a travel brochure highlighting geographic features</li>
+                    <li>Write a news report about a geographic event in the region</li>
+                </ul>
+            `;
+            document.getElementById('ela-critical-content').innerHTML = criticalContent;
+        }
+
+        // Function to generate comprehensive, pedagogically-sound Science content
+        function generateScienceContent(lesson) {
+            console.log('Generating science content for lesson:', lesson ? lesson.title : 'null'); // Debug log
+            if (!lesson) return;
+            
+            const lessonTitle = lesson.title || '';
+            const vocabulary = lesson.teacherContent?.vocabulary || lesson.vocabulary || [];
+            console.log('Lesson title:', lessonTitle, 'Vocabulary count:', vocabulary.length); // Debug log
+            
+            // Generate comprehensive Earth Science investigation lesson
+            const earthScienceContent = `
+                <h4>🌍 Earth Science Investigation: Geographic Systems (50 minutes)</h4>
+                
+                <div class="lesson-objective">
+                    <strong>Learning Target:</strong> Students will analyze Earth's systems and investigate how geosphere, hydrosphere, atmosphere, and biosphere interact to shape the geography of ${lessonTitle}.
+                </div>
+                
+                <h5>🔬 5E Model Science Lesson Structure</h5>
+                
+                <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin: 10px 0;">
+                    <h6>ENGAGE (8 minutes) - Phenomenon Introduction</h6>
+                    <p><strong>Driving Question:</strong> "How do Earth's systems work together to create the unique geographic features we see in ${lessonTitle}?"</p>
+                    
+                    <p><strong>Hook Activity - Geographic Mystery:</strong></p>
+                    <ul>
+                        <li>Show satellite image or topographic map of the region WITHOUT labels</li>
+                        <li>Students make observations using "I see... I think... I wonder..." protocol</li>
+                        <li>Record initial hypotheses about what Earth systems created these features</li>
+                        <li>Introduce the investigation focus: <em>"Today we're going to be Earth system detectives!"</em></li>
+                    </ul>
+                </div>
+                
+                <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; margin: 10px 0;">
+                    <h6>EXPLORE (15 minutes) - System Investigation Stations</h6>
+                    <p><strong>Rotating Investigation Stations (3-4 minutes each):</strong></p>
+                    
+                    <p><strong>Station 1: Geosphere Evidence</strong></p>
+                    <ul>
+                        <li>Analyze rock samples/images from the region</li>
+                        <li>Use hardness tests and observation tools</li>
+                        <li>Question: "What do these rocks tell us about the region's geological history?"</li>
+                    </ul>
+                    
+                    <p><strong>Station 2: Hydrosphere Investigation</strong></p>
+                    <ul>
+                        <li>Examine water cycle data, precipitation maps, river systems</li>
+                        <li>Test water samples for pH and dissolved minerals (simulation)</li>
+                        <li>Question: "How does water shape and change this landscape?"</li>
+                    </ul>
+                    
+                    <p><strong>Station 3: Atmosphere Analysis</strong></p>
+                    <ul>
+                        <li>Study climate graphs, pressure systems, wind patterns</li>
+                        <li>Use weather instruments to measure local conditions</li>
+                        <li>Question: "How do atmospheric conditions influence life in this region?"</li>
+                    </ul>
+                    
+                    <p><strong>Station 4: Biosphere Exploration</strong></p>
+                    <ul>
+                        <li>Examine ecosystem photos, food webs, adaptation examples</li>
+                        <li>Analyze biodiversity data and species distributions</li>
+                        <li>Question: "How do living things adapt to geographic conditions here?"</li>
+                    </ul>
+                </div>
+                
+                <div style="background: #fff3e0; padding: 15px; border-radius: 8px; margin: 10px 0;">
+                    <h6>EXPLAIN (12 minutes) - System Interactions Modeling</h6>
+                    
+                    <p><strong>Collaborative Sense-Making:</strong></p>
+                    <ol>
+                        <li><strong>Evidence Synthesis:</strong> Teams share findings from each station</li>
+                        <li><strong>System Interaction Map:</strong> Create visual model showing how the 4 Earth systems connect</li>
+                        <li><strong>Scientific Vocabulary Integration:</strong> Use precise terminology to describe interactions</li>
+                        <li><strong>Mechanism Identification:</strong> Explain HOW each system influences the others</li>
+                    </ol>
+                    
+                    <p><strong>Key Vocabulary in Context:</strong></p>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin: 10px 0;">
+                        <div style="background: white; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                            <strong>Geosphere:</strong> Rocky outer layer including landforms, minerals, soil
+                        </div>
+                        <div style="background: white; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                            <strong>Hydrosphere:</strong> All water on Earth including oceans, rivers, groundwater
+                        </div>
+                        <div style="background: white; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                            <strong>Atmosphere:</strong> Layer of gases surrounding Earth, including weather systems
+                        </div>
+                        <div style="background: white; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                            <strong>Biosphere:</strong> All living things and areas where life exists on Earth
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="background: #f3e5f5; padding: 15px; border-radius: 8px; margin: 10px 0;">
+                    <h6>ELABORATE (10 minutes) - Real-World Application</h6>
+                    
+                    <p><strong>Design Challenge:</strong> "Environmental Impact Assessment"</p>
+                    <p><em>Scenario:</em> A new development is planned in ${lessonTitle}. As environmental scientists, evaluate potential impacts on each Earth system.</p>
+                    
+                    <p><strong>Requirements:</strong></p>
+                    <ul>
+                        <li>Predict effects on all 4 Earth systems</li>
+                        <li>Use evidence from today's investigation</li>
+                        <li>Propose 2 solutions to minimize negative impacts</li>
+                        <li>Present findings using scientific reasoning</li>
+                    </ul>
+                </div>
+                
+                <div style="background: #fce4ec; padding: 15px; border-radius: 8px; margin: 10px 0;">
+                    <h6>EVALUATE (5 minutes) - Assessment & Reflection</h6>
+                    
+                    <p><strong>Exit Ticket - 3-2-1 Science Reflection:</strong></p>
+                    <ul>
+                        <li><strong>3</strong> pieces of evidence showing Earth system interactions in ${lessonTitle}</li>
+                        <li><strong>2</strong> scientific vocabulary words you can now explain to someone else</li>
+                        <li><strong>1</strong> question you still have about how these systems work together</li>
+                    </ul>
+                    
+                    <p><strong>Performance Assessment:</strong> Students draw and label a diagram showing how all 4 Earth systems interact in the studied region, with arrows and explanations.</p>
+                </div>
+                
+                <h5>🎯 NGSS Standards Addressed</h5>
+                <ul>
+                    <li><strong>MS-ESS2-1:</strong> Develop a model to describe the cycling of Earth's materials</li>
+                    <li><strong>MS-ESS2-2:</strong> Analyze and interpret data on the interactions among Earth's systems</li>
+                    <li><strong>MS-ESS3-2:</strong> Analyze data to determine scale of human impact on environment</li>
+                </ul>
+            `;
+            document.getElementById('science-earth-content').innerHTML = earthScienceContent;
+            
+            
+            // Generate Scientific Practices Investigation
+            const conceptsContent = `
+                <h4>🔬 Scientific Practices: Geographic Data Analysis (45 minutes)</h4>
+                
+                <div class="lesson-objective">
+                    <strong>Learning Target:</strong> Students will apply scientific practices to analyze, interpret, and communicate geographic data using evidence-based reasoning.
+                </div>
+                
+                <h5>Scientific Practice Focus: Analyzing & Interpreting Data</h5>
+                
+                <div style="background: #e1f5fe; padding: 15px; border-radius: 8px; margin: 10px 0;">
+                    <h6>📊 Data Investigation Protocol</h6>
+                    
+                    <p><strong>Phase 1: Data Collection & Organization (12 minutes)</strong></p>
+                    <div class="activity-section">
+                        <p><strong>Geographic Data Sets for ${lessonTitle}:</strong></p>
+                        <ul>
+                            <li><strong>Climate Data:</strong> Temperature and precipitation graphs (10-year averages)</li>
+                            <li><strong>Topographic Data:</strong> Elevation profiles and slope calculations</li>
+                            <li><strong>Population Data:</strong> Density maps and demographic information</li>
+                            <li><strong>Economic Data:</strong> Land use patterns and resource distribution</li>
+                        </ul>
+                        
+                        <p><strong>Data Organization Skills:</strong></p>
+                        <ol>
+                            <li>Create data tables with appropriate headers and units</li>
+                            <li>Identify patterns, trends, and outliers in data sets</li>
+                            <li>Calculate measures of central tendency (mean, median, mode)</li>
+                            <li>Determine data ranges and variability</li>
+                        </ol>
+                    </div>
+                    
+                    <p><strong>Phase 2: Graph Construction & Analysis (18 minutes)</strong></p>
+                    <div class="activity-section">
+                        <p><strong>Graphing Requirements (Choose 2):</strong></p>
+                        <ul>
+                            <li><strong>Climate Graph:</strong> Double-bar graph showing temperature and precipitation by month</li>
+                            <li><strong>Population Pyramid:</strong> Age and gender distribution for the region</li>
+                            <li><strong>Scatter Plot:</strong> Correlation between elevation and temperature</li>
+                            <li><strong>Line Graph:</strong> Population or economic changes over time</li>
+                        </ul>
+                        
+                        <p><strong>Graph Analysis Framework:</strong></p>
+                        <ol>
+                            <li><strong>Describe:</strong> What does the graph show? (Variables, trends, patterns)</li>
+                            <li><strong>Analyze:</strong> What relationships do you observe? (Correlations, cause-effect)</li>
+                            <li><strong>Interpret:</strong> What do these patterns tell us about ${lessonTitle}?</li>
+                            <li><strong>Evaluate:</strong> How reliable is this data? What are limitations?</li>
+                        </ol>
+                    </div>
+                    
+                    <p><strong>Phase 3: Evidence-Based Conclusions (15 minutes)</strong></p>
+                    <div class="activity-section">
+                        <p><strong>Scientific Reasoning Framework:</strong></p>
+                        <ul>
+                            <li><strong>Claim:</strong> Make a statement about geographic patterns in the region</li>
+                            <li><strong>Evidence:</strong> Use specific data from graphs and tables to support claim</li>
+                            <li><strong>Reasoning:</strong> Explain HOW the evidence supports the claim using scientific principles</li>
+                        </ul>
+                        
+                        <p><strong>Sample Scientific Argument Structure:</strong></p>
+                        <div style="background: #f5f5f5; padding: 10px; border-left: 3px solid #2196f3; margin: 10px 0;">
+                            <p><em>"Based on our analysis of climate data, I claim that _______ [geographic pattern]. The evidence supporting this claim includes _______ [specific data]. This evidence supports my claim because _______ [scientific reasoning connecting evidence to claim]."</em></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <h5>🧪 Hands-On Geographic Modeling</h5>
+                <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; margin: 10px 0;">
+                    <p><strong>Choice-Based Investigation Labs:</strong></p>
+                    
+                    <p><strong>Option A: Topographic Model Challenge</strong></p>
+                    <ul>
+                        <li><strong>Materials:</strong> Modeling clay, contour maps, rulers, water</li>
+                        <li><strong>Procedure:</strong> Build 3D model from 2D contour map of the region</li>
+                        <li><strong>Variables:</strong> Test how slope affects water flow and erosion</li>
+                        <li><strong>Data Collection:</strong> Measure flow rates, erosion patterns, deposition areas</li>
+                    </ul>
+                    
+                    <p><strong>Option B: Climate Simulation</strong></p>
+                    <ul>
+                        <li><strong>Materials:</strong> Heat lamps, thermometers, ice, colored water, clear containers</li>
+                        <li><strong>Procedure:</strong> Model how latitude and elevation affect temperature</li>
+                        <li><strong>Variables:</strong> Test distance from heat source (latitude) and elevation</li>
+                        <li><strong>Data Collection:</strong> Record temperature changes over time and space</li>
+                    </ul>
+                    
+                    <p><strong>Option C: Watershed Investigation</strong></p>
+                    <ul>
+                        <li><strong>Materials:</strong> Sandbox, spray bottles, food coloring, collection containers</li>
+                        <li><strong>Procedure:</strong> Model how geography affects water drainage patterns</li>
+                        <li><strong>Variables:</strong> Test different landform configurations</li>
+                        <li><strong>Data Collection:</strong> Measure water volume, flow direction, contamination spread</li>
+                    </ul>
+                </div>
+                
+                <h5>📝 Scientific Communication</h5>
+                <div style="background: #fff3e0; padding: 15px; border-radius: 8px; margin: 10px 0;">
+                    <p><strong>Lab Report Structure (Scientific Writing):</strong></p>
+                    <ol>
+                        <li><strong>Question:</strong> What geographic relationship were you investigating?</li>
+                        <li><strong>Hypothesis:</strong> What did you predict would happen and why?</li>
+                        <li><strong>Variables:</strong> What did you change (independent) and measure (dependent)?</li>
+                        <li><strong>Procedure:</strong> Step-by-step method that others could replicate</li>
+                        <li><strong>Results:</strong> Data tables and graphs with observations (NO interpretation here)</li>
+                        <li><strong>Analysis:</strong> What patterns did you observe? How do results compare to hypothesis?</li>
+                        <li><strong>Conclusion:</strong> What did you learn about geographic systems? What questions remain?</li>
+                    </ol>
+                    
+                    <p><strong>Peer Review Protocol:</strong></p>
+                    <ul>
+                        <li>Are claims supported by sufficient evidence?</li>
+                        <li>Is the reasoning scientifically accurate?</li>
+                        <li>Are graphs and data tables labeled correctly?</li>
+                        <li>Would another scientist be able to replicate this investigation?</li>
+                    </ul>
+                </div>
+                
+                <h4>🎯 Science & Engineering Practices (NGSS)</h4>
+                <ul>
+                    <li><strong>Practice 1:</strong> Asking Questions and Defining Problems</li>
+                    <li><strong>Practice 4:</strong> Analyzing and Interpreting Data</li>
+                    <li><strong>Practice 5:</strong> Using Mathematics and Computational Thinking</li>
+                    <li><strong>Practice 7:</strong> Engaging in Argument from Evidence</li>
+                    <li><strong>Practice 8:</strong> Obtaining, Evaluating, and Communicating Information</li>
+                </ul>
+            `;
+            document.getElementById('science-concepts-content').innerHTML = conceptsContent;
+            
+            
+            // Generate Engineering Design & Technology Integration
+            const labContent = `
+                <h4>🛠️ Engineering Design: Geographic Solutions (50 minutes)</h4>
+                
+                <div class="lesson-objective">
+                    <strong>Learning Target:</strong> Students will use the engineering design process to develop solutions for geographic challenges in ${lessonTitle}.
+                </div>
+                
+                <h5>Engineering Design Challenge</h5>
+                <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; margin: 10px 0;">
+                    <h6>🎯 Real-World Problem Scenarios (Choose One)</h6>
+                    
+                    <p><strong>Scenario A: Sustainable Settlement Design</strong></p>
+                    <div style="background: white; padding: 10px; border-left: 3px solid #4caf50; margin: 10px 0;">
+                        <p><strong>Problem:</strong> Design a sustainable community that works with the geographic features of ${lessonTitle}</p>
+                        <p><strong>Constraints:</strong> Must accommodate 1,000 people, minimize environmental impact, use local resources</p>
+                        <p><strong>Criteria:</strong> Efficient land use, renewable energy, water management, transportation</p>
+                    </div>
+                    
+                    <p><strong>Scenario B: Natural Disaster Preparedness</strong></p>
+                    <div style="background: white; padding: 10px; border-left: 3px solid #ff9800; margin: 10px 0;">
+                        <p><strong>Problem:</strong> Develop an early warning and response system for geographic hazards in the region</p>
+                        <p><strong>Constraints:</strong> Limited budget, must work in remote areas, must be reliable</p>
+                        <p><strong>Criteria:</strong> Fast communication, accurate detection, community accessibility</p>
+                    </div>
+                    
+                    <p><strong>Scenario C: Resource Management System</strong></p>
+                    <div style="background: white; padding: 10px; border-left: 3px solid #2196f3; margin: 10px 0;">
+                        <p><strong>Problem:</strong> Create a system to sustainably manage water or mineral resources</p>
+                        <p><strong>Constraints:</strong> Must balance economic needs with environmental protection</p>
+                        <p><strong>Criteria:</strong> Long-term sustainability, community benefit, environmental protection</p>
+                    </div>
+                </div>
+                
+                <h5>📐 Engineering Design Process</h5>
+                <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin: 10px 0;">
+                    <p><strong>Step 1: Ask & Research (8 minutes)</strong></p>
+                    <ul>
+                        <li>Define the problem using specific geographic context from ${lessonTitle}</li>
+                        <li>Research existing solutions to similar problems in other regions</li>
+                        <li>Identify stakeholders (who would be affected by your solution?)</li>
+                        <li>List constraints and criteria for success</li>
+                    </ul>
+                    
+                    <p><strong>Step 2: Imagine & Plan (12 minutes)</strong></p>
+                    <ul>
+                        <li>Brainstorm multiple solution approaches (minimum 3 ideas)</li>
+                        <li>Consider how geographic features will influence your design</li>
+                        <li>Select best solution using criteria-based decision matrix</li>
+                        <li>Create detailed design plan with labeled diagrams</li>
+                    </ul>
+                    
+                    <p><strong>Step 3: Create & Build (20 minutes)</strong></p>
+                    <ul>
+                        <li>Build prototype using available materials (cardboard, clay, recyclables)</li>
+                        <li>Test prototype against design criteria</li>
+                        <li>Document design decisions and modifications during building</li>
+                        <li>Take photos/videos of testing process</li>
+                    </ul>
+                    
+                    <p><strong>Step 4: Improve & Communicate (10 minutes)</strong></p>
+                    <ul>
+                        <li>Analyze test results - what worked? What didn't?</li>
+                        <li>Redesign based on evidence from testing</li>
+                        <li>Prepare presentation explaining solution and design process</li>
+                        <li>Connect solution back to geographic principles from lesson</li>
+                    </ul>
+                </div>
+                
+                <h5>🔧 Available Engineering Materials</h5>
+                <div style="background: #f5f5f5; padding: 15px; border: 1px solid #ddd; margin: 10px 0;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <div>
+                            <h6>Construction Materials:</h6>
+                            <ul>
+                                <li>Cardboard sheets and tubes</li>
+                                <li>Modeling clay and foam</li>
+                                <li>Wooden craft sticks</li>
+                                <li>Plastic bottles and containers</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h6>Testing Materials:</h6>
+                            <ul>
+                                <li>Water and spray bottles</li>
+                                <li>Sand and soil samples</li>
+                                <li>Weights and measuring tools</li>
+                                <li>Timers and data collection sheets</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h6>Technology Tools:</h6>
+                            <ul>
+                                <li>Digital cameras/tablets</li>
+                                <li>Simple circuit materials (LEDs, batteries)</li>
+                                <li>Graph paper and design software</li>
+                                <li>Scale rulers and protractors</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <h5>📊 Engineering Documentation</h5>
+                <div style="background: #fff3e0; padding: 15px; border-radius: 8px; margin: 10px 0;">
+                    <p><strong>Engineering Notebook Requirements:</strong></p>
+                    <ol>
+                        <li><strong>Problem Definition:</strong> Clear statement connecting to ${lessonTitle} geography</li>
+                        <li><strong>Research Notes:</strong> Examples of similar solutions from other regions</li>
+                        <li><strong>Design Sketches:</strong> Multiple ideas with labels and dimensions</li>
+                        <li><strong>Materials List:</strong> Everything used in prototype with quantities</li>
+                        <li><strong>Testing Data:</strong> Measurements and observations during trials</li>
+                        <li><strong>Improvements:</strong> What would you change in version 2.0?</li>
+                        <li><strong>Real-World Application:</strong> How could this solution actually be implemented?</li>
+                    </ol>
+                </div>
+                
+                <h4>🎯 Engineering Standards (NGSS) Addressed</h4>
+                <ul>
+                    <li><strong>MS-ETS1-1:</strong> Define criteria and constraints of a design problem</li>
+                    <li><strong>MS-ETS1-2:</strong> Evaluate competing design solutions</li>
+                    <li><strong>MS-ETS1-3:</strong> Analyze data from tests to determine optimal design features</li>
+                    <li><strong>MS-ETS1-4:</strong> Develop a model to generate data for iterative testing</li>
+                </ul>
+            `;
+            document.getElementById('science-lab-content').innerHTML = labContent;
+            
+            
+            // Generate Advanced Assessment & Technology Integration
+            const dataContent = `
+                <h4>📊 Scientific Assessment & Technology Integration (40 minutes)</h4>
+                
+                <div class="lesson-objective">
+                    <strong>Learning Target:</strong> Students will demonstrate scientific literacy by evaluating geographic data, using digital tools, and communicating findings through multiple modalities.
+                </div>
+                
+                <h5>🖥️ Digital Geography Investigation</h5>
+                <div style="background: #e8f4fd; padding: 15px; border-radius: 8px; margin: 10px 0;">
+                    <h6>Technology-Enhanced Data Analysis</h6>
+                    
+                    <p><strong>Digital Tool Options (Choose 2):</strong></p>
+                    
+                    <div style="background: white; padding: 10px; border: 1px solid #ddd; margin: 10px 0;">
+                        <h6>🌐 Google Earth Pro Investigation</h6>
+                        <ul>
+                            <li><strong>Task:</strong> Use historical imagery to track changes in ${lessonTitle} over 20 years</li>
+                            <li><strong>Data Collection:</strong> Measure land use changes, urban growth, environmental impacts</li>
+                            <li><strong>Analysis:</strong> Calculate rates of change, identify patterns and causes</li>
+                            <li><strong>Product:</strong> Annotated tour with before/after comparisons</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: white; padding: 10px; border: 1px solid #ddd; margin: 10px 0;">
+                        <h6>📈 Climate Data Explorer (NOAA)</h6>
+                        <ul>
+                            <li><strong>Task:</strong> Analyze 30-year climate trends for the region</li>
+                            <li><strong>Data Collection:</strong> Download temperature, precipitation, extreme weather data</li>
+                            <li><strong>Analysis:</strong> Create graphs, calculate averages, identify trends</li>
+                            <li><strong>Product:</strong> Digital presentation with data visualizations</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: white; padding: 10px; border: 1px solid #ddd; margin: 10px 0;">
+                        <h6>🛰️ NASA Worldview Satellite Analysis</h6>
+                        <ul>
+                            <li><strong>Task:</strong> Track seasonal changes, natural disasters, or human activities</li>
+                            <li><strong>Data Collection:</strong> Compare satellite images across different time periods</li>
+                            <li><strong>Analysis:</strong> Identify changes, measure impacts, explain causes</li>
+                            <li><strong>Product:</strong> Time-lapse story with scientific explanations</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <h5>🧮 Mathematical Modeling & Computational Thinking</h5>
+                <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; margin: 10px 0;">
+                    <p><strong>Geographic Calculations & Problem Solving:</strong></p>
+                    
+                    <h6>Population Density Analysis</h6>
+                    <ul>
+                        <li><strong>Formula:</strong> Population Density = Total Population ÷ Land Area</li>
+                        <li><strong>Application:</strong> Calculate and compare population density for different regions within ${lessonTitle}</li>
+                        <li><strong>Extensions:</strong> Predict future population based on growth rates, analyze carrying capacity</li>
+                    </ul>
+                    
+                    <h6>Climate Change Projections</h6>
+                    <ul>
+                        <li><strong>Data Analysis:</strong> Use linear regression to project temperature trends</li>
+                        <li><strong>Modeling:</strong> Create simple climate models using spreadsheet functions</li>
+                        <li><strong>Uncertainty:</strong> Discuss confidence intervals and limitations of predictions</li>
+                    </ul>
+                    
+                    <h6>Resource Sustainability Calculations</h6>
+                    <ul>
+                        <li><strong>Rate Problems:</strong> Calculate depletion rates for natural resources</li>
+                        <li><strong>Proportional Reasoning:</strong> Scale local data to regional or global levels</li>
+                        <li><strong>Systems Thinking:</strong> Model feedback loops in human-environment interactions</li>
+                    </ul>
+                </div>
+                
+                <h5>🎯 Performance-Based Assessment Menu</h5>
+                <div style="background: #fff3e0; padding: 15px; border-radius: 8px; margin: 10px 0;">
+                    <p><strong>Choose ONE assessment to demonstrate your understanding:</strong></p>
+                    
+                    <div style="background: white; padding: 10px; border: 1px solid #ddd; margin: 10px 0;">
+                        <h6>🎬 Scientific Documentary (Video)</h6>
+                        <p><strong>Requirements:</strong> 3-5 minute video explaining geographic systems in ${lessonTitle}</p>
+                        <ul>
+                            <li>Include data visualizations and evidence</li>
+                            <li>Use scientific vocabulary accurately</li>
+                            <li>Address a real-world geographic question</li>
+                            <li>Cite credible sources</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: white; padding: 10px; border: 1px solid #ddd; margin: 10px 0;">
+                        <h6>📱 Interactive Digital Map</h6>
+                        <p><strong>Requirements:</strong> Create annotated map using Google My Maps or similar tool</p>
+                        <ul>
+                            <li>Include multiple data layers (climate, population, resources)</li>
+                            <li>Provide detailed descriptions with scientific explanations</li>
+                            <li>Include photos, graphs, and multimedia elements</li>
+                            <li>Design for a specific audience (tourists, researchers, students)</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: white; padding: 10px; border: 1px solid #ddd; margin: 10px 0;">
+                        <h6>📊 Scientific Research Poster</h6>
+                        <p><strong>Requirements:</strong> Professional poster presenting original data analysis</p>
+                        <ul>
+                            <li>Clear research question and hypothesis</li>
+                            <li>Methods section describing data sources and analysis</li>
+                            <li>Results with graphs and statistical analysis</li>
+                            <li>Discussion connecting findings to broader geographic principles</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: white; padding: 10px; border: 1px solid #ddd; margin: 10px 0;">
+                        <h6>💬 Expert Panel Discussion</h6>
+                        <p><strong>Requirements:</strong> Participate in moderated discussion as geographic expert</p>
+                        <ul>
+                            <li>Prepare expert testimony based on evidence</li>
+                            <li>Respond to questions from "community members" (classmates)</li>
+                            <li>Defend recommendations using scientific reasoning</li>
+                            <li>Address counterarguments respectfully and factually</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <h5>📝 Rubric for Scientific Communication</h5>
+                <div style="background: #f3e5f5; padding: 15px; border-radius: 8px; margin: 10px 0;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+                        <tr style="background: #e1bee7;">
+                            <th style="padding: 8px; border: 1px solid #9c27b0;">Criteria</th>
+                            <th style="padding: 8px; border: 1px solid #9c27b0;">Exemplary (4)</th>
+                            <th style="padding: 8px; border: 1px solid #9c27b0;">Proficient (3)</th>
+                            <th style="padding: 8px; border: 1px solid #9c27b0;">Developing (2)</th>
+                        </tr>
+                        <tr>
+                            <td style="padding: 5px; border: 1px solid #9c27b0;"><strong>Data Analysis</strong></td>
+                            <td style="padding: 5px; border: 1px solid #9c27b0;">Identifies complex patterns, calculates statistics, draws sophisticated connections</td>
+                            <td style="padding: 5px; border: 1px solid #9c27b0;">Identifies obvious patterns, basic calculations, makes connections</td>
+                            <td style="padding: 5px; border: 1px solid #9c27b0;">Lists data with minimal pattern recognition</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 5px; border: 1px solid #9c27b0;"><strong>Scientific Reasoning</strong></td>
+                            <td style="padding: 5px; border: 1px solid #9c27b0;">Uses evidence to support claims with sophisticated reasoning</td>
+                            <td style="padding: 5px; border: 1px solid #9c27b0;">Supports most claims with appropriate evidence</td>
+                            <td style="padding: 5px; border: 1px solid #9c27b0;">Makes claims with limited or inappropriate evidence</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 5px; border: 1px solid #9c27b0;"><strong>Communication</strong></td>
+                            <td style="padding: 5px; border: 1px solid #9c27b0;">Clear, engaging presentation using precise scientific vocabulary</td>
+                            <td style="padding: 5px; border: 1px solid #9c27b0;">Clear communication with appropriate vocabulary</td>
+                            <td style="padding: 5px; border: 1px solid #9c27b0;">Communication unclear or vocabulary imprecise</td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <h4>🎯 Assessment Standards Addressed</h4>
+                <ul>
+                    <li><strong>NGSS MS-ESS3-3:</strong> Apply scientific principles to design methods for monitoring environmental factors</li>
+                    <li><strong>CCSS.MATH.CONTENT.6.RP.A.3:</strong> Use ratio and rate reasoning to solve real-world problems</li>
+                    <li><strong>CCSS.ELA-LITERACY.RST.6-8.7:</strong> Integrate quantitative information expressed in text with visual displays</li>
+                    <li><strong>ISTE Standards:</strong> Digital citizenship, knowledge constructor, innovative designer</li>
+                </ul>
+            `;
+            document.getElementById('science-data-content').innerHTML = dataContent;
+        }
+
+        // Print functions for complete lessons
+        function printELALesson() {
+            // Create a clean print version
+            const printWindow = window.open('', '_blank');
+            const lessonTitle = currentLesson ? currentLesson.title : 'Geography Lesson';
+            
+            // Get ELA content
+            const elaContent = document.getElementById('ela-content').innerHTML;
+            
+            // Create print HTML
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>ELA Lesson: ${lessonTitle}</title>
+                    <style>
+                        body {
+                            font-family: Arial, sans-serif;
+                            margin: 40px;
+                            line-height: 1.6;
+                            color: #333;
+                        }
+                        .print-title {
+                            font-size: 24px;
+                            font-weight: bold;
+                            margin-bottom: 20px;
+                            text-align: center;
+                            border-bottom: 3px solid #333;
+                            padding-bottom: 15px;
+                        }
+                        .cross-curricular-grid {
+                            display: block !important;
+                        }
+                        .activity-card {
+                            border: 1px solid #ccc;
+                            margin-bottom: 25px;
+                            padding: 20px;
+                            page-break-inside: avoid;
+                        }
+                        .activity-card h3 {
+                            font-size: 18px;
+                            margin-bottom: 15px;
+                            color: #333;
+                            border-bottom: 1px solid #ddd;
+                            padding-bottom: 8px;
+                        }
+                        .activity-content h4 {
+                            font-size: 16px;
+                            margin: 15px 0 8px 0;
+                            color: #333;
+                        }
+                        .activity-content ul, .activity-content ol {
+                            margin: 10px 0;
+                            padding-left: 25px;
+                        }
+                        .activity-content li {
+                            margin-bottom: 8px;
+                            line-height: 1.5;
+                        }
+                        .activity-content p {
+                            margin: 12px 0;
+                        }
+                        .activity-content strong {
+                            font-weight: bold;
+                        }
+                        .print-section, .loading-message {
+                            display: none !important;
+                        }
+                        @page {
+                            margin: 1in;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="print-title">📚 English Language Arts Lesson<br>${lessonTitle}</div>
+                    ${elaContent}
+                </body>
+                </html>
+            `);
+            
+            printWindow.document.close();
+            
+            // Wait for content to load, then print
+            setTimeout(() => {
+                printWindow.print();
+                printWindow.close();
+            }, 250);
+        }
+
+        function printScienceLesson() {
+            // Create a clean print version
+            const printWindow = window.open('', '_blank');
+            const lessonTitle = currentLesson ? currentLesson.title : 'Geography Lesson';
+            
+            // Get Science content
+            const scienceContent = document.getElementById('science-content').innerHTML;
+            
+            // Create print HTML
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Science Lesson: ${lessonTitle}</title>
+                    <style>
+                        body {
+                            font-family: Arial, sans-serif;
+                            margin: 40px;
+                            line-height: 1.6;
+                            color: #333;
+                        }
+                        .print-title {
+                            font-size: 24px;
+                            font-weight: bold;
+                            margin-bottom: 20px;
+                            text-align: center;
+                            border-bottom: 3px solid #333;
+                            padding-bottom: 15px;
+                        }
+                        .cross-curricular-grid {
+                            display: block !important;
+                        }
+                        .activity-card {
+                            border: 1px solid #ccc;
+                            margin-bottom: 25px;
+                            padding: 20px;
+                            page-break-inside: avoid;
+                        }
+                        .activity-card h3 {
+                            font-size: 18px;
+                            margin-bottom: 15px;
+                            color: #333;
+                            border-bottom: 1px solid #ddd;
+                            padding-bottom: 8px;
+                        }
+                        .activity-content h4 {
+                            font-size: 16px;
+                            margin: 15px 0 8px 0;
+                            color: #333;
+                        }
+                        .activity-content ul, .activity-content ol {
+                            margin: 10px 0;
+                            padding-left: 25px;
+                        }
+                        .activity-content li {
+                            margin-bottom: 8px;
+                            line-height: 1.5;
+                        }
+                        .activity-content p {
+                            margin: 12px 0;
+                        }
+                        .activity-content strong {
+                            font-weight: bold;
+                        }
+                        .print-section, .loading-message {
+                            display: none !important;
+                        }
+                        @page {
+                            margin: 1in;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="print-title">🔬 Science Integration Lesson<br>${lessonTitle}</div>
+                    ${scienceContent}
+                </body>
+                </html>
+            `);
+            
+            printWindow.document.close();
+            
+            // Wait for content to load, then print
+            setTimeout(() => {
+                printWindow.print();
+                printWindow.close();
+            }, 250);
+        }
+
+        // Print Substitute Teacher Guide - Complete lesson with student reading and teacher notes
+        function printSubstituteGuide() {
+            if (!currentLesson) {
+                alert('Please select a lesson first');
+                return;
+            }
+
+            // Create a clean print version for substitute teachers
+            const printWindow = window.open('', '_blank');
+            const lessonTitle = currentLesson.title || 'Geography Lesson';
+            const moduleTitle = document.getElementById('module-title').textContent || 'Unknown Module';
+            const timeEstimate = document.getElementById('time-estimate').textContent || '45 minutes';
+            
+            // Get lesson content elements
+            const objectives = Array.from(document.querySelectorAll('#objectives-list li'))
+                .filter(li => !li.classList.contains('loading'))
+                .map(li => li.textContent).join('</li><li>');
+            
+            const materials = Array.from(document.querySelectorAll('#materials-list li'))
+                .filter(li => !li.classList.contains('loading'))
+                .map(li => li.textContent).join('</li><li>');
+            
+            const procedures = Array.from(document.querySelectorAll('#procedures-list li'))
+                .filter(li => !li.classList.contains('loading'))
+                .map(li => li.textContent).join('</li><li>');
+            
+            const assessments = Array.from(document.querySelectorAll('#assessments-list li'))
+                .filter(li => !li.classList.contains('loading'))
+                .map(li => li.textContent).join('</li><li>');
+            
+            const activities = Array.from(document.querySelectorAll('#activities-list li'))
+                .filter(li => !li.classList.contains('loading'))
+                .map(li => li.textContent).join('</li><li>');
+            
+            const vocabulary = Array.from(document.querySelectorAll('#vocabulary-list li'))
+                .filter(li => !li.classList.contains('loading'))
+                .map(li => li.innerHTML).join('</li><li>');
+            
+            // Get student reading content
+            const studentContent = document.getElementById('lesson-content').innerHTML || '<p>No lesson content available</p>';
+            
+            // Create comprehensive substitute guide HTML
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Substitute Guide: ${lessonTitle}</title>
+                    <style>
+                        body {
+                            font-family: Arial, sans-serif;
+                            margin: 30px;
+                            line-height: 1.6;
+                            color: #333;
+                            font-size: 12px;
+                        }
+                        .header {
+                            text-align: center;
+                            border-bottom: 3px solid #333;
+                            padding-bottom: 20px;
+                            margin-bottom: 25px;
+                        }
+                        .lesson-title {
+                            font-size: 24px;
+                            font-weight: bold;
+                            margin-bottom: 8px;
+                        }
+                        .module-info {
+                            font-size: 16px;
+                            color: #666;
+                            margin-bottom: 5px;
+                        }
+                        .time-info {
+                            font-size: 14px;
+                            background: #f0f0f0;
+                            padding: 8px 16px;
+                            border-radius: 20px;
+                            display: inline-block;
+                            margin-top: 10px;
+                        }
+                        .substitute-alert {
+                            background: #ffeb3b;
+                            border: 2px solid #ff9800;
+                            padding: 15px;
+                            margin: 20px 0;
+                            border-radius: 8px;
+                            font-weight: bold;
+                            text-align: center;
+                        }
+                        .section {
+                            margin: 25px 0;
+                            page-break-inside: avoid;
+                        }
+                        .section-title {
+                            font-size: 16px;
+                            font-weight: bold;
+                            color: #2c5aa0;
+                            margin-bottom: 10px;
+                            padding-bottom: 5px;
+                            border-bottom: 2px solid #e0e0e0;
+                        }
+                        .quick-reference {
+                            background: #f8f9fa;
+                            border-left: 4px solid #2c5aa0;
+                            padding: 15px;
+                            margin: 15px 0;
+                        }
+                        .objectives-box {
+                            background: #e8f5e8;
+                            border: 1px solid #4caf50;
+                            padding: 15px;
+                            border-radius: 8px;
+                            margin: 15px 0;
+                        }
+                        .student-reading {
+                            background: white;
+                            border: 2px solid #2c5aa0;
+                            padding: 20px;
+                            margin: 20px 0;
+                            border-radius: 8px;
+                        }
+                        .student-reading h1, .student-reading h2, .student-reading h3 {
+                            color: #2c5aa0;
+                            margin-top: 20px;
+                            margin-bottom: 10px;
+                        }
+                        .student-reading h1 { font-size: 20px; }
+                        .student-reading h2 { font-size: 18px; }
+                        .student-reading h3 { font-size: 16px; }
+                        .student-reading p {
+                            margin: 12px 0;
+                            line-height: 1.7;
+                        }
+                        .student-reading ul, .student-reading ol {
+                            margin: 12px 0;
+                            padding-left: 25px;
+                        }
+                        .student-reading li {
+                            margin: 6px 0;
+                        }
+                        .student-reading strong {
+                            font-weight: bold;
+                            color: #2c5aa0;
+                        }
+                        .teacher-notes {
+                            background: #fff3cd;
+                            border: 2px solid #ffc107;
+                            padding: 15px;
+                            margin: 15px 0;
+                            border-radius: 8px;
+                        }
+                        .teacher-notes h4 {
+                            margin-top: 0;
+                            color: #856404;
+                        }
+                        ul, ol {
+                            margin: 10px 0;
+                            padding-left: 25px;
+                        }
+                        li {
+                            margin: 6px 0;
+                            line-height: 1.5;
+                        }
+                        .vocab-term {
+                            background: #f0f8ff;
+                            padding: 8px;
+                            margin: 5px 0;
+                            border-left: 3px solid #2c5aa0;
+                            border-radius: 4px;
+                        }
+                        .emergency-info {
+                            position: fixed;
+                            bottom: 20px;
+                            right: 20px;
+                            background: #dc3545;
+                            color: white;
+                            padding: 10px;
+                            border-radius: 8px;
+                            font-size: 11px;
+                            max-width: 200px;
+                        }
+                        @page {
+                            margin: 0.75in;
+                            @top-center {
+                                content: "Substitute Guide: ${lessonTitle}";
+                                font-size: 10px;
+                                color: #666;
+                            }
+                            @bottom-center {
+                                content: "Page " counter(page) " - ${moduleTitle}";
+                                font-size: 10px;
+                                color: #666;
+                            }
+                        }
+                        .page-break {
+                            page-break-before: always;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <div class="lesson-title">📚 SUBSTITUTE TEACHER GUIDE</div>
+                        <div class="lesson-title">${lessonTitle}</div>
+                        <div class="module-info">${moduleTitle}</div>
+                        <div class="time-info">⏱️ Estimated Time: ${timeEstimate}</div>
+                    </div>
+                    
+                    <div class="substitute-alert">
+                        🚨 SUBSTITUTE TEACHER: This guide contains everything you need to teach this lesson successfully! 🚨
+                    </div>
+                    
+                    <div class="quick-reference">
+                        <h3>📋 QUICK REFERENCE</h3>
+                        <p><strong>What to do:</strong> Read through this entire guide first, then follow the step-by-step procedures below.</p>
+                        <p><strong>Student Task:</strong> Students will read the lesson content and complete activities as directed.</p>
+                        <p><strong>Your Role:</strong> Guide students through the reading, facilitate discussions, and ensure learning objectives are met.</p>
+                    </div>
+                    
+                    <div class="section">
+                        <div class="section-title">🎯 LEARNING OBJECTIVES</div>
+                        <div class="objectives-box">
+                            <p><strong>By the end of this lesson, students will be able to:</strong></p>
+                            <ul><li>${objectives || 'Complete the assigned reading and demonstrate understanding of key concepts'}</li></ul>
+                        </div>
+                    </div>
+                    
+                    <div class="section">
+                        <div class="section-title">📚 MATERIALS NEEDED</div>
+                        <ul><li>${materials || 'This printed guide, student reading materials'}</li></ul>
+                    </div>
+                    
+                    <div class="section">
+                        <div class="section-title">📖 KEY VOCABULARY</div>
+                        <p><strong>Review these terms with students:</strong></p>
+                        <div class="vocab-terms">
+                            ${vocabulary ? '<ul><li class="vocab-term">' + vocabulary + '</li></ul>' : '<p>Key terms will be highlighted in the reading.</p>'}
+                        </div>
+                    </div>
+                    
+                    <div class="section">
+                        <div class="section-title">🔧 STEP-BY-STEP PROCEDURES</div>
+                        <div class="teacher-notes">
+                            <h4>📝 Teacher Instructions:</h4>
+                            <ol>
+                                <li><strong>Introduction (5 minutes):</strong> Briefly introduce the lesson topic and review key vocabulary</li>
+                                <li><strong>Reading Time (20-25 minutes):</strong> Have students read the lesson content below (they can read silently or take turns reading aloud)</li>
+                                <li><strong>Discussion (10-15 minutes):</strong> Ask students questions about what they read using the assessment questions provided</li>
+                                <li><strong>Wrap-up (5 minutes):</strong> Review main concepts and assign any follow-up work</li>
+                            </ol>
+                            ${procedures ? '<p><strong>Additional Procedures:</strong></p><ul><li>' + procedures + '</li></ul>' : ''}
+                        </div>
+                    </div>
+                    
+                    <div class="section">
+                        <div class="section-title">🎯 STUDENT ACTIVITIES</div>
+                        <ul><li>${activities || 'Read lesson content, participate in discussion, complete any assigned questions'}</li></ul>
+                    </div>
+                    
+                    <div class="section">
+                        <div class="section-title">📝 ASSESSMENT & DISCUSSION QUESTIONS</div>
+                        <div class="teacher-notes">
+                            <h4>Use these questions to check student understanding:</h4>
+                            <ul>
+                                <li>What is the main idea of today's lesson?</li>
+                                <li>Can you explain [key vocabulary term] in your own words?</li>
+                                <li>How does this topic connect to what we've learned before?</li>
+                                <li>What questions do you still have about this topic?</li>
+                                ${assessments ? '<li>' + assessments + '</li>' : ''}
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="page-break"></div>
+                    
+                    <div class="section">
+                        <div class="section-title">📖 STUDENT READING MATERIAL</div>
+                        <div class="teacher-notes">
+                            <h4>📋 Instructions for Students:</h4>
+                            <p>Read the following lesson content carefully. Pay attention to bolded terms and main ideas. Be prepared to discuss what you've learned.</p>
+                        </div>
+                        <div class="student-reading">
+                            ${studentContent}
+                        </div>
+                    </div>
+                    
+                    <div class="emergency-info">
+                        <strong>Need Help?</strong><br>
+                        Contact main office<br>
+                        or neighboring teacher
+                    </div>
+                </body>
+                </html>
+            `);
+            
+            printWindow.document.close();
+            
+            // Wait for content to load, then print
+            setTimeout(() => {
+                printWindow.print();
+                printWindow.close();
+            }, 500);
+        }
+        
+        // Initialize the application when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load stored data
+            lessonAssignments = JSON.parse(localStorage.getItem('lessonAssignments') || '{}');
+            completedLessons = JSON.parse(localStorage.getItem('completedLessons') || '{}');
+            
+            // Initialize calendar and load modules
+            initializeCalendar();
+            loadModules();
+        });
+    </script>
+</body>
+</html>
