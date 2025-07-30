@@ -2696,27 +2696,37 @@
 
         // Update vocabulary with special formatting
         function updateVocabulary(vocabulary) {
-            const list = document.getElementById('vocabulary-list');
+            const list = document.getElementById('vocabulary-cards');
             if (vocabulary.length === 0) {
-                list.innerHTML = '<li style="color: #6c757d; font-style: italic;">No vocabulary terms available</li>';
+                list.innerHTML = '<div style="color: #6c757d; font-style: italic;">No vocabulary terms available</div>';
                 return;
             }
 
             list.innerHTML = vocabulary.map(item => {
                 if (typeof item === 'object' && item.term && item.definition) {
-                    return `<li class="vocab-term"><strong>${item.term}:</strong> ${item.definition}</li>`;
+                    return `<div class="vocab-card">
+                                <div class="vocab-term">${item.term}</div>
+                                <div class="vocab-definition">${item.definition}</div>
+                            </div>`;
                 } else if (typeof item === 'string') {
                     // Handle string format like "term: definition"
                     const parts = item.split(':');
                     if (parts.length >= 2) {
                         const term = parts[0].trim();
                         const definition = parts.slice(1).join(':').trim();
-                        return `<li class="vocab-term"><strong>${term}:</strong> ${definition}</li>`;
+                        return `<div class="vocab-card">
+                                    <div class="vocab-term">${term}</div>
+                                    <div class="vocab-definition">${definition}</div>
+                                </div>`;
                     } else {
-                        return `<li class="vocab-term">${item}</li>`;
+                        return `<div class="vocab-card">
+                                    <div class="vocab-term">${item}</div>
+                                </div>`;
                     }
                 } else {
-                    return `<li class="vocab-term">${item}</li>`;
+                    return `<div class="vocab-card">
+                                <div class="vocab-term">${item}</div>
+                            </div>`;
                 }
             }).join('');
         }
