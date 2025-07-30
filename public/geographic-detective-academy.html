@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geographic Detective Academy - World Geography Simulation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo h1 {
+            color: #ffd700;
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .logo .subtitle {
+            color: #cccccc;
+            font-size: 0.9rem;
+            font-weight: normal;
+        }
+
+        .status-badges {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        .classified {
+            background: #dc3545;
+            color: white;
+        }
+
+        .active-case {
+            background: #28a745;
+            color: white;
+        }
+
+        .navigation {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 0;
+            display: flex;
+            overflow-x: auto;
+            border-bottom: 2px solid #ffd700;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            border-bottom: 3px solid transparent;
+            min-width: fit-content;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 215, 0, 0.2);
+            border-bottom-color: #ffd700;
+        }
+
+        .nav-item.active {
+            background: rgba(255, 215, 0, 0.3);
+            border-bottom-color: #ffd700;
+        }
+
+        .nav-item .icon {
+            font-size: 1.2rem;
+        }
+
+        .nav-item .label {
+            font-weight: 500;
+        }
+
+        .main-content {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .content-panel {
+            background: rgba(255, 255, 255, 0.95);
+            color: #333;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            margin-bottom: 2rem;
+        }
+
+        .simulation-title {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .simulation-title h2 {
+            color: #1e3c72;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .simulation-title .mystery-title {
+            color: #2a5298;
+            font-size: 1.5rem;
+            font-style: italic;
+        }
+
+        .overview-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .overview-section {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid #ffd700;
+        }
+
+        .overview-section h3 {
+            color: #1e3c72;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .schedule-item {
+            background: white;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            border-radius: 5px;
+            border-left: 3px solid #28a745;
+        }
+
+        .day-label {
+            font-weight: bold;
+            color: #1e3c72;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .case-file {
+            background: linear-gradient(145deg, #ffe4e1, #ffd700);
+            border: 2px solid #dc3545;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            color: #333;
+        }
+
+        .case-header {
+            background: #dc3545;
+            color: white;
+            padding: 0.5rem 1rem;
+            margin: -1.5rem -1.5rem 1rem -1.5rem;
+            border-radius: 8px 8px 0 0;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .evidence-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .evidence-list li {
+            background: rgba(255, 255, 255, 0.8);
+            margin: 0.5rem 0;
+            padding: 0.8rem;
+            border-radius: 5px;
+            border-left: 3px solid #28a745;
+        }
+
+        .coordinate-highlight {
+            background: #ffd700;
+            color: #333;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .overview-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .navigation {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <span style="font-size: 2rem;">🔍</span>
+            <div>
+                <h1>Geographic Detective Academy</h1>
+                <div class="subtitle">Q1 Simulation - The Mystery of the Missing Maps</div>
+            </div>
+        </div>
+        <div class="status-badges">
+            <div class="badge classified">CLASSIFIED</div>
+            <div class="badge active-case">ACTIVE CASE</div>
+        </div>
+    </header>
+
+    <nav class="navigation">
+        <div class="nav-item active" data-panel="overview">
+            <span class="icon">📋</span>
+            <span class="label">Overview</span>
+        </div>
+        <div class="nav-item" data-panel="daily-structure">
+            <span class="icon">📅</span>
+            <span class="label">Daily Structure</span>
+        </div>
+        <div class="nav-item" data-panel="team-roles">
+            <span class="icon">👥</span>
+            <span class="label">Team Roles</span>
+        </div>
+        <div class="nav-item" data-panel="investigation-events">
+            <span class="icon">⚠️</span>
+            <span class="label">Investigation Events</span>
+        </div>
+        <div class="nav-item" data-panel="assessments">
+            <span class="icon">📊</span>
+            <span class="label">Assessments</span>
+        </div>
+        <div class="nav-item" data-panel="teacher-guide">
+            <span class="icon">📖</span>
+            <span class="label">Teacher Guide</span>
+        </div>
+        <div class="nav-item" data-panel="student-materials">
+            <span class="icon">📋</span>
+            <span class="label">Student Materials</span>
+        </div>
+        <div class="nav-item" data-panel="gamma-prompts">
+            <span class="icon">🎮</span>
+            <span class="label">Gamma Prompts</span>
+        </div>
+        <div class="nav-item" data-panel="complete-package">
+            <span class="icon">📦</span>
+            <span class="label">Complete Package</span>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <!-- OVERVIEW PANEL -->
+        <div id="overview" class="content-panel">
+            <div class="simulation-title">
+                <h2>Q1: Geographic Detectives Simulation</h2>
+                <div class="mystery-title">"The Mystery of the Missing Maps Academy"</div>
+            </div>
+
+            <div class="overview-content">
+                <div class="overview-section">
+                    <h3>🎯 SIMULATION OVERVIEW</h3>
+                    <p>Students become rookie detectives at the International Geographic Bureau investigating the disappearance of the world's most important maps and geographic artifacts. Over 12 days, they'll solve increasingly complex cases using geographic skills, knowledge of early civilizations, and collaborative problem-solving.</p>
+                    
+                    <div class="case-file">
+                        <div class="case-header">🚨 URGENT: Global Geographic Crisis</div>
+                        <p><strong>The world's most valuable geographic artifacts have vanished!</strong></p>
+                        <ul>
+                            <li>Ancient maps from early civilizations - STOLEN</li>
+                            <li>Modern GPS technology - COMPROMISED</li>
+                            <li>International boundaries at risk</li>
+                            <li>Global navigation systems failing worldwide</li>
+                        </ul>
+                        <p><strong>Time is running out. The world needs heroes.</strong></p>
+                    </div>
+                </div>
+
+                <div class="overview-section">
+                    <h3>📅 SCHEDULE</h3>
+                    <div class="schedule-item">
+                        <div class="day-label">Setup Day (Day 0):</div>
+                        Character creation, team formation, introduction to the Bureau
+                    </div>
+                    <div class="schedule-item">
+                        <div class="day-label">Investigation Days (Days 1-10):</div>
+                        Progressive cases building geographic skills
+                    </div>
+                    <div class="schedule-item">
+                        <div class="day-label">Wrap-up Day (Day 11):</div>
+                        Final case presentation and summative assessment
+                    </div>
+                </div>
+            </div>
+
+            <div class="overview-content">
+                <div class="overview-section">
+                    <h3>📖 THE STORY</h3>
+                    <p>The year is 2025, and the International Geographic Bureau's most precious collection has been stolen: ancient maps from early civilizations, modern geographic tools, and classified location data.</p>
+                    
+                    <p><strong>You are the world's last hope.</strong> As rookie detectives, students must:</p>
+                    <ul>
+                        <li>Master geographic detective skills</li>
+                        <li>Learn to read landscapes like fingerprints</li>
+                        <li>Solve increasingly complex cases</li>
+                        <li>Track down international criminals</li>
+                        <li>Follow geographic clues across continents</li>
+                        <li>Graduate as certified Geographic Crime Specialists</li>
+                    </ul>
+                </div>
+
+                <div class="overview-section">
+                    <h3>🏆 BADGE PROGRESSION</h3>
+                    <div class="schedule-item">
+                        <div class="day-label">🥉 Rookie:</div>
+                        Basic geographic skills and observation
+                    </div>
+                    <div class="schedule-item">
+                        <div class="day-label">🥈 Detective:</div>
+                        Advanced case-solving and analysis
+                    </div>
+                    <div class="schedule-item">
+                        <div class="day-label">🥇 Specialist:</div>
+                        Expert geographic crime investigation
+                    </div>
+                    <p><em>Each case builds your geographic expertise and credentials.</em></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- DAILY STRUCTURE PANEL -->
+        <div id="daily-structure" class="content-panel hidden">
+            <h2>📅 Daily Structure</h2>
+            <p>Detailed daily progression and activities will be loaded here...</p>
+        </div>
+
+        <!-- TEAM ROLES PANEL -->
+        <div id="team-roles" class="content-panel hidden">
+            <h2>👥 Team Roles</h2>
+            <p>Detective unit roles and responsibilities will be loaded here...</p>
+        </div>
+
+        <!-- INVESTIGATION EVENTS PANEL -->
+        <div id="investigation-events" class="content-panel hidden">
+            <h2>⚠️ Investigation Events</h2>
+            
+            <div class="case-file">
+                <div class="case-header">Case File #001: The Great Globe Heist</div>
+                <p><strong>ROOKIE LEVEL - GEOGRAPHIC FUNDAMENTALS TRAINING</strong></p>
+                
+                <div class="overview-content">
+                    <div>
+                        <h4>📍 Crime Scene Details</h4>
+                        <ul>
+                            <li><strong>Location:</strong> Roosevelt Middle School, Room 204</li>
+                            <li><strong>Time:</strong> Tuesday, 3:15 PM</li>
+                            <li><strong>Missing Item:</strong> 12-inch classroom globe</li>
+                            <li><strong>Threat Level:</strong> Low</li>
+                            <li><strong>Required Skills:</strong> Basic geography, observation, coordinate reading</li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h4>🔍 Evidence Found</h4>
+                        <ul class="evidence-list">
+                            <li>Empty globe stand with dust outline</li>
+                            <li>Fingerprints on metal base</li>
+                            <li>Torn paper with coordinates: <span class="coordinate-highlight">40°N, 74°W</span></li>
+                            <li>Compass left behind pointing northeast</li>
+                            <li>World map on wall with pin missing</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <p><strong>Investigation Question:</strong> The coordinates <span class="coordinate-highlight">40°N, 74°W</span> were found on torn paper - what could this mean?</p>
+            </div>
+        </div>
+
+        <!-- ASSESSMENTS PANEL -->
+        <div id="assessments" class="content-panel hidden">
+            <h2>📊 Assessments</h2>
+            <p>Assessment rubrics and evaluation methods will be loaded here...</p>
+        </div>
+
+        <!-- TEACHER GUIDE PANEL -->
+        <div id="teacher-guide" class="content-panel hidden">
+            <h2>📖 Teacher Guide</h2>
+            <p>Instructor resources and guidance will be loaded here...</p>
+        </div>
+
+        <!-- STUDENT MATERIALS PANEL -->
+        <div id="student-materials" class="content-panel hidden">
+            <h2>📋 Student Materials</h2>
+            <p>Handouts, worksheets, and student resources will be loaded here...</p>
+        </div>
+
+        <!-- GAMMA PROMPTS PANEL -->
+        <div id="gamma-prompts" class="content-panel hidden">
+            <h2>🎮 Gamma Prompts</h2>
+            <p>Interactive elements and prompts will be loaded here...</p>
+        </div>
+
+        <!-- COMPLETE PACKAGE PANEL -->
+        <div id="complete-package" class="content-panel hidden">
+            <h2>📦 Complete Package</h2>
+            <p>Full simulation bundle and resources will be loaded here...</p>
+        </div>
+    </main>
+
+    <script>
+        // Navigation functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const navItems = document.querySelectorAll('.nav-item');
+            const panels = document.querySelectorAll('.content-panel');
+
+            navItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const targetPanel = this.getAttribute('data-panel');
+                    
+                    // Remove active class from all nav items
+                    navItems.forEach(nav => nav.classList.remove('active'));
+                    
+                    // Add active class to clicked item
+                    this.classList.add('active');
+                    
+                    // Hide all panels
+                    panels.forEach(panel => panel.classList.add('hidden'));
+                    
+                    // Show target panel
+                    const targetElement = document.getElementById(targetPanel);
+                    if (targetElement) {
+                        targetElement.classList.remove('hidden');
+                    }
+                });
+            });
+        });
+    </script>
+    
+    <!-- Load dynamic content system -->
+    <script src="/simulation-dynamic.js"></script>
+</body>
+</html>

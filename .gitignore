@@ -8,3 +8,15 @@ build/
 coverage/
 *.tmp
 *.temp
+
+# Oregon Trail simulation content (local development only)
+oregon-trail/
+OregonTrail*
+*oregon*trail*
+oregon_trail*
+*Oregon*Trail*
+
+# Local simulation files
+local-simulations/
+simulation-uploads/
+temp-uploads/

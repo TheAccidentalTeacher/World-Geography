@@ -6,6 +6,7 @@ const { Curriculum, Module, Lesson } = require('./models');
 const { extractAllPDFs } = require('./extract-pdfs');
 const { schoolCalendar, calendarUtils } = require('./calendar-config');
 const { extractCurriculumForDashboard } = require('./extract-curriculum-dashboard');
+const { createSimulationRoutes } = require('./simulation-system');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -74,6 +75,9 @@ app.get('/api/health', (req, res) => {
     timestamp: new Date().toISOString()
   });
 });
+
+// Initialize Geographic Detective Academy Simulation System
+createSimulationRoutes(app);
 
 // Serve lessons directory
 app.get('/lessons', (req, res) => {
