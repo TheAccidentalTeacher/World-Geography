@@ -1197,12 +1197,21 @@
             // Initialize presentation system
             presentation = new SimulationPresentation();
             
-            // Add to Gamma Prompts panel when the dynamic content loads
-            setTimeout(() => {
-                presentation.addToPresentationPanel();
-                presentation.generateThumbnails();
-                console.log('🎮 Presentation system initialized with 60 slides');
-            }, 1000);
+            // Wait for gamma-prompts panel to be available
+            function initializePresentationWhenReady() {
+                const gammaPanel = document.getElementById('gamma-prompts');
+                if (gammaPanel) {
+                    presentation.addToPresentationPanel();
+                    presentation.generateThumbnails();
+                    console.log('🎮 Presentation system initialized with 60 slides');
+                } else {
+                    // Try again in 500ms if panel not ready
+                    setTimeout(initializePresentationWhenReady, 500);
+                }
+            }
+            
+            // Start initialization with a small delay
+            setTimeout(initializePresentationWhenReady, 100);
         });
     </script>
 </body>
