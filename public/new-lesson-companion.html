@@ -1406,14 +1406,23 @@
         <div class="content-area">
             <div class="sidebar">
                 <div class="tab-buttons">
-                    <button class="tab-button active" onclick="showTab('teacher')">Teacher Guide</button>
-                    <button class="tab-button" onclick="showTab('vocabulary')">📚 Vocabulary</button>
-                    <button class="tab-button" onclick="showTab('ai-tools')">🤖 AI Tools</button>
-                    <button class="tab-button" onclick="showTab('connections')">🔗 Connections</button>
+                    <button class="tab-button active" onclick="switchTab('teacher-guide')">Teacher Guide</button>
+                    <button class="tab-button" onclick="switchTab('vocabulary')">📚 Vocabulary</button>
+                    <button class="tab-button" onclick="switchTab('ai-tools')">🤖 AI Tools</button>
+                    <button class="tab-button" onclick="switchTab('connections')">🔗 Connections</button>
                 </div>
 
                 <!-- PHASE 1: TEACHER GUIDE TAB -->
-                <div id="teacher-tab" class="tab-content active">
+                <div id="teacher-guide" class="tab-content" style="display: block;">
+                    <div class="lesson-info">
+                        <h3>📋 Lesson Overview</h3>
+                        <ul>
+                            <li><strong>Module:</strong> <span id="module-title">Select a lesson</span></li>
+                            <li><strong>Lesson:</strong> <span id="lesson-title">No lesson selected</span></li>
+                            <li><strong>Time:</strong> <span id="time-estimate">45 minutes</span></li>
+                        </ul>
+                    </div>
+
                     <div class="lesson-info">
                         <h3>📋 Learning Objectives</h3>
                         <ul id="objectives-list">
@@ -1448,6 +1457,13 @@
                             <li class="loading">Loading activities...</li>
                         </ul>
                     </div>
+
+                    <div class="lesson-info">
+                        <h3>📚 Key Vocabulary</h3>
+                        <div id="vocabulary-container">
+                            <p class="loading">Loading vocabulary terms...</p>
+                        </div>
+                    </div>
                     
                     <!-- Substitute Guide Print Button -->
                     <div class="substitute-guide-section">
@@ -1459,10 +1475,10 @@
                 </div>
 
                 <!-- PHASE 1: VOCABULARY TAB - FULLY IMPLEMENTED -->
-                <div id="vocabulary-tab" class="tab-content">
+                <div id="vocabulary" class="tab-content">
                     <div class="lesson-info">
                         <h3>📖 Lesson Vocabulary</h3>
-                        <div id="vocabulary-cards-container">
+                        <div id="vocabulary-cards" class="vocabulary-cards-container">
                             <div class="loading">Loading vocabulary terms...</div>
                         </div>
                     </div>
@@ -1488,17 +1504,17 @@
                     <div class="lesson-info">
                         <h3>🔍 AI Definition Lookup</h3>
                         <div class="ai-lookup-section">
-                            <input type="text" id="term-lookup-input" placeholder="Enter geographic term..." class="lookup-input">
+                            <input type="text" id="lookup-input" placeholder="Enter geographic term..." class="lookup-input">
                             <button onclick="lookupDefinition()" class="lookup-btn">
                                 🤖 Get AI Definition
                             </button>
-                            <div id="definition-result" class="definition-display"></div>
+                            <div id="definition-display" class="definition-display"></div>
                         </div>
                     </div>
                 </div>
 
                 <!-- PHASE 1: AI TOOLS TAB - FULLY IMPLEMENTED -->
-                <div id="ai-tools-tab" class="tab-content">
+                <div id="ai-tools" class="tab-content">
                     <div class="lesson-info">
                         <h3>🤖 AI-Powered Learning</h3>
                         <div class="ai-tool-card">
@@ -1508,7 +1524,7 @@
                             <button onclick="explainConcept()" class="ai-action-btn">
                                 ✨ Explain This Concept
                             </button>
-                            <div id="explanation-result" class="ai-result"></div>
+                            <div id="concept-result" class="ai-result"></div>
                         </div>
 
                         <div class="ai-tool-card">
@@ -1518,6 +1534,26 @@
                                 🔗 Find Current Examples
                             </button>
                             <div id="connections-result" class="ai-result"></div>
+                        </div>
+
+                        <div class="ai-tool-card">
+                            <h4>❓ Question Generator</h4>
+                            <p>Generate study questions for any geographic topic</p>
+                            <textarea id="question-input" placeholder="Enter a topic for question generation..." class="ai-input"></textarea>
+                            <button onclick="generateQuestions()" class="ai-action-btn">
+                                📝 Generate Questions
+                            </button>
+                            <div id="question-result" class="ai-result"></div>
+                        </div>
+
+                        <div class="ai-tool-card">
+                            <h4>🎓 Subject Connections</h4>
+                            <p>Find connections between geography and other subjects</p>
+                            <textarea id="connection-input" placeholder="Enter a subject area (Math, Science, History, ELA)..." class="ai-input"></textarea>
+                            <button onclick="createConnection()" class="ai-action-btn">
+                                🔗 Create Connection
+                            </button>
+                            <div id="connection-result" class="ai-result"></div>
                         </div>
                     </div>
 
@@ -1538,7 +1574,7 @@
                 </div>
 
                 <!-- PHASE 1: CONNECTIONS TAB - BASIC IMPLEMENTATION -->
-                <div id="connections-tab" class="tab-content">
+                <div id="connections" class="tab-content">
                     <div class="lesson-info">
                         <h3>🔗 Cross-Lesson Connections</h3>
                         <div id="lesson-connections-container">
