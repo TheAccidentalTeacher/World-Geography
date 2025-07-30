@@ -1406,14 +1406,14 @@
         <div class="content-area">
             <div class="sidebar">
                 <div class="tab-buttons">
-                    <button class="tab-button active" onclick="switchTab('teacher-guide')">Teacher Guide</button>
-                    <button class="tab-button" onclick="switchTab('vocabulary')">📚 Vocabulary</button>
-                    <button class="tab-button" onclick="switchTab('ai-tools')">🤖 AI Tools</button>
-                    <button class="tab-button" onclick="switchTab('connections')">🔗 Connections</button>
+                    <button class="tab-button active" onclick="showTab('teacher')">Teacher Guide</button>
+                    <button class="tab-button" onclick="showTab('vocabulary')">📚 Vocabulary</button>
+                    <button class="tab-button" onclick="showTab('ai-tools')">🤖 AI Tools</button>
+                    <button class="tab-button" onclick="showTab('connections')">🔗 Connections</button>
                 </div>
 
                 <!-- PHASE 1: TEACHER GUIDE TAB -->
-                <div id="teacher-guide" class="tab-content" style="display: block;">
+                <div id="teacher-tab" class="tab-content active">
                     <div class="lesson-info">
                         <h3>📋 Lesson Overview</h3>
                         <ul>
@@ -1475,7 +1475,7 @@
                 </div>
 
                 <!-- PHASE 1: VOCABULARY TAB - FULLY IMPLEMENTED -->
-                <div id="vocabulary" class="tab-content">
+                <div id="vocabulary-tab" class="tab-content">
                     <div class="lesson-info">
                         <h3>📖 Lesson Vocabulary</h3>
                         <div id="vocabulary-cards" class="vocabulary-cards-container">
@@ -1514,7 +1514,7 @@
                 </div>
 
                 <!-- PHASE 1: AI TOOLS TAB - FULLY IMPLEMENTED -->
-                <div id="ai-tools" class="tab-content">
+                <div id="ai-tools-tab" class="tab-content">
                     <div class="lesson-info">
                         <h3>🤖 AI-Powered Learning</h3>
                         <div class="ai-tool-card">
@@ -1574,7 +1574,7 @@
                 </div>
 
                 <!-- PHASE 1: CONNECTIONS TAB - BASIC IMPLEMENTATION -->
-                <div id="connections" class="tab-content">
+                <div id="connections-tab" class="tab-content">
                     <div class="lesson-info">
                         <h3>🔗 Cross-Lesson Connections</h3>
                         <div id="lesson-connections-container">
@@ -4473,40 +4473,9 @@
             initializeCalendar();
             loadModules();
             
-            // Initialize enhanced sidebar
-            initializeEnhancedSidebar();
-        });
-
-        // =================================
-        // ENHANCED SIDEBAR FUNCTIONALITY
-        // =================================
-
-        function initializeEnhancedSidebar() {
-            switchTab('teacher-guide');
+            // Load vocabulary terms for enhanced sidebar
             loadVocabularyTerms();
-        }
-
-        // Tab management system
-        function switchTab(tabName) {
-            // Hide all content
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.style.display = 'none';
-            });
-            
-            // Remove active class from all buttons
-            document.querySelectorAll('.tab-button').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            
-            // Show selected content and activate button
-            const selectedContent = document.getElementById(tabName);
-            const selectedButton = document.querySelector(`[onclick="switchTab('${tabName}')"]`);
-            
-            if (selectedContent && selectedButton) {
-                selectedContent.style.display = 'block';
-                selectedButton.classList.add('active');
-            }
-        }
+        });
 
         // =================================
         // VOCABULARY SYSTEM - PHASE 1
@@ -4746,10 +4715,10 @@
             // Quick tab switching with Alt + number
             if (e.altKey) {
                 switch(e.key) {
-                    case '1': switchTab('teacher-guide'); break;
-                    case '2': switchTab('vocabulary'); break;
-                    case '3': switchTab('ai-tools'); break;
-                    case '4': switchTab('connections'); break;
+                    case '1': showTab('teacher'); break;
+                    case '2': showTab('vocabulary'); break;
+                    case '3': showTab('ai-tools'); break;
+                    case '4': showTab('connections'); break;
                 }
             }
             
