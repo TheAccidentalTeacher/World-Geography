@@ -92,7 +92,7 @@
 
         .content-area {
             display: flex;
-            min-height: 600px;
+            min-height: calc(100vh - 200px);
         }
 
         .sidebar {
@@ -101,13 +101,16 @@
             border-right: 1px solid #e9ecef;
             padding: 30px;
             overflow-y: auto;
+            height: fit-content;
         }
 
         .main-content {
             flex: 1;
             padding: 30px;
             overflow-y: auto;
-            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            min-height: 100%;
         }
 
         .lesson-info {
@@ -148,6 +151,190 @@
         .lesson-reading {
             background: white;
             line-height: 1.8;
+            flex: 1;
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .lesson-content-wrapper {
+            flex: 1;
+            padding-bottom: 40px;
+        }
+
+        .supplementary-content {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 30px;
+            border: 1px solid #dee2e6;
+        }
+
+        .content-section {
+            margin-bottom: 35px;
+        }
+
+        .content-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .content-section h3 {
+            color: #2c5aa0;
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+
+        .key-terms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .term-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #17a2b8;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .term-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .connections-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .connection-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #28a745;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            transition: transform 0.2s ease;
+        }
+
+        .connection-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .subject-icon {
+            font-size: 1.8rem;
+            min-width: 40px;
+        }
+
+        .activities-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .activity-item {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #ffc107;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            transition: transform 0.2s ease;
+        }
+
+        .activity-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .activity-icon {
+            font-size: 1.5rem;
+            min-width: 35px;
+        }
+
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .resource-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #6f42c1;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .resource-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .resource-card h4 {
+            color: #2c5aa0;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .resource-card p {
+            color: #6c757d;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .reflection-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+
+        .reflection-section h3 {
+            color: white;
+            border-bottom-color: rgba(255,255,255,0.3);
+        }
+
+        .reflection-questions {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .question-item {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid rgba(255,255,255,0.5);
+        }
+
+        .question-item p {
+            margin: 0;
+            color: white;
+        }
+
+        .question-item strong {
+            color: #ffd700;
         }
 
         .lesson-reading h1 {
@@ -2061,7 +2248,123 @@
 
             // Convert markdown content to HTML
             const htmlContent = convertMarkdownToHTML(studentReading.content);
-            contentDiv.innerHTML = `<div class="lesson-reading">${htmlContent}</div>`;
+            
+            // Create enhanced content with supplementary materials
+            const enhancedContent = `
+                <div class="lesson-reading">
+                    <div class="lesson-content-wrapper">
+                        ${htmlContent}
+                    </div>
+                    
+                    <div class="supplementary-content">
+                        <div class="content-section">
+                            <h3>🔍 Key Terms & Concepts</h3>
+                            <div class="key-terms-grid">
+                                <div class="term-card">
+                                    <strong>Geographic Theme:</strong> Location, Place, Movement, Region, Human-Environment Interaction
+                                </div>
+                                <div class="term-card">
+                                    <strong>Spatial Thinking:</strong> Understanding patterns and relationships across space
+                                </div>
+                                <div class="term-card">
+                                    <strong>Cultural Landscape:</strong> The visible human imprint on the environment
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="content-section">
+                            <h3>🌐 Cross-Curricular Connections</h3>
+                            <div class="connections-grid">
+                                <div class="connection-card">
+                                    <span class="subject-icon">📚</span>
+                                    <strong>English Language Arts:</strong> Analyze geographic narratives and cultural texts
+                                </div>
+                                <div class="connection-card">
+                                    <span class="subject-icon">🔬</span>
+                                    <strong>Science:</strong> Explore climate patterns, ecosystems, and environmental science
+                                </div>
+                                <div class="connection-card">
+                                    <span class="subject-icon">📊</span>
+                                    <strong>Mathematics:</strong> Use statistics, graphs, and data analysis for geographic research
+                                </div>
+                                <div class="connection-card">
+                                    <span class="subject-icon">🎨</span>
+                                    <strong>Arts:</strong> Study cultural art forms and architectural styles from different regions
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="content-section">
+                            <h3>💡 Extension Activities</h3>
+                            <div class="activities-list">
+                                <div class="activity-item">
+                                    <span class="activity-icon">🎯</span>
+                                    <div>
+                                        <strong>Geographic Investigation:</strong> Research a current global issue and analyze its geographic causes and effects
+                                    </div>
+                                </div>
+                                <div class="activity-item">
+                                    <span class="activity-icon">🗺️</span>
+                                    <div>
+                                        <strong>Digital Mapping:</strong> Create interactive maps using online GIS tools to visualize geographic data
+                                    </div>
+                                </div>
+                                <div class="activity-item">
+                                    <span class="activity-icon">📱</span>
+                                    <div>
+                                        <strong>Virtual Field Trip:</strong> Explore geographic locations through virtual reality and street view technology
+                                    </div>
+                                </div>
+                                <div class="activity-item">
+                                    <span class="activity-icon">🎪</span>
+                                    <div>
+                                        <strong>Cultural Exchange:</strong> Connect with students from other regions to share geographic perspectives
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="content-section">
+                            <h3>📚 Additional Resources</h3>
+                            <div class="resources-grid">
+                                <div class="resource-card">
+                                    <h4>🌍 National Geographic Education</h4>
+                                    <p>Interactive maps, videos, and lesson plans for geographic exploration</p>
+                                </div>
+                                <div class="resource-card">
+                                    <h4>🗺️ Google Earth Education</h4>
+                                    <p>Satellite imagery and virtual tours for immersive geographic learning</p>
+                                </div>
+                                <div class="resource-card">
+                                    <h4>📊 World Bank Data</h4>
+                                    <p>Economic and demographic data for comparative geographic analysis</p>
+                                </div>
+                                <div class="resource-card">
+                                    <h4>🌡️ Climate.gov</h4>
+                                    <p>Climate data and educational resources for environmental geography</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="content-section reflection-section">
+                            <h3>🤔 Reflection Questions</h3>
+                            <div class="reflection-questions">
+                                <div class="question-item">
+                                    <p><strong>Think Globally:</strong> How does this lesson's content connect to current world events?</p>
+                                </div>
+                                <div class="question-item">
+                                    <p><strong>Act Locally:</strong> How do the geographic concepts in this lesson apply to your own community?</p>
+                                </div>
+                                <div class="question-item">
+                                    <p><strong>Future Connections:</strong> How might understanding this geography help you in your future career or studies?</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            contentDiv.innerHTML = enhancedContent;
         }
 
         // Simple markdown to HTML converter
