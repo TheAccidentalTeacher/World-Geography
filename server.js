@@ -19,6 +19,7 @@ app.use(express.static('public'));
 // Serve PDF files statically
 app.use('/pdf files', express.static('pdf files'));
 app.use('/student readings', express.static('student readings'));
+app.use('/local-simulations', express.static('local-simulations'));
 
 // Database connection
 const connectDB = async () => {

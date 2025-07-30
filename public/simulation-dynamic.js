@@ -459,11 +459,59 @@ class SimulationInterface {
     async loadGammaPrompts() {
         const panel = document.getElementById('gamma-prompts');
         panel.innerHTML = `
-            <h2>🎮 Gamma Prompts</h2>
-            <p class="subtitle">Interactive elements and engagement techniques for enhanced simulation experience</p>
+            <h2>🎮 Interactive Presentation & Engagement</h2>
+            <p class="subtitle">Full 60-slide presentation system with interactive elements and engagement techniques</p>
+            
+            <div class="presentation-section">
+                <h3>📊 Complete Presentation System</h3>
+                <div class="presentation-info">
+                    <div class="info-card">
+                        <h4>🎯 Ready for Upload</h4>
+                        <p>Upload your 60 PNG slides to activate the full presentation system with navigation, notes, and interactive features.</p>
+                        <div class="upload-status">
+                            <strong>Upload Location:</strong> <code>local-simulations/oregon-trail/presentation/</code>
+                        </div>
+                    </div>
+                    
+                    <div class="info-card">
+                        <h4>🛠️ Features Available</h4>
+                        <ul>
+                            <li>Full slide navigation with thumbnails</li>
+                            <li>Keyboard controls and auto-play</li>
+                            <li>Fullscreen presentation mode</li>
+                            <li>Contextual teaching notes for each slide</li>
+                            <li>Progress tracking and timing</li>
+                            <li>Download individual slides</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="presentation-demo">
+                    <h4>🎬 Presentation Preview</h4>
+                    <div class="demo-container">
+                        <div class="demo-slide">
+                            <div class="demo-header">
+                                <h3>🕵️ Geographic Detective Academy</h3>
+                                <div class="slide-counter">Slide 1 of 60</div>
+                            </div>
+                            <div class="demo-content">
+                                <div class="demo-image-placeholder">
+                                    <span class="demo-icon">🗺️</span>
+                                    <p>Your presentation slides will appear here</p>
+                                </div>
+                                <div class="demo-controls">
+                                    <button class="demo-btn">◀️ Previous</button>
+                                    <button class="demo-btn">⛶ Fullscreen</button>
+                                    <button class="demo-btn">▶️ Next</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             
             <div class="prompts-section">
-                <h3>🎯 Engagement Techniques</h3>
+                <h3>💬 Interactive Engagement Techniques</h3>
                 <div class="technique-grid">
                     <div class="technique-card">
                         <h4>🚨 Urgent Communications</h4>
@@ -500,7 +548,7 @@ class SimulationInterface {
             </div>
             
             <div class="prompts-section">
-                <h3>💬 Interactive Prompts</h3>
+                <h3>🎯 Interactive Prompts Library</h3>
                 <div class="prompts-grid">
                     <div class="prompt-card">
                         <div class="prompt-type">Daily Opener</div>
@@ -520,6 +568,16 @@ class SimulationInterface {
                     <div class="prompt-card">
                         <div class="prompt-type">Reflection Prompt</div>
                         <div class="prompt-text">"Document in your detective journal: What geographic skills were essential for solving today's case?"</div>
+                    </div>
+                    
+                    <div class="prompt-card">
+                        <div class="prompt-type">Investigation Briefing</div>
+                        <div class="prompt-text">"Bureau Alert: We've received reports of suspicious geographic activity. Your team has been assigned to investigate. What's your first move?"</div>
+                    </div>
+                    
+                    <div class="prompt-card">
+                        <div class="prompt-type">Critical Thinking</div>
+                        <div class="prompt-text">"The evidence points to three possible locations. Use your geographic analysis skills to determine which is most likely and justify your reasoning."</div>
                     </div>
                 </div>
             </div>
@@ -930,6 +988,107 @@ const dynamicStyles = `
         justify-content: center;
         font-weight: bold;
         flex-shrink: 0;
+    }
+    
+    .presentation-section {
+        background: linear-gradient(145deg, #f8f9fa, #e9ecef);
+        border-radius: 15px;
+        padding: 2rem;
+        margin: 2rem 0;
+        border: 1px solid #dee2e6;
+    }
+    
+    .presentation-info {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin: 1.5rem 0;
+    }
+    
+    .info-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        border-left: 4px solid #007bff;
+    }
+    
+    .upload-status {
+        background: #e8f4f8;
+        padding: 0.8rem;
+        border-radius: 5px;
+        margin-top: 1rem;
+        font-family: monospace;
+        font-size: 0.9rem;
+        border: 1px solid #b8daff;
+    }
+    
+    .presentation-demo {
+        margin-top: 2rem;
+    }
+    
+    .demo-container {
+        background: #2c3e50;
+        border-radius: 10px;
+        padding: 1rem;
+        margin-top: 1rem;
+    }
+    
+    .demo-slide {
+        background: #34495e;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    
+    .demo-header {
+        background: linear-gradient(135deg, #3498db, #2980b9);
+        color: white;
+        padding: 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .demo-content {
+        padding: 2rem;
+        text-align: center;
+    }
+    
+    .demo-image-placeholder {
+        background: #4a6741;
+        border-radius: 8px;
+        padding: 3rem;
+        margin-bottom: 1rem;
+        border: 2px dashed #7f8c8d;
+        color: #bdc3c7;
+    }
+    
+    .demo-icon {
+        font-size: 4rem;
+        display: block;
+        margin-bottom: 1rem;
+    }
+    
+    .demo-controls {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+    }
+    
+    .demo-btn {
+        background: #3498db;
+        color: white;
+        border: none;
+        padding: 0.8rem 1.5rem;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: bold;
+    }
+    
+    .demo-btn:hover {
+        background: #2980b9;
+        transform: translateY(-2px);
     }
 </style>
 `;
