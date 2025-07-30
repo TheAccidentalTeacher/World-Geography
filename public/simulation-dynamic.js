@@ -400,61 +400,182 @@ class SimulationInterface {
     }
 
     async loadTeacherGuide() {
-        const response = await fetch(`${this.apiBase}/teacher-guide`);
-        const data = await response.json();
-        
-        const panel = document.getElementById('teacher-guide');
-        panel.innerHTML = `
-            <h2>📖 ${data.data.title}</h2>
-            <p class="subtitle">${data.data.description}</p>
+        try {
+            // Load the expanded teacher guide markdown file
+            const response = await fetch('/simulation-files/TEACHER-GUIDE-EXPANDED.md');
+            const markdown = await response.text();
             
-            <div class="guide-section">
-                <h3>🚀 Preparation Checklist</h3>
-                <div class="preparation-grid">
-                    <div class="prep-card">
-                        <h4>Before Implementation</h4>
-                        <ul class="checklist">
-                            ${data.data.preparation.beforeImplementation.map(item => `
-                                <li><input type="checkbox"> ${item}</li>
-                            `).join('')}
-                        </ul>
-                    </div>
-                    <div class="prep-card">
-                        <h4>Classroom Setup</h4>
-                        <ul class="checklist">
-                            ${data.data.preparation.classroomSetup.map(item => `
-                                <li><input type="checkbox"> ${item}</li>
-                            `).join('')}
-                        </ul>
-                    </div>
+            const panel = document.getElementById('teacher-guide');
+            
+            // Simple markdown-to-HTML conversion for the key elements
+            let html = markdown
+                // Headers
+                .replace(/^### (.*$)/gm, '<h3>$1</h3>')
+                .replace(/^## (.*$)/gm, '<h2>$1</h2>')
+                .replace(/^# (.*$)/gm, '<h1>$1</h1>')
+                // Bold text
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                // Italic text
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                // Code blocks (simplified)
+                .replace(/`([^`]+)`/g, '<code>$1</code>')
+                // Tables (basic conversion)
+                .replace(/\|([^|]+)\|/g, (match, content) => {
+                    const cells = content.split('|').map(cell => cell.trim());
+                    return '<tr>' + cells.map(cell => `<td>${cell}</td>`).join('') + '</tr>';
+                })
+                // Lists (simplified)
+                .replace(/^- (.*$)/gm, '<li>$1</li>')
+                // Line breaks
+                .replace(/\n/g, '<br>');
+            
+            // Wrap lists
+            html = html.replace(/(<li>.*?<\/li>)/g, '<ul>$1</ul>');
+            
+            // Add some basic styling
+            panel.innerHTML = `
+                <div class="teacher-guide-content" style="
+                    font-family: 'Segoe UI', sans-serif;
+                    line-height: 1.6;
+                    max-width: none;
+                    color: #333;
+                ">
+                    <style>
+                        .teacher-guide-content h1 { 
+                            color: #1e3c72; 
+                            border-bottom: 3px solid #ffd700; 
+                            padding-bottom: 0.5rem; 
+                            margin: 2rem 0 1rem 0;
+                            font-size: 2rem;
+                        }
+                        .teacher-guide-content h2 { 
+                            color: #2a5298; 
+                            margin: 1.5rem 0 1rem 0; 
+                            font-size: 1.5rem;
+                            background: linear-gradient(45deg, #f8f9fa, #e9ecef);
+                            padding: 0.75rem;
+                            border-radius: 5px;
+                            border-left: 4px solid #ffd700;
+                        }
+                        .teacher-guide-content h3 { 
+                            color: #1e3c72; 
+                            margin: 1rem 0 0.5rem 0; 
+                            font-size: 1.2rem;
+                            font-weight: 600;
+                        }
+                        .teacher-guide-content ul {
+                            margin: 0.5rem 0;
+                            padding-left: 1.5rem;
+                        }
+                        .teacher-guide-content li {
+                            margin: 0.25rem 0;
+                        }
+                        .teacher-guide-content strong {
+                            color: #dc3545;
+                            font-weight: 600;
+                        }
+                        .teacher-guide-content em {
+                            color: #28a745;
+                            font-style: italic;
+                        }
+                        .teacher-guide-content code {
+                            background: #f8f9fa;
+                            padding: 0.2rem 0.4rem;
+                            border-radius: 3px;
+                            font-family: 'Courier New', monospace;
+                            border: 1px solid #e9ecef;
+                        }
+                        .teacher-guide-content table {
+                            width: 100%;
+                            border-collapse: collapse;
+                            margin: 1rem 0;
+                            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                        }
+                        .teacher-guide-content th,
+                        .teacher-guide-content td {
+                            border: 1px solid #ddd;
+                            padding: 0.75rem;
+                            text-align: left;
+                        }
+                        .teacher-guide-content th {
+                            background: linear-gradient(45deg, #1e3c72, #2a5298);
+                            color: white;
+                            font-weight: 600;
+                        }
+                        .teacher-guide-content tr:nth-child(even) {
+                            background: #f8f9fa;
+                        }
+                        .teacher-guide-content blockquote {
+                            background: #e3f2fd;
+                            border-left: 4px solid #2196f3;
+                            margin: 1rem 0;
+                            padding: 1rem;
+                            border-radius: 0 5px 5px 0;
+                        }
+                    </style>
+                    ${html}
                 </div>
-            </div>
+            `;
+        } catch (error) {
+            console.error('❌ Error loading expanded teacher guide:', error);
             
-            <div class="guide-section">
-                <h3>🎭 Facilitation Strategies</h3>
-                <div class="facilitation-grid">
-                    ${data.data.facilitation.map(phase => `
-                        <div class="facilitation-card">
-                            <h4>${phase.phase}</h4>
-                            <ul>
-                                ${phase.techniques.map(technique => `<li>${technique}</li>`).join('')}
+            // Fallback to the original API-based teacher guide
+            const response = await fetch(`${this.apiBase}/teacher-guide`);
+            const data = await response.json();
+            
+            const panel = document.getElementById('teacher-guide');
+            panel.innerHTML = `
+                <h2>📖 ${data.data.title}</h2>
+                <p class="subtitle">${data.data.description}</p>
+                
+                <div class="guide-section">
+                    <h3>🚀 Preparation Checklist</h3>
+                    <div class="preparation-grid">
+                        <div class="prep-card">
+                            <h4>Before Implementation</h4>
+                            <ul class="checklist">
+                                ${data.data.preparation.beforeImplementation.map(item => `
+                                    <li><input type="checkbox"> ${item}</li>
+                                `).join('')}
                             </ul>
                         </div>
-                    `).join('')}
-                </div>
-            </div>
-            
-            <div class="guide-section">
-                <h3>🔧 Extension Opportunities</h3>
-                <div class="extensions-grid">
-                    ${data.data.extensions.map(extension => `
-                        <div class="extension-card">
-                            <p>${extension}</p>
+                        <div class="prep-card">
+                            <h4>Classroom Setup</h4>
+                            <ul class="checklist">
+                                ${data.data.preparation.classroomSetup.map(item => `
+                                    <li><input type="checkbox"> ${item}</li>
+                                `).join('')}
+                            </ul>
                         </div>
-                    `).join('')}
+                    </div>
                 </div>
-            </div>
-        `;
+                
+                <div class="guide-section">
+                    <h3>🎭 Facilitation Strategies</h3>
+                    <div class="facilitation-grid">
+                        ${data.data.facilitation.map(phase => `
+                            <div class="facilitation-card">
+                                <h4>${phase.phase}</h4>
+                                <ul>
+                                    ${phase.techniques.map(technique => `<li>${technique}</li>`).join('')}
+                                </ul>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                
+                <div class="guide-section">
+                    <h3>🔧 Extension Opportunities</h3>
+                    <div class="extensions-grid">
+                        ${data.data.extensions.map(extension => `
+                            <div class="extension-card">
+                                <p>${extension}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
     }
 
     async loadGammaPrompts() {
