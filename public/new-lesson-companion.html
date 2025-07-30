@@ -337,6 +337,338 @@
             color: #ffd700;
         }
 
+        /* ENHANCED SIDEBAR STYLING - PHASE 1 & 2 */
+        .tab-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 10px;
+        }
+
+        .tab-button {
+            flex: 1;
+            min-width: 70px;
+            padding: 8px 12px;
+            border: none;
+            background: #f8f9fa;
+            color: #6c757d;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .tab-button.active {
+            background: #007bff;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 4px rgba(0,123,255,0.3);
+        }
+
+        .tab-button:hover:not(.active) {
+            background: #e9ecef;
+            color: #495057;
+        }
+
+        /* VOCABULARY TAB STYLING */
+        .vocabulary-cards-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .vocab-card {
+            background: linear-gradient(135deg, #fff9e6 0%, #ffffff 100%);
+            border: 1px solid #ffc107;
+            border-radius: 8px;
+            padding: 12px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .vocab-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 2px 8px rgba(255,193,7,0.3);
+        }
+
+        .vocab-term {
+            font-weight: 600;
+            color: #2c5aa0;
+            margin-bottom: 5px;
+        }
+
+        .vocab-definition {
+            font-size: 0.85rem;
+            color: #6c757d;
+            line-height: 1.4;
+        }
+
+        /* BLOOKET STYLING */
+        .blooket-section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .blooket-game-card {
+            background: linear-gradient(135deg, #e3f2fd 0%, #ffffff 100%);
+            border: 2px solid #2196f3;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .blooket-game-card h4 {
+            color: #1976d2;
+            margin: 0 0 10px 0;
+            font-size: 0.95rem;
+        }
+
+        .blooket-launch-btn {
+            background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+
+        .blooket-launch-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(76,175,80,0.3);
+        }
+
+        /* AI LOOKUP STYLING */
+        .ai-lookup-section {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .lookup-input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        .lookup-input:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+        }
+
+        .lookup-btn {
+            background: linear-gradient(135deg, #6f42c1 0%, #5a2d91 100%);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .lookup-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(111,66,193,0.3);
+        }
+
+        .definition-display {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 10px;
+            border-left: 4px solid #6f42c1;
+            display: none;
+        }
+
+        .definition-display.show {
+            display: block;
+        }
+
+        /* AI TOOLS TAB STYLING */
+        .ai-tool-card {
+            background: linear-gradient(135deg, #f0f4ff 0%, #ffffff 100%);
+            border: 1px solid #4dabf7;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .ai-tool-card h4 {
+            color: #1971c2;
+            margin: 0 0 8px 0;
+        }
+
+        .ai-tool-card p {
+            color: #6c757d;
+            font-size: 0.85rem;
+            margin: 0 0 15px 0;
+        }
+
+        .ai-input {
+            width: 100%;
+            min-height: 60px;
+            padding: 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            resize: vertical;
+            font-family: inherit;
+            font-size: 0.9rem;
+        }
+
+        .ai-input:focus {
+            outline: none;
+            border-color: #4dabf7;
+            box-shadow: 0 0 0 3px rgba(77,171,247,0.1);
+        }
+
+        .ai-action-btn {
+            background: linear-gradient(135deg, #4dabf7 0%, #339af0 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .ai-action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(77,171,247,0.3);
+        }
+
+        .ai-result {
+            background: #fff;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            border-left: 4px solid #4dabf7;
+            display: none;
+        }
+
+        .ai-result.show {
+            display: block;
+        }
+
+        /* CONNECTIONS TAB STYLING */
+        .connection-card {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #28a745;
+        }
+
+        .connection-card h4 {
+            color: #2c5aa0;
+            margin: 0 0 10px 0;
+        }
+
+        .cross-curricular-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .subject-connection-card {
+            background: linear-gradient(135deg, #fff5f5 0%, #ffffff 100%);
+            border: 1px solid #ffc9c9;
+            border-radius: 10px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .subject-icon {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+        }
+
+        .subject-connection-card h4 {
+            margin: 0 0 10px 0;
+            font-size: 0.9rem;
+            color: #2c5aa0;
+        }
+
+        /* PHASE 2 PLACEHOLDER STYLING */
+        .phase-2-placeholder {
+            opacity: 0.7;
+            position: relative;
+        }
+
+        .coming-soon {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .placeholder-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 2px dashed #dee2e6;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .placeholder-card h4 {
+            color: #6c757d;
+            margin: 0 0 8px 0;
+        }
+
+        .placeholder-card p {
+            color: #adb5bd;
+            font-size: 0.85rem;
+            margin: 0 0 12px 0;
+        }
+
+        .placeholder-btn {
+            background: #dee2e6;
+            color: #6c757d;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: not-allowed;
+            font-size: 0.85rem;
+        }
+
+        /* RESPONSIVE ADJUSTMENTS */
+        @media (max-width: 768px) {
+            .tab-buttons {
+                flex-direction: column;
+            }
+            
+            .tab-button {
+                flex: none;
+                width: 100%;
+            }
+            
+            .cross-curricular-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
         .lesson-reading h1 {
             color: #2c5aa0;
             font-size: 2.2rem;
@@ -1075,9 +1407,12 @@
             <div class="sidebar">
                 <div class="tab-buttons">
                     <button class="tab-button active" onclick="showTab('teacher')">Teacher Guide</button>
-                    <button class="tab-button" onclick="showTab('overview')">Overview</button>
+                    <button class="tab-button" onclick="showTab('vocabulary')">📚 Vocabulary</button>
+                    <button class="tab-button" onclick="showTab('ai-tools')">🤖 AI Tools</button>
+                    <button class="tab-button" onclick="showTab('connections')">🔗 Connections</button>
                 </div>
 
+                <!-- PHASE 1: TEACHER GUIDE TAB -->
                 <div id="teacher-tab" class="tab-content active">
                     <div class="lesson-info">
                         <h3>📋 Learning Objectives</h3>
@@ -1123,21 +1458,134 @@
                     </div>
                 </div>
 
-                <div id="overview-tab" class="tab-content">
+                <!-- PHASE 1: VOCABULARY TAB - FULLY IMPLEMENTED -->
+                <div id="vocabulary-tab" class="tab-content">
                     <div class="lesson-info">
-                        <h3>⏱️ Lesson Details</h3>
-                        <div id="lesson-overview">
-                            <p><strong>Time:</strong> <span id="time-estimate">Loading...</span></p>
-                            <p><strong>Module:</strong> <span id="module-title">Loading...</span></p>
-                            <p><strong>Lesson:</strong> <span id="lesson-title">Loading...</span></p>
+                        <h3>📖 Lesson Vocabulary</h3>
+                        <div id="vocabulary-cards-container">
+                            <div class="loading">Loading vocabulary terms...</div>
                         </div>
                     </div>
 
                     <div class="lesson-info">
-                        <h3>📖 Key Vocabulary</h3>
-                        <ul id="vocabulary-list">
-                            <li class="loading">Loading vocabulary...</li>
-                        </ul>
+                        <h3>🎮 Blooket Games</h3>
+                        <div class="blooket-section">
+                            <div class="blooket-game-card">
+                                <h4>Geography Vocabulary Challenge</h4>
+                                <button onclick="launchBlooketGame('vocabulary')" class="blooket-launch-btn">
+                                    🚀 Launch Vocab Game
+                                </button>
+                            </div>
+                            <div class="blooket-game-card">
+                                <h4>Geographic Terms Quiz</h4>
+                                <button onclick="launchBlooketGame('terms')" class="blooket-launch-btn">
+                                    🎯 Launch Terms Quiz
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="lesson-info">
+                        <h3>🔍 AI Definition Lookup</h3>
+                        <div class="ai-lookup-section">
+                            <input type="text" id="term-lookup-input" placeholder="Enter geographic term..." class="lookup-input">
+                            <button onclick="lookupDefinition()" class="lookup-btn">
+                                🤖 Get AI Definition
+                            </button>
+                            <div id="definition-result" class="definition-display"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PHASE 1: AI TOOLS TAB - FULLY IMPLEMENTED -->
+                <div id="ai-tools-tab" class="tab-content">
+                    <div class="lesson-info">
+                        <h3>🤖 AI-Powered Learning</h3>
+                        <div class="ai-tool-card">
+                            <h4>📝 Concept Explainer</h4>
+                            <p>AI explains complex geographic concepts in simple terms</p>
+                            <textarea id="concept-input" placeholder="Enter a geographic concept you'd like explained..." class="ai-input"></textarea>
+                            <button onclick="explainConcept()" class="ai-action-btn">
+                                ✨ Explain This Concept
+                            </button>
+                            <div id="explanation-result" class="ai-result"></div>
+                        </div>
+
+                        <div class="ai-tool-card">
+                            <h4>🌍 Real-World Connections</h4>
+                            <p>Find current events and examples related to this lesson</p>
+                            <button onclick="findConnections()" class="ai-action-btn">
+                                🔗 Find Current Examples
+                            </button>
+                            <div id="connections-result" class="ai-result"></div>
+                        </div>
+                    </div>
+
+                    <!-- PHASE 2 PLACEHOLDERS -->
+                    <div class="lesson-info phase-2-placeholder">
+                        <h3>🎨 Advanced AI Features <span class="coming-soon">Coming Soon</span></h3>
+                        <div class="placeholder-card">
+                            <h4>📸 Image Generation</h4>
+                            <p>AI-generated images to visualize geographic concepts</p>
+                            <button class="placeholder-btn" disabled>🔒 Phase 2 Feature</button>
+                        </div>
+                        <div class="placeholder-card">
+                            <h4>🎭 Interactive Storytelling</h4>
+                            <p>AI creates engaging narratives about geographic regions</p>
+                            <button class="placeholder-btn" disabled>🔒 Phase 2 Feature</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PHASE 1: CONNECTIONS TAB - BASIC IMPLEMENTATION -->
+                <div id="connections-tab" class="tab-content">
+                    <div class="lesson-info">
+                        <h3>🔗 Cross-Lesson Connections</h3>
+                        <div id="lesson-connections-container">
+                            <div class="connection-card">
+                                <h4>📚 Previous Lessons</h4>
+                                <div id="previous-lessons">Loading connections...</div>
+                            </div>
+                            <div class="connection-card">
+                                <h4>🔜 Upcoming Topics</h4>
+                                <div id="upcoming-lessons">Loading connections...</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="lesson-info">
+                        <h3>� Cross-Curricular Links</h3>
+                        <div class="cross-curricular-grid">
+                            <div class="subject-connection-card">
+                                <span class="subject-icon">📚</span>
+                                <h4>English Language Arts</h4>
+                                <div id="ela-connections">Loading ELA connections...</div>
+                            </div>
+                            <div class="subject-connection-card">
+                                <span class="subject-icon">🔬</span>
+                                <h4>Science</h4>
+                                <div id="science-connections">Loading science connections...</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PHASE 2 PLACEHOLDERS -->
+                    <div class="lesson-info phase-2-placeholder">
+                        <h3>🍳 Cultural Experiences <span class="coming-soon">Coming Soon</span></h3>
+                        <div class="placeholder-card">
+                            <h4>🥘 Regional Recipes</h4>
+                            <p>Authentic recipes from the geographic regions being studied</p>
+                            <button class="placeholder-btn" disabled>🔒 Phase 2 Feature</button>
+                        </div>
+                    </div>
+
+                    <div class="lesson-info phase-2-placeholder">
+                        <h3>📰 Current Events <span class="coming-soon">Coming Soon</span></h3>
+                        <div class="placeholder-card">
+                            <h4>🌍 Live Geographic News</h4>
+                            <p>Curated current events related to lesson topics</p>
+                            <button class="placeholder-btn" disabled>🔒 Phase 2 Feature</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -3988,6 +4436,291 @@
             // Initialize calendar and load modules
             initializeCalendar();
             loadModules();
+            
+            // Initialize enhanced sidebar
+            initializeEnhancedSidebar();
+        });
+
+        // =================================
+        // ENHANCED SIDEBAR FUNCTIONALITY
+        // =================================
+
+        function initializeEnhancedSidebar() {
+            switchTab('teacher-guide');
+            loadVocabularyTerms();
+        }
+
+        // Tab management system
+        function switchTab(tabName) {
+            // Hide all content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.style.display = 'none';
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected content and activate button
+            const selectedContent = document.getElementById(tabName);
+            const selectedButton = document.querySelector(`[onclick="switchTab('${tabName}')"]`);
+            
+            if (selectedContent && selectedButton) {
+                selectedContent.style.display = 'block';
+                selectedButton.classList.add('active');
+            }
+        }
+
+        // =================================
+        // VOCABULARY SYSTEM - PHASE 1
+        // =================================
+
+        // Geographic vocabulary for Q1 Geographic Detective Academy
+        const vocabularyTerms = [
+            {
+                term: "Physical Geography",
+                definition: "The study of Earth's natural features like mountains, rivers, climate, and ecosystems."
+            },
+            {
+                term: "Human Geography", 
+                definition: "The study of how people, cultures, and societies interact with and shape their environment."
+            },
+            {
+                term: "Cartography",
+                definition: "The art and science of making maps and charts to represent geographic information."
+            },
+            {
+                term: "Cultural Landscape",
+                definition: "Areas where human activities have modified the natural environment over time."
+            },
+            {
+                term: "Economic Geography",
+                definition: "The study of how economic activities are distributed across space and how location affects economic processes."
+            },
+            {
+                term: "Topography",
+                definition: "The detailed mapping of surface features of land, including elevation and terrain."
+            },
+            {
+                term: "Geographic Information Systems (GIS)",
+                definition: "Technology used to capture, store, analyze, and display geographic and spatial data."
+            },
+            {
+                term: "Trade Routes",
+                definition: "Paths or networks used for commercial transport of goods between different regions or countries."
+            },
+            {
+                term: "Cultural Heritage",
+                definition: "Traditions, customs, monuments, and artifacts that are passed down through generations."
+            },
+            {
+                term: "Environmental Impact",
+                definition: "The effect that human activities have on the natural world and ecosystems."
+            }
+        ];
+
+        function loadVocabularyTerms() {
+            const container = document.getElementById('vocabulary-cards');
+            if (!container) return;
+
+            container.innerHTML = vocabularyTerms.map(item => `
+                <div class="vocab-card" onclick="selectVocabTerm('${item.term}')">
+                    <div class="vocab-term">${item.term}</div>
+                    <div class="vocab-definition">${item.definition}</div>
+                </div>
+            `).join('');
+        }
+
+        function selectVocabTerm(term) {
+            // Visual feedback for selection
+            document.querySelectorAll('.vocab-card').forEach(card => {
+                card.style.backgroundColor = '';
+            });
+            
+            event.target.closest('.vocab-card').style.backgroundColor = '#e3f2fd';
+            
+            // Could integrate with AI lookup or other features
+            console.log(`Selected vocabulary term: ${term}`);
+        }
+
+        // =================================
+        // BLOOKET INTEGRATION - PHASE 1
+        // =================================
+
+        function launchBlooketGame(gameType) {
+            const gameUrls = {
+                'vocabulary': 'https://dashboard.blooket.com/set/676a8f5e2e5a9b7f8c123456', // Example ID
+                'geography-basics': 'https://dashboard.blooket.com/set/676a8f5e2e5a9b7f8c123457',
+                'detective-challenge': 'https://dashboard.blooket.com/set/676a8f5e2e5a9b7f8c123458'
+            };
+
+            // Open in new tab
+            if (gameUrls[gameType]) {
+                window.open(gameUrls[gameType], '_blank');
+            } else {
+                alert('This Blooket game will be available soon! Game sets are being prepared for this content.');
+            }
+        }
+
+        // =================================
+        // AI TOOLS INTEGRATION - PHASE 1
+        // =================================
+
+        // Simple AI Definition Lookup
+        async function lookupDefinition() {
+            const input = document.getElementById('lookup-input');
+            const display = document.getElementById('definition-display');
+            const term = input.value.trim();
+
+            if (!term) {
+                alert('Please enter a term to look up.');
+                return;
+            }
+
+            // Show loading state
+            display.innerHTML = '<div style="text-align: center; color: #6c757d;">🔍 Looking up definition...</div>';
+            display.classList.add('show');
+
+            try {
+                // Simulate AI API call (replace with actual OpenAI integration)
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                // Mock response - replace with actual API
+                const mockDefinition = generateMockDefinition(term);
+                
+                display.innerHTML = `
+                    <h5 style="color: #6f42c1; margin: 0 0 10px 0;">${term}</h5>
+                    <p style="margin: 0; line-height: 1.5;">${mockDefinition}</p>
+                `;
+            } catch (error) {
+                display.innerHTML = '<div style="color: #dc3545;">Sorry, there was an error looking up that term. Please try again.</div>';
+            }
+        }
+
+        function generateMockDefinition(term) {
+            // Basic geographic term definitions
+            const definitions = {
+                'elevation': 'The height of a location above sea level, typically measured in feet or meters.',
+                'climate': 'The long-term weather patterns in a particular region over many years.',
+                'longitude': 'Geographic coordinate that specifies the east-west position of a point on Earth.',
+                'latitude': 'Geographic coordinate that specifies the north-south position of a point on Earth.',
+                'ecosystem': 'A community of living organisms interacting with their physical environment.',
+                'watershed': 'An area of land that drains water, sediment, and dissolved materials to a common outlet.'
+            };
+
+            return definitions[term.toLowerCase()] || 
+                   `${term} is a geographic concept that relates to the study of Earth's features, human activities, and their interactions. This term is commonly used in geographic analysis and spatial thinking.`;
+        }
+
+        // Advanced AI Tools
+        async function explainConcept() {
+            const input = document.getElementById('concept-input');
+            const result = document.getElementById('concept-result');
+            const concept = input.value.trim();
+
+            if (!concept) {
+                alert('Please enter a concept to explain.');
+                return;
+            }
+
+            result.innerHTML = '<div style="text-align: center; color: #6c757d;">🤖 Generating explanation...</div>';
+            result.classList.add('show');
+
+            // Simulate AI processing
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            
+            result.innerHTML = `
+                <h5 style="color: #4dabf7;">Concept Explanation: ${concept}</h5>
+                <p>This is where an AI-powered explanation would appear, breaking down complex geographic concepts into student-friendly language with examples and connections to the current lesson.</p>
+                <div style="background: #f8f9fa; padding: 10px; border-radius: 6px; margin-top: 10px;">
+                    <strong>💡 Teaching Tip:</strong> Consider using visual aids or real-world examples to reinforce this concept.
+                </div>
+            `;
+        }
+
+        async function generateQuestions() {
+            const input = document.getElementById('question-input');
+            const result = document.getElementById('question-result');
+            const topic = input.value.trim();
+
+            if (!topic) {
+                alert('Please enter a topic for question generation.');
+                return;
+            }
+
+            result.innerHTML = '<div style="text-align: center; color: #6c757d;">📝 Generating questions...</div>';
+            result.classList.add('show');
+
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            
+            result.innerHTML = `
+                <h5 style="color: #4dabf7;">Study Questions: ${topic}</h5>
+                <ol style="padding-left: 20px;">
+                    <li>What are the key characteristics of ${topic}?</li>
+                    <li>How does ${topic} impact human activities?</li>
+                    <li>Can you identify examples of ${topic} in your local area?</li>
+                    <li>What tools would a geographer use to study ${topic}?</li>
+                    <li>How might ${topic} change over time due to human or natural factors?</li>
+                </ol>
+                <div style="background: #e3f2fd; padding: 10px; border-radius: 6px; margin-top: 10px;">
+                    <strong>🎯 Assessment Idea:</strong> Use these questions for exit tickets or discussion starters.
+                </div>
+            `;
+        }
+
+        async function createConnection() {
+            const input = document.getElementById('connection-input');
+            const result = document.getElementById('connection-result');
+            const subject = input.value.trim();
+
+            if (!subject) {
+                alert('Please enter a subject area for cross-curricular connections.');
+                return;
+            }
+
+            result.innerHTML = '<div style="text-align: center; color: #6c757d;">🔗 Finding connections...</div>';
+            result.classList.add('show');
+
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            result.innerHTML = `
+                <h5 style="color: #4dabf7;">Geography ↔ ${subject} Connections</h5>
+                <div style="background: #fff; border: 1px solid #e9ecef; border-radius: 8px; padding: 15px;">
+                    <p><strong>Direct Connections:</strong> Geographic concepts that naturally align with ${subject} curriculum.</p>
+                    <p><strong>Project Ideas:</strong> Collaborative activities that combine geographic thinking with ${subject} skills.</p>
+                    <p><strong>Assessment Opportunities:</strong> Ways to evaluate student understanding across both subjects.</p>
+                </div>
+            `;
+        }
+
+        // =================================
+        // PHASE 2 PLACEHOLDER FUNCTIONS
+        // =================================
+
+        function showComingSoon(feature) {
+            alert(`${feature} is coming in Phase 2! This feature will include advanced functionality for enhanced learning experiences.`);
+        }
+
+        // =================================
+        // KEYBOARD SHORTCUTS
+        // =================================
+
+        document.addEventListener('keydown', function(e) {
+            // Quick tab switching with Alt + number
+            if (e.altKey) {
+                switch(e.key) {
+                    case '1': switchTab('teacher-guide'); break;
+                    case '2': switchTab('vocabulary'); break;
+                    case '3': switchTab('ai-tools'); break;
+                    case '4': switchTab('connections'); break;
+                }
+            }
+            
+            // Enter key for AI inputs
+            if (e.key === 'Enter' && e.target.classList.contains('lookup-input')) {
+                lookupDefinition();
+            }
         });
     </script>
 </body>
