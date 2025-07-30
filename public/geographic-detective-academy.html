@@ -523,27 +523,32 @@
                         </div>
 
                         <div class="presentation-viewer">
-                            <div class="slide-container">
-                                <img id="current-slide-image" 
-                                     src="${this.slidesPath}1_Geographic-Detective-Academy.png" 
-                                     alt="Slide 1"
-                                     class="slide-image">
-                                
-                                <div class="slide-overlay">
-                                    <button class="nav-btn prev-btn" onclick="presentation.previousSlide()">
-                                        <span class="icon">◀️</span>
-                                    </button>
-                                    <button class="nav-btn next-btn" onclick="presentation.nextSlide()">
-                                        <span class="icon">▶️</span>
-                                    </button>
-                                </div>
-
-                                <div class="slide-annotations" id="slide-annotations">
-                                    <!-- Dynamic annotations will be loaded here -->
+                        <div class="slide-container">
+                            <div id="current-slide-placeholder" class="slide-placeholder">
+                                <div class="placeholder-content">
+                                    <div class="placeholder-icon">🕵️</div>
+                                    <h3>Geographic Detective Academy</h3>
+                                    <p>Slide <span id="current-slide-number">1</span> of ${this.totalSlides}</p>
+                                    <div class="placeholder-note">
+                                        <strong>Note:</strong> Slide images are served locally only.<br>
+                                        Full presentation available in development environment.
+                                    </div>
                                 </div>
                             </div>
+                            
+                            <div class="slide-overlay">
+                                <button class="nav-btn prev-btn" onclick="presentation.previousSlide()">
+                                    <span class="icon">◀️</span>
+                                </button>
+                                <button class="nav-btn next-btn" onclick="presentation.nextSlide()">
+                                    <span class="icon">▶️</span>
+                                </button>
+                            </div>
 
-                            <div class="slide-notes-panel" id="slide-notes-panel">
+                            <div class="slide-annotations" id="slide-annotations">
+                                <!-- Dynamic annotations will be loaded here -->
+                            </div>
+                        </div>                            <div class="slide-notes-panel" id="slide-notes-panel">
                                 <h4>📝 Slide Notes & Key Points</h4>
                                 <div id="slide-notes-content">
                                     Loading slide notes...
@@ -603,78 +608,12 @@
             }
 
             updateSlide() {
-                const slideImage = document.getElementById('current-slide-image');
+                const slideNumber = document.getElementById('current-slide-number');
                 const slideCounter = document.getElementById('current-slide');
                 const progressFill = document.querySelector('.progress-fill');
 
-                if (slideImage) {
-                    // Use the actual file names from the uploaded slides
-                    const slideFiles = [
-                        '1_Geographic-Detective-Academy.png',
-                        '2_URGENT-Global-Geographic-Crisis.png',
-                        '3_Your-Mission-Become-Geographic-Crime-Specialists.png',
-                        '4_Evidence-Manager.png',
-                        '5_Your-Path-to-Mastery.png',
-                        '6_CASE-FILE-001.png',
-                        '7_Day-1-The-Great-Globe-Heist.png',
-                        '8_Crime-Scene-Investigation.png',
-                        '9_Witness-Interview-Janitor-Bob.png',
-                        '10_Your-First-Geographic-Challenge.png',
-                        '11_CASE-SOLVED.png',
-                        '12_Skills-Earned-Day-1.png',
-                        '13_CASE-FILE-002.png',
-                        '14_Day-2-Mountains-of-Mystery.png',
-                        '15_Crime-Scene-Survey-Office-Break-In.png',
-                        '16_Witness-Interview-Dr-Sarah-Chen-Chief-Cartographer.png',
-                        '17_Physical-Geography-Challenge.png',
-                        '18_Elevation-Detective-Work.png',
-                        '19_CASE-SOLVED.png',
-                        '20_Skills-Earned-Day-2.png',
-                        '21_CASE-FILE-003.png',
-                        '22_Day-3-International-Heritage-Heist.png',
-                        '23_Stolen-Cultural-Treasures.png',
-                        '24_Witness-Interview-Museum-Director-Maria-Santos.png',
-                        '25_Geographic-Culture-Connection.png',
-                        '26_Cultural-Geography-Challenge.png',
-                        '27_CASE-SOLVED.png',
-                        '28_Skills-Earned-Day-3.png',
-                        '29_CASE-FILE-004-005.png',
-                        '30_Days-4-5-Economic-Espionage.png',
-                        '31_Multi-Day-Investigation-Economic-Intelligence-Theft.png',
-                        '32_Economic-Geography-Understanding-Trade.png',
-                        '33_Witness-Interview-Trade-Specialist-Dr-James-Morrison.png',
-                        '34_Resource-Geography-Challenge.png',
-                        '35_Government-Systems-Under-Attack.png',
-                        '36_Economic-Crime-Pattern-Analysis.png',
-                        '37_CASE-SOLVED.png',
-                        '38_Skills-Earned-Days-4-5.png',
-                        '39_CASE-FILE-006-008.png',
-                        '40_Days-6-8-Archaeological-Adventure.png',
-                        '41_Multi-Site-Archaeological-Crime-Scene.png',
-                        '42_River-Valley-Civilizations-Pattern.png',
-                        '43_Witness-Interview-Dr-Elena-Rodriguez-Lead-Archaeologist.png',
-                        '44_Ancient-Geographic-Technology.png',
-                        '45_Historical-Geography-Challenge.png',
-                        '46_Ancient-Civilization-Geographic-Comparison.png',
-                        '47_CASE-SOLVED.png',
-                        '48_Skills-Earned-Days-6-8.png',
-                        '49_CASE-FILE-009-011.png',
-                        '50_Days-9-11-The-Final-Confrontation.png',
-                        '51_The-Cartographers-Master-Plan-Revealed.png',
-                        '52_Global-Criminal-Network-Analysis.png',
-                        '53_Elite-Task-Force-Assembly.png',
-                        '54_Advanced-Geographic-Intelligence-Challenge.png',
-                        '55_The-Cartographers-Location-Discovered.png',
-                        '56_Epic-Geographic-Skills-Integration.png',
-                        '57_The-Final-Confrontation.png',
-                        '58_ULTIMATE-VICTORY.png',
-                        '59_Your-Geographic-Detective-Academy-Graduation.png',
-                        '60_Your-Geographic-Legacy.png'
-                    ];
-                    
-                    const currentFile = slideFiles[this.currentSlide - 1];
-                    slideImage.src = `${this.slidesPath}${currentFile}`;
-                    slideImage.alt = `Slide ${this.currentSlide}`;
+                if (slideNumber) {
+                    slideNumber.textContent = this.currentSlide;
                 }
 
                 if (slideCounter) {
@@ -686,7 +625,6 @@
                 }
 
                 this.updateSlideNotes();
-                this.highlightCurrentThumbnail();
             }
 
             updateSlideNotes() {
@@ -1011,6 +949,46 @@
                     max-height: 100%;
                     object-fit: contain;
                     border-radius: 8px;
+                }
+
+                .slide-placeholder {
+                    width: 100%;
+                    height: 100%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    background: linear-gradient(145deg, #4a6741, #5a7751);
+                    border-radius: 8px;
+                    color: white;
+                    text-align: center;
+                }
+
+                .placeholder-content {
+                    padding: 2rem;
+                }
+
+                .placeholder-icon {
+                    font-size: 4rem;
+                    margin-bottom: 1rem;
+                }
+
+                .placeholder-content h3 {
+                    margin: 0 0 1rem 0;
+                    font-size: 1.5rem;
+                }
+
+                .placeholder-content p {
+                    margin: 0 0 1rem 0;
+                    font-size: 1.2rem;
+                    color: #bdc3c7;
+                }
+
+                .placeholder-note {
+                    background: rgba(0,0,0,0.3);
+                    padding: 1rem;
+                    border-radius: 5px;
+                    font-size: 0.9rem;
+                    color: #ecf0f1;
                 }
 
                 .slide-overlay {

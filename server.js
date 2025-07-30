@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
+const { GridFSBucket } = require('mongodb');
 const { Curriculum, Module, Lesson } = require('./models');
 const { extractAllPDFs } = require('./extract-pdfs');
 const { schoolCalendar, calendarUtils } = require('./calendar-config');
@@ -10,6 +11,9 @@ const { createSimulationRoutes } = require('./simulation-system');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// GridFS bucket for slides
+let slidesBucket;
 
 // Middleware
 app.use(cors());
@@ -30,6 +34,13 @@ const connectDB = async () => {
     await mongoose.connect(mongoUri);
     console.log('✅ Connected to MongoDB');
     console.log('📊 Database:', mongoose.connection.name);
+    
+    // Initialize GridFS bucket for slides
+    slidesBucket = new GridFSBucket(mongoose.connection.db, {
+      bucketName: 'slides'
+    });
+    console.log('🗂️ GridFS bucket initialized for slides');
+    
     return true;
   } catch (error) {
     console.error('❌ MongoDB connection error:', error.message);
@@ -75,6 +86,73 @@ app.get('/api/health', (req, res) => {
     message: 'World Geography Curriculum API is running',
     timestamp: new Date().toISOString()
   });
+});
+
+// Serve slides from MongoDB GridFS
+app.get('/slides/:filename', async (req, res) => {
+  try {
+    const filename = req.params.filename;
+    
+    // Check if slides bucket is initialized
+    if (!slidesBucket) {
+      return res.status(503).json({ error: 'Slides service not available' });
+    }
+    
+    // Find the file in GridFS
+    const files = await slidesBucket.find({ filename: filename }).toArray();
+    
+    if (files.length === 0) {
+      return res.status(404).json({ error: 'Slide not found' });
+    }
+    
+    const file = files[0];
+    
+    // Set appropriate headers
+    res.set({
+      'Content-Type': 'image/png',
+      'Content-Length': file.length,
+      'Cache-Control': 'public, max-age=86400' // Cache for 24 hours
+    });
+    
+    // Stream the file from GridFS
+    const downloadStream = slidesBucket.openDownloadStreamByName(filename);
+    
+    downloadStream.on('error', (error) => {
+      console.error('❌ Error streaming slide:', error);
+      res.status(500).json({ error: 'Error streaming slide' });
+    });
+    
+    downloadStream.pipe(res);
+    
+  } catch (error) {
+    console.error('❌ Error serving slide:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// List all available slides
+app.get('/api/slides', async (req, res) => {
+  try {
+    if (!slidesBucket) {
+      return res.status(503).json({ error: 'Slides service not available' });
+    }
+    
+    const files = await slidesBucket.find({}).toArray();
+    const slideList = files.map(file => ({
+      filename: file.filename,
+      uploadDate: file.uploadDate,
+      length: file.length
+    }));
+    
+    res.json({ 
+      totalSlides: slideList.length,
+      slides: slideList.sort((a, b) => a.filename.localeCompare(b.filename))
+    });
+    
+  } catch (error) {
+    console.error('❌ Error listing slides:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 });
 
 // Initialize Geographic Detective Academy Simulation System

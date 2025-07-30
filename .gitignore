@@ -18,5 +18,8 @@ oregon_trail*
 
 # Local simulation files
 local-simulations/
+
+# Presentation slides (too large for git)
+public/slides/
 simulation-uploads/
 temp-uploads/
