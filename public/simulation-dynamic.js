@@ -1071,36 +1071,36 @@ class SimulationInterface {
             .replace(/^#### (.*$)/gm, '<h4>$1</h4>')
             
             // Convert special day headers
-            .replace(/^## (Day \\d+: .*$)/gm, '<div class="day-header">$1</div>')
+            .replace(/^## (Day \d+: .*$)/gm, '<div class="day-header">$1</div>')
             
             // Convert case files
-            .replace(/\\*\\*(CASE FILE \\d+.*?)\\*\\*/g, '<div class="case-file">$1</div>')
+            .replace(/\*\*(CASE FILE \d+.*?)\*\*/g, '<div class="case-file">$1</div>')
             
             // Convert slide references with special styling
-            .replace(/\\[(Slide \\d+[^\\]]*)\\]/g, '<span class="slide-reference">$1</span>')
+            .replace(/\[(Slide \d+[^\]]*)\]/g, '<span class="slide-reference">$1</span>')
             
             // Convert timing notes
-            .replace(/\\*\\*Timing:\\*\\* (.*$)/gm, '<div class="timing-note">⏰ Timing: $1</div>')
+            .replace(/\*\*Timing:\*\* (.*$)/gm, '<div class="timing-note">⏰ Timing: $1</div>')
             
             // Convert learning objectives
-            .replace(/\\*\\*Learning Objective:\\*\\* (.*$)/gm, '<div class="learning-objective">🎯 <strong>Learning Objective:</strong> $1</div>')
+            .replace(/\*\*Learning Objective:\*\* (.*$)/gm, '<div class="learning-objective">🎯 <strong>Learning Objective:</strong> $1</div>')
             
             // Convert assessment notes
-            .replace(/\\*\\*Assessment:\\*\\* (.*$)/gm, '<div class="assessment-note">📊 <strong>Assessment:</strong> $1</div>')
+            .replace(/\*\*Assessment:\*\* (.*$)/gm, '<div class="assessment-note">📊 <strong>Assessment:</strong> $1</div>')
             
             // Convert implementation checklists
-            .replace(/\\*\\*Implementation Checklist:\\*\\*/g, '<div class="implementation-checklist"><strong>📋 Implementation Checklist:</strong>')
-            .replace(/\\*\\*Materials Needed:\\*\\*/g, '<div class="implementation-checklist"><strong>📦 Materials Needed:</strong>')
-            .replace(/\\*\\*Preparation Steps:\\*\\*/g, '<div class="implementation-checklist"><strong>🔧 Preparation Steps:</strong>')
+            .replace(/\*\*Implementation Checklist:\*\*/g, '<div class="implementation-checklist"><strong>📋 Implementation Checklist:</strong>')
+            .replace(/\*\*Materials Needed:\*\*/g, '<div class="implementation-checklist"><strong>📦 Materials Needed:</strong>')
+            .replace(/\*\*Preparation Steps:\*\*/g, '<div class="implementation-checklist"><strong>🔧 Preparation Steps:</strong>')
             
             // Convert bold text
-            .replace(/\\*\\*(.*?)\\*\\*/g, '<strong>$1</strong>')
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
             
             // Convert italic text
-            .replace(/\\*(.*?)\\*/g, '<em>$1</em>')
+            .replace(/\*(.*?)\*/g, '<em>$1</em>')
             
             // Convert code blocks
-            .replace(/```[\\s\\S]*?```/g, function(match) {
+            .replace(/```[\s\S]*?```/g, function(match) {
                 const content = match.replace(/```/g, '');
                 return '<pre><code>' + content + '</code></pre>';
             })
@@ -1109,14 +1109,14 @@ class SimulationInterface {
             .replace(/`([^`]+)`/g, '<code>$1</code>')
             
             // Convert unordered lists
-            .replace(/^\\- (.*$)/gm, '<li>$1</li>')
-            .replace(/^\\* (.*$)/gm, '<li>$1</li>')
+            .replace(/^- (.*$)/gm, '<li>$1</li>')
+            .replace(/^\* (.*$)/gm, '<li>$1</li>')
             
             // Convert ordered lists
-            .replace(/^\\d+\\. (.*$)/gm, '<li>$1</li>')
+            .replace(/^\d+\. (.*$)/gm, '<li>$1</li>')
             
             // Wrap consecutive list items in ul/ol tags
-            .replace(/(<li>.*<\\/li>)/gs, function(match) {
+            .replace(/(<li>.*<\/li>)/gs, function(match) {
                 return '<ul>' + match + '</ul>';
             })
             
@@ -1127,7 +1127,7 @@ class SimulationInterface {
             .replace(/^---$/gm, '<hr class="section-divider">')
             
             // Convert line breaks to paragraphs
-            .split('\\n\\n')
+            .split('\n\n')
             .map(paragraph => {
                 // Don't wrap already wrapped elements
                 const trimmed = paragraph.trim();
@@ -1143,13 +1143,13 @@ class SimulationInterface {
                 }
                 return '<p>' + paragraph + '</p>';
             })
-            .join('\\n')
+            .join('\n')
             
             // Close any open implementation checklist divs
-            .replace(/(<div class="implementation-checklist">[\\s\\S]*?)(<h|<div class="day-header"|<div class="case-file"|$)/g, '$1</div>$2')
+            .replace(/(<div class="implementation-checklist">[\s\S]*?)(<h|<div class="day-header"|<div class="case-file"|$)/g, '$1</div>$2')
             
             // Clean up extra newlines
-            .replace(/\\n{3,}/g, '\\n\\n')
+            .replace(/\n{3,}/g, '\n\n')
             .trim();
             
         console.log('✅ Comprehensive markdown conversion complete');
