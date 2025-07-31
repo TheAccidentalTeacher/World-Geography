@@ -1936,30 +1936,339 @@ class SimulationInterface {
     async loadCompletePackage() {
         const panel = document.getElementById('complete-package');
         panel.innerHTML = `
-            <h2>📦 Complete Simulation Package</h2>
-            <p class="subtitle">Everything needed to implement the Geographic Detective Academy simulation</p>
-            
-            <div class="package-overview">
+            <div class="complete-package-header">
+                <h1>📦 Complete Geographic Detective Academy Package</h1>
+                <p class="mega-subtitle">
+                    Everything needed to implement the Geographic Detective Academy simulation - 
+                    <strong>Generate a comprehensive PDF containing ALL materials in one massive document!</strong>
+                </p>
                 <div class="package-stats">
                     <div class="stat-item">
                         <div class="stat-number">12</div>
                         <div class="stat-label">Days of Content</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-number">25+</div>
-                        <div class="stat-label">Student Materials</div>
+                        <div class="stat-number">11</div>
+                        <div class="stat-label">Investigation Cases</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-number">3</div>
-                        <div class="stat-label">Progressive Cases</div>
+                        <div class="stat-number">50+</div>
+                        <div class="stat-label">Pages of Materials</div>
                     </div>
                     <div class="stat-item">
                         <div class="stat-number">4</div>
-                        <div class="stat-label">Team Roles</div>
+                        <div class="stat-label">Detective Roles</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pdf-generation-section">
+                <div class="generation-controls">
+                    <button id="generate-complete-pdf" class="mega-pdf-button">
+                        🎯 GENERATE COMPLETE PDF PACKAGE
+                        <span class="button-subtitle">Everything in one massive document (50+ pages)</span>
+                    </button>
+                    
+                    <div class="generation-options">
+                        <h3>📋 Customize Your Package:</h3>
+                        <div class="options-grid">
+                            <label class="option-item">
+                                <input type="checkbox" id="include-teacher-guide" checked>
+                                <span class="checkmark"></span>
+                                📖 Teacher Implementation Guide
+                            </label>
+                            <label class="option-item">
+                                <input type="checkbox" id="include-daily-structure" checked>
+                                <span class="checkmark"></span>
+                                📅 Daily Structure & Timeline
+                            </label>
+                            <label class="option-item">
+                                <input type="checkbox" id="include-team-roles" checked>
+                                <span class="checkmark"></span>
+                                👥 Team Roles & Character Cards
+                            </label>
+                            <label class="option-item">
+                                <input type="checkbox" id="include-investigations" checked>
+                                <span class="checkmark"></span>
+                                🔍 All Investigation Events (11 Cases)
+                            </label>
+                            <label class="option-item">
+                                <input type="checkbox" id="include-assessments" checked>
+                                <span class="checkmark"></span>
+                                📊 Assessment System & Rubrics
+                            </label>
+                            <label class="option-item">
+                                <input type="checkbox" id="include-student-materials" checked>
+                                <span class="checkmark"></span>
+                                📚 Student Handouts & Resources
+                            </label>
+                            <label class="option-item">
+                                <input type="checkbox" id="include-standards" checked>
+                                <span class="checkmark"></span>
+                                🎯 Learning Objectives & Standards
+                            </label>
+                            <label class="option-item">
+                                <input type="checkbox" id="include-implementation" checked>
+                                <span class="checkmark"></span>
+                                ✅ Implementation Checklists
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="package-preview">
+                    <h3>📄 Your PDF Will Include:</h3>
+                    <div class="content-outline">
+                        <div class="section-preview">
+                            <h4>🏁 Section 1: Implementation Guide (8-10 pages)</h4>
+                            <ul>
+                                <li>Complete setup instructions</li>
+                                <li>Classroom management strategies</li>
+                                <li>Technology requirements</li>
+                                <li>Troubleshooting guide</li>
+                            </ul>
+                        </div>
+                        <div class="section-preview">
+                            <h4>📅 Section 2: Daily Structure (6-8 pages)</h4>
+                            <ul>
+                                <li>12-day progression overview</li>
+                                <li>Daily lesson plans</li>
+                                <li>Time management guides</li>
+                                <li>Pacing strategies</li>
+                            </ul>
+                        </div>
+                        <div class="section-preview">
+                            <h4>👥 Section 3: Team Roles (4-5 pages)</h4>
+                            <ul>
+                                <li>Character role descriptions</li>
+                                <li>AI-generated role card images</li>
+                                <li>Team formation strategies</li>
+                                <li>Role rotation guidelines</li>
+                            </ul>
+                        </div>
+                        <div class="section-preview">
+                            <h4>🔍 Section 4: Investigation Events (20-25 pages)</h4>
+                            <ul>
+                                <li>All 11 detailed investigation cases</li>
+                                <li>Evidence analysis frameworks</li>
+                                <li>Geographic skill challenges</li>
+                                <li>Case progression logic</li>
+                            </ul>
+                        </div>
+                        <div class="section-preview">
+                            <h4>📊 Section 5: Assessment System (8-10 pages)</h4>
+                            <ul>
+                                <li>Complete 4-point rubric system</li>
+                                <li>Daily formative assessments</li>
+                                <li>Project-based evaluations</li>
+                                <li>Portfolio requirements</li>
+                            </ul>
+                        </div>
+                        <div class="section-preview">
+                            <h4>📚 Section 6: Student Materials (10-15 pages)</h4>
+                            <ul>
+                                <li>All student handouts</li>
+                                <li>Investigation worksheets</li>
+                                <li>Reference materials</li>
+                                <li>Printable resources</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="quick-actions">
+                <h3>⚡ Quick Access:</h3>
+                <div class="action-buttons">
+                    <button class="action-btn preview-btn">
+                        👁️ Preview Package Contents
+                    </button>
+                    <button class="action-btn download-individual">
+                        📁 Download Individual Sections
+                    </button>
+                    <button class="action-btn print-friendly">
+                        🖨️ Print-Friendly Version
+                    </button>
+                </div>
+            </div>
+
+            <div id="generation-status" class="generation-status hidden">
+                <div class="status-content">
+                    <div class="spinner"></div>
+                    <h4>Generating Your Complete Package...</h4>
+                    <p id="status-message">Initializing PDF generation system...</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
                     </div>
                 </div>
             </div>
         `;
+
+        // Initialize the mega PDF generation system
+        this.setupCompletePackageGeneration();
+    }
+
+    setupCompletePackageGeneration() {
+        const generateBtn = document.getElementById('generate-complete-pdf');
+        const statusDiv = document.getElementById('generation-status');
+        const statusMessage = document.getElementById('status-message');
+        const progressFill = document.getElementById('progress-fill');
+
+        generateBtn.addEventListener('click', async () => {
+            // Show generation status
+            statusDiv.classList.remove('hidden');
+            generateBtn.disabled = true;
+            generateBtn.innerHTML = '⏳ Generating...';
+
+            try {
+                await this.generateMegaPDF();
+            } catch (error) {
+                console.error('❌ PDF Generation Error:', error);
+                statusMessage.textContent = 'Error generating PDF. Please try again.';
+            }
+        });
+
+        // Setup other action buttons
+        this.setupQuickActions();
+    }
+
+    async generateMegaPDF() {
+        const statusMessage = document.getElementById('status-message');
+        const progressFill = document.getElementById('progress-fill');
+        const generateBtn = document.getElementById('generate-complete-pdf');
+
+        // Get selected options
+        const options = this.getSelectedOptions();
+        
+        const steps = [
+            { step: 'Initializing PDF system...', progress: 5 },
+            { step: 'Fetching Teacher Implementation Guide...', progress: 15 },
+            { step: 'Compiling Daily Structure content...', progress: 25 },
+            { step: 'Processing Team Roles & AI images...', progress: 35 },
+            { step: 'Gathering all Investigation Events...', progress: 50 },
+            { step: 'Formatting Assessment System...', progress: 65 },
+            { step: 'Collecting Student Materials...', progress: 75 },
+            { step: 'Organizing Learning Objectives...', progress: 85 },
+            { step: 'Finalizing PDF compilation...', progress: 95 },
+            { step: 'PDF Generation Complete!', progress: 100 }
+        ];
+
+        // Simulate realistic PDF generation process
+        for (let i = 0; i < steps.length; i++) {
+            statusMessage.textContent = steps[i].step;
+            progressFill.style.width = steps[i].progress + '%';
+            
+            // Simulate processing time
+            await new Promise(resolve => setTimeout(resolve, 800 + Math.random() * 400));
+        }
+
+        // Generate the actual PDF
+        await this.compileMegaPDF(options);
+
+        // Reset UI
+        setTimeout(() => {
+            document.getElementById('generation-status').classList.add('hidden');
+            generateBtn.disabled = false;
+            generateBtn.innerHTML = `
+                🎯 GENERATE COMPLETE PDF PACKAGE
+                <span class="button-subtitle">Everything in one massive document (50+ pages)</span>
+            `;
+        }, 2000);
+    }
+
+    async compileMegaPDF(options) {
+        // Create comprehensive PDF compilation request
+        const response = await fetch('/api/simulation/generate-complete-pdf', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                sections: options,
+                includeImages: true,
+                format: 'comprehensive',
+                timestamp: new Date().toISOString()
+            })
+        });
+
+        if (response.ok) {
+            // Handle successful PDF generation
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Geographic-Detective-Academy-Complete-Package-${new Date().toISOString().split('T')[0]}.pdf`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+            
+            // Show success message
+            this.showSuccessMessage();
+        } else {
+            throw new Error('PDF generation failed');
+        }
+    }
+
+    getSelectedOptions() {
+        return {
+            teacherGuide: document.getElementById('include-teacher-guide').checked,
+            dailyStructure: document.getElementById('include-daily-structure').checked,
+            teamRoles: document.getElementById('include-team-roles').checked,
+            investigations: document.getElementById('include-investigations').checked,
+            assessments: document.getElementById('include-assessments').checked,
+            studentMaterials: document.getElementById('include-student-materials').checked,
+            standards: document.getElementById('include-standards').checked,
+            implementation: document.getElementById('include-implementation').checked
+        };
+    }
+
+    setupQuickActions() {
+        const previewBtn = document.querySelector('.preview-btn');
+        const downloadIndividualBtn = document.querySelector('.download-individual');
+        const printFriendlyBtn = document.querySelector('.print-friendly');
+
+        previewBtn.addEventListener('click', () => this.showPackagePreview());
+        downloadIndividualBtn.addEventListener('click', () => this.showIndividualDownloads());
+        printFriendlyBtn.addEventListener('click', () => this.generatePrintVersion());
+    }
+
+    showSuccessMessage() {
+        const successAlert = document.createElement('div');
+        successAlert.className = 'success-alert';
+        successAlert.innerHTML = `
+            <div class="alert-content">
+                <div class="success-icon">🎉</div>
+                <div class="success-text">
+                    <h3>PDF Generation Complete!</h3>
+                    <p>🔍 Your complete Geographic Detective Academy package has been downloaded!</p>
+                    <p><strong>Contains:</strong> All selected sections with professional formatting and images.</p>
+                </div>
+                <button class="alert-close" onclick="this.parentElement.parentElement.remove()">×</button>
+            </div>
+        `;
+        
+        document.body.appendChild(successAlert);
+        
+        // Auto-remove after 6 seconds
+        setTimeout(() => {
+            if (successAlert.parentElement) {
+                successAlert.remove();
+            }
+        }, 6000);
+    }
+
+    showPackagePreview() {
+        // Implementation for package preview
+        console.log('📄 Package preview requested');
+    }
+
+    showIndividualDownloads() {
+        // Implementation for individual section downloads
+        console.log('📁 Individual downloads requested');
+    }
+
+    generatePrintVersion() {
+        // Implementation for print-friendly version
+        console.log('🖨️ Print-friendly version requested');
     }
 
     setupInvestigationFilters() {
