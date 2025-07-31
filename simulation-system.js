@@ -1,6 +1,6 @@
 /**
  * Geographic Detective Academy Simulation System
- * Based on the extracted framework from Oregon Trail simulation materials
+ * Based on            icon: '📋',the extracted framework from Oregon Trail simulation materials
  */
 
 const express = require('express');
@@ -29,7 +29,7 @@ const simulationFramework = {
             title: 'Evidence Manager',
             description: "You're the mastermind who spots patterns others miss! As the Evidence Manager, you collect every geographic clue—from satellite images to population data—and turn chaos into crystal-clear evidence.",
             mission: 'Pattern-spotting mastermind who organizes and analyzes all geographic evidence',
-            activities: 'Organize crime scene photos, analyze map coordinates, catalog witness statements, and create evidence timelines. You\'re like a geographic CSI investigator!',
+            activities: "Organize crime scene photos, analyze map coordinates, catalog witness statements, and create evidence timelines. You're like a geographic CSI investigator!",
             skills: ['Critical thinking', 'Pattern recognition', 'Data organization', 'Digital research techniques'],
             appeal: 'Every case gets solved because YOU found the missing piece of the puzzle!',
             icon: '🔍',
@@ -51,7 +51,7 @@ const simulationFramework = {
             title: 'Resource Tracker',
             description: "You're the detective who follows the money, resources, and people! Nothing moves around the world without YOU tracking its path and uncovering the connections.",
             mission: 'Detective who follows money, resources, and people across the globe',
-            activities: 'Trace trade routes, monitor population movements, track natural resources, and spot economic patterns. You\'re like a geographic spy following secret trails!',
+            activities: "Trace trade routes, monitor population movements, track natural resources, and spot economic patterns. You're like a geographic spy following secret trails!",
             skills: ['Economic analysis', 'Logistics thinking', 'Cause-and-effect reasoning', 'Global connections'],
             appeal: 'You discover how everything in the world is connected—and predict what happens next!',
             icon: '🎯',
@@ -66,7 +66,7 @@ const simulationFramework = {
             skills: ['Scientific writing', 'Communication skills', 'Report organization', 'Presentation techniques'],
             appeal: 'Your words become the official record that cracks the case and shares the victory with the world!',
             icon: '�',
-            imagePrompt: 'A detail-oriented student detective with a digital tablet and smart pen, surrounded by floating case files, investigation reports, and timeline displays. They\'re documenting discoveries with geographic evidence photos and notes appearing as holographic displays.'
+            imagePrompt: "A detail-oriented student detective with a digital tablet and smart pen, surrounded by floating case files, investigation reports, and timeline displays. They're documenting discoveries with geographic evidence photos and notes appearing as holographic displays."
         }
     ],
     
