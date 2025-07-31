@@ -218,11 +218,6 @@ class SimulationInterface {
             </div>
         `;
     }
-                    </div>
-                </div>
-            </div>
-        `;
-    }
 
     async loadInvestigationEvents() {
         const response = await fetch(`${this.apiBase}/investigation-events`);
