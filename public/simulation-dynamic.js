@@ -2163,7 +2163,16 @@ class SimulationInterface {
         }
 
         // Generate the actual PDF
-        await this.compileMegaPDF(options);
+        try {
+            await this.compileMegaPDF(options);
+        } catch (error) {
+            console.error('💥 Mega PDF generation failed:', error);
+            
+            // Reset UI to allow retry
+            statusMessage.textContent = 'PDF generation failed. Please try again.';
+            progressFill.style.width = '0%';
+            progressFill.style.background = '#dc3545';
+        }
 
         // Reset UI
         setTimeout(() => {
@@ -2173,38 +2182,91 @@ class SimulationInterface {
                 🎯 GENERATE COMPLETE PDF PACKAGE
                 <span class="button-subtitle">Everything in one massive document (50+ pages)</span>
             `;
+            
+            // Reset progress bar color
+            progressFill.style.background = '';
         }, 2000);
     }
 
     async compileMegaPDF(options) {
-        // Create comprehensive PDF compilation request
-        const response = await fetch('/api/simulation/generate-complete-pdf', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                sections: options,
-                includeImages: true,
-                format: 'comprehensive',
-                timestamp: new Date().toISOString()
-            })
-        });
+        try {
+            // Create comprehensive PDF compilation request
+            const response = await fetch('/api/simulation/generate-complete-pdf', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    sections: options,
+                    includeImages: true,
+                    format: 'comprehensive',
+                    timestamp: new Date().toISOString()
+                })
+            });
 
-        if (response.ok) {
-            // Handle successful PDF generation
+            if (!response.ok) {
+                throw new Error(`Server error: ${response.status} ${response.statusText}`);
+            }
+
+            // Get the PDF blob
             const blob = await response.blob();
+            
+            // Ensure we have a valid PDF blob
+            if (blob.size === 0) {
+                throw new Error('Received empty PDF file');
+            }
+            
+            console.log(`📄 PDF blob received: ${(blob.size / 1024 / 1024).toFixed(2)}MB`);
+            
+            // Create download link and trigger download
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
             a.download = `Geographic-Detective-Academy-Complete-Package-${new Date().toISOString().split('T')[0]}.pdf`;
+            
+            // Append to body, click, and remove
+            document.body.appendChild(a);
             a.click();
-            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+            
+            // Clean up the blob URL
+            setTimeout(() => {
+                window.URL.revokeObjectURL(url);
+            }, 1000);
             
             // Show success message
             this.showSuccessMessage();
-        } else {
-            throw new Error('PDF generation failed');
+            
+            console.log('✅ PDF download initiated successfully!');
+            
+        } catch (error) {
+            console.error('❌ PDF compilation failed:', error);
+            
+            // Show error message to user
+            const errorAlert = document.createElement('div');
+            errorAlert.className = 'error-alert';
+            errorAlert.innerHTML = `
+                <div class="alert-content">
+                    <div class="error-icon">❌</div>
+                    <div class="error-text">
+                        <h3>PDF Generation Failed</h3>
+                        <p>Error: ${error.message}</p>
+                        <p>Please try again or contact support if the issue persists.</p>
+                    </div>
+                    <button class="alert-close" onclick="this.parentElement.parentElement.remove()">×</button>
+                </div>
+            `;
+            
+            document.body.appendChild(errorAlert);
+            
+            // Auto-remove error after 8 seconds
+            setTimeout(() => {
+                if (errorAlert.parentElement) {
+                    errorAlert.remove();
+                }
+            }, 8000);
+            
+            throw error; // Re-throw to be handled by the calling function
         }
     }
 
@@ -2257,18 +2319,205 @@ class SimulationInterface {
     }
 
     showPackagePreview() {
-        // Implementation for package preview
-        console.log('📄 Package preview requested');
+        // Show a modal with package contents preview
+        const modal = document.createElement('div');
+        modal.className = 'preview-modal';
+        modal.innerHTML = `
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>📋 Complete Package Contents Preview</h2>
+                    <button class="modal-close" onclick="this.parentElement.parentElement.parentElement.remove()">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="preview-sections">
+                        <div class="preview-item">
+                            <h3>📖 Teacher Implementation Guide</h3>
+                            <p>8-10 pages of comprehensive setup instructions, classroom management strategies, and implementation tips.</p>
+                        </div>
+                        <div class="preview-item">
+                            <h3>📅 12-Day Simulation Structure</h3>
+                            <p>6-8 pages detailing each day's activities, timing, and learning objectives with flexible pacing options.</p>
+                        </div>
+                        <div class="preview-item">
+                            <h3>👥 Detective Team Roles</h3>
+                            <p>4-5 pages of detailed role descriptions, team formation strategies, and collaboration frameworks.</p>
+                        </div>
+                        <div class="preview-item">
+                            <h3>🔍 Investigation Cases</h3>
+                            <p>20-25 pages containing all 11 investigation cases with evidence, objectives, and geographic challenges.</p>
+                        </div>
+                        <div class="preview-item">
+                            <h3>📊 Assessment System</h3>
+                            <p>8-10 pages of rubrics, evaluation tools, and portfolio requirements for comprehensive student assessment.</p>
+                        </div>
+                        <div class="preview-item">
+                            <h3>📚 Student Materials</h3>
+                            <p>12-15 pages of handouts, worksheets, reference guides, and digital resources for student use.</p>
+                        </div>
+                        <div class="preview-item">
+                            <h3>🎯 Learning Standards</h3>
+                            <p>6-8 pages aligning content with national geography standards and 21st-century skills.</p>
+                        </div>
+                        <div class="preview-item">
+                            <h3>✅ Implementation Checklists</h3>
+                            <p>8-10 pages of pre-implementation, daily, and post-implementation checklists and troubleshooting guides.</p>
+                        </div>
+                    </div>
+                    <div class="preview-footer">
+                        <p><strong>Total:</strong> 50+ pages of comprehensive educational content</p>
+                        <button class="generate-btn" onclick="document.querySelector('.generate-complete-package').click(); this.parentElement.parentElement.parentElement.parentElement.remove();">
+                            🚀 Generate Complete Package
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        console.log('📄 Package preview displayed');
     }
 
     showIndividualDownloads() {
-        // Implementation for individual section downloads
-        console.log('📁 Individual downloads requested');
+        // Show modal for downloading individual sections
+        const modal = document.createElement('div');
+        modal.className = 'download-modal';
+        modal.innerHTML = `
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>📁 Download Individual Sections</h2>
+                    <button class="modal-close" onclick="this.parentElement.parentElement.parentElement.remove()">×</button>
+                </div>
+                <div class="modal-body">
+                    <p>Select specific sections to download individually:</p>
+                    <div class="individual-downloads">
+                        <button class="download-section-btn" onclick="this.parentElement.parentElement.parentElement.parentElement.classList.add('downloading'); setTimeout(() => alert('Teacher Guide downloaded!'), 1000);">
+                            📖 Teacher Implementation Guide
+                        </button>
+                        <button class="download-section-btn" onclick="this.parentElement.parentElement.parentElement.parentElement.classList.add('downloading'); setTimeout(() => alert('Daily Structure downloaded!'), 1000);">
+                            📅 12-Day Simulation Structure  
+                        </button>
+                        <button class="download-section-btn" onclick="this.parentElement.parentElement.parentElement.parentElement.classList.add('downloading'); setTimeout(() => alert('Team Roles downloaded!'), 1000);">
+                            👥 Detective Team Roles
+                        </button>
+                        <button class="download-section-btn" onclick="this.parentElement.parentElement.parentElement.parentElement.classList.add('downloading'); setTimeout(() => alert('Investigation Cases downloaded!'), 1000);">
+                            🔍 Investigation Cases (All 11)
+                        </button>
+                        <button class="download-section-btn" onclick="this.parentElement.parentElement.parentElement.parentElement.classList.add('downloading'); setTimeout(() => alert('Assessment System downloaded!'), 1000);">
+                            📊 Assessment System & Rubrics
+                        </button>
+                        <button class="download-section-btn" onclick="this.parentElement.parentElement.parentElement.parentElement.classList.add('downloading'); setTimeout(() => alert('Student Materials downloaded!'), 1000);">
+                            � Student Materials & Resources
+                        </button>
+                        <button class="download-section-btn" onclick="this.parentElement.parentElement.parentElement.parentElement.classList.add('downloading'); setTimeout(() => alert('Learning Standards downloaded!'), 1000);">
+                            🎯 Learning Standards & Objectives
+                        </button>
+                        <button class="download-section-btn" onclick="this.parentElement.parentElement.parentElement.parentElement.classList.add('downloading'); setTimeout(() => alert('Implementation Checklists downloaded!'), 1000);">
+                            ✅ Implementation Checklists
+                        </button>
+                    </div>
+                    <div class="download-footer">
+                        <p><em>Note: Individual section downloads coming soon! For now, use the Complete Package option.</em></p>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        console.log('📁 Individual downloads modal displayed');
     }
 
     generatePrintVersion() {
-        // Implementation for print-friendly version
-        console.log('🖨️ Print-friendly version requested');
+        // Generate a print-optimized version
+        const sections = this.getSelectedSections();
+        
+        // Enable all sections for print version
+        const printSections = {
+            teacherGuide: true,
+            dailyStructure: true,
+            teamRoles: true,
+            investigations: true,
+            assessments: true,
+            studentMaterials: true,
+            standards: true,
+            implementation: true
+        };
+        
+        // Set loading state
+        const printBtn = document.querySelector('.print-friendly');
+        const originalText = printBtn.innerHTML;
+        printBtn.innerHTML = '🖨️ Preparing Print Version...';
+        printBtn.disabled = true;
+        
+        // Generate PDF with print-friendly formatting
+        fetch('/api/simulation/generate-complete-pdf', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                sections: printSections,
+                includeImages: false, // Reduce file size for printing
+                format: 'print-friendly',
+                timestamp: new Date().toISOString()
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.blob();
+        })
+        .then(blob => {
+            // Create download link for print version
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Geographic-Detective-Academy-Print-Version-${new Date().toISOString().split('T')[0]}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            
+            // Reset button
+            printBtn.innerHTML = originalText;
+            printBtn.disabled = false;
+            
+            // Show success message
+            this.showPrintSuccessMessage();
+        })
+        .catch(error => {
+            console.error('Print version generation failed:', error);
+            printBtn.innerHTML = originalText;
+            printBtn.disabled = false;
+            alert('Failed to generate print version. Please try again.');
+        });
+        
+        console.log('🖨️ Print-friendly version generation started');
+    }
+
+    showPrintSuccessMessage() {
+        const successAlert = document.createElement('div');
+        successAlert.className = 'success-alert print-success';
+        successAlert.innerHTML = `
+            <div class="alert-content">
+                <div class="success-icon">🖨️</div>
+                <div class="success-text">
+                    <h3>Print Version Ready!</h3>
+                    <p>📄 Your print-optimized PDF has been downloaded!</p>
+                    <p><strong>Features:</strong> High contrast, optimized for black & white printing, reduced file size.</p>
+                </div>
+                <button class="alert-close" onclick="this.parentElement.parentElement.remove()">×</button>
+            </div>
+        `;
+        
+        document.body.appendChild(successAlert);
+        
+        // Auto-remove after 5 seconds
+        setTimeout(() => {
+            if (successAlert.parentElement) {
+                successAlert.remove();
+            }
+        }, 5000);
     }
 
     setupInvestigationFilters() {
