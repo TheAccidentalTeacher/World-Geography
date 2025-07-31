@@ -446,57 +446,819 @@ class SimulationInterface {
     }
 
     async loadInvestigationEvents() {
-        const response = await fetch(`${this.apiBase}/investigation-events`);
-        const data = await response.json();
-        
         const panel = document.getElementById('investigation-events');
         panel.innerHTML = `
-            <h2>⚠️ ${data.data.title}</h2>
-            <p class="subtitle">${data.data.description}</p>
+            <div class="investigation-header">
+                <h1>🕵️ Investigation Events Database</h1>
+                <p class="mission-statement">Progressive case studies designed to build geographic detective skills through authentic, engaging investigations</p>
+                <div class="academy-stats">
+                    <span class="stat">12 Investigation Cases</span>
+                    <span class="stat">60 Presentation Slides</span>
+                    <span class="stat">8 Module Integrations</span>
+                    <span class="stat">4 Detective Specializations</span>
+                </div>
+            </div>
             
-            <div class="cases-container">
-                ${data.data.cases.map(caseItem => `
-                    <div class="case-card ${caseItem.level.toLowerCase()}">
-                        <div class="case-header">
-                            <div class="case-title">
-                                <h3>${caseItem.title}</h3>
-                                <div class="case-badges">
-                                    <span class="badge level-${caseItem.level.toLowerCase()}">${caseItem.level}</span>
-                                    <span class="badge difficulty-${caseItem.difficulty.toLowerCase()}">${caseItem.difficulty}</span>
-                                </div>
-                            </div>
-                            <div class="time-required">${caseItem.timeRequired}</div>
+            <div class="event-filters">
+                <button class="filter-btn active" data-filter="all">All Cases (11)</button>
+                <button class="filter-btn" data-filter="orientation">Setup (1)</button>
+                <button class="filter-btn" data-filter="rookie">Rookie Level (2)</button>
+                <button class="filter-btn" data-filter="detective">Detective Level (1)</button>
+                <button class="filter-btn" data-filter="specialist">Specialist Level (6)</button>
+                <button class="filter-btn" data-filter="master">Master Level (2)</button>
+                <button class="filter-btn" data-filter="graduation">Graduation (1)</button>
+            </div>
+            
+            <div class="search-controls">
+                <input type="text" id="investigation-search" placeholder="🔍 Search cases by topic, skill, or module..." class="search-input">
+            </div>
+            
+            <div class="investigation-cases">
+                <!-- SETUP DAY -->
+                <div class="investigation-card setup-day" data-difficulty="orientation">
+                    <div class="case-header">
+                        <span class="case-number">DAY 0</span>
+                        <h3 class="case-title">Welcome to the Academy</h3>
+                        <div class="case-badges">
+                            <span class="difficulty-badge setup">ORIENTATION</span>
+                            <span class="duration-badge">45 MINUTES</span>
+                        </div>
+                    </div>
+                    
+                    <div class="case-summary">
+                        <p><strong>Mission:</strong> Transform rookie students into Geographic Detective Academy cadets through team formation, role assignment, and immersion into the International Geographic Bureau crisis.</p>
+                    </div>
+                    
+                    <div class="case-details">
+                        <div class="scenario-box">
+                            <h4>🎭 Investigation Scenario</h4>
+                            <p><strong>Setting:</strong> International Geographic Bureau Headquarters</p>
+                            <p><strong>Crisis:</strong> The world's most important geographic artifacts have been stolen by a master criminal organization</p>
+                            <p><strong>Urgency:</strong> Only newly recruited detective teams can solve this international crisis</p>
+                            <p><strong>Stakes:</strong> Global geographic knowledge security at risk</p>
                         </div>
                         
-                        <div class="case-content">
-                            <div class="scenario-section">
-                                <h4>📍 Investigation Scenario</h4>
-                                <div class="scenario-details">
-                                    <p><strong>Setting:</strong> ${caseItem.scenario.setting}</p>
-                                    <p><strong>Mystery:</strong> ${caseItem.scenario.mystery}</p>
-                                    <p><strong>Urgency:</strong> ${caseItem.scenario.urgency}</p>
-                                </div>
+                        <div class="objectives-grid">
+                            <div class="learning-objectives">
+                                <h4>🎯 Learning Objectives</h4>
+                                <ul>
+                                    <li>Understand simulation framework and collaborative procedures</li>
+                                    <li>Form balanced detective teams with specialized roles</li>
+                                    <li>Create character backgrounds and professional identities</li>
+                                    <li>Establish International Geographic Bureau immersion</li>
+                                </ul>
                             </div>
                             
-                            <div class="skills-section">
-                                <h4>🧠 Geographic Skills</h4>
-                                <div class="skills-list">
-                                    ${caseItem.geographicSkills.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
+                            <div class="geographic-skills">
+                                <h4>🗺️ Geographic Skills Foundation</h4>
+                                <ul>
+                                    <li>Introduction to geographic thinking and spatial analysis</li>
+                                    <li>Understanding geography's role in problem-solving</li>
+                                    <li>Recognition of five themes of geography</li>
+                                    <li>Geographic vocabulary and professional terminology</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="implementation-timeline">
+                            <h4>⏰ Implementation Timeline</h4>
+                            <div class="timeline-item">
+                                <span class="time">Minutes 1-10</span>
+                                <span class="activity">Welcome presentation and story introduction</span>
+                                <span class="slide-ref">Slides 1-3</span>
+                            </div>
+                            <div class="timeline-item">
+                                <span class="time">Minutes 11-20</span>
+                                <span class="activity">Team formation and role assignment</span>
+                                <span class="slide-ref">Slide 4</span>
+                            </div>
+                            <div class="timeline-item">
+                                <span class="time">Minutes 21-35</span>
+                                <span class="activity">Character creation and equipment distribution</span>
+                                <span class="slide-ref">Equipment cards</span>
+                            </div>
+                            <div class="timeline-item">
+                                <span class="time">Minutes 36-45</span>
+                                <span class="activity">Academy oath ceremony and team building</span>
+                                <span class="slide-ref">Slide 5</span>
+                            </div>
+                        </div>
+                        
+                        <div class="team-structure">
+                            <h4>👥 Detective Team Roles</h4>
+                            <div class="roles-grid">
+                                <div class="role-card">
+                                    <div class="role-icon">🗂️</div>
+                                    <h5>Evidence Manager</h5>
+                                    <p>Tracks clues, maintains chain of custody, organizes physical evidence and artifacts</p>
                                 </div>
+                                <div class="role-card">
+                                    <div class="role-icon">🗺️</div>
+                                    <h5>Geography Specialist</h5>
+                                    <p>Analyzes spatial data, interprets maps, provides coordinate system expertise</p>
+                                </div>
+                                <div class="role-card">
+                                    <div class="role-icon">💰</div>
+                                    <h5>Resource Tracker</h5>
+                                    <p>Manages investigation budget, equipment procurement, logistical planning</p>
+                                </div>
+                                <div class="role-card">
+                                    <div class="role-icon">📝</div>
+                                    <h5>Case Chronicler</h5>
+                                    <p>Documents investigation progress, maintains case journal, prepares reports</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="teacher-implementation">
+                            <h4>📖 Teacher Script Excerpts</h4>
+                            <div class="script-box">
+                                <p><em>"Good morning, detectives! Today you begin training at the most prestigious law enforcement academy in the world - the International Geographic Bureau's Detective Academy. You are about to learn that geography isn't just about memorizing capitals and rivers - it's about solving crimes, saving lives, and protecting global security."</em></p>
+                            </div>
+                        </div>
+                        
+                        <div class="assessment-focus">
+                            <h4>📊 Assessment Focus</h4>
+                            <ul>
+                                <li>Team formation dynamics and collaboration readiness</li>
+                                <li>Understanding of role responsibilities and expectations</li>
+                                <li>Engagement with geographic detective framework</li>
+                                <li>Communication and leadership emerging patterns</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- DAY 1: THE GREAT GLOBE HEIST -->
+                <div class="investigation-card day-1" data-difficulty="rookie">
+                    <div class="case-header">
+                        <span class="case-number">CASE #001</span>
+                        <h3 class="case-title">The Great Globe Heist</h3>
+                        <div class="case-badges">
+                            <span class="difficulty-badge rookie">ROOKIE LEVEL</span>
+                            <span class="duration-badge">15 MIN + MODULE 1</span>
+                            <span class="module-badge">GEOGRAPHER'S WORLD</span>
+                        </div>
+                    </div>
+                    
+                    <div class="case-summary">
+                        <p><strong>Mystery:</strong> The academy's prized 12-inch demonstration globe has vanished, containing hidden coordinates to a much larger treasure that threatens international security.</p>
+                    </div>
+                    
+                    <div class="case-details">
+                        <div class="scenario-box">
+                            <h4>🎭 Investigation Scenario</h4>
+                            <p><strong>Setting:</strong> Roosevelt Middle School Geography Laboratory, Room 204</p>
+                            <p><strong>Crime:</strong> Breaking and entering with theft of specialized geographic equipment</p>
+                            <p><strong>Evidence:</strong> Dust outline (12-inch diameter), fingerprints on metal stand, torn coordinate paper (40°N, 74°W), abandoned compass pointing northeast</p>
+                            <p><strong>Stakes:</strong> Globe contains encrypted coordinates to international treasure map network</p>
+                        </div>
+                        
+                        <div class="objectives-grid">
+                            <div class="learning-objectives">
+                                <h4>🎯 Learning Objectives</h4>
+                                <ul>
+                                    <li>Define geography and its role in criminal investigation</li>
+                                    <li>Distinguish between physical and human geographic evidence</li>
+                                    <li>Apply basic coordinate system knowledge to solve problems</li>
+                                    <li>Use fundamental geographic tools in authentic contexts</li>
+                                </ul>
                             </div>
                             
-                            <div class="evidence-section">
-                                <h4>🔍 Key Evidence</h4>
-                                <div class="evidence-grid">
-                                    ${caseItem.evidence.map(evidence => `
-                                        <div class="evidence-item">
-                                            <div class="evidence-description">${evidence.item}</div>
-                                            <div class="evidence-significance">${evidence.significance}</div>
-                                            <div class="geographic-clue"><strong>Geographic Clue:</strong> ${evidence.geographicClue}</div>
-                                        </div>
-                                    `).join('')}
+                            <div class="geographic-skills">
+                                <h4>🗺️ Geographic Skills Practiced</h4>
+                                <ul>
+                                    <li>Coordinate system interpretation (latitude/longitude)</li>
+                                    <li>Cardinal direction analysis and compass use</li>
+                                    <li>Physical vs. human geographic evidence classification</li>
+                                    <li>Basic map reading and spatial orientation</li>
+                                    <li>Geographic vocabulary application in professional context</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="evidence-analysis">
+                            <h4>🔍 Key Evidence Analysis</h4>
+                            <div class="evidence-grid">
+                                <div class="evidence-item">
+                                    <h5>Coordinate Fragment: 40°N, 74°W</h5>
+                                    <p>Geographic Specialist Analysis: Points to Statue of Liberty area, New York Harbor</p>
+                                    <p>Significance: Indicates thief's target location for treasure map recovery</p>
+                                </div>
+                                <div class="evidence-item">
+                                    <h5>Compass Direction: Northeast</h5>
+                                    <p>Physical Evidence: Shows escape route planning and geographic knowledge</p>
+                                    <p>Implication: Thief understands navigation and directional systems</p>
+                                </div>
+                                <div class="evidence-item">
+                                    <h5>Globe Specifications: 12-inch diameter</h5>
+                                    <p>Equipment Analysis: Specific size suggests targeted theft, not random</p>
+                                    <p>Context: Contains hidden information known only to geographic specialists</p>
                                 </div>
                             </div>
+                        </div>
+                        
+                        <div class="investigation-sequence">
+                            <h4>🔬 Investigation Sequence</h4>
+                            <div class="sequence-step">
+                                <span class="step-number">1</span>
+                                <div class="step-content">
+                                    <h5>Case Introduction (3 minutes) - Slide 6</h5>
+                                    <p>Present crime scene evidence and establish urgency of hidden coordinates</p>
+                                </div>
+                            </div>
+                            <div class="sequence-step">
+                                <span class="step-number">2</span>
+                                <div class="step-content">
+                                    <h5>Evidence Presentation (5 minutes) - Slides 7-8</h5>
+                                    <p>Evidence Manager records clues, Geography Specialist analyzes coordinates</p>
+                                </div>
+                            </div>
+                            <div class="sequence-step">
+                                <span class="step-number">3</span>
+                                <div class="step-content">
+                                    <h5>Team Investigation (5 minutes)</h5>
+                                    <p>Teams collaborate to analyze evidence and propose solution using $1,000 investigation credits</p>
+                                </div>
+                            </div>
+                            <div class="sequence-step">
+                                <span class="step-number">4</span>
+                                <div class="step-content">
+                                    <h5>Solution Reveal (2 minutes) - Slides 9-10</h5>
+                                    <p>Coordinate analysis leads to Statue of Liberty area treasure recovery</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="module-integration">
+                            <h4>📚 Module 1 Integration: A Geographer's World</h4>
+                            <div class="integration-connections">
+                                <div class="connection-item">
+                                    <h5>Geographic Tools Application</h5>
+                                    <p>Students experience authentic use of coordinates, compass directions, and spatial analysis in problem-solving context</p>
+                                </div>
+                                <div class="connection-item">
+                                    <h5>Five Themes of Geography</h5>
+                                    <p>Location (coordinates), Place (crime scene characteristics), Human-Environment Interaction (security measures), Movement (escape routes), Region (New York Harbor area)</p>
+                                </div>
+                                <div class="connection-item">
+                                    <h5>Geographic Thinking Skills</h5>
+                                    <p>Spatial analysis, pattern recognition, scale understanding, and geographic reasoning</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="case-outcome">
+                            <h4>🏆 Case Resolution & Skills Earned</h4>
+                            <div class="outcome-box success">
+                                <p><strong>Resolution:</strong> Detective teams successfully use coordinate analysis to locate the thief at the Statue of Liberty area, recovering both the stolen globe and preventing access to the hidden treasure map network.</p>
+                                <div class="skills-earned">
+                                    <h5>Skills Earned:</h5>
+                                    <span class="skill-badge">Coordinate Analysis</span>
+                                    <span class="skill-badge">Evidence Documentation</span>
+                                    <span class="skill-badge">Spatial Reasoning</span>
+                                    <span class="skill-badge">Team Investigation</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- DAY 2: MOUNTAINS OF MYSTERY -->
+                <div class="investigation-card day-2" data-difficulty="detective">
+                    <div class="case-header">
+                        <span class="case-number">CASE #002</span>
+                        <h3 class="case-title">Mountains of Mystery</h3>
+                        <div class="case-badges">
+                            <span class="difficulty-badge detective">DETECTIVE LEVEL</span>
+                            <span class="duration-badge">15 MIN + MODULE 2</span>
+                            <span class="module-badge">PHYSICAL WORLD</span>
+                        </div>
+                    </div>
+                    
+                    <div class="case-summary">
+                        <p><strong>Mystery:</strong> International Cartography Office break-in results in stolen elevation maps and topographic data. The thief has escaped into dangerous mountainous terrain requiring advanced physical geography analysis.</p>
+                    </div>
+                    
+                    <div class="case-details">
+                        <div class="scenario-box">
+                            <h4>🎭 Investigation Scenario</h4>
+                            <p><strong>Setting:</strong> International Cartography Office, Mountain Research Division</p>
+                            <p><strong>Crime:</strong> High-security break-in targeting elevation and topographic datasets</p>
+                            <p><strong>Evidence:</strong> Footprints at 2,847 feet elevation, avoidance of south-facing slopes, weather gear suited for specific conditions</p>
+                            <p><strong>Stakes:</strong> Stolen topographic data could compromise national security installations</p>
+                        </div>
+                        
+                        <div class="objectives-grid">
+                            <div class="learning-objectives">
+                                <h4>🎯 Learning Objectives</h4>
+                                <ul>
+                                    <li>Analyze physical geographic features as criminal evidence</li>
+                                    <li>Understand how landforms affect human movement and behavior</li>
+                                    <li>Use topographic maps for tracking and prediction</li>
+                                    <li>Apply climate and weather knowledge to solve problems</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="geographic-skills">
+                                <h4>🗺️ Geographic Skills Practiced</h4>
+                                <ul>
+                                    <li>Topographic map interpretation and elevation analysis</li>
+                                    <li>Landform identification and significance assessment</li>
+                                    <li>Climate pattern analysis and weather impact evaluation</li>
+                                    <li>Slope aspect and terrain navigation understanding</li>
+                                    <li>Physical geography vocabulary in professional context</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="evidence-analysis">
+                            <h4>🔍 Advanced Evidence Analysis</h4>
+                            <div class="evidence-grid">
+                                <div class="evidence-item complex">
+                                    <h5>Elevation Evidence: 2,847 feet precisely</h5>
+                                    <p>Geographic Analysis: Specific elevation suggests targeted knowledge of terrain features</p>
+                                    <p>Tactical Implication: Height provides surveillance advantage over approaches</p>
+                                    <p>Weather Factor: Elevation affects temperature, precipitation, and visibility</p>
+                                </div>
+                                <div class="evidence-item complex">
+                                    <h5>Slope Aspect: Avoided south-facing slopes</h5>
+                                    <p>Physical Geography: South-facing slopes receive more solar radiation</p>
+                                    <p>Behavioral Analysis: Suggests preference for cooler, shadier terrain</p>
+                                    <p>Season Consideration: Strategy varies by time of year and climate</p>
+                                </div>
+                                <div class="evidence-item complex">
+                                    <h5>Weather Pattern Correlation</h5>
+                                    <p>Meteorological Data: Recent precipitation and temperature records</p>
+                                    <p>Terrain Impact: How weather affects different slope aspects and elevations</p>
+                                    <p>Predictive Value: Weather patterns help predict future movement</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="investigation-sequence">
+                            <h4>🏔️ Physical Geography Investigation Sequence</h4>
+                            <div class="sequence-step">
+                                <span class="step-number">1</span>
+                                <div class="step-content">
+                                    <h5>Case Introduction (3 minutes) - Slide 11</h5>
+                                    <p>Present mountain crime scene with physical evidence requiring terrain analysis</p>
+                                </div>
+                            </div>
+                            <div class="sequence-step">
+                                <span class="step-number">2</span>
+                                <div class="step-content">
+                                    <h5>Physical Evidence Analysis (5 minutes) - Slides 12-13</h5>
+                                    <p>Geography Specialist analyzes elevation and slope data, Evidence Manager documents terrain clues</p>
+                                </div>
+                            </div>
+                            <div class="sequence-step">
+                                <span class="step-number">3</span>
+                                <div class="step-content">
+                                    <h5>Team Investigation (5 minutes)</h5>
+                                    <p>Collaborative terrain analysis using topographic maps and weather data</p>
+                                </div>
+                            </div>
+                            <div class="sequence-step">
+                                <span class="step-number">4</span>
+                                <div class="step-content">
+                                    <h5>Solution Reveal (2 minutes) - Slides 14-15</h5>
+                                    <p>Physical geography knowledge leads to suspect hideout in north-facing valley</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="module-integration">
+                            <h4>🌍 Module 2 Integration: The Physical World</h4>
+                            <div class="integration-connections">
+                                <div class="connection-item">
+                                    <h5>Landform Impact on Human Activity</h5>
+                                    <p>Students discover how elevation, slope, and terrain features influence criminal behavior and escape routes</p>
+                                </div>
+                                <div class="connection-item">
+                                    <h5>Climate and Weather Systems</h5>
+                                    <p>Real-world application of weather patterns, temperature gradients, and precipitation effects on human movement</p>
+                                </div>
+                                <div class="connection-item">
+                                    <h5>Physical Geography Processes</h5>
+                                    <p>Understanding of erosion, slope stability, and terrain formation impacts on accessibility and safety</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="case-outcome">
+                            <h4>🏆 Case Resolution & Advanced Skills</h4>
+                            <div class="outcome-box success">
+                                <p><strong>Resolution:</strong> Teams successfully predict suspect location using elevation analysis, slope aspect understanding, and weather pattern correlation, leading to capture in a north-facing valley hideout.</p>
+                                <div class="skills-earned">
+                                    <h5>Advanced Skills Earned:</h5>
+                                    <span class="skill-badge">Topographic Analysis</span>
+                                    <span class="skill-badge">Climate Investigation</span>
+                                    <span class="skill-badge">Terrain Navigation</span>
+                                    <span class="skill-badge">Weather Pattern Recognition</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- DAY 3: INTERNATIONAL HERITAGE HEIST -->
+                <div class="investigation-card day-3" data-difficulty="detective">
+                    <div class="case-header">
+                        <span class="case-number">CASE #003</span>
+                        <h3 class="case-title">International Heritage Heist</h3>
+                        <div class="case-badges">
+                            <span class="difficulty-badge detective">DETECTIVE LEVEL</span>
+                            <span class="duration-badge">15 MIN + MODULE 3</span>
+                            <span class="module-badge">HUMAN WORLD</span>
+                        </div>
+                    </div>
+                    
+                    <div class="case-summary">
+                        <p><strong>Mystery:</strong> The International Heritage Museum has been robbed, but the thief only took specific cultural treasures from particular regions, showing deep knowledge of cultural geography and global heritage patterns.</p>
+                    </div>
+                    
+                    <div class="case-details">
+                        <div class="scenario-box">
+                            <h4>🎭 Investigation Scenario</h4>
+                            <p><strong>Setting:</strong> International Heritage Museum, Cultural Geography Wing</p>
+                            <p><strong>Crime:</strong> Selective theft targeting cultural artifacts from major world civilizations</p>
+                            <p><strong>Evidence:</strong> Pattern of stolen items from river valley civilizations, coastal trading cities, and mountain fortress cultures</p>
+                            <p><strong>Stakes:</strong> Artifacts represent major cultural diffusion routes used for international heritage fraud</p>
+                        </div>
+                        
+                        <div class="objectives-grid">
+                            <div class="learning-objectives">
+                                <h4>🎯 Learning Objectives</h4>
+                                <ul>
+                                    <li>Analyze cultural geographic patterns in criminal evidence</li>
+                                    <li>Understand how human migration shapes cultural landscapes</li>
+                                    <li>Apply knowledge of cultural diffusion to solve problems</li>
+                                    <li>Demonstrate cultural sensitivity in international investigations</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="geographic-skills">
+                                <h4>🗺️ Geographic Skills Practiced</h4>
+                                <ul>
+                                    <li>Cultural landscape analysis and interpretation</li>
+                                    <li>Migration pattern recognition and mapping</li>
+                                    <li>Trade route identification and cultural exchange</li>
+                                    <li>Cultural diffusion and geographic spread understanding</li>
+                                    <li>Human geography vocabulary in investigative context</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="case-outcome">
+                            <h4>🏆 Case Resolution & Cultural Skills</h4>
+                            <div class="outcome-box success">
+                                <p><strong>Resolution:</strong> Teams identify cultural diffusion patterns linking stolen artifacts to ancient trade and migration routes, preventing an international heritage forgery network.</p>
+                                <div class="skills-earned">
+                                    <h5>Cultural Skills Earned:</h5>
+                                    <span class="skill-badge">Cultural Analysis</span>
+                                    <span class="skill-badge">Migration Tracking</span>
+                                    <span class="skill-badge">Trade Route Mapping</span>
+                                    <span class="skill-badge">Heritage Investigation</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- DAY 4: ECONOMIC ATLAS CONSPIRACY -->
+                <div class="investigation-card day-4" data-difficulty="specialist">
+                    <div class="case-header">
+                        <span class="case-number">CASE #004</span>
+                        <h3 class="case-title">Economic Atlas Conspiracy</h3>
+                        <div class="case-badges">
+                            <span class="difficulty-badge specialist">SPECIALIST LEVEL</span>
+                            <span class="duration-badge">15 MIN + MODULE 4</span>
+                            <span class="module-badge">ECONOMICS</span>
+                        </div>
+                    </div>
+                    
+                    <div class="case-summary">
+                        <p><strong>Mystery:</strong> Criminals have stolen economic maps showing global trade routes, resource distribution, and chokepoints, planning to disrupt supply chains for massive profit through economic espionage.</p>
+                    </div>
+                    
+                    <div class="case-details">
+                        <div class="scenario-box">
+                            <h4>🎭 Investigation Scenario</h4>
+                            <p><strong>Setting:</strong> Global Economic Research Institute</p>
+                            <p><strong>Crime:</strong> Theft of classified economic geographic data and trade route intelligence</p>
+                            <p><strong>Evidence:</strong> Maps of maritime chokepoints, energy routes, and agricultural trade corridors</p>
+                            <p><strong>Stakes:</strong> Global supply chain disruption could affect billions of dollars in international commerce</p>
+                        </div>
+                        
+                        <div class="case-outcome">
+                            <h4>🏆 Case Resolution & Economic Skills</h4>
+                            <div class="outcome-box success">
+                                <p><strong>Resolution:</strong> Economic geography analysis predicts targeting of Panama Canal, preventing major supply chain disruption affecting global trade.</p>
+                                <div class="skills-earned">
+                                    <h5>Economic Skills Earned:</h5>
+                                    <span class="skill-badge">Trade Analysis</span>
+                                    <span class="skill-badge">Resource Mapping</span>
+                                    <span class="skill-badge">Supply Chain Investigation</span>
+                                    <span class="skill-badge">Economic Geography</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- DAY 5: JURISDICTIONAL CHALLENGES -->
+                <div class="investigation-card day-5" data-difficulty="specialist">
+                    <div class="case-header">
+                        <span class="case-number">CASE #005</span>
+                        <h3 class="case-title">Jurisdictional Challenges</h3>
+                        <div class="case-badges">
+                            <span class="difficulty-badge specialist">SPECIALIST LEVEL</span>
+                            <span class="duration-badge">15 MIN + MODULE 5</span>
+                            <span class="module-badge">GOVERNMENT</span>
+                        </div>
+                    </div>
+                    
+                    <div class="case-summary">
+                        <p><strong>Mystery:</strong> International criminals are exploiting political geographic boundaries and jurisdiction gaps to move stolen artifacts across borders, requiring understanding of political geography and international law.</p>
+                    </div>
+                    
+                    <div class="case-details">
+                        <div class="scenario-box">
+                            <h4>🎭 Investigation Scenario</h4>
+                            <p><strong>Setting:</strong> International Border Region</p>
+                            <p><strong>Crime:</strong> Cross-border smuggling exploiting jurisdictional boundaries</p>
+                            <p><strong>Evidence:</strong> Border crossing patterns, diplomatic immunity claims, international treaty violations</p>
+                            <p><strong>Stakes:</strong> International cooperation needed to close jurisdiction gaps and prevent diplomatic incidents</p>
+                        </div>
+                        
+                        <div class="case-outcome">
+                            <h4>🏆 Case Resolution & Political Skills</h4>
+                            <div class="outcome-box success">
+                                <p><strong>Resolution:</strong> Understanding of political geography and international law enables cross-border cooperation to apprehend smuggling network.</p>
+                                <div class="skills-earned">
+                                    <h5>Political Skills Earned:</h5>
+                                    <span class="skill-badge">Border Analysis</span>
+                                    <span class="skill-badge">International Law</span>
+                                    <span class="skill-badge">Political Geography</span>
+                                    <span class="skill-badge">Diplomatic Investigation</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- DAY 6: ANCIENT MESOPOTAMIAN MYSTERY -->
+                <div class="investigation-card day-6" data-difficulty="specialist">
+                    <div class="case-header">
+                        <span class="case-number">CASE #006</span>
+                        <h3 class="case-title">Ancient Mesopotamian Mystery</h3>
+                        <div class="case-badges">
+                            <span class="difficulty-badge specialist">SPECIALIST LEVEL</span>
+                            <span class="duration-badge">15 MIN + MODULE 6</span>
+                            <span class="module-badge">FERTILE CRESCENT</span>
+                        </div>
+                    </div>
+                    
+                    <div class="case-summary">
+                        <p><strong>Mystery:</strong> Ancient cuneiform tablets and Mesopotamian maps have been stolen from archaeological sites, requiring knowledge of early civilizations and geographic factors that shaped human development.</p>
+                    </div>
+                    
+                    <div class="case-details">
+                        <div class="scenario-box">
+                            <h4>🎭 Investigation Scenario</h4>
+                            <p><strong>Setting:</strong> Archaeological excavation sites in Iraq</p>
+                            <p><strong>Crime:</strong> Theft of ancient artifacts showing early geographic knowledge</p>
+                            <p><strong>Evidence:</strong> Cuneiform tablets with early maps, irrigation system plans, trade route records</p>
+                            <p><strong>Stakes:</strong> Understanding humanity's first geographic innovations and urban planning concepts</p>
+                        </div>
+                        
+                        <div class="case-outcome">
+                            <h4>🏆 Case Resolution & Ancient Skills</h4>
+                            <div class="outcome-box success">
+                                <p><strong>Resolution:</strong> Knowledge of Mesopotamian geography and early civilization patterns leads to recovery of humanity's first geographic documents.</p>
+                                <div class="skills-earned">
+                                    <h5>Ancient Civilization Skills:</h5>
+                                    <span class="skill-badge">Archaeological Analysis</span>
+                                    <span class="skill-badge">Ancient Geography</span>
+                                    <span class="skill-badge">Civilization Mapping</span>
+                                    <span class="skill-badge">Historical Investigation</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- DAY 7: SILK ROAD SCRAMBLE -->
+                <div class="investigation-card day-7" data-difficulty="specialist">
+                    <div class="case-header">
+                        <span class="case-number">CASE #007</span>
+                        <h3 class="case-title">The Silk Road Scramble</h3>
+                        <div class="case-badges">
+                            <span class="difficulty-badge specialist">SPECIALIST LEVEL</span>
+                            <span class="duration-badge">15 MIN + MODULE 7</span>
+                            <span class="module-badge">CHINESE CIVILIZATIONS</span>
+                        </div>
+                    </div>
+                    
+                    <div class="case-summary">
+                        <p><strong>Mystery:</strong> Ancient Chinese navigation tools and Silk Road maps have been stolen, requiring understanding of Chinese geographic innovations and trade route development that connected East and West.</p>
+                    </div>
+                    
+                    <div class="case-details">
+                        <div class="scenario-box">
+                            <h4>🎭 Investigation Scenario</h4>
+                            <p><strong>Setting:</strong> Museum of Chinese Geographic History</p>
+                            <p><strong>Crime:</strong> Theft of Chinese compass technology and Silk Road documentation</p>
+                            <p><strong>Evidence:</strong> Ancient Chinese compasses, trade route scrolls, geographic innovation records</p>
+                            <p><strong>Stakes:</strong> Understanding how Chinese geographic knowledge revolutionized global navigation and trade</p>
+                        </div>
+                        
+                        <div class="case-outcome">
+                            <h4>🏆 Case Resolution & Chinese Geographic Skills</h4>
+                            <div class="outcome-box success">
+                                <p><strong>Resolution:</strong> Application of Chinese geographic innovations and Silk Road knowledge recovers stolen navigation technology and trade documentation.</p>
+                                <div class="skills-earned">
+                                    <h5>Chinese Civilization Skills:</h5>
+                                    <span class="skill-badge">Navigation History</span>
+                                    <span class="skill-badge">Trade Route Analysis</span>
+                                    <span class="skill-badge">Chinese Geography</span>
+                                    <span class="skill-badge">Innovation Investigation</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- DAY 8: SACRED GEOGRAPHY SCANDAL -->
+                <div class="investigation-card day-8" data-difficulty="specialist">
+                    <div class="case-header">
+                        <span class="case-number">CASE #008</span>
+                        <h3 class="case-title">Sacred Geography Scandal</h3>
+                        <div class="case-badges">
+                            <span class="difficulty-badge specialist">SPECIALIST LEVEL</span>
+                            <span class="duration-badge">15 MIN + MODULE 8</span>
+                            <span class="module-badge">INDIAN CIVILIZATIONS</span>
+                        </div>
+                    </div>
+                    
+                    <div class="case-summary">
+                        <p><strong>Mystery:</strong> Sacred geographic texts and religious site maps from Indian civilizations have been stolen, requiring understanding of how geography shapes religious practices and spiritual landscapes.</p>
+                    </div>
+                    
+                    <div class="case-details">
+                        <div class="scenario-box">
+                            <h4>🎭 Investigation Scenario</h4>
+                            <p><strong>Setting:</strong> Institute for Religious Geographic Studies</p>
+                            <p><strong>Crime:</strong> Theft of sacred site documentation and religious geography texts</p>
+                            <p><strong>Evidence:</strong> Pilgrimage route maps, monsoon pattern documents, sacred river system charts</p>
+                            <p><strong>Stakes:</strong> Understanding how geographic features influence spiritual practices and religious development</p>
+                        </div>
+                        
+                        <div class="case-outcome">
+                            <h4>🏆 Case Resolution & Religious Geographic Skills</h4>
+                            <div class="outcome-box success">
+                                <p><strong>Resolution:</strong> Knowledge of Indian geographic patterns and religious site relationships leads to recovery of sacred geographic documentation.</p>
+                                <div class="skills-earned">
+                                    <h5>Religious Geography Skills:</h5>
+                                    <span class="skill-badge">Sacred Site Analysis</span>
+                                    <span class="skill-badge">Monsoon Investigation</span>
+                                    <span class="skill-badge">Religious Geography</span>
+                                    <span class="skill-badge">Cultural Landscape Study</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- DAY 9: THE TECHNOLOGY TRAIL -->
+                <div class="investigation-card day-9" data-difficulty="master">
+                    <div class="case-header">
+                        <span class="case-number">CASE #009</span>
+                        <h3 class="case-title">The Technology Trail</h3>
+                        <div class="case-badges">
+                            <span class="difficulty-badge master">MASTER LEVEL</span>
+                            <span class="duration-badge">15 MIN + REVIEW</span>
+                            <span class="module-badge">ADVANCED TECH</span>
+                        </div>
+                    </div>
+                    
+                    <div class="case-summary">
+                        <p><strong>Mystery:</strong> All modern geographic technology including GPS units, satellite imagery, and GIS systems have been stolen. Teams must use traditional geographic skills to track down high-tech thieves.</p>
+                    </div>
+                    
+                    <div class="case-details">
+                        <div class="scenario-box">
+                            <h4>🎭 Investigation Scenario</h4>
+                            <p><strong>Setting:</strong> Geographic Technology Research Center</p>
+                            <p><strong>Crime:</strong> Complete theft of modern geographic technology infrastructure</p>
+                            <p><strong>Evidence:</strong> Must rely on traditional navigation, paper maps, and classical geographic techniques</p>
+                            <p><strong>Stakes:</strong> Prove that fundamental geographic knowledge transcends technology</p>
+                        </div>
+                        
+                        <div class="case-outcome">
+                            <h4>🏆 Case Resolution & Master Skills</h4>
+                            <div class="outcome-box success">
+                                <p><strong>Resolution:</strong> Synthesis of all previous geographic knowledge enables successful investigation using traditional methods, demonstrating mastery of geographic fundamentals.</p>
+                                <div class="skills-earned">
+                                    <h5>Master Skills Earned:</h5>
+                                    <span class="skill-badge">Traditional Navigation</span>
+                                    <span class="skill-badge">Geographic Synthesis</span>
+                                    <span class="skill-badge">Technology Integration</span>
+                                    <span class="skill-badge">Advanced Investigation</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- DAY 10: THE MASTER CRIMINAL -->
+                <div class="investigation-card day-10" data-difficulty="master">
+                    <div class="case-header">
+                        <span class="case-number">CASE #010</span>
+                        <h3 class="case-title">The Geographic Mastermind</h3>
+                        <div class="case-badges">
+                            <span class="difficulty-badge master">MASTER LEVEL</span>
+                            <span class="duration-badge">15 MIN + REVIEW</span>
+                            <span class="module-badge">FINAL CHALLENGE</span>
+                        </div>
+                    </div>
+                    
+                    <div class="case-summary">
+                        <p><strong>Mystery:</strong> The mastermind behind all thefts has been identified, but they're using advanced geographic knowledge to evade capture. Teams must apply everything they've learned to solve the ultimate case.</p>
+                    </div>
+                    
+                    <div class="case-details">
+                        <div class="scenario-box">
+                            <h4>🎭 Investigation Scenario</h4>
+                            <p><strong>Setting:</strong> Global pursuit across multiple continents</p>
+                            <p><strong>Crime:</strong> Mastermind using comprehensive geographic knowledge for evasion</p>
+                            <p><strong>Evidence:</strong> Requires integration of all previous cases and geographic concepts</p>
+                            <p><strong>Stakes:</strong> Final test of complete geographic detective mastery</p>
+                        </div>
+                        
+                        <div class="case-outcome">
+                            <h4>🏆 Case Resolution & Ultimate Mastery</h4>
+                            <div class="outcome-box success">
+                                <p><strong>Resolution:</strong> Comprehensive application of all geographic knowledge and detective skills leads to capture of the mastermind and recovery of all stolen artifacts.</p>
+                                <div class="skills-earned">
+                                    <h5>Ultimate Mastery Achieved:</h5>
+                                    <span class="skill-badge">Geographic Mastery</span>
+                                    <span class="skill-badge">Comprehensive Analysis</span>
+                                    <span class="skill-badge">International Investigation</span>
+                                    <span class="skill-badge">Detective Excellence</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- DAY 11: ACADEMY GRADUATION -->
+                <div class="investigation-card day-11" data-difficulty="master">
+                    <div class="case-header">
+                        <span class="case-number">DAY 11</span>
+                        <h3 class="case-title">Academy Graduation</h3>
+                        <div class="case-badges">
+                            <span class="difficulty-badge master">GRADUATION</span>
+                            <span class="duration-badge">45 MINUTES</span>
+                            <span class="module-badge">CELEBRATION</span>
+                        </div>
+                    </div>
+                    
+                    <div class="case-summary">
+                        <p><strong>Mission:</strong> Formal recognition and celebration of detective achievements, case presentations, badge awards, and preparation for advanced geographic challenges ahead.</p>
+                    </div>
+                    
+                    <div class="case-details">
+                        <div class="scenario-box">
+                            <h4>🎭 Graduation Ceremony</h4>
+                            <p><strong>Setting:</strong> International Geographic Bureau Academy Auditorium</p>
+                            <p><strong>Activities:</strong> Final case presentations, portfolio reviews, badge ceremony</p>
+                            <p><strong>Recognition:</strong> Individual and team achievements in geographic detective work</p>
+                            <p><strong>Future:</strong> Preview of advanced international investigations and specializations</p>
+                        </div>
+                        
+                        <div class="case-outcome">
+                            <h4>🏆 Academy Graduation Achievement</h4>
+                            <div class="outcome-box success">
+                                <p><strong>Achievement:</strong> Successful completion of Geographic Detective Academy training with comprehensive mastery of geographic investigation techniques and readiness for advanced international cases.</p>
+                                <div class="skills-earned">
+                                    <h5>Graduate Detective Certification:</h5>
+                                    <span class="skill-badge">Certified Geographic Detective</span>
+                                    <span class="skill-badge">International Investigator</span>
+                                    <span class="skill-badge">Geographic Specialist</span>
+                                    <span class="skill-badge">Academy Graduate</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Add filter functionality
+        this.setupInvestigationFilters();
+    }
                             
                             <div class="solution-preview">
                                 <h4>🎯 Investigation Approach</h4>
@@ -848,6 +1610,74 @@ class SimulationInterface {
                 </div>
             </div>
         `;
+    }
+
+    setupInvestigationFilters() {
+        // Enhanced filter functionality for all 11 investigation cases
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const investigationCards = document.querySelectorAll('.investigation-card');
+        const searchInput = document.getElementById('investigation-search');
+        
+        // Filter by difficulty level
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remove active class from all buttons
+                filterBtns.forEach(b => b.classList.remove('active'));
+                // Add active class to clicked button
+                btn.classList.add('active');
+                
+                const filter = btn.dataset.filter;
+                
+                investigationCards.forEach(card => {
+                    if (filter === 'all') {
+                        card.style.display = 'block';
+                    } else {
+                        const difficulty = card.dataset.difficulty;
+                        const isGraduation = filter === 'graduation' && card.classList.contains('day-11');
+                        const isMatch = difficulty === filter || isGraduation;
+                        card.style.display = isMatch ? 'block' : 'none';
+                    }
+                });
+            });
+        });
+        
+        // Search functionality
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                
+                investigationCards.forEach(card => {
+                    const cardText = card.textContent.toLowerCase();
+                    const isVisible = cardText.includes(searchTerm);
+                    card.style.display = isVisible ? 'block' : 'none';
+                });
+                
+                // Reset filter buttons when searching
+                if (searchTerm) {
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                }
+            });
+        }
+        
+        // Add toggle functionality for case details
+        investigationCards.forEach(card => {
+            const header = card.querySelector('.case-header');
+            const details = card.querySelector('.case-details');
+            
+            if (header && details) {
+                header.addEventListener('click', () => {
+                    const isExpanded = details.style.display === 'block';
+                    details.style.display = isExpanded ? 'none' : 'block';
+                    header.style.cursor = 'pointer';
+                    
+                    // Add visual feedback
+                    card.classList.toggle('expanded', !isExpanded);
+                });
+                
+                // Initially hide details for cleaner view
+                details.style.display = 'none';
+            }
+        });
     }
 
     showError(panelId, error) {
