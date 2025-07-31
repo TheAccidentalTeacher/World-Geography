@@ -1,6 +1,8 @@
 /**
  * Geographic Detective Academy Simulation System
- * Based on            icon: '📋',the extracted framework from Oregon Trail simulation materials
+ * Based o            appeal: 'Your words become the official record that cracks the case and shares the victory with the world!',
+            icon: '📋',
+            imagePrompt: "A detail-oriented student detective with a digital tablet and smart pen, surrounded by floating case files, investigation reports, and timeline displays. They're documenting discoveries with geographic evidence photos and notes appearing as holographic displays."he extracted framework from Oregon Trail simulation materials
  */
 
 const express = require('express');
@@ -44,7 +46,7 @@ const simulationFramework = {
             skills: ['Map reading', 'Cultural awareness', 'Environmental analysis', 'Geographic reasoning'],
             appeal: 'You become the ultimate world explorer without leaving your seat—and everyone relies on YOUR expertise!',
             icon: '🌍',
-            imagePrompt: 'A young geographic expert student standing confidently in front of a massive interactive world globe, with holographic regional displays floating around them. They\'re pointing at different continents while geographic data streams flow in the background.'
+            imagePrompt: "A young geographic expert student standing confidently in front of a massive interactive world globe, with holographic regional displays floating around them. They're pointing at different continents while geographic data streams flow in the background."
         },
         {
             id: 'resource-tracker',
