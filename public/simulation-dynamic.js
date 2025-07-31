@@ -1470,73 +1470,429 @@ class SimulationInterface {
     }
 
     async loadAssessments() {
-        const response = await fetch(`${this.apiBase}/assessments`);
-        const data = await response.json();
-        
         const panel = document.getElementById('assessments');
         panel.innerHTML = `
-            <h2>📊 ${data.data.title}</h2>
-            <p class="subtitle">${data.data.description}</p>
-            
-            <div class="assessment-section">
-                <h3>📝 Formative Assessments</h3>
-                <div class="assessment-grid">
-                    ${data.data.formativeAssessments.map(assessment => `
-                        <div class="assessment-card">
-                            <h4>${assessment.type}</h4>
-                            <div class="frequency">Frequency: ${assessment.frequency}</div>
-                            <div class="components">
-                                ${assessment.components.map(component => `
-                                    <div class="component-item">
-                                        <h5>${component.skill}</h5>
-                                        <div class="rubric-levels">
-                                            <div class="level developing">
-                                                <strong>Developing:</strong> ${component.levels.developing}
-                                            </div>
-                                            <div class="level proficient">
-                                                <strong>Proficient:</strong> ${component.levels.proficient}
-                                            </div>
-                                            <div class="level advanced">
-                                                <strong>Advanced:</strong> ${component.levels.advanced}
-                                            </div>
-                                        </div>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    `).join('')}
+            <div class="assessment-header">
+                <h1>📊 Geographic Detective Academy Assessment System</h1>
+                <p class="mission-statement">Comprehensive evaluation framework designed to measure geographic detective skills through authentic, performance-based assessments</p>
+                <div class="assessment-stats">
+                    <span class="stat">3 Assessment Types</span>
+                    <span class="stat">4-Point Rubric Scale</span>
+                    <span class="stat">12 Daily Evaluations</span>
+                    <span class="stat">Portfolio-Based Evidence</span>
                 </div>
             </div>
             
-            <div class="assessment-section">
-                <h3>🎯 Summative Assessments</h3>
-                <div class="summative-grid">
-                    ${data.data.summativeAssessments.map(assessment => `
-                        <div class="summative-card">
-                            <h4>${assessment.type}</h4>
-                            <p class="assessment-description">${assessment.description}</p>
-                            <div class="assessment-components">
-                                <h5>Assessment Components:</h5>
-                                <ul>
-                                    ${assessment.components.map(component => `<li>${component}</li>`).join('')}
-                                </ul>
+            <div class="assessment-filters">
+                <button class="assessment-filter-btn active" data-filter="all">All Assessments</button>
+                <button class="assessment-filter-btn" data-filter="daily">Daily Formative</button>
+                <button class="assessment-filter-btn" data-filter="project">Project-Based</button>
+                <button class="assessment-filter-btn" data-filter="portfolio">Portfolio Assessment</button>
+                <button class="assessment-filter-btn" data-filter="rubrics">Rubrics & Criteria</button>
+            </div>
+            
+            <div class="assessment-content">
+                <!-- DAILY FORMATIVE ASSESSMENTS -->
+                <div class="assessment-section" data-type="daily">
+                    <div class="section-header">
+                        <h2>📝 Daily Formative Assessments</h2>
+                        <p class="section-subtitle">Continuous evaluation during each investigation case</p>
+                    </div>
+                    
+                    <div class="daily-assessment-grid">
+                        <div class="assessment-card formative">
+                            <div class="assessment-card-header">
+                                <h3>🗺️ Geographic Tool Usage</h3>
+                                <span class="frequency-badge">Every Investigation</span>
                             </div>
-                            <div class="rubric-criteria">
-                                <h5>Evaluation Criteria:</h5>
-                                <div class="criteria-grid">
-                                    ${Object.entries(assessment.rubric).map(([criterion, description]) => `
-                                        <div class="criterion-item">
-                                            <strong>${criterion.replace(/_/g, ' ').toUpperCase()}:</strong>
-                                            <p>${description}</p>
+                            <div class="assessment-details">
+                                <div class="skill-progression">
+                                    <h4>Skill Progression Rubric</h4>
+                                    <div class="rubric-levels">
+                                        <div class="rubric-level developing">
+                                            <h5>1 - Developing</h5>
+                                            <p>Uses basic geographic tools with significant guidance and support. Requires step-by-step instruction for coordinate reading, map orientation, and tool selection.</p>
                                         </div>
-                                    `).join('')}
+                                        <div class="rubric-level approaching">
+                                            <h5>2 - Approaching Proficiency</h5>
+                                            <p>Uses geographic tools with minimal guidance. Demonstrates understanding of basic functions but may need assistance with complex applications.</p>
+                                        </div>
+                                        <div class="rubric-level proficient">
+                                            <h5>3 - Proficient</h5>
+                                            <p>Uses geographic tools accurately and independently. Makes appropriate tool selections and applies them effectively to solve investigation problems.</p>
+                                        </div>
+                                        <div class="rubric-level advanced">
+                                            <h5>4 - Advanced</h5>
+                                            <p>Uses geographic tools creatively and innovatively. Combines multiple tools strategically and explains their applications to complex geographic challenges.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="evidence-indicators">
+                                    <h4>Observable Evidence</h4>
+                                    <ul>
+                                        <li>Accurate coordinate system interpretation</li>
+                                        <li>Appropriate map scale selection and use</li>
+                                        <li>Effective compass and directional analysis</li>
+                                        <li>Strategic tool combination for problem-solving</li>
+                                    </ul>
                                 </div>
                             </div>
                         </div>
-                    `).join('')}
+                        
+                        <div class="assessment-card formative">
+                            <div class="assessment-card-header">
+                                <h3>🔍 Evidence Analysis Skills</h3>
+                                <span class="frequency-badge">Every Investigation</span>
+                            </div>
+                            <div class="assessment-details">
+                                <div class="skill-progression">
+                                    <h4>Analytical Thinking Rubric</h4>
+                                    <div class="rubric-levels">
+                                        <div class="rubric-level developing">
+                                            <h5>1 - Developing</h5>
+                                            <p>Identifies basic evidence with support. Requires guidance to make geographic connections and analyze spatial relationships.</p>
+                                        </div>
+                                        <div class="rubric-level approaching">
+                                            <h5>2 - Approaching Proficiency</h5>
+                                            <p>Analyzes evidence and makes geographic connections with minimal guidance. Shows understanding of spatial relationships.</p>
+                                        </div>
+                                        <div class="rubric-level proficient">
+                                            <h5>3 - Proficient</h5>
+                                            <p>Synthesizes multiple evidence sources to reach logical geographic conclusions. Demonstrates clear analytical reasoning.</p>
+                                        </div>
+                                        <div class="rubric-level advanced">
+                                            <h5>4 - Advanced</h5>
+                                            <p>Evaluates evidence critically and draws sophisticated geographic inferences. Identifies patterns and makes predictive analyses.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="evidence-indicators">
+                                    <h4>Observable Evidence</h4>
+                                    <ul>
+                                        <li>Systematic evidence organization and documentation</li>
+                                        <li>Geographic pattern recognition and analysis</li>
+                                        <li>Logical reasoning progression from evidence to conclusion</li>
+                                        <li>Integration of multiple geographic concepts</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="assessment-card formative">
+                            <div class="assessment-card-header">
+                                <h3>👥 Team Collaboration</h3>
+                                <span class="frequency-badge">Every Investigation</span>
+                            </div>
+                            <div class="assessment-details">
+                                <div class="skill-progression">
+                                    <h4>Collaboration Excellence Rubric</h4>
+                                    <div class="rubric-levels">
+                                        <div class="rubric-level developing">
+                                            <h5>1 - Developing</h5>
+                                            <p>Participates in team activities with encouragement. Beginning to understand role responsibilities and team dynamics.</p>
+                                        </div>
+                                        <div class="rubric-level approaching">
+                                            <h5>2 - Approaching Proficiency</h5>
+                                            <p>Actively contributes to team success. Demonstrates understanding of role specialization and collaborative problem-solving.</p>
+                                        </div>
+                                        <div class="rubric-level proficient">
+                                            <h5>3 - Proficient</h5>
+                                            <p>Leads team problem-solving and supports others' learning. Effectively balances individual expertise with team goals.</p>
+                                        </div>
+                                        <div class="rubric-level advanced">
+                                            <h5>4 - Advanced</h5>
+                                            <p>Facilitates exceptional team performance and mentors peers. Demonstrates leadership and elevates entire team capability.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="evidence-indicators">
+                                    <h4>Observable Evidence</h4>
+                                    <ul>
+                                        <li>Effective role-based contribution and expertise sharing</li>
+                                        <li>Constructive communication and active listening</li>
+                                        <li>Conflict resolution and consensus building</li>
+                                        <li>Peer support and collaborative problem-solving</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- PROJECT-BASED ASSESSMENTS -->
+                <div class="assessment-section" data-type="project">
+                    <div class="section-header">
+                        <h2>🎯 Project-Based Assessments</h2>
+                        <p class="section-subtitle">Comprehensive evaluation through multi-day investigation projects</p>
+                    </div>
+                    
+                    <div class="project-assessment-grid">
+                        <div class="assessment-card project-based">
+                            <div class="assessment-card-header">
+                                <h3>🕵️ Master Detective Case</h3>
+                                <span class="duration-badge">Days 9-10</span>
+                            </div>
+                            <div class="assessment-details">
+                                <div class="project-overview">
+                                    <p><strong>Comprehensive Final Investigation:</strong> Students integrate all learned geographic detective skills to solve a complex, multi-faceted case requiring synthesis of physical geography, human geography, and advanced analytical techniques.</p>
+                                </div>
+                                <div class="assessment-components">
+                                    <h4>Assessment Components</h4>
+                                    <div class="components-grid">
+                                        <div class="component-item">
+                                            <h5>🔍 Independent Evidence Analysis</h5>
+                                            <p>Students demonstrate mastery of evidence collection, organization, and geographic interpretation without guidance.</p>
+                                            <span class="weight">Weight: 25%</span>
+                                        </div>
+                                        <div class="component-item">
+                                            <h5>🧠 Geographic Concept Application</h5>
+                                            <p>Integration and explanation of geographic concepts learned throughout the academy training program.</p>
+                                            <span class="weight">Weight: 25%</span>
+                                        </div>
+                                        <div class="component-item">
+                                            <h5>👥 Team Leadership & Collaboration</h5>
+                                            <p>Demonstration of advanced teamwork skills, leadership capabilities, and peer mentoring during complex investigations.</p>
+                                            <span class="weight">Weight: 25%</span>
+                                        </div>
+                                        <div class="component-item">
+                                            <h5>📊 Professional Presentation</h5>
+                                            <p>Clear, organized presentation of findings using appropriate geographic vocabulary and visual evidence.</p>
+                                            <span class="weight">Weight: 25%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="evaluation-criteria">
+                                    <h4>Evaluation Criteria</h4>
+                                    <div class="criteria-breakdown">
+                                        <div class="criterion">
+                                            <h5>GEOGRAPHIC KNOWLEDGE (4 points)</h5>
+                                            <p>Demonstrates mastery of coordinate systems, map reading, physical and human geography concepts, and their practical applications in problem-solving contexts.</p>
+                                        </div>
+                                        <div class="criterion">
+                                            <h5>PROBLEM SOLVING (4 points)</h5>
+                                            <p>Uses systematic investigation methods, logical reasoning progression, and creative thinking to reach well-supported conclusions.</p>
+                                        </div>
+                                        <div class="criterion">
+                                            <h5>COMMUNICATION (4 points)</h5>
+                                            <p>Presents findings clearly with appropriate geographic vocabulary, visual aids, and professional presentation skills.</p>
+                                        </div>
+                                        <div class="criterion">
+                                            <h5>REAL WORLD APPLICATION (4 points)</h5>
+                                            <p>Connects case solutions to authentic geographic challenges and demonstrates understanding of geography's role in addressing global issues.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- PORTFOLIO ASSESSMENT -->
+                <div class="assessment-section" data-type="portfolio">
+                    <div class="section-header">
+                        <h2>📁 Portfolio Assessment</h2>
+                        <p class="section-subtitle">Cumulative evidence collection demonstrating growth and mastery</p>
+                    </div>
+                    
+                    <div class="portfolio-structure">
+                        <div class="portfolio-section">
+                            <div class="portfolio-header">
+                                <h3>📋 Detective Academy Portfolio Components</h3>
+                                <p>Students maintain a comprehensive portfolio demonstrating their journey from rookie to master detective</p>
+                            </div>
+                            
+                            <div class="portfolio-requirements">
+                                <div class="portfolio-item">
+                                    <div class="item-header">
+                                        <h4>🗂️ Case Investigation Logs</h4>
+                                        <span class="required-badge">Required: All 11 Cases</span>
+                                    </div>
+                                    <div class="item-details">
+                                        <p><strong>Purpose:</strong> Document investigation process, evidence analysis, and learning progression throughout the academy</p>
+                                        <div class="requirements-list">
+                                            <h5>Must Include:</h5>
+                                            <ul>
+                                                <li>Initial evidence documentation and organization</li>
+                                                <li>Geographic analysis and reasoning process</li>
+                                                <li>Team collaboration notes and role contributions</li>
+                                                <li>Solution development and final conclusions</li>
+                                                <li>Reflection on geographic skills learned and applied</li>
+                                            </ul>
+                                        </div>
+                                        <div class="quality-indicators">
+                                            <h5>Quality Indicators:</h5>
+                                            <ul>
+                                                <li>Detailed, organized evidence documentation</li>
+                                                <li>Clear geographic reasoning and analysis</li>
+                                                <li>Evidence of skill progression over time</li>
+                                                <li>Thoughtful reflection and self-assessment</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="portfolio-item">
+                                    <div class="item-header">
+                                        <h4>🗺️ Geographic Skills Artifacts</h4>
+                                        <span class="required-badge">Required: 8 Artifacts</span>
+                                    </div>
+                                    <div class="item-details">
+                                        <p><strong>Purpose:</strong> Demonstrate mastery of specific geographic tools, concepts, and applications</p>
+                                        <div class="artifact-types">
+                                            <h5>Artifact Categories:</h5>
+                                            <div class="artifact-grid">
+                                                <div class="artifact-type">
+                                                    <h6>📍 Coordinate Mastery</h6>
+                                                    <p>Evidence of advanced coordinate system use and spatial analysis</p>
+                                                </div>
+                                                <div class="artifact-type">
+                                                    <h6>🏔️ Physical Geography Analysis</h6>
+                                                    <p>Topographic interpretation and landform impact assessment</p>
+                                                </div>
+                                                <div class="artifact-type">
+                                                    <h6>🏛️ Human Geography Connections</h6>
+                                                    <p>Cultural, economic, and political geography applications</p>
+                                                </div>
+                                                <div class="artifact-type">
+                                                    <h6>🔗 Geographic Relationships</h6>
+                                                    <p>Demonstration of complex geographic pattern recognition</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="portfolio-item">
+                                    <div class="item-header">
+                                        <h4>🎓 Detective Academy Reflection</h4>
+                                        <span class="required-badge">Required: Final Reflection</span>
+                                    </div>
+                                    <div class="item-details">
+                                        <p><strong>Purpose:</strong> Synthesize learning experience and demonstrate metacognitive understanding of geographic skill development</p>
+                                        <div class="reflection-components">
+                                            <h5>Reflection Components:</h5>
+                                            <ul>
+                                                <li>Personal growth analysis from rookie to master detective</li>
+                                                <li>Most challenging investigations and problem-solving strategies</li>
+                                                <li>Geographic concepts that changed their worldview</li>
+                                                <li>Real-world applications and career connections</li>
+                                                <li>Future learning goals and geographic interests</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- RUBRICS AND CRITERIA -->
+                <div class="assessment-section" data-type="rubrics">
+                    <div class="section-header">
+                        <h2>📏 Assessment Rubrics & Criteria</h2>
+                        <p class="section-subtitle">Detailed evaluation standards and performance expectations</p>
+                    </div>
+                    
+                    <div class="rubrics-container">
+                        <div class="master-rubric">
+                            <div class="rubric-header">
+                                <h3>🏆 Master Detective Academy Rubric</h3>
+                                <p>Comprehensive 4-point scale for evaluating all geographic detective skills</p>
+                            </div>
+                            
+                            <div class="rubric-table">
+                                <div class="rubric-row header-row">
+                                    <div class="rubric-cell skill-category">Skill Category</div>
+                                    <div class="rubric-cell level-1">1 - Developing</div>
+                                    <div class="rubric-cell level-2">2 - Approaching</div>
+                                    <div class="rubric-cell level-3">3 - Proficient</div>
+                                    <div class="rubric-cell level-4">4 - Advanced</div>
+                                </div>
+                                
+                                <div class="rubric-row">
+                                    <div class="rubric-cell skill-category">
+                                        <h4>🗺️ Geographic Tool Mastery</h4>
+                                        <p>Use of maps, coordinates, and spatial analysis tools</p>
+                                    </div>
+                                    <div class="rubric-cell level-1">
+                                        Uses basic tools with significant guidance. Requires step-by-step instruction for most geographic applications.
+                                    </div>
+                                    <div class="rubric-cell level-2">
+                                        Uses tools with minimal guidance. Shows understanding but needs support for complex applications.
+                                    </div>
+                                    <div class="rubric-cell level-3">
+                                        Uses tools accurately and independently. Makes appropriate selections and applies effectively.
+                                    </div>
+                                    <div class="rubric-cell level-4">
+                                        Uses tools creatively and strategically. Combines multiple tools innovatively and explains applications.
+                                    </div>
+                                </div>
+                                
+                                <div class="rubric-row">
+                                    <div class="rubric-cell skill-category">
+                                        <h4>🧠 Geographic Thinking</h4>
+                                        <p>Spatial reasoning and geographic concept application</p>
+                                    </div>
+                                    <div class="rubric-cell level-1">
+                                        Identifies basic geographic features. Limited understanding of spatial relationships and patterns.
+                                    </div>
+                                    <div class="rubric-cell level-2">
+                                        Recognizes geographic patterns with guidance. Beginning to make spatial connections and relationships.
+                                    </div>
+                                    <div class="rubric-cell level-3">
+                                        Analyzes geographic patterns independently. Demonstrates clear understanding of spatial relationships.
+                                    </div>
+                                    <div class="rubric-cell level-4">
+                                        Synthesizes complex geographic relationships. Makes sophisticated spatial analyses and predictions.
+                                    </div>
+                                </div>
+                                
+                                <div class="rubric-row">
+                                    <div class="rubric-cell skill-category">
+                                        <h4>🔍 Investigation Process</h4>
+                                        <p>Evidence analysis and problem-solving methodology</p>
+                                    </div>
+                                    <div class="rubric-cell level-1">
+                                        Follows basic investigation steps with support. Limited evidence analysis and simple conclusions.
+                                    </div>
+                                    <div class="rubric-cell level-2">
+                                        Conducts investigations with minimal guidance. Analyzes evidence and draws logical conclusions.
+                                    </div>
+                                    <div class="rubric-cell level-3">
+                                        Uses systematic investigation methods independently. Synthesizes multiple evidence sources effectively.
+                                    </div>
+                                    <div class="rubric-cell level-4">
+                                        Demonstrates sophisticated investigation techniques. Evaluates evidence critically and makes predictive analyses.
+                                    </div>
+                                </div>
+                                
+                                <div class="rubric-row">
+                                    <div class="rubric-cell skill-category">
+                                        <h4>💬 Communication</h4>
+                                        <p>Geographic vocabulary and presentation of findings</p>
+                                    </div>
+                                    <div class="rubric-cell level-1">
+                                        Uses basic geographic vocabulary. Simple presentation of findings with limited organization.
+                                    </div>
+                                    <div class="rubric-cell level-2">
+                                        Uses appropriate geographic terms. Organized presentation with clear main ideas.
+                                    </div>
+                                    <div class="rubric-cell level-3">
+                                        Uses precise geographic vocabulary. Professional presentation with logical organization and supporting evidence.
+                                    </div>
+                                    <div class="rubric-cell level-4">
+                                        Uses sophisticated geographic language. Compelling presentation with expert organization and persuasive evidence.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         `;
+        
+        // Add assessment filtering functionality
+        this.setupAssessmentFilters();
     }
 
     async loadTeacherGuide() {
@@ -1657,6 +2013,53 @@ class SimulationInterface {
         investigationCards.forEach(card => {
             const header = card.querySelector('.case-header');
             const details = card.querySelector('.case-details');
+            
+            if (header && details) {
+                header.addEventListener('click', () => {
+                    const isExpanded = details.style.display === 'block';
+                    details.style.display = isExpanded ? 'none' : 'block';
+                    header.style.cursor = 'pointer';
+                    
+                    // Add visual feedback
+                    card.classList.toggle('expanded', !isExpanded);
+                });
+                
+                // Initially hide details for cleaner view
+                details.style.display = 'none';
+            }
+        });
+    }
+
+    setupAssessmentFilters() {
+        // Enhanced filter functionality for assessment sections
+        const filterBtns = document.querySelectorAll('.assessment-filter-btn');
+        const assessmentSections = document.querySelectorAll('.assessment-section');
+        
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remove active class from all buttons
+                filterBtns.forEach(b => b.classList.remove('active'));
+                // Add active class to clicked button
+                btn.classList.add('active');
+                
+                const filter = btn.dataset.filter;
+                
+                assessmentSections.forEach(section => {
+                    if (filter === 'all') {
+                        section.style.display = 'block';
+                    } else {
+                        const sectionType = section.dataset.type;
+                        section.style.display = sectionType === filter ? 'block' : 'none';
+                    }
+                });
+            });
+        });
+        
+        // Add expandable functionality for assessment cards
+        const assessmentCards = document.querySelectorAll('.assessment-card, .summative-card, .portfolio-item');
+        assessmentCards.forEach(card => {
+            const header = card.querySelector('.assessment-card-header, .item-header');
+            const details = card.querySelector('.assessment-details, .item-details');
             
             if (header && details) {
                 header.addEventListener('click', () => {

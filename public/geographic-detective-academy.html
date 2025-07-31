@@ -1370,6 +1370,549 @@
             color: #333;
             font-weight: bold;
         }
+        
+        /* COMPREHENSIVE ASSESSMENT SYSTEM STYLING */
+        .assessment-header {
+            text-align: center;
+            background: linear-gradient(135deg, #1a237e, #3949ab);
+            color: white;
+            padding: 3rem 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+        }
+        
+        .assessment-header h1 {
+            margin: 0 0 1rem 0;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .assessment-header .mission-statement {
+            font-size: 1.2rem;
+            margin: 0 0 2rem 0;
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+        
+        .assessment-stats {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .assessment-stats .stat {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+        }
+        
+        .assessment-filters {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+        
+        .assessment-filter-btn {
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .assessment-filter-btn:hover {
+            background: #e9ecef;
+            border-color: #1a237e;
+            transform: translateY(-2px);
+        }
+        
+        .assessment-filter-btn.active {
+            background: #1a237e;
+            color: white;
+            border-color: #1a237e;
+        }
+        
+        .assessment-section {
+            margin: 3rem 0;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .section-header {
+            background: linear-gradient(135deg, #e8f5e8, #c8e6c9);
+            padding: 2rem;
+            border-bottom: 1px solid #a5d6a7;
+        }
+        
+        .section-header h2 {
+            margin: 0 0 0.5rem 0;
+            color: #1b5e20;
+            font-size: 2rem;
+        }
+        
+        .section-header .section-subtitle {
+            margin: 0;
+            color: #2e7d32;
+            font-size: 1.1rem;
+            opacity: 0.8;
+        }
+        
+        .daily-assessment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            padding: 2rem;
+        }
+        
+        .assessment-card {
+            background: linear-gradient(145deg, #ffffff, #f8f9fa);
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .assessment-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(26, 35, 126, 0.15);
+            border-color: #1a237e;
+        }
+        
+        .assessment-card-header {
+            background: linear-gradient(135deg, #1a237e, #3949ab);
+            color: white;
+            padding: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .assessment-card-header h3 {
+            margin: 0;
+            font-size: 1.3rem;
+        }
+        
+        .frequency-badge, .duration-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.4rem 1rem;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .assessment-details {
+            padding: 1.5rem;
+            display: none;
+        }
+        
+        .skill-progression h4 {
+            color: #1a237e;
+            margin: 0 0 1rem 0;
+            font-size: 1.2rem;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 0.5rem;
+        }
+        
+        .rubric-levels {
+            display: grid;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .rubric-level {
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid;
+        }
+        
+        .rubric-level.developing {
+            background: #fff3e0;
+            border-color: #ff9800;
+        }
+        
+        .rubric-level.approaching {
+            background: #fff8e1;
+            border-color: #ffc107;
+        }
+        
+        .rubric-level.proficient {
+            background: #e8f5e8;
+            border-color: #4caf50;
+        }
+        
+        .rubric-level.advanced {
+            background: #e3f2fd;
+            border-color: #2196f3;
+        }
+        
+        .rubric-level h5 {
+            margin: 0 0 0.5rem 0;
+            font-weight: 700;
+            color: #333;
+        }
+        
+        .rubric-level p {
+            margin: 0;
+            line-height: 1.5;
+            color: #555;
+        }
+        
+        .evidence-indicators h4 {
+            color: #1a237e;
+            margin: 1rem 0 0.5rem 0;
+            font-size: 1.1rem;
+        }
+        
+        .evidence-indicators ul {
+            margin: 0;
+            padding-left: 1.5rem;
+        }
+        
+        .evidence-indicators li {
+            margin: 0.5rem 0;
+            color: #555;
+            line-height: 1.4;
+        }
+        
+        .project-assessment-grid {
+            padding: 2rem;
+        }
+        
+        .assessment-card.project-based {
+            max-width: none;
+        }
+        
+        .project-overview {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            border-left: 4px solid #1a237e;
+        }
+        
+        .project-overview p {
+            margin: 0;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #333;
+        }
+        
+        .components-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+        
+        .component-item {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+        
+        .component-item:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+        }
+        
+        .component-item h5 {
+            margin: 0 0 0.75rem 0;
+            color: #1a237e;
+            font-size: 1.1rem;
+        }
+        
+        .component-item p {
+            margin: 0 0 1rem 0;
+            color: #555;
+            line-height: 1.4;
+        }
+        
+        .weight {
+            background: #1a237e;
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .criteria-breakdown {
+            display: grid;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+        
+        .criterion {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid #4caf50;
+        }
+        
+        .criterion h5 {
+            margin: 0 0 0.75rem 0;
+            color: #1b5e20;
+            font-size: 1.1rem;
+        }
+        
+        .criterion p {
+            margin: 0;
+            color: #2e7d32;
+            line-height: 1.5;
+        }
+        
+        .portfolio-structure {
+            padding: 2rem;
+        }
+        
+        .portfolio-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, #e8f5e8, #c8e6c9);
+            padding: 2rem;
+            border-radius: 12px;
+        }
+        
+        .portfolio-header h3 {
+            margin: 0 0 1rem 0;
+            color: #1b5e20;
+            font-size: 2rem;
+        }
+        
+        .portfolio-header p {
+            margin: 0;
+            color: #2e7d32;
+            font-size: 1.2rem;
+        }
+        
+        .portfolio-requirements {
+            display: grid;
+            gap: 2rem;
+        }
+        
+        .portfolio-item {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .portfolio-item:hover {
+            border-color: #1a237e;
+            box-shadow: 0 4px 12px rgba(26, 35, 126, 0.1);
+        }
+        
+        .item-header {
+            background: linear-gradient(135deg, #1a237e, #3949ab);
+            color: white;
+            padding: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .item-header h4 {
+            margin: 0;
+            font-size: 1.3rem;
+        }
+        
+        .required-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.4rem 1rem;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .item-details {
+            padding: 2rem;
+            display: none;
+        }
+        
+        .item-details p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            color: #333;
+        }
+        
+        .requirements-list, .quality-indicators, .reflection-components {
+            margin-bottom: 2rem;
+        }
+        
+        .requirements-list h5, .quality-indicators h5, .reflection-components h5 {
+            color: #1a237e;
+            margin: 0 0 1rem 0;
+            font-size: 1.2rem;
+        }
+        
+        .artifact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .artifact-type {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .artifact-type h6 {
+            margin: 0 0 0.5rem 0;
+            color: #1a237e;
+            font-size: 1rem;
+        }
+        
+        .artifact-type p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #555;
+            line-height: 1.4;
+        }
+        
+        .rubrics-container {
+            padding: 2rem;
+        }
+        
+        .master-rubric {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .rubric-header {
+            background: linear-gradient(135deg, #1a237e, #3949ab);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .rubric-header h3 {
+            margin: 0 0 0.5rem 0;
+            font-size: 2rem;
+        }
+        
+        .rubric-header p {
+            margin: 0;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .rubric-table {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+            gap: 1px;
+            background: #e9ecef;
+        }
+        
+        .rubric-row {
+            display: contents;
+        }
+        
+        .rubric-cell {
+            background: white;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .header-row .rubric-cell {
+            background: #f8f9fa;
+            font-weight: 700;
+            color: #1a237e;
+            text-align: center;
+            padding: 1rem;
+        }
+        
+        .skill-category {
+            border-right: 2px solid #1a237e;
+        }
+        
+        .skill-category h4 {
+            margin: 0 0 0.5rem 0;
+            color: #1a237e;
+            font-size: 1.1rem;
+        }
+        
+        .skill-category p {
+            margin: 0;
+            color: #555;
+            font-size: 0.9rem;
+            font-style: italic;
+        }
+        
+        .level-1 { border-left: 4px solid #ff9800; }
+        .level-2 { border-left: 4px solid #ffc107; }
+        .level-3 { border-left: 4px solid #4caf50; }
+        .level-4 { border-left: 4px solid #2196f3; }
+        
+        /* Responsive Design for Assessment System */
+        @media (max-width: 768px) {
+            .daily-assessment-grid {
+                grid-template-columns: 1fr;
+                padding: 1rem;
+            }
+            
+            .components-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .assessment-stats {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .assessment-filters {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .rubric-table {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .rubric-row {
+                display: block;
+                margin-bottom: 2rem;
+                border: 1px solid #e9ecef;
+                border-radius: 8px;
+                overflow: hidden;
+            }
+            
+            .rubric-cell {
+                border-bottom: 1px solid #e9ecef;
+            }
+            
+            .header-row {
+                display: none;
+            }
+            
+            .artifact-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1554,8 +2097,30 @@
 
         <!-- ASSESSMENTS PANEL -->
         <div id="assessments" class="content-panel hidden">
-            <h2>📊 Assessments</h2>
-            <p>Assessment rubrics and evaluation methods will be loaded here...</p>
+            <div class="assessment-header">
+                <h1>� Detective Academy Assessment System</h1>
+                <p class="mission-statement">
+                    Comprehensive evaluation framework tracking your progression from Geographic Cadet to Master Detective
+                </p>
+                <div class="assessment-stats">
+                    <div class="stat">📊 12 Daily Assessments</div>
+                    <div class="stat">🏆 4-Point Mastery Scale</div>
+                    <div class="stat">📋 Portfolio Excellence</div>
+                    <div class="stat">🎯 Skills-Based Evaluation</div>
+                </div>
+            </div>
+            
+            <div class="assessment-filters">
+                <button class="assessment-filter-btn active" data-filter="all">All Assessments</button>
+                <button class="assessment-filter-btn" data-filter="daily">Daily Formative</button>
+                <button class="assessment-filter-btn" data-filter="project">Project-Based</button>
+                <button class="assessment-filter-btn" data-filter="portfolio">Portfolio</button>
+                <button class="assessment-filter-btn" data-filter="rubrics">Master Rubric</button>
+            </div>
+            
+            <div id="assessment-content">
+                <!-- Assessment content will be loaded here -->
+            </div>
         </div>
 
         <!-- TEACHER GUIDE PANEL -->
