@@ -771,11 +771,10 @@ class SimulationInterface {
                         </div>
                         
                         <div class="facilitation-cards">
-                            ${Object.entries(data.data.facilitation).map(([key, strategy]) => `
+                            ${data.data.facilitation.map((strategy, index) => `
                                 <div class="facilitation-card">
-                                    <span class="card-icon">${strategy.icon}</span>
-                                    <h4 class="card-title">${strategy.title}</h4>
-                                    <p>${strategy.description}</p>
+                                    <span class="card-icon">${index === 0 ? '🚀' : index === 1 ? '🔍' : '🎯'}</span>
+                                    <h4 class="card-title">${strategy.phase}</h4>
                                     <ul style="margin-top: 1rem;">
                                         ${strategy.techniques.map(technique => `<li>${technique}</li>`).join('')}
                                     </ul>
@@ -784,64 +783,18 @@ class SimulationInterface {
                         </div>
                     </div>
                     
-                    <!-- Daily Timing Guide -->
+                    <!-- Extension Opportunities -->
                     <div class="guide-section">
                         <div class="section-header">
-                            <span class="section-icon">⏰</span>
-                            <h2 class="section-title">Daily Timing Guide</h2>
-                        </div>
-                        
-                        <div class="timing-grid">
-                            ${data.data.timing.dailyBreakdown.map(activity => `
-                                <div class="timing-block">
-                                    <span class="timing-duration">${activity.duration}</span>
-                                    <span class="timing-activity">${activity.activity}</span>
-                                </div>
-                            `).join('')}
-                        </div>
-                        
-                        <div style="margin-top: 2rem; padding: 1.5rem; background: #fff3cd; border-radius: 8px; border-left: 4px solid #ffc107;">
-                            <h4 style="color: #856404; margin: 0 0 1rem 0;">⚡ Pacing Tips</h4>
-                            <ul style="margin: 0; color: #856404;">
-                                ${data.data.timing.pacingTips.map(tip => `<li>${tip}</li>`).join('')}
-                            </ul>
-                        </div>
-                    </div>
-                    
-                    <!-- Assessment Rubric -->
-                    <div class="guide-section">
-                        <div class="section-header">
-                            <span class="section-icon">📊</span>
-                            <h2 class="section-title">Assessment Framework</h2>
-                        </div>
-                        
-                        <div class="assessment-rubric">
-                            <div class="rubric-header">Geographic Detective Skills Assessment</div>
-                            <div class="rubric-grid">
-                                ${Object.entries(data.data.assessment.rubric).map(([level, criteria]) => `
-                                    <div class="rubric-cell">
-                                        <div class="rubric-level">${level}</div>
-                                        <ul style="margin: 0; padding-left: 1rem; font-size: 0.9rem;">
-                                            ${criteria.map(criterion => `<li>${criterion}</li>`).join('')}
-                                        </ul>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Professional Teaching Tips -->
-                    <div class="guide-section">
-                        <div class="section-header">
-                            <span class="section-icon">💡</span>
-                            <h2 class="section-title">Professional Teaching Tips</h2>
+                            <span class="section-icon">�</span>
+                            <h2 class="section-title">Extension Opportunities</h2>
                         </div>
                         
                         <div class="tips-container">
-                            ${data.data.tips.map(tip => `
+                            ${data.data.extensions.map(extension => `
                                 <div class="tip-item">
-                                    <div class="tip-title">${tip.title}</div>
-                                    <p style="margin: 0;">${tip.description}</p>
+                                    <div class="tip-title">Enhancement Opportunity</div>
+                                    <p style="margin: 0;">${extension}</p>
                                 </div>
                             `).join('')}
                         </div>
