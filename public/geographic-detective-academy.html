@@ -971,10 +971,61 @@
                         `,
                         toolkit: `
                             <div class="team-roles">
-                                <div class="tool-item">🔍 <strong>Evidence Manager:</strong> Organizes and analyzes geographic clues</div>
-                                <div class="tool-item">🌍 <strong>Geography Specialist:</strong> Provides regional expertise and context</div>
-                                <div class="tool-item">🎯 <strong>Resource Tracker:</strong> Monitors movement of people and goods</div>
-                                <div class="tool-item">📋 <strong>Case Chronicler:</strong> Documents findings and discoveries</div>
+                                <div class="role-card">
+                                    <div class="role-image-placeholder">
+                                        <strong>🔍 AI IMAGE: Evidence Manager</strong><br>
+                                        <em>A confident 7th grade student wearing a detective badge and magnifying glass, surrounded by floating geographic maps, charts, and digital evidence screens. The character has a determined expression while organizing colorful geographic clues on a high-tech evidence board.</em>
+                                    </div>
+                                    <div class="role-content">
+                                        <h4>🔍 Evidence Manager</h4>
+                                        <p><strong>Your Mission:</strong> You're the mastermind who spots patterns others miss! As the Evidence Manager, you collect every geographic clue—from satellite images to population data—and turn chaos into crystal-clear evidence.</p>
+                                        <p><strong>What You'll Do:</strong> Organize crime scene photos, analyze map coordinates, catalog witness statements, and create evidence timelines. You're like a geographic CSI investigator!</p>
+                                        <p><strong>Skills You'll Master:</strong> Critical thinking, pattern recognition, data organization, and digital research techniques.</p>
+                                        <p><strong>Why It's Awesome:</strong> Every case gets solved because YOU found the missing piece of the puzzle!</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="role-card">
+                                    <div class="role-image-placeholder">
+                                        <strong>🌍 AI IMAGE: Geography Specialist</strong><br>
+                                        <em>A young geographic expert student standing confidently in front of a massive interactive world globe, with holographic regional displays floating around them. They're pointing at different continents while geographic data streams flow in the background.</em>
+                                    </div>
+                                    <div class="role-content">
+                                        <h4>🌍 Geography Specialist</h4>
+                                        <p><strong>Your Mission:</strong> You're the walking encyclopedia of world knowledge! When the team needs to know about ANY place on Earth, you're their go-to expert with instant answers.</p>
+                                        <p><strong>What You'll Do:</strong> Analyze terrain features, explain climate patterns, identify cultural landmarks, and decode geographic mysteries. You make every location come alive with stories!</p>
+                                        <p><strong>Skills You'll Master:</strong> Map reading, cultural awareness, environmental analysis, and geographic reasoning.</p>
+                                        <p><strong>Why It's Awesome:</strong> You become the ultimate world explorer without leaving your seat—and everyone relies on YOUR expertise!</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="role-card">
+                                    <div class="role-image-placeholder">
+                                        <strong>🎯 AI IMAGE: Resource Tracker</strong><br>
+                                        <em>A tech-savvy 7th grade student monitoring multiple digital screens showing trade routes, population movements, and resource flows across a dynamic world map. They're using advanced tracking tools with arrows and pathways lighting up across continents.</em>
+                                    </div>
+                                    <div class="role-content">
+                                        <h4>🎯 Resource Tracker</h4>
+                                        <p><strong>Your Mission:</strong> You're the detective who follows the money, resources, and people! Nothing moves around the world without YOU tracking its path and uncovering the connections.</p>
+                                        <p><strong>What You'll Do:</strong> Trace trade routes, monitor population movements, track natural resources, and spot economic patterns. You're like a geographic spy following secret trails!</p>
+                                        <p><strong>Skills You'll Master:</strong> Economic analysis, logistics thinking, cause-and-effect reasoning, and global connections.</p>
+                                        <p><strong>Why It's Awesome:</strong> You discover how everything in the world is connected—and predict what happens next!</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="role-card">
+                                    <div class="role-image-placeholder">
+                                        <strong>📋 AI IMAGE: Case Chronicler</strong><br>
+                                        <em>A detail-oriented student detective with a digital tablet and smart pen, surrounded by floating case files, investigation reports, and timeline displays. They're documenting discoveries with geographic evidence photos and notes appearing as holographic displays.</em>
+                                    </div>
+                                    <div class="role-content">
+                                        <h4>📋 Case Chronicler</h4>
+                                        <p><strong>Your Mission:</strong> You're the storyteller who makes sure no discovery gets lost! As the Case Chronicler, you document every breakthrough and create the official case files that solve the mystery.</p>
+                                        <p><strong>What You'll Do:</strong> Write investigation reports, create case timelines, organize team findings, and present final conclusions. You turn detective work into compelling stories!</p>
+                                        <p><strong>Skills You'll Master:</strong> Scientific writing, communication skills, report organization, and presentation techniques.</p>
+                                        <p><strong>Why It's Awesome:</strong> Your words become the official record that cracks the case and shares the victory with the world!</p>
+                                    </div>
+                                </div>
                             </div>
                         `,
                         wisdom: `
@@ -2365,6 +2416,77 @@
                 .skill-item strong {
                     color: #1a202c;
                 }
+
+                /* Enhanced Role Cards Styling */
+                .role-card {
+                    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+                    border: 2px solid #007bff;
+                    border-radius: 12px;
+                    padding: 1.5rem;
+                    margin: 1rem 0;
+                    box-shadow: 0 4px 8px rgba(0,123,255,0.2);
+                    transition: transform 0.3s ease, box-shadow 0.3s ease;
+                    color: #2d3748;
+                }
+
+                .role-card:hover {
+                    transform: translateY(-3px);
+                    box-shadow: 0 8px 16px rgba(0,123,255,0.3);
+                }
+
+                .role-image-placeholder {
+                    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+                    border: 2px dashed #2196f3;
+                    border-radius: 8px;
+                    padding: 1rem;
+                    margin-bottom: 1rem;
+                    text-align: center;
+                    color: #1565c0;
+                    font-size: 0.85rem;
+                    line-height: 1.4;
+                    min-height: 100px;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                }
+
+                .role-content h4 {
+                    color: #1e3c72;
+                    font-size: 1.2rem;
+                    margin-bottom: 0.75rem;
+                    border-bottom: 2px solid #ffd700;
+                    padding-bottom: 0.5rem;
+                }
+
+                .role-content p {
+                    margin-bottom: 0.75rem;
+                    line-height: 1.5;
+                    color: #2d3748;
+                }
+
+                .role-content p strong {
+                    color: #1a202c;
+                    font-weight: 600;
+                }
+
+                .team-roles {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                    gap: 1.5rem;
+                    margin-top: 1rem;
+                }
+
+                @media (max-width: 768px) {
+                    .team-roles {
+                        grid-template-columns: 1fr;
+                    }
+                    
+                    .role-card {
+                        padding: 1rem;
+                    }
+                }
+
+                /* End Enhanced Role Cards Styling */
 
                 .urgency-meter,
                 .difficulty-badge,
