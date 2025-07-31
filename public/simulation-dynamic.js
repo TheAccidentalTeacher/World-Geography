@@ -1059,8 +1059,103 @@ class SimulationInterface {
             </div>
         `;
     }
-}
 
+    convertComprehensiveMarkdownToHTML(markdown) {
+        console.log('🔄 Converting comprehensive markdown to HTML...');
+        
+        let html = markdown
+            // Convert headers with proper styling
+            .replace(/^# (.*$)/gm, '<h1>$1</h1>')
+            .replace(/^## (.*$)/gm, '<h2>$1</h2>')
+            .replace(/^### (.*$)/gm, '<h3>$1</h3>')
+            .replace(/^#### (.*$)/gm, '<h4>$1</h4>')
+            
+            // Convert special day headers
+            .replace(/^## (Day \\d+: .*$)/gm, '<div class="day-header">$1</div>')
+            
+            // Convert case files
+            .replace(/\\*\\*(CASE FILE \\d+.*?)\\*\\*/g, '<div class="case-file">$1</div>')
+            
+            // Convert slide references with special styling
+            .replace(/\\[(Slide \\d+[^\\]]*)\\]/g, '<span class="slide-reference">$1</span>')
+            
+            // Convert timing notes
+            .replace(/\\*\\*Timing:\\*\\* (.*$)/gm, '<div class="timing-note">⏰ Timing: $1</div>')
+            
+            // Convert learning objectives
+            .replace(/\\*\\*Learning Objective:\\*\\* (.*$)/gm, '<div class="learning-objective">🎯 <strong>Learning Objective:</strong> $1</div>')
+            
+            // Convert assessment notes
+            .replace(/\\*\\*Assessment:\\*\\* (.*$)/gm, '<div class="assessment-note">📊 <strong>Assessment:</strong> $1</div>')
+            
+            // Convert implementation checklists
+            .replace(/\\*\\*Implementation Checklist:\\*\\*/g, '<div class="implementation-checklist"><strong>📋 Implementation Checklist:</strong>')
+            .replace(/\\*\\*Materials Needed:\\*\\*/g, '<div class="implementation-checklist"><strong>📦 Materials Needed:</strong>')
+            .replace(/\\*\\*Preparation Steps:\\*\\*/g, '<div class="implementation-checklist"><strong>🔧 Preparation Steps:</strong>')
+            
+            // Convert bold text
+            .replace(/\\*\\*(.*?)\\*\\*/g, '<strong>$1</strong>')
+            
+            // Convert italic text
+            .replace(/\\*(.*?)\\*/g, '<em>$1</em>')
+            
+            // Convert code blocks
+            .replace(/```[\\s\\S]*?```/g, function(match) {
+                const content = match.replace(/```/g, '');
+                return '<pre><code>' + content + '</code></pre>';
+            })
+            
+            // Convert inline code
+            .replace(/`([^`]+)`/g, '<code>$1</code>')
+            
+            // Convert unordered lists
+            .replace(/^\\- (.*$)/gm, '<li>$1</li>')
+            .replace(/^\\* (.*$)/gm, '<li>$1</li>')
+            
+            // Convert ordered lists
+            .replace(/^\\d+\\. (.*$)/gm, '<li>$1</li>')
+            
+            // Wrap consecutive list items in ul/ol tags
+            .replace(/(<li>.*<\\/li>)/gs, function(match) {
+                return '<ul>' + match + '</ul>';
+            })
+            
+            // Convert blockquotes
+            .replace(/^> (.*$)/gm, '<blockquote>$1</blockquote>')
+            
+            // Convert horizontal rules
+            .replace(/^---$/gm, '<hr class="section-divider">')
+            
+            // Convert line breaks to paragraphs
+            .split('\\n\\n')
+            .map(paragraph => {
+                // Don't wrap already wrapped elements
+                const trimmed = paragraph.trim();
+                if (trimmed.startsWith('<div') || 
+                    trimmed.startsWith('<h') || 
+                    trimmed.startsWith('<ul') || 
+                    trimmed.startsWith('<ol') || 
+                    trimmed.startsWith('<blockquote') ||
+                    trimmed.startsWith('<hr') ||
+                    trimmed.startsWith('<pre') ||
+                    trimmed === '') {
+                    return paragraph;
+                }
+                return '<p>' + paragraph + '</p>';
+            })
+            .join('\\n')
+            
+            // Close any open implementation checklist divs
+            .replace(/(<div class="implementation-checklist">[\\s\\S]*?)(<h|<div class="day-header"|<div class="case-file"|$)/g, '$1</div>$2')
+            
+            // Clean up extra newlines
+            .replace(/\\n{3,}/g, '\\n\\n')
+            .trim();
+            
+        console.log('✅ Comprehensive markdown conversion complete');
+        return html;
+    }
+}
 // Initialize the simulation interface when the page loads
 document.addEventListener('DOMContentLoaded', function() {
     new SimulationInterface();
