@@ -1259,19 +1259,6 @@ class SimulationInterface {
         // Add filter functionality
         this.setupInvestigationFilters();
     }
-                            
-                            <div class="solution-preview">
-                                <h4>🎯 Investigation Approach</h4>
-                                <p><strong>Method:</strong> ${caseItem.solution.method}</p>
-                                <p><strong>Geographic Concepts:</strong> ${caseItem.solution.geographicConcepts}</p>
-                                <p><strong>Real-World Connection:</strong> ${caseItem.solution.realWorldConnection}</p>
-                            </div>
-                        </div>
-                    </div>
-                `).join('')}
-            </div>
-        `;
-    }
 
     async loadStudentMaterials() {
         const panel = document.getElementById('student-materials');
