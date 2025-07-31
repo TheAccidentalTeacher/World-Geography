@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geographic Detective Handbook</title>
+    <style>
+        /* EXACT COLOR SCHEME FROM SPECIFICATION */
+        :root {
+            --primary-dark: #1a2332;
+            --primary-blue: #3b82f6;
+            --secondary-gold: #fbbf24;
+            --text-light: #f8fafc;
+            --text-dark: #1e293b;
+            --classified-red: #dc2626;
+            --active-green: #16a34a;
+            --warning-amber: #d97706;
+            --panel-background: #f1f5f9;
+            --card-background: #ffffff;
+            --border-color: #e2e8f0;
+        }
+
+        /* PRINT-READY FORMATTING */
+        @page {
+            size: 8.5in 11in;
+            margin: 0.75in 0.5in 0.75in 1in; /* Extra left margin for spiral binding */
+        }
+
+        @media print {
+            .page-break { page-break-before: always; }
+            .no-print { display: none; }
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            font-size: 11pt;
+            line-height: 1.4;
+            color: var(--text-dark);
+            background: white;
+            margin: 0;
+            padding: 0;
+        }
+
+        .page {
+            min-height: 9.5in;
+            padding: 0.5in;
+            background: white;
+        }
+
+        /* HEADER STYLES */
+        .classified-banner {
+            background: var(--classified-red);
+            color: var(--text-light);
+            text-align: center;
+            padding: 8px;
+            font-weight: bold;
+            font-size: 14pt;
+            letter-spacing: 2px;
+            border: 3px solid var(--primary-dark);
+            margin-bottom: 20px;
+        }
+
+        .handbook-title {
+            background: var(--primary-dark);
+            color: var(--text-light);
+            text-align: center;
+            padding: 20px;
+            margin: 20px 0;
+            font-size: 24pt;
+            font-weight: bold;
+        }
+
+        .section-header {
+            background: var(--primary-blue);
+            color: var(--text-light);
+            padding: 12px;
+            font-size: 16pt;
+            font-weight: bold;
+            margin: 20px 0 10px 0;
+        }
+
+        .subsection-header {
+            background: var(--secondary-gold);
+            color: var(--text-dark);
+            padding: 8px;
+            font-size: 14pt;
+            font-weight: bold;
+            margin: 15px 0 8px 0;
+        }
+
+        /* CONTENT BOXES */
+        .info-box {
+            background: var(--panel-background);
+            border: 2px solid var(--border-color);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
+        .evidence-box {
+            background: #f9f9f9;
+            border: 2px dotted var(--primary-blue);
+            padding: 12px;
+            margin: 8px 0;
+        }
+
+        .coordinate-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 10px 0;
+        }
+
+        .coordinate-example {
+            font-family: 'Consolas', 'Monaco', monospace;
+            background: #f0f0f0;
+            padding: 8px;
+            border: 1px solid #ddd;
+            font-size: 10pt;
+        }
+
+        /* TABLES */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+            font-size: 10pt;
+        }
+
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background: var(--primary-blue);
+            color: var(--text-light);
+            font-weight: bold;
+        }
+
+        /* FLOWCHART STYLES */
+        .investigation-step {
+            background: var(--primary-blue);
+            color: var(--text-light);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .step-description {
+            display: inline-block;
+            vertical-align: middle;
+            width: calc(100% - 50px);
+            padding: 5px 0;
+        }
+
+        /* VOCABULARY SECTION */
+        .vocab-term {
+            font-weight: bold;
+            color: var(--primary-blue);
+        }
+
+        .vocab-definition {
+            margin-left: 20px;
+            margin-bottom: 8px;
+        }
+
+        /* QUICK REFERENCE */
+        .quick-ref-card {
+            border: 3px solid var(--primary-dark);
+            background: var(--secondary-gold);
+            padding: 15px;
+            text-align: center;
+        }
+
+        /* AGENT ID FIELD */
+        .agent-field {
+            border: 2px solid var(--primary-dark);
+            padding: 10px;
+            margin: 20px 0;
+            background: var(--panel-background);
+        }
+
+        .agent-field label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .agent-field input {
+            border: none;
+            border-bottom: 2px solid var(--primary-dark);
+            background: transparent;
+            font-size: 12pt;
+            padding: 5px;
+            width: 200px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- PAGE 1: COVER PAGE -->
+<div class="page">
+    <div class="classified-banner">CLASSIFIED</div>
+    
+    <div class="handbook-title">
+        🕵️‍♂️ GEOGRAPHIC DETECTIVE HANDBOOK
+    </div>
+    
+    <div style="text-align: center; font-size: 18pt; margin: 30px 0;">
+        Essential Investigation Guide
+    </div>
+    
+    <div style="text-align: center; margin: 40px 0;">
+        <div style="font-size: 72pt; color: var(--primary-blue);">🗺️</div>
+        <div style="font-size: 14pt; margin-top: 20px;">Geographic Detective Academy</div>
+        <div style="font-size: 12pt; color: var(--primary-blue);">Bureau of Geographic Investigation</div>
+    </div>
+    
+    <div class="agent-field">
+        <label>AGENT ID:</label>
+        <input type="text" placeholder="Enter your detective name">
+        
+        <div style="margin-top: 15px;">
+            <label>ACADEMY CLASS:</label>
+            <input type="text" placeholder="Enter your class period">
+        </div>
+        
+        <div style="margin-top: 15px;">
+            <label>ISSUE DATE:</label>
+            <input type="text" placeholder="Today's date">
+        </div>
+    </div>
+    
+    <div style="text-align: center; margin-top: 40px; font-size: 10pt; color: var(--classified-red); font-weight: bold;">
+        FOR OFFICIAL ACADEMY USE ONLY<br>
+        UNAUTHORIZED DISTRIBUTION PROHIBITED
+    </div>
+</div>
+
+<!-- PAGE 2-3: COORDINATE SYSTEMS -->
+<div class="page page-break">
+    <div class="section-header">📍 Coordinate Systems Quick Reference</div>
+    
+    <div class="subsection-header">Latitude & Longitude System</div>
+    <div class="info-box">
+        <strong>🌍 Understanding the Grid:</strong>
+        <ul>
+            <li><strong>Latitude:</strong> Horizontal lines measuring north/south from the Equator (0°)</li>
+            <li><strong>Longitude:</strong> Vertical lines measuring east/west from the Prime Meridian (0°)</li>
+            <li><strong>Format:</strong> Degrees, Minutes, Seconds (DMS) or Decimal Degrees (DD)</li>
+        </ul>
+    </div>
+    
+    <div class="coordinate-grid">
+        <div class="coordinate-example">
+            <strong>DMS Format:</strong><br>
+            Latitude: 40° 44' 54" N<br>
+            Longitude: 73° 59' 9" W<br>
+            <em>(New York City)</em>
+        </div>
+        <div class="coordinate-example">
+            <strong>Decimal Format:</strong><br>
+            Latitude: 40.748611<br>
+            Longitude: -73.985556<br>
+            <em>(Same location)</em>
+        </div>
+    </div>
+    
+    <div class="subsection-header">UTM Coordinate System</div>
+    <div class="info-box">
+        <strong>🎯 Universal Transverse Mercator:</strong>
+        <ul>
+            <li>Divides Earth into 60 zones, each 6° of longitude wide</li>
+            <li>Uses meters instead of degrees for precise measurements</li>
+            <li>Format: Zone + Easting + Northing</li>
+        </ul>
+    </div>
+    
+    <div class="coordinate-example">
+        <strong>UTM Example:</strong><br>
+        Zone: 18T<br>
+        Easting: 585628<br>
+        Northing: 4511322<br>
+        <em>(New York City in UTM)</em>
+    </div>
+    
+    <div class="subsection-header">GPS Coordinate Formats</div>
+    <table>
+        <tr>
+            <th>Format Type</th>
+            <th>Example</th>
+            <th>Common Use</th>
+        </tr>
+        <tr>
+            <td>Degrees, Minutes, Seconds</td>
+            <td>N 40° 44' 54", W 73° 59' 9"</td>
+            <td>Traditional navigation</td>
+        </tr>
+        <tr>
+            <td>Decimal Degrees</td>
+            <td>40.748611, -73.985556</td>
+            <td>Digital mapping, GPS devices</td>
+        </tr>
+        <tr>
+            <td>Degrees, Decimal Minutes</td>
+            <td>N 40° 44.9', W 73° 59.15'</td>
+            <td>Marine navigation</td>
+        </tr>
+    </table>
+</div>
+
+<!-- COORDINATE PRACTICE GRID -->
+<div class="page page-break">
+    <div class="subsection-header">🎯 Practice Coordinate Plotting Grid</div>
+    
+    <div style="text-align: center; margin: 20px 0;">
+        <svg width="500" height="400" style="border: 2px solid var(--primary-dark);">
+            <!-- Grid lines -->
+            <defs>
+                <pattern id="grid" width="50" height="40" patternUnits="userSpaceOnUse">
+                    <path d="M 50 0 L 0 0 0 40" fill="none" stroke="#ddd" stroke-width="1"/>
+                </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#grid)" />
+            
+            <!-- Major grid lines -->
+            <g stroke="var(--primary-blue)" stroke-width="2">
+                <line x1="250" y1="0" x2="250" y2="400" /> <!-- Prime Meridian -->
+                <line x1="0" y1="200" x2="500" y2="200" />   <!-- Equator -->
+            </g>
+            
+            <!-- Labels -->
+            <text x="255" y="15" font-size="12" fill="var(--primary-blue)">0° Longitude</text>
+            <text x="5" y="195" font-size="12" fill="var(--primary-blue)">0° Latitude</text>
+            
+            <!-- Quadrant labels -->
+            <text x="375" y="100" font-size="14" font-weight="bold" fill="var(--primary-dark)">NE</text>
+            <text x="125" y="100" font-size="14" font-weight="bold" fill="var(--primary-dark)">NW</text>
+            <text x="375" y="300" font-size="14" font-weight="bold" fill="var(--primary-dark)">SE</text>
+            <text x="125" y="300" font-size="14" font-weight="bold" fill="var(--primary-dark)">SW</text>
+        </svg>
+    </div>
+    
+    <div class="evidence-box">
+        <strong>🔍 Practice Exercise:</strong>
+        <ol>
+            <li>Plot these coordinates on the grid above:
+                <ul>
+                    <li>A: 30°N, 45°E</li>
+                    <li>B: 15°S, 30°W</li>
+                    <li>C: 45°N, 90°W</li>
+                </ul>
+            </li>
+            <li>Identify which quadrant each point falls in</li>
+            <li>Calculate the approximate distance between points A and C</li>
+        </ol>
+    </div>
+    
+    <div class="subsection-header">🧮 Conversion Formulas</div>
+    <div class="coordinate-example">
+        <strong>DMS to Decimal Degrees:</strong><br>
+        DD = Degrees + (Minutes/60) + (Seconds/3600)<br><br>
+        
+        <strong>Distance Between Coordinates (approximate):</strong><br>
+        1° latitude ≈ 111 km (69 miles)<br>
+        1° longitude ≈ 111 km × cos(latitude)<br><br>
+        
+        <strong>Quick Reference:</strong><br>
+        • 1 minute of latitude ≈ 1.85 km (1.15 miles)<br>
+        • 1 second of latitude ≈ 31 m (102 feet)
+    </div>
+</div>
+
+<!-- PAGE 4-5: MAP READING TECHNIQUES -->
+<div class="page page-break">
+    <div class="section-header">🗺️ Map Reading Techniques</div>
+    
+    <div class="subsection-header">Scale Interpretation Guide</div>
+    <div class="info-box">
+        <strong>📏 Understanding Map Scales:</strong>
+        <table>
+            <tr>
+                <th>Scale Type</th>
+                <th>Example</th>
+                <th>Meaning</th>
+            </tr>
+            <tr>
+                <td>Ratio Scale</td>
+                <td>1:100,000</td>
+                <td>1 unit on map = 100,000 units in real world</td>
+            </tr>
+            <tr>
+                <td>Verbal Scale</td>
+                <td>1 inch = 1 mile</td>
+                <td>Direct relationship statement</td>
+            </tr>
+            <tr>
+                <td>Graphic Scale</td>
+                <td>[----|----|----]<br>0  1  2  3 km</td>
+                <td>Visual bar showing distance</td>
+            </tr>
+        </table>
+    </div>
+    
+    <div class="subsection-header">Legend Symbol Library</div>
+    <div class="coordinate-grid">
+        <div class="evidence-box">
+            <strong>🏠 Cultural Features:</strong>
+            <ul style="font-size: 10pt;">
+                <li>⚫ Cities (population size by symbol size)</li>
+                <li>🏭 Industrial areas</li>
+                <li>✈️ Airports</li>
+                <li>🚂 Railways</li>
+                <li>🛣️ Highways (thick lines)</li>
+                <li>🏫 Schools</li>
+                <li>🏥 Hospitals</li>
+            </ul>
+        </div>
+        <div class="evidence-box">
+            <strong>🌿 Physical Features:</strong>
+            <ul style="font-size: 10pt;">
+                <li>🏔️ Mountains (brown contour lines)</li>
+                <li>🌊 Water bodies (blue)</li>
+                <li>🌲 Forests (green areas)</li>
+                <li>🏜️ Deserts (tan/yellow)</li>
+                <li>❄️ Glaciers (white/light blue)</li>
+                <li>🌋 Volcanoes</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="subsection-header">Topographic Map Reading</div>
+    <div class="info-box">
+        <strong>📈 Contour Line Analysis:</strong>
+        <ul>
+            <li><strong>Contour Lines:</strong> Connect points of equal elevation</li>
+            <li><strong>Contour Interval:</strong> Vertical distance between lines</li>
+            <li><strong>Close Lines:</strong> Steep slopes</li>
+            <li><strong>Wide Lines:</strong> Gentle slopes</li>
+            <li><strong>Circular Patterns:</strong> Hills or depressions</li>
+        </ul>
+    </div>
+    
+    <div class="evidence-box">
+        <strong>🔍 Detective Skills - Elevation Analysis:</strong>
+        <ol>
+            <li>Find the contour interval on the map legend</li>
+            <li>Count contour lines to determine elevation changes</li>
+            <li>Look for patterns that indicate landforms</li>
+            <li>Use elevation to predict climate and vegetation</li>
+        </ol>
+    </div>
+</div>
+
+<!-- PAGE 5 CONTINUED: DISTANCE AND DIRECTION -->
+<div class="page page-break">
+    <div class="subsection-header">📐 Distance Measurement Methods</div>
+    
+    <div class="coordinate-grid">
+        <div class="coordinate-example">
+            <strong>Method 1: Graphic Scale</strong><br>
+            1. Mark distance on paper edge<br>
+            2. Compare to scale bar<br>
+            3. Read actual distance<br>
+            4. Account for map curves
+        </div>
+        <div class="coordinate-example">
+            <strong>Method 2: Grid Squares</strong><br>
+            1. Count grid squares<br>
+            2. Multiply by grid scale<br>
+            3. Add partial squares<br>
+            4. Convert to desired units
+        </div>
+    </div>
+    
+    <div class="subsection-header">🧭 Compass Rose and Direction Finding</div>
+    <div style="text-align: center; margin: 20px 0;">
+        <svg width="200" height="200">
+            <circle cx="100" cy="100" r="90" fill="none" stroke="var(--primary-dark)" stroke-width="3"/>
+            <circle cx="100" cy="100" r="5" fill="var(--primary-dark)"/>
+            
+            <!-- Cardinal directions -->
+            <line x1="100" y1="15" x2="100" y2="35" stroke="var(--classified-red)" stroke-width="4"/>
+            <text x="95" y="12" font-size="14" font-weight="bold" fill="var(--classified-red)">N</text>
+            
+            <line x1="185" y1="100" x2="165" y2="100" stroke="var(--primary-dark)" stroke-width="3"/>
+            <text x="192" y="105" font-size="14" font-weight="bold">E</text>
+            
+            <line x1="100" y1="185" x2="100" y2="165" stroke="var(--primary-dark)" stroke-width="3"/>
+            <text x="95" y="200" font-size="14" font-weight="bold">S</text>
+            
+            <line x1="15" y1="100" x2="35" y2="100" stroke="var(--primary-dark)" stroke-width="3"/>
+            <text x="5" y="105" font-size="14" font-weight="bold">W</text>
+            
+            <!-- Intermediate directions -->
+            <text x="145" y="45" font-size="12">NE</text>
+            <text x="145" y="165" font-size="12">SE</text>
+            <text x="40" y="165" font-size="12">SW</text>
+            <text x="40" y="45" font-size="12">NW</text>
+        </svg>
+    </div>
+    
+    <div class="info-box">
+        <strong>🎯 Bearing and Azimuth:</strong>
+        <ul>
+            <li><strong>Bearing:</strong> Direction from one point to another (N 45° E)</li>
+            <li><strong>Azimuth:</strong> Direction measured clockwise from North (045°)</li>
+            <li><strong>Back Bearing:</strong> Opposite direction (add/subtract 180°)</li>
+        </ul>
+    </div>
+</div>
+
+<!-- PAGE 6-7: EVIDENCE COLLECTION STANDARDS -->
+<div class="page page-break">
+    <div class="section-header">📋 Evidence Collection Standards</div>
+    
+    <div class="subsection-header">Documentation Protocols</div>
+    <div class="evidence-box">
+        <strong>📝 The 5 W's + H Method:</strong>
+        <ol>
+            <li><strong>WHO:</strong> People involved, witnesses, suspects</li>
+            <li><strong>WHAT:</strong> Evidence found, geographic features observed</li>
+            <li><strong>WHEN:</strong> Time and date of discovery</li>
+            <li><strong>WHERE:</strong> Exact location with coordinates</li>
+            <li><strong>WHY:</strong> Significance to the investigation</li>
+            <li><strong>HOW:</strong> Method of discovery or collection</li>
+        </ol>
+    </div>
+    
+    <div class="subsection-header">Photo Evidence Guidelines</div>
+    <table>
+        <tr>
+            <th>Photo Type</th>
+            <th>Purpose</th>
+            <th>Requirements</th>
+        </tr>
+        <tr>
+            <td>Overview Shot</td>
+            <td>Show entire scene</td>
+            <td>Include scale reference, north arrow</td>
+        </tr>
+        <tr>
+            <td>Mid-range Shot</td>
+            <td>Show evidence in context</td>
+            <td>Clear view of surroundings</td>
+        </tr>
+        <tr>
+            <td>Close-up Shot</td>
+            <td>Detail of specific evidence</td>
+            <td>Measurement scale, clear focus</td>
+        </tr>
+        <tr>
+            <td>Coordinate Shot</td>
+            <td>Document GPS location</td>
+            <td>GPS device screen visible</td>
+        </tr>
+    </table>
+    
+    <div class="subsection-header">Witness Interview Techniques</div>
+    <div class="info-box">
+        <strong>🎤 Geographic Interview Focus:</strong>
+        <ul>
+            <li><strong>Location Details:</strong> Where exactly did events occur?</li>
+            <li><strong>Direction Information:</strong> Which way were people/objects moving?</li>
+            <li><strong>Distance Estimates:</strong> How far away were key elements?</li>
+            <li><strong>Landmark References:</strong> What geographic features were nearby?</li>
+            <li><strong>Time and Place:</strong> When and where did witness observe events?</li>
+        </ul>
+    </div>
+    
+    <div class="evidence-box">
+        <strong>⚠️ Interview Best Practices:</strong>
+        <ol>
+            <li>Ask open-ended questions first</li>
+            <li>Request specific geographic details</li>
+            <li>Have witness draw simple maps</li>
+            <li>Verify location information when possible</li>
+            <li>Record exact quotes about locations</li>
+        </ol>
+    </div>
+</div>
+
+<!-- PAGE 7 CONTINUED: CHAIN OF CUSTODY -->
+<div class="page page-break">
+    <div class="subsection-header">🔗 Chain of Custody Procedures</div>
+    
+    <div class="info-box">
+        <strong>📋 Evidence Tracking Form:</strong>
+        <table style="font-size: 9pt;">
+            <tr>
+                <th>Time</th>
+                <th>Detective</th>
+                <th>Action</th>
+                <th>Location</th>
+                <th>Signature</th>
+            </tr>
+            <tr>
+                <td>________</td>
+                <td>________</td>
+                <td>Collected</td>
+                <td>________</td>
+                <td>________</td>
+            </tr>
+            <tr>
+                <td>________</td>
+                <td>________</td>
+                <td>Transferred</td>
+                <td>________</td>
+                <td>________</td>
+            </tr>
+            <tr>
+                <td>________</td>
+                <td>________</td>
+                <td>Analyzed</td>
+                <td>________</td>
+                <td>________</td>
+            </tr>
+            <tr>
+                <td>________</td>
+                <td>________</td>
+                <td>Stored</td>
+                <td>________</td>
+                <td>________</td>
+            </tr>
+        </table>
+    </div>
+    
+    <div class="subsection-header">Evidence Categorization System</div>
+    <div class="coordinate-grid">
+        <div class="evidence-box">
+            <strong>🌍 Geographic Evidence:</strong>
+            <ul style="font-size: 10pt;">
+                <li>Maps and location data</li>
+                <li>GPS coordinates</li>
+                <li>Photographs with location</li>
+                <li>Elevation measurements</li>
+                <li>Climate data</li>
+                <li>Landmark observations</li>
+            </ul>
+        </div>
+        <div class="evidence-box">
+            <strong>👥 Human Evidence:</strong>
+            <ul style="font-size: 10pt;">
+                <li>Witness statements</li>
+                <li>Expert testimonies</li>
+                <li>Interview recordings</li>
+                <li>Behavioral observations</li>
+                <li>Cultural information</li>
+                <li>Historical accounts</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="evidence-box">
+        <strong>🔍 Evidence Priority Levels:</strong>
+        <ul>
+            <li><strong style="color: var(--classified-red);">CRITICAL:</strong> Direct proof or disproof of case theory</li>
+            <li><strong style="color: var(--warning-amber);">IMPORTANT:</strong> Supports or challenges key evidence</li>
+            <li><strong style="color: var(--primary-blue);">SUPPORTING:</strong> Provides context or background</li>
+            <li><strong>INFORMATIONAL:</strong> General knowledge about the case</li>
+        </ul>
+    </div>
+</div>
+
+<!-- PAGE 8-9: GEOGRAPHIC VOCABULARY -->
+<div class="page page-break">
+    <div class="section-header">📖 Geographic Vocabulary</div>
+    
+    <div class="subsection-header">Essential Geographic Terms</div>
+    
+    <div class="vocab-term">Absolute Location</div>
+    <div class="vocab-definition">Exact position on Earth's surface using coordinates (latitude/longitude)</div>
+    
+    <div class="vocab-term">Relative Location</div>
+    <div class="vocab-definition">Position described in relation to other places ("north of the school")</div>
+    
+    <div class="vocab-term">Cardinal Directions</div>
+    <div class="vocab-definition">The four main compass points: North, South, East, West</div>
+    
+    <div class="vocab-term">Intermediate Directions</div>
+    <div class="vocab-definition">Northeast, Southeast, Southwest, Northwest</div>
+    
+    <div class="vocab-term">Scale</div>
+    <div class="vocab-definition">Relationship between distance on a map and actual distance on Earth</div>
+    
+    <div class="vocab-term">Elevation</div>
+    <div class="vocab-definition">Height above sea level, measured in feet or meters</div>
+    
+    <div class="vocab-term">Topography</div>
+    <div class="vocab-definition">Physical features of Earth's surface (mountains, valleys, plains)</div>
+    
+    <div class="vocab-term">Climate</div>
+    <div class="vocab-definition">Long-term weather patterns of a region</div>
+    
+    <div class="vocab-term">GPS (Global Positioning System)</div>
+    <div class="vocab-definition">Satellite system that provides precise location coordinates</div>
+    
+    <div class="subsection-header">Investigation Terminology</div>
+    
+    <div class="vocab-term">Evidence</div>
+    <div class="vocab-definition">Information that helps prove or disprove something in an investigation</div>
+    
+    <div class="vocab-term">Hypothesis</div>
+    <div class="vocab-definition">Educated guess about what happened, based on evidence</div>
+    
+    <div class="vocab-term">Corroborate</div>
+    <div class="vocab-definition">To confirm information using multiple sources</div>
+    
+    <div class="vocab-term">Alibi</div>
+    <div class="vocab-definition">Proof that someone was elsewhere when something happened</div>
+    
+    <div class="vocab-term">Motive</div>
+    <div class="vocab-definition">Reason why someone might commit a crime</div>
+    
+    <div class="vocab-term">Witness</div>
+    <div class="vocab-definition">Person who saw or heard something related to the case</div>
+</div>
+
+<!-- PAGE 9 CONTINUED: DETECTIVE ROLES -->
+<div class="page page-break">
+    <div class="subsection-header">🎭 Detective Role Definitions</div>
+    
+    <div class="evidence-box">
+        <strong>🔍 Lead Detective</strong>
+        <div class="vocab-definition">Coordinates team activities, makes final decisions, presents findings</div>
+    </div>
+    
+    <div class="evidence-box">
+        <strong>📊 Evidence Manager</strong>
+        <div class="vocab-definition">Organizes and tracks all evidence, maintains chain of custody</div>
+    </div>
+    
+    <div class="evidence-box">
+        <strong>🗺️ Geographic Specialist</strong>
+        <div class="vocab-definition">Analyzes location data, maps evidence, interprets coordinate information</div>
+    </div>
+    
+    <div class="evidence-box">
+        <strong>🎤 Interview Specialist</strong>
+        <div class="vocab-definition">Conducts witness interviews, records testimonies, evaluates credibility</div>
+    </div>
+    
+    <div class="evidence-box">
+        <strong>📝 Documentation Specialist</strong>
+        <div class="vocab-definition">Records all activities, maintains case files, prepares reports</div>
+    </div>
+    
+    <div class="subsection-header">📁 Case File Terminology</div>
+    
+    <div class="vocab-term">Case Number</div>
+    <div class="vocab-definition">Unique identifier for each investigation (001, 002, 003, etc.)</div>
+    
+    <div class="vocab-term">Case Status</div>
+    <div class="vocab-definition">ACTIVE (under investigation), CLASSIFIED (restricted access), SOLVED</div>
+    
+    <div class="vocab-term">Evidence Log</div>
+    <div class="vocab-definition">Detailed record of all evidence collected during investigation</div>
+    
+    <div class="vocab-term">Case Summary</div>
+    <div class="vocab-definition">Brief overview of investigation findings and conclusions</div>
+    
+    <div class="vocab-term">Geographic Profile</div>
+    <div class="vocab-definition">Analysis of location patterns related to the case</div>
+</div>
+
+<!-- PAGE 10-11: INVESTIGATION PROCESS -->
+<div class="page page-break">
+    <div class="section-header">🔄 Investigation Process</div>
+    
+    <div class="subsection-header">Step-by-Step Investigation Flowchart</div>
+    
+    <div style="margin: 20px 0;">
+        <div style="margin: 10px 0;">
+            <span class="investigation-step">1</span>
+            <span class="step-description"><strong>Case Assignment:</strong> Receive case file and initial briefing</span>
+        </div>
+        
+        <div style="margin: 10px 0;">
+            <span class="investigation-step">2</span>
+            <span class="step-description"><strong>Team Assembly:</strong> Assign detective roles and responsibilities</span>
+        </div>
+        
+        <div style="margin: 10px 0;">
+            <span class="investigation-step">3</span>
+            <span class="step-description"><strong>Initial Assessment:</strong> Review available evidence and information</span>
+        </div>
+        
+        <div style="margin: 10px 0;">
+            <span class="investigation-step">4</span>
+            <span class="step-description"><strong>Geographic Analysis:</strong> Identify locations, plot coordinates, analyze patterns</span>
+        </div>
+        
+        <div style="margin: 10px 0;">
+            <span class="investigation-step">5</span>
+            <span class="step-description"><strong>Evidence Collection:</strong> Gather additional evidence systematically</span>
+        </div>
+        
+        <div style="margin: 10px 0;">
+            <span class="investigation-step">6</span>
+            <span class="step-description"><strong>Witness Interviews:</strong> Conduct interviews and record testimonies</span>
+        </div>
+        
+        <div style="margin: 10px 0;">
+            <span class="investigation-step">7</span>
+            <span class="step-description"><strong>Analysis Phase:</strong> Examine evidence for patterns and connections</span>
+        </div>
+        
+        <div style="margin: 10px 0;">
+            <span class="investigation-step">8</span>
+            <span class="step-description"><strong>Hypothesis Formation:</strong> Develop theory based on evidence</span>
+        </div>
+        
+        <div style="margin: 10px 0;">
+            <span class="investigation-step">9</span>
+            <span class="step-description"><strong>Verification:</strong> Test hypothesis against all available evidence</span>
+        </div>
+        
+        <div style="margin: 10px 0;">
+            <span class="investigation-step">10</span>
+            <span class="step-description"><strong>Case Resolution:</strong> Draw conclusions and prepare final report</span>
+        </div>
+    </div>
+    
+    <div class="subsection-header">Case Opening Procedures</div>
+    <div class="info-box">
+        <strong>✅ Investigation Checklist:</strong>
+        <ul style="columns: 2;">
+            <li>☐ Assign case number</li>
+            <li>☐ Distribute role cards</li>
+            <li>☐ Set up evidence log</li>
+            <li>☐ Review initial briefing</li>
+            <li>☐ Identify key locations</li>
+            <li>☐ Plot coordinates on map</li>
+            <li>☐ List known witnesses</li>
+            <li>☐ Establish timeline</li>
+            <li>☐ Set investigation goals</li>
+            <li>☐ Plan team strategy</li>
+        </ul>
+    </div>
+</div>
+
+<!-- PAGE 11 CONTINUED: ANALYSIS AND COLLABORATION -->
+<div class="page page-break">
+    <div class="subsection-header">🔬 Evidence Analysis Methods</div>
+    
+    <div class="evidence-box">
+        <strong>🎯 Geographic Analysis Techniques:</strong>
+        <ol>
+            <li><strong>Pattern Recognition:</strong> Look for geographic relationships in evidence</li>
+            <li><strong>Distance Analysis:</strong> Calculate distances between key locations</li>
+            <li><strong>Elevation Study:</strong> Consider how terrain affects the case</li>
+            <li><strong>Climate Correlation:</strong> Examine weather impact on events</li>
+            <li><strong>Accessibility Assessment:</strong> Evaluate how easy locations are to reach</li>
+        </ol>
+    </div>
+    
+    <div class="subsection-header">👥 Team Collaboration Protocols</div>
+    
+    <div class="coordinate-grid">
+        <div class="info-box">
+            <strong>📋 Daily Team Meetings:</strong>
+            <ul style="font-size: 10pt;">
+                <li>Share new evidence discoveries</li>
+                <li>Update investigation timeline</li>
+                <li>Discuss emerging patterns</li>
+                <li>Plan next day's activities</li>
+                <li>Resolve conflicting evidence</li>
+            </ul>
+        </div>
+        <div class="info-box">
+            <strong>📊 Progress Tracking:</strong>
+            <ul style="font-size: 10pt;">
+                <li>Evidence collection status</li>
+                <li>Interview completion rates</li>
+                <li>Geographic analysis progress</li>
+                <li>Hypothesis development</li>
+                <li>Team role effectiveness</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="subsection-header">✅ Case Closing Checklists</div>
+    
+    <div class="evidence-box">
+        <strong>🎯 Final Case Review:</strong>
+        <ul>
+            <li>☐ All evidence properly documented and logged</li>
+            <li>☐ Geographic analysis complete with maps and coordinates</li>
+            <li>☐ All witness interviews conducted and recorded</li>
+            <li>☐ Case hypothesis supported by evidence</li>
+            <li>☐ Alternative theories considered and ruled out</li>
+            <li>☐ Team consensus on final conclusions</li>
+            <li>☐ Final report prepared for presentation</li>
+            <li>☐ Case file organized for academy review</li>
+        </ul>
+    </div>
+</div>
+
+<!-- PAGE 12: QUICK REFERENCE CARD -->
+<div class="page page-break">
+    <div class="quick-ref-card">
+        <div style="font-size: 18pt; font-weight: bold; margin-bottom: 20px;">
+            🚨 QUICK REFERENCE CARD
+        </div>
+        
+        <div class="coordinate-grid">
+            <div>
+                <strong>📞 Emergency Protocols:</strong>
+                <ul style="font-size: 10pt;">
+                    <li>Academy Control: Extension 911</li>
+                    <li>Evidence Locker: Room 101</li>
+                    <li>Map Library: Room 205</li>
+                    <li>Technology Support: Extension 123</li>
+                </ul>
+            </div>
+            <div>
+                <strong>🌍 Key Coordinate Examples:</strong>
+                <ul style="font-size: 10pt;">
+                    <li>School: ___°___'___"N, ___°___'___"W</li>
+                    <li>City Center: ___°___'___"N, ___°___'___"W</li>
+                    <li>Nearest Airport: ___°___'___"N, ___°___'___"W</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div style="margin: 20px 0;">
+            <strong>✅ Daily Investigation Checklist:</strong>
+            <div style="columns: 2; font-size: 10pt;">
+                <ul>
+                    <li>☐ Review previous day's evidence</li>
+                    <li>☐ Check GPS coordinates accuracy</li>
+                    <li>☐ Update evidence log</li>
+                    <li>☐ Conduct scheduled interviews</li>
+                    <li>☐ Analyze geographic patterns</li>
+                    <li>☐ Document new discoveries</li>
+                    <li>☐ Team status meeting</li>
+                    <li>☐ Plan tomorrow's activities</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div style="border: 3px solid var(--primary-dark); padding: 15px; margin: 20px 0; background: var(--panel-background);">
+            <div style="text-align: center; font-weight: bold; font-size: 14pt; margin-bottom: 10px;">
+                🕵️‍♂️ DETECTIVE OATH
+            </div>
+            <div style="font-style: italic; text-align: center;">
+                "I solemnly swear to use geographic knowledge and investigation skills to uncover the truth, 
+                protect evidence integrity, work collaboratively with my team, and uphold the highest 
+                standards of the Geographic Detective Academy."
+            </div>
+            <div style="text-align: center; margin-top: 15px;">
+                <strong>Agent Signature:</strong> _________________________
+            </div>
+            <div style="text-align: center; margin-top: 10px;">
+                <strong>Date:</strong> _________________________
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px; font-size: 12pt; color: var(--primary-blue);">
+            <strong>Geographic Detective Academy</strong><br>
+            Bureau of Geographic Investigation<br>
+            <em>"Truth Through Geography"</em>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

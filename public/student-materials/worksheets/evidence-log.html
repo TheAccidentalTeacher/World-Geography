@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evidence Collection Log Template</title>
+    <style>
+        /* EXACT COLOR SCHEME FROM SPECIFICATION */
+        :root {
+            --primary-dark: #1a2332;
+            --primary-blue: #3b82f6;
+            --secondary-gold: #fbbf24;
+            --text-light: #f8fafc;
+            --text-dark: #1e293b;
+            --classified-red: #dc2626;
+            --active-green: #16a34a;
+            --warning-amber: #d97706;
+            --panel-background: #f1f5f9;
+            --card-background: #ffffff;
+            --border-color: #e2e8f0;
+        }
+
+        /* PRINT-READY FORMATTING */
+        @page {
+            size: 8.5in 11in;
+            margin: 0.75in;
+        }
+
+        @media print {
+            .page-break { page-break-before: always; }
+            .no-print { display: none; }
+            input[type="text"], input[type="date"], textarea {
+                border: none !important;
+                border-bottom: 1px solid #000 !important;
+                background: transparent !important;
+            }
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            font-size: 11pt;
+            line-height: 1.4;
+            color: var(--text-dark);
+            background: white;
+            margin: 0;
+            padding: 0;
+        }
+
+        .page {
+            min-height: 9.5in;
+            padding: 0.5in;
+            background: white;
+        }
+
+        /* HEADER STYLES */
+        .classified-banner {
+            background: var(--classified-red);
+            color: var(--text-light);
+            text-align: center;
+            padding: 8px;
+            font-weight: bold;
+            font-size: 14pt;
+            letter-spacing: 2px;
+            border: 3px solid var(--primary-dark);
+            margin-bottom: 20px;
+        }
+
+        .log-title {
+            background: var(--primary-dark);
+            color: var(--text-light);
+            text-align: center;
+            padding: 15px;
+            margin: 20px 0;
+            font-size: 20pt;
+            font-weight: bold;
+        }
+
+        .section-header {
+            background: var(--primary-blue);
+            color: var(--text-light);
+            padding: 10px;
+            font-size: 14pt;
+            font-weight: bold;
+            margin: 15px 0 10px 0;
+        }
+
+        /* FORM STYLES */
+        .case-header {
+            border: 3px solid var(--primary-dark);
+            padding: 20px;
+            margin: 20px 0;
+            background: var(--panel-background);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 10px 0;
+        }
+
+        .form-field {
+            margin: 8px 0;
+        }
+
+        .form-field label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 3px;
+            color: var(--primary-dark);
+        }
+
+        .form-field input,
+        .form-field textarea {
+            width: 100%;
+            padding: 5px;
+            border: 2px solid var(--border-color);
+            border-radius: 3px;
+            font-size: 11pt;
+            box-sizing: border-box;
+        }
+
+        .form-field input:focus,
+        .form-field textarea:focus {
+            border-color: var(--primary-blue);
+            outline: none;
+        }
+
+        /* TABLE STYLES */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+            font-size: 10pt;
+        }
+
+        th, td {
+            border: 2px solid var(--border-color);
+            padding: 8px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background: var(--primary-blue);
+            color: var(--text-light);
+            font-weight: bold;
+        }
+
+        td input {
+            border: none;
+            width: 100%;
+            padding: 3px;
+            font-size: 10pt;
+        }
+
+        /* EVIDENCE BOXES */
+        .evidence-box {
+            background: #f9f9f9;
+            border: 2px dotted var(--primary-blue);
+            padding: 12px;
+            margin: 8px 0;
+        }
+
+        .signature-box {
+            border: 2px solid var(--primary-dark);
+            padding: 15px;
+            margin: 10px 0;
+            text-align: center;
+        }
+
+        .signature-line {
+            border-bottom: 2px solid var(--primary-dark);
+            display: inline-block;
+            width: 200px;
+            margin: 0 10px;
+        }
+
+        /* CHECKBOX STYLES */
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            margin-right: 8px;
+            transform: scale(1.2);
+        }
+
+        /* COORDINATE GRID */
+        .coordinate-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .coordinate-box {
+            border: 2px solid var(--primary-blue);
+            padding: 10px;
+            text-align: center;
+        }
+
+        .coordinate-box label {
+            font-weight: bold;
+            color: var(--primary-blue);
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .coordinate-box input {
+            font-family: 'Consolas', 'Monaco', monospace;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<!-- PAGE 1: CASE HEADER INFORMATION -->
+<div class="page">
+    <div class="classified-banner">ACTIVE CASE - EVIDENCE LOG</div>
+    
+    <div class="log-title">
+        🔍 EVIDENCE COLLECTION LOG
+    </div>
+    
+    <div class="case-header">
+        <div style="text-align: center; font-size: 16pt; font-weight: bold; margin-bottom: 20px; color: var(--classified-red);">
+            CASE FILE HEADER
+        </div>
+        
+        <div class="form-row">
+            <div class="form-field">
+                <label>CASE FILE #:</label>
+                <input type="text" placeholder="001, 002, 003..." style="font-family: monospace; font-size: 14pt; font-weight: bold;">
+            </div>
+            <div class="form-field">
+                <label>DATE OPENED:</label>
+                <input type="date">
+            </div>
+        </div>
+        
+        <div class="form-field">
+            <label>DETECTIVE TEAM NAME:</label>
+            <input type="text" placeholder="Enter your team name">
+        </div>
+        
+        <div class="form-field">
+            <label>CASE NAME:</label>
+            <input type="text" placeholder="Official case title (e.g., 'The Great Globe Heist')">
+        </div>
+        
+        <div class="form-field">
+            <label>INVESTIGATION LOCATION:</label>
+            <input type="text" placeholder="Primary investigation area">
+        </div>
+        
+        <div class="form-row">
+            <div class="form-field">
+                <label>LEAD DETECTIVE:</label>
+                <input type="text" placeholder="Team leader name">
+            </div>
+            <div class="form-field">
+                <label>EVIDENCE MANAGER:</label>
+                <input type="text" placeholder="Evidence manager name">
+            </div>
+        </div>
+    </div>
+    
+    <div class="section-header">👥 Team Member Assignments</div>
+    
+    <table>
+        <tr>
+            <th style="width: 25%;">Detective Role</th>
+            <th style="width: 30%;">Team Member Name</th>
+            <th style="width: 45%;">Primary Responsibilities</th>
+        </tr>
+        <tr>
+            <td><strong>Lead Detective</strong></td>
+            <td><input type="text"></td>
+            <td>Coordinate team, make decisions, present findings</td>
+        </tr>
+        <tr>
+            <td><strong>Evidence Manager</strong></td>
+            <td><input type="text"></td>
+            <td>Track evidence, maintain chain of custody</td>
+        </tr>
+        <tr>
+            <td><strong>Geographic Specialist</strong></td>
+            <td><input type="text"></td>
+            <td>Analyze locations, map evidence, coordinates</td>
+        </tr>
+        <tr>
+            <td><strong>Interview Specialist</strong></td>
+            <td><input type="text"></td>
+            <td>Conduct interviews, record testimonies</td>
+        </tr>
+        <tr>
+            <td><strong>Documentation Specialist</strong></td>
+            <td><input type="text"></td>
+            <td>Record activities, maintain files, reports</td>
+        </tr>
+    </table>
+    
+    <div class="signature-box">
+        <strong>CASE AUTHORIZATION</strong><br><br>
+        Lead Detective Signature: <span class="signature-line"></span> Date: <span class="signature-line"></span><br><br>
+        Academy Supervisor Approval: <span class="signature-line"></span> Date: <span class="signature-line"></span>
+    </div>
+</div>
+
+<!-- PAGE 2: EVIDENCE INVENTORY -->
+<div class="page page-break">
+    <div class="section-header">📋 Evidence Inventory Tracking</div>
+    
+    <div class="evidence-box">
+        <strong>📝 Evidence Documentation Instructions:</strong>
+        <ul>
+            <li>Assign each piece of evidence a unique ID number</li>
+            <li>Document exact location where evidence was found</li>
+            <li>Note geographic significance and relevance to case</li>
+            <li>Record chain of custody for all evidence transfers</li>
+            <li>Photograph evidence with measurement scale when possible</li>
+        </ul>
+    </div>
+    
+    <table style="font-size: 9pt;">
+        <tr>
+            <th style="width: 8%;">Evidence ID</th>
+            <th style="width: 20%;">Description</th>
+            <th style="width: 18%;">Location Found</th>
+            <th style="width: 12%;">Date/Time</th>
+            <th style="width: 15%;">Collected By</th>
+            <th style="width: 12%;">Photo #</th>
+            <th style="width: 15%;">Geographic Significance</th>
+        </tr>
+        <tr>
+            <td><input type="text" placeholder="E001"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+        </tr>
+        <tr>
+            <td><input type="text" placeholder="E002"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+        </tr>
+        <tr>
+            <td><input type="text" placeholder="E003"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+        </tr>
+        <tr>
+            <td><input type="text" placeholder="E004"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+        </tr>
+        <tr>
+            <td><input type="text" placeholder="E005"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+        </tr>
+        <tr>
+            <td><input type="text" placeholder="E006"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+        </tr>
+        <tr>
+            <td><input type="text" placeholder="E007"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+        </tr>
+        <tr>
+            <td><input type="text" placeholder="E008"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+        </tr>
+        <tr>
+            <td><input type="text" placeholder="E009"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+        </tr>
+        <tr>
+            <td><input type="text" placeholder="E010"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+        </tr>
+    </table>
+    
+    <div class="section-header">📷 Photo Evidence Documentation</div>
+    
+    <div class="checkbox-group">
+        <div class="checkbox-item">
+            <input type="checkbox" id="overview">
+            <label for="overview">Overview shots taken</label>
+        </div>
+        <div class="checkbox-item">
+            <input type="checkbox" id="midrange">
+            <label for="midrange">Mid-range shots taken</label>
+        </div>
+        <div class="checkbox-item">
+            <input type="checkbox" id="closeup">
+            <label for="closeup">Close-up detail shots</label>
+        </div>
+        <div class="checkbox-item">
+            <input type="checkbox" id="scale">
+            <label for="scale">Scale reference included</label>
+        </div>
+        <div class="checkbox-item">
+            <input type="checkbox" id="coordinates">
+            <label for="coordinates">GPS coordinates documented</label>
+        </div>
+        <div class="checkbox-item">
+            <input type="checkbox" id="north">
+            <label for="north">North arrow indicated</label>
+        </div>
+    </div>
+    
+    <div class="evidence-box">
+        <strong>📊 Evidence Category Summary:</strong>
+        <div class="form-row">
+            <div>
+                <label>Physical Evidence Count:</label>
+                <input type="number" style="width: 60px;">
+            </div>
+            <div>
+                <label>Geographic Evidence Count:</label>
+                <input type="number" style="width: 60px;">
+            </div>
+        </div>
+        <div class="form-row">
+            <div>
+                <label>Witness Statements Count:</label>
+                <input type="number" style="width: 60px;">
+            </div>
+            <div>
+                <label>Expert Testimonies Count:</label>
+                <input type="number" style="width: 60px;">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- PAGE 3: WITNESS TESTIMONY LOG -->
+<div class="page page-break">
+    <div class="section-header">🎤 Witness Testimony Log</div>
+    
+    <div class="evidence-box">
+        <strong>🎯 Interview Guidelines:</strong>
+        <ul>
+            <li>Focus on geographic details: locations, directions, distances</li>
+            <li>Ask witnesses to describe landmarks and reference points</li>
+            <li>Request specific coordinate information when available</li>
+            <li>Have witnesses sketch simple maps of relevant areas</li>
+            <li>Verify location information through follow-up questions</li>
+        </ul>
+    </div>
+    
+    <div style="margin: 20px 0;">
+        <strong style="font-size: 14pt;">WITNESS #1</strong>
+        
+        <div class="form-row">
+            <div class="form-field">
+                <label>Witness Name:</label>
+                <input type="text">
+            </div>
+            <div class="form-field">
+                <label>Interview Date/Time:</label>
+                <input type="text">
+            </div>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-field">
+                <label>Interviewing Detective:</label>
+                <input type="text">
+            </div>
+            <div class="form-field">
+                <label>Location of Interview:</label>
+                <input type="text">
+            </div>
+        </div>
+        
+        <div class="form-field">
+            <label>Witness Account (focus on geographic details):</label>
+            <textarea rows="4" placeholder="Record witness testimony with emphasis on locations, directions, and geographic references..."></textarea>
+        </div>
+        
+        <div class="form-field">
+            <label>Key Geographic Information Provided:</label>
+            <textarea rows="3" placeholder="Summarize specific location data, coordinates, landmarks, or directional information..."></textarea>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-field">
+                <label>Credibility Rating (1-10):</label>
+                <input type="number" min="1" max="10" style="width: 60px;">
+            </div>
+            <div class="form-field">
+                <label>Geographic Knowledge Level:</label>
+                <select style="width: 100%; padding: 5px;">
+                    <option>Excellent</option>
+                    <option>Good</option>
+                    <option>Fair</option>
+                    <option>Limited</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    
+    <div style="margin: 20px 0; border-top: 2px solid var(--border-color); padding-top: 15px;">
+        <strong style="font-size: 14pt;">WITNESS #2</strong>
+        
+        <div class="form-row">
+            <div class="form-field">
+                <label>Witness Name:</label>
+                <input type="text">
+            </div>
+            <div class="form-field">
+                <label>Interview Date/Time:</label>
+                <input type="text">
+            </div>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-field">
+                <label>Interviewing Detective:</label>
+                <input type="text">
+            </div>
+            <div class="form-field">
+                <label>Location of Interview:</label>
+                <input type="text">
+            </div>
+        </div>
+        
+        <div class="form-field">
+            <label>Witness Account (focus on geographic details):</label>
+            <textarea rows="4" placeholder="Record witness testimony with emphasis on locations, directions, and geographic references..."></textarea>
+        </div>
+        
+        <div class="form-field">
+            <label>Key Geographic Information Provided:</label>
+            <textarea rows="3" placeholder="Summarize specific location data, coordinates, landmarks, or directional information..."></textarea>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-field">
+                <label>Credibility Rating (1-10):</label>
+                <input type="number" min="1" max="10" style="width: 60px;">
+            </div>
+            <div class="form-field">
+                <label>Geographic Knowledge Level:</label>
+                <select style="width: 100%; padding: 5px;">
+                    <option>Excellent</option>
+                    <option>Good</option>
+                    <option>Fair</option>
+                    <option>Limited</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    
+    <div class="evidence-box">
+        <strong>🔍 Testimony Cross-Reference Analysis:</strong>
+        <div class="form-field">
+            <label>Consistent Geographic Details Between Witnesses:</label>
+            <textarea rows="2" placeholder="Note any geographic information that multiple witnesses confirm..."></textarea>
+        </div>
+        <div class="form-field">
+            <label>Conflicting Location Information:</label>
+            <textarea rows="2" placeholder="Note any contradictory geographic details that need further investigation..."></textarea>
+        </div>
+    </div>
+</div>
+
+<!-- PAGE 4: COORDINATE & LOCATION DATA -->
+<div class="page page-break">
+    <div class="section-header">📍 Coordinate & Location Data Recording</div>
+    
+    <div class="evidence-box">
+        <strong>🌍 GPS Coordinate Documentation:</strong>
+        <p>Record all coordinates in both DMS (Degrees, Minutes, Seconds) and Decimal Degrees format when possible. Include elevation data if available.</p>
+    </div>
+    
+    <div class="coordinate-grid">
+        <div class="coordinate-box">
+            <label>CRIME SCENE LOCATION</label>
+            <div style="margin: 5px 0;">
+                <label style="font-size: 9pt;">Latitude (DMS):</label>
+                <input type="text" placeholder="40° 44' 54&quot; N">
+            </div>
+            <div style="margin: 5px 0;">
+                <label style="font-size: 9pt;">Longitude (DMS):</label>
+                <input type="text" placeholder="73° 59' 9&quot; W">
+            </div>
+            <div style="margin: 5px 0;">
+                <label style="font-size: 9pt;">Decimal Degrees:</label>
+                <input type="text" placeholder="40.748611, -73.985556">
+            </div>
+            <div style="margin: 5px 0;">
+                <label style="font-size: 9pt;">Elevation (ft/m):</label>
+                <input type="text" placeholder="33 ft / 10 m">
+            </div>
+        </div>
+        
+        <div class="coordinate-box">
+            <label>EVIDENCE LOCATION #1</label>
+            <div style="margin: 5px 0;">
+                <label style="font-size: 9pt;">Latitude (DMS):</label>
+                <input type="text">
+            </div>
+            <div style="margin: 5px 0;">
+                <label style="font-size: 9pt;">Longitude (DMS):</label>
+                <input type="text">
+            </div>
+            <div style="margin: 5px 0;">
+                <label style="font-size: 9pt;">Decimal Degrees:</label>
+                <input type="text">
+            </div>
+            <div style="margin: 5px 0;">
+                <label style="font-size: 9pt;">Elevation (ft/m):</label>
+                <input type="text">
+            </div>
+        </div>
+        
+        <div class="coordinate-box">
+            <label>EVIDENCE LOCATION #2</label>
+            <div style="margin: 5px 0;">
+                <label style="font-size: 9pt;">Latitude (DMS):</label>
+                <input type="text">
+            </div>
+            <div style="margin: 5px 0;">
+                <label style="font-size: 9pt;">Longitude (DMS):</label>
+                <input type="text">
+            </div>
+            <div style="margin: 5px 0;">
+                <label style="font-size: 9pt;">Decimal Degrees:</label>
+                <input type="text">
+            </div>
+            <div style="margin: 5px 0;">
+                <label style="font-size: 9pt;">Elevation (ft/m):</label>
+                <input type="text">
+            </div>
+        </div>
+    </div>
+    
+    <div class="section-header">📏 Distance & Measurement Log</div>
+    
+    <table>
+        <tr>
+            <th style="width: 25%;">From Location</th>
+            <th style="width: 25%;">To Location</th>
+            <th style="width: 15%;">Distance</th>
+            <th style="width: 15%;">Bearing/Direction</th>
+            <th style="width: 20%;">Measurement Method</th>
+        </tr>
+        <tr>
+            <td><input type="text" placeholder="Crime scene"></td>
+            <td><input type="text" placeholder="Evidence location"></td>
+            <td><input type="text" placeholder="250 m"></td>
+            <td><input type="text" placeholder="N 45° E"></td>
+            <td><input type="text" placeholder="GPS, map scale"></td>
+        </tr>
+        <tr>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+        </tr>
+        <tr>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+        </tr>
+        <tr>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+        </tr>
+    </table>
+    
+    <div class="section-header">🗺️ Map Reference Annotations</div>
+    
+    <div class="evidence-box">
+        <strong>📌 Location Descriptions:</strong>
+        <div class="form-field">
+            <label>Crime Scene Description:</label>
+            <textarea rows="2" placeholder="Describe terrain, landmarks, accessibility, nearby features..."></textarea>
+        </div>
+        <div class="form-field">
+            <label>Key Evidence Locations:</label>
+            <textarea rows="2" placeholder="Describe where major evidence was found in relation to geographic features..."></textarea>
+        </div>
+        <div class="form-field">
+            <label>Geographic Patterns Observed:</label>
+            <textarea rows="2" placeholder="Note any patterns in evidence distribution, elevation changes, or geographic relationships..."></textarea>
+        </div>
+    </div>
+    
+    <div class="section-header">📋 Final Location Summary</div>
+    
+    <div class="signature-box">
+        <strong>GEOGRAPHIC ANALYSIS CERTIFICATION</strong><br><br>
+        All coordinates verified and cross-checked: ☐ Yes ☐ No<br><br>
+        Map references confirmed: ☐ Yes ☐ No<br><br>
+        Distance calculations reviewed: ☐ Yes ☐ No<br><br>
+        Geographic Specialist Signature: <span class="signature-line"></span> Date: <span class="signature-line"></span><br><br>
+        Evidence Manager Verification: <span class="signature-line"></span> Date: <span class="signature-line"></span>
+    </div>
+</div>
+
+</body>
+</html>

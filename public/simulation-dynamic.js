@@ -512,62 +512,205 @@ class SimulationInterface {
     }
 
     async loadStudentMaterials() {
-        const response = await fetch(`${this.apiBase}/student-materials`);
-        const data = await response.json();
-        
         const panel = document.getElementById('student-materials');
         panel.innerHTML = `
-            <h2>📋 ${data.data.title}</h2>
-            <p class="subtitle">${data.data.description}</p>
+            <h2>📋 Student Materials</h2>
+            <p class="subtitle">Comprehensive resources for geographic detective work</p>
             
             <div class="materials-section">
                 <h3>📄 Student Handouts</h3>
                 <div class="materials-grid">
-                    ${data.data.handouts.map(handout => `
-                        <div class="material-card">
-                            <div class="material-header">
-                                <h4>${handout.title}</h4>
-                                <div class="material-meta">
-                                    <span class="page-count">${handout.pageCount} pages</span>
-                                    <span class="format">${handout.format}</span>
-                                </div>
-                            </div>
-                            <p class="material-description">${handout.description}</p>
-                            <div class="material-contents">
-                                <h5>Contents:</h5>
-                                <ul>
-                                    ${handout.contents ? handout.contents.map(item => `<li>${item}</li>`).join('') : 
-                                      handout.sections ? handout.sections.map(item => `<li>${item}</li>`).join('') :
-                                      handout.worksheets ? handout.worksheets.map(item => `<li>${item}</li>`).join('') :
-                                      handout.components ? handout.components.map(item => `<li>${item}</li>`).join('') : ''}
-                                </ul>
+                    <div class="material-card">
+                        <div class="material-header">
+                            <h4>�️‍♂️ Geographic Detective Handbook</h4>
+                            <div class="material-meta">
+                                <span class="page-count">12 pages</span>
+                                <span class="format">Spiral-bound reference booklet</span>
                             </div>
                         </div>
-                    `).join('')}
+                        <p class="material-description">Essential reference guide for geographic investigation techniques</p>
+                        <div class="material-contents">
+                            <h5>Contents:</h5>
+                            <ul>
+                                <li>Coordinate system quick reference (latitude/longitude, UTM)</li>
+                                <li>Map reading techniques and scale interpretation</li>
+                                <li>Evidence collection and documentation standards</li>
+                                <li>Geographic vocabulary and terminology</li>
+                                <li>Investigation process flowchart and methodologies</li>
+                            </ul>
+                        </div>
+                        <div class="material-actions">
+                            <button onclick="simulationInterface.downloadMaterial('handbooks', 'detective-handbook.html')" class="download-btn">
+                                📥 Download Handbook
+                            </button>
+                            <button onclick="simulationInterface.previewMaterial('handbooks', 'detective-handbook.html')" class="preview-btn">
+                                👁️ Preview
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="material-card">
+                        <div class="material-header">
+                            <h4>📋 Evidence Collection Log Template</h4>
+                            <div class="material-meta">
+                                <span class="page-count">4 pages</span>
+                                <span class="format">Double-sided worksheet packet</span>
+                            </div>
+                        </div>
+                        <p class="material-description">Structured format for documenting case evidence and analysis</p>
+                        <div class="material-contents">
+                            <h5>Contents:</h5>
+                            <ul>
+                                <li>Case identification and basic information</li>
+                                <li>Evidence inventory with geographic significance notes</li>
+                                <li>Witness testimony and geographic clue analysis</li>
+                                <li>Coordinate and location data recording</li>
+                                <li>Team collaboration and role responsibility tracking</li>
+                            </ul>
+                        </div>
+                        <div class="material-actions">
+                            <button onclick="simulationInterface.downloadMaterial('worksheets', 'evidence-log.html')" class="download-btn">
+                                📥 Download Log
+                            </button>
+                            <button onclick="simulationInterface.previewMaterial('worksheets', 'evidence-log.html')" class="preview-btn">
+                                👁️ Preview
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="material-card">
+                        <div class="material-header">
+                            <h4>📊 Coordinate Analysis Worksheet Collection</h4>
+                            <div class="material-meta">
+                                <span class="page-count">8 pages</span>
+                                <span class="format">Consumable practice worksheets</span>
+                            </div>
+                        </div>
+                        <p class="material-description">Practice exercises for latitude/longitude and coordinate system mastery</p>
+                        <div class="material-contents">
+                            <h5>Contents:</h5>
+                            <ul>
+                                <li>Basic coordinate identification and plotting</li>
+                                <li>Distance calculation between coordinates</li>
+                                <li>Coordinate system conversion practice</li>
+                                <li>Real-world location identification challenges</li>
+                                <li>GPS navigation and waypoint exercises</li>
+                            </ul>
+                        </div>
+                        <div class="material-actions">
+                            <button onclick="alert('Coordinate worksheets coming in Phase 2!')" class="coming-soon-btn">
+                                🚧 Coming Soon
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="material-card">
+                        <div class="material-header">
+                            <h4>📝 Case Report Presentation Template</h4>
+                            <div class="material-meta">
+                                <span class="page-count">6 pages</span>
+                                <span class="format">Presentation template with graphic organizers</span>
+                            </div>
+                        </div>
+                        <p class="material-description">Structured format for presenting investigation findings and solutions</p>
+                        <div class="material-contents">
+                            <h5>Contents:</h5>
+                            <ul>
+                                <li>Executive summary of case and findings</li>
+                                <li>Evidence analysis and geographic interpretation</li>
+                                <li>Investigation methodology and team roles</li>
+                                <li>Geographic concepts applied and learned</li>
+                                <li>Real-world connections and applications</li>
+                                <li>Recommendations and next steps</li>
+                            </ul>
+                        </div>
+                        <div class="material-actions">
+                            <button onclick="alert('Case report templates coming in Phase 2!')" class="coming-soon-btn">
+                                🚧 Coming Soon
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
             
             <div class="materials-section">
                 <h3>💻 Digital Tools</h3>
                 <div class="tools-grid">
-                    ${data.data.digitalTools.map(tool => `
-                        <div class="tool-card">
-                            <h4>${tool.name}</h4>
-                            <p class="tool-description">${tool.description}</p>
-                            <div class="tool-features">
-                                <h5>Features:</h5>
-                                <ul>
-                                    ${tool.features.map(feature => `<li>${feature}</li>`).join('')}
-                                </ul>
-                            </div>
-                            <div class="access-level">
-                                <strong>Access:</strong> ${tool.accessLevel}
-                            </div>
+                    <div class="tool-card">
+                        <h4>🌍 Interactive World Map Portal</h4>
+                        <p class="tool-description">Web-based mapping tool with coordinate overlay and measurement features</p>
+                        <div class="tool-features">
+                            <h5>Features:</h5>
+                            <ul>
+                                <li>Coordinate plotting and identification</li>
+                                <li>Distance and area measurement</li>
+                                <li>Layer overlays for climate, population, physical features</li>
+                                <li>Access: Browser-based, no installation required</li>
+                            </ul>
                         </div>
-                    `).join('')}
+                        <div class="tool-actions">
+                            <button onclick="alert('Digital tools coming in Phase 3!')" class="coming-soon-btn">
+                                🚧 Phase 3
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="tool-card">
+                        <h4>🔍 Geographic Investigation Database</h4>
+                        <p class="tool-description">Searchable database of geographic facts, statistics, and reference information</p>
+                        <div class="tool-features">
+                            <h5>Features:</h5>
+                            <ul>
+                                <li>Country and region fact sheets</li>
+                                <li>Climate and physical geography data</li>
+                                <li>Cultural and economic indicators</li>
+                                <li>Access: Password-protected student portal</li>
+                            </ul>
+                        </div>
+                        <div class="tool-actions">
+                            <button onclick="alert('Digital tools coming in Phase 3!')" class="coming-soon-btn">
+                                🚧 Phase 3
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="tool-card">
+                        <h4>🗃️ Virtual Evidence Locker</h4>
+                        <p class="tool-description">Digital repository for storing and organizing case evidence and findings</p>
+                        <div class="tool-features">
+                            <h5>Features:</h5>
+                            <ul>
+                                <li>Team collaboration workspace</li>
+                                <li>Evidence photo and document storage</li>
+                                <li>Investigation timeline tracking</li>
+                                <li>Access: Team-based shared workspace</li>
+                            </ul>
+                        </div>
+                        <div class="tool-actions">
+                            <button onclick="alert('Digital tools coming in Phase 3!')" class="coming-soon-btn">
+                                🚧 Phase 3
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         `;
+    }
+
+    // Add download and preview methods
+    downloadMaterial(category, filename) {
+        const downloadUrl = `/student-materials/${category}/${filename}`;
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.download = filename;
+        link.click();
+        console.log(`📥 Downloading ${filename} from ${category}`);
+    }
+
+    previewMaterial(category, filename) {
+        const previewUrl = `/student-materials/${category}/${filename}`;
+        window.open(previewUrl, '_blank');
+        console.log(`👁️ Previewing ${filename} from ${category}`);
     }
 
     async loadAssessments() {
