@@ -448,35 +448,6 @@
         </div>
     </main>
 
-    <script>
-        // Navigation functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            const navItems = document.querySelectorAll('.nav-item');
-            const panels = document.querySelectorAll('.content-panel');
-
-            navItems.forEach(item => {
-                item.addEventListener('click', function() {
-                    const targetPanel = this.getAttribute('data-panel');
-                    
-                    // Use the SimulationInterface for navigation if available
-                    if (window.simulationInterface && typeof window.simulationInterface.switchPanel === 'function') {
-                        window.simulationInterface.switchPanel(targetPanel);
-                    } else {
-                        // Fallback navigation method
-                        navItems.forEach(nav => nav.classList.remove('active'));
-                        this.classList.add('active');
-                        panels.forEach(panel => panel.classList.add('hidden'));
-                        
-                        const targetElement = document.getElementById(targetPanel);
-                        if (targetElement) {
-                            targetElement.classList.remove('hidden');
-                        }
-                    }
-                });
-            });
-        });
-    </script>
-    
     <!-- Load dynamic content system -->
     <script src="/simulation-dynamic.js"></script>
     

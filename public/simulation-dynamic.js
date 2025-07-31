@@ -3,25 +3,51 @@
  * Fetches and renders content for each navigation panel
  */
 
+console.log('🚀 simulation-dynamic.js loaded at:', new Date().toISOString());
+
 class SimulationInterface {
     constructor() {
+        console.log('🏗️ SimulationInterface constructor called');
+        
+        // Prevent duplicate initialization
+        if (window.simulationInterfaceInitialized) {
+            console.warn('⚠️ SimulationInterface already initialized, skipping...');
+            return;
+        }
+        
         this.currentPanel = 'overview';
         this.apiBase = '/api/simulation';
+        console.log('📡 API Base set to:', this.apiBase);
         this.initializeNavigation();
+        
+        // Mark as initialized
+        window.simulationInterfaceInitialized = true;
+        console.log('✅ SimulationInterface constructor complete');
     }
 
     initializeNavigation() {
+        console.log('🔗 Starting navigation initialization...');
         const navItems = document.querySelectorAll('.nav-item');
+        console.log('📋 Found nav items:', navItems.length);
         
-        navItems.forEach(item => {
-            item.addEventListener('click', (e) => {
-                const targetPanel = item.getAttribute('data-panel');
+        navItems.forEach((item, index) => {
+            const targetPanel = item.getAttribute('data-panel');
+            console.log(`🎯 Nav item ${index}: ${targetPanel}`);
+            
+            // Remove any existing event listeners to prevent duplicates
+            const newItem = item.cloneNode(true);
+            item.parentNode.replaceChild(newItem, item);
+            
+            newItem.addEventListener('click', (e) => {
+                console.log(`🖱️ Clicked nav item: ${targetPanel}`);
                 this.switchPanel(targetPanel);
             });
         });
 
         // Initialize the CLASSIFIED and ACTIVE CASE buttons
+        console.log('🚨 Initializing status buttons...');
         this.initializeStatusButtons();
+        console.log('✅ Navigation initialization complete');
     }
 
     initializeStatusButtons() {
