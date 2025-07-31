@@ -393,9 +393,8 @@ class SimulationInterface {
             <div class="roles-grid">
                 ${data.data.map(role => `
                     <div class="role-card enhanced">
-                        <div class="role-image-placeholder">
-                            <strong>${role.icon} AI IMAGE: ${role.title}</strong><br>
-                            <em>${role.imagePrompt}</em>
+                        <div class="role-image-container">
+                            <img src="/images/role-cards/${role.title.toLowerCase().replace(/\s+/g, ' ')}.png" alt="${role.title}" class="role-card-image">
                         </div>
                         <div class="role-header">
                             <span class="role-icon">${role.icon}</span>
