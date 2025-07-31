@@ -416,9 +416,16 @@ class SimulationInterface {
 
     async loadTeacherGuide() {
         try {
-            // Load structured teacher guide data from API
-            const response = await fetch(`${this.apiBase}/teacher-guide`);
-            const data = await response.json();
+            // Load the comprehensive teacher guide from markdown file
+            console.log('📚 Loading COMPREHENSIVE Teacher Guide (596 lines)...');
+            const response = await fetch('/simulation-files/TEACHER-GUIDE-EXPANDED.md');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const markdownContent = await response.text();
+            console.log('📄 Loaded markdown content, converting to HTML...');
+            const htmlContent = this.convertComprehensiveMarkdownToHTML(markdownContent);
             
             const panel = document.getElementById('teacher-guide');
             panel.innerHTML = `
@@ -802,11 +809,15 @@ class SimulationInterface {
                 </div>
             `;
         } catch (error) {
-            console.error('❌ Error loading teacher guide:', error);
+            console.error('❌ Error loading comprehensive teacher guide:', error);
             document.getElementById('teacher-guide').innerHTML = `
-                <div style="text-align: center; padding: 2rem; color: #dc3545;">
-                    <h3>📋 Teacher Guide Temporarily Unavailable</h3>
-                    <p>We're working to restore the teacher guide. Please try again in a moment.</p>
+                <div class="error-message" style="text-align: center; padding: 2rem; color: #dc3545; background: #f8d7da; border-radius: 8px; margin: 2rem;">
+                    <h3>⚠️ Unable to Load Comprehensive Teacher Guide</h3>
+                    <p>There was an error loading the complete 596-line teacher implementation guide. Please try refreshing the page.</p>
+                    <details style="margin-top: 1rem;">
+                        <summary style="cursor: pointer; font-weight: bold;">Technical Details</summary>
+                        <code style="display: block; margin-top: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 4px;">${error.message}</code>
+                    </details>
                 </div>
             `;
         }
