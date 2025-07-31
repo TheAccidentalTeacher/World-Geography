@@ -25,17 +25,33 @@ class SimulationInterface {
     }
 
     initializeStatusButtons() {
+        console.log('🔧 Initializing status buttons...');
         const classifiedBtn = document.querySelector('.badge.classified');
         const activeCaseBtn = document.querySelector('.badge.active-case');
         
+        console.log('🔍 Found classified button:', classifiedBtn);
+        console.log('🔍 Found active case button:', activeCaseBtn);
+        
         if (classifiedBtn) {
             classifiedBtn.style.cursor = 'pointer';
-            classifiedBtn.addEventListener('click', () => this.toggleClassifiedMode());
+            classifiedBtn.addEventListener('click', () => {
+                console.log('🔒 CLASSIFIED button clicked!');
+                this.toggleClassifiedMode();
+            });
+            console.log('✅ CLASSIFIED button initialized');
+        } else {
+            console.warn('⚠️ CLASSIFIED button not found');
         }
         
         if (activeCaseBtn) {
             activeCaseBtn.style.cursor = 'pointer';
-            activeCaseBtn.addEventListener('click', () => this.toggleActiveCaseStatus());
+            activeCaseBtn.addEventListener('click', () => {
+                console.log('🚨 ACTIVE CASE button clicked!');
+                this.toggleActiveCaseStatus();
+            });
+            console.log('✅ ACTIVE CASE button initialized');
+        } else {
+            console.warn('⚠️ ACTIVE CASE button not found');
         }
     }
 
@@ -197,9 +213,15 @@ class SimulationInterface {
     }
 
     async switchPanel(panelId) {
+        console.log(`🔄 Switching to panel: ${panelId}`);
+        
         // Update navigation state
         document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
-        document.querySelector(`[data-panel="${panelId}"]`).classList.add('active');
+        const navElement = document.querySelector(`[data-panel="${panelId}"]`);
+        if (navElement) {
+            navElement.classList.add('active');
+            console.log(`✅ Navigation updated for: ${panelId}`);
+        }
         
         // Hide all panels
         document.querySelectorAll('.content-panel').forEach(panel => panel.classList.add('hidden'));
@@ -209,15 +231,18 @@ class SimulationInterface {
         
         try {
             // Load content for the panel
+            console.log(`📥 Loading content for: ${panelId}`);
             await this.loadPanelContent(panelId);
+            console.log(`✅ Content loaded for: ${panelId}`);
             
             // Show the target panel
             const targetElement = document.getElementById(panelId);
             if (targetElement) {
                 targetElement.classList.remove('hidden');
+                console.log(`👁️ Panel visible: ${panelId}`);
             }
         } catch (error) {
-            console.error(`Error loading panel ${panelId}:`, error);
+            console.error(`❌ Error loading panel ${panelId}:`, error);
             this.showError(panelId, error);
         }
     }
@@ -769,11 +794,6 @@ class SimulationInterface {
         return html;
     }
 }
-
-// Initialize when DOM is ready
-document.addEventListener('DOMContentLoaded', function() {
-    new SimulationInterface();
-});
 
 // Add enhanced styling for the dynamic content
 const dynamicStyles = `
