@@ -321,7 +321,8 @@ class SimulationInterface {
                 await this.loadStudentMaterials();
                 break;
             case 'gamma-prompts':
-                await this.loadGammaPrompts();
+                // Let HTML SimulationPresentation handle this panel
+                console.log('🎬 Gamma-prompts panel handled by SimulationPresentation class');
                 break;
             case 'complete-package':
                 await this.loadCompletePackage();
@@ -675,60 +676,6 @@ class SimulationInterface {
                 </div>
             `;
         }
-    }
-
-    async loadGammaPrompts() {
-        const panel = document.getElementById('gamma-prompts');
-        panel.innerHTML = `
-            <h2>🎮 Interactive Presentation & Engagement</h2>
-            <p class="subtitle">Full 60-slide presentation system with interactive elements and engagement techniques</p>
-            
-            <div class="presentation-section">
-                <h3>📊 Complete Presentation System</h3>
-                <div class="presentation-info">
-                    <div class="info-card">
-                        <h4>🎯 Ready for Upload</h4>
-                        <p>Upload your 60 PNG slides to activate the full presentation system with navigation, notes, and interactive features.</p>
-                        <div class="upload-status">
-                            <strong>Upload Location:</strong> <code>local-simulations/oregon-trail/presentation/</code>
-                        </div>
-                    </div>
-                    
-                    <div class="info-card">
-                        <h4>🛠️ Features Available</h4>
-                        <ul>
-                            <li>Full slide navigation with thumbnails</li>
-                            <li>Keyboard controls and auto-play</li>
-                            <li>Fullscreen presentation mode</li>
-                            <li>Contextual teaching notes for each slide</li>
-                            <li>Progress tracking and timing</li>
-                            <li>Download individual slides</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="prompts-section">
-                <h3>💬 Interactive Engagement Techniques</h3>
-                <div class="technique-grid">
-                    <div class="technique-card">
-                        <h4>🚨 Urgent Communications</h4>
-                        <p>Use "emergency" Bureau communications to maintain engagement and urgency throughout investigations.</p>
-                        <div class="example">
-                            <strong>Example:</strong> "PRIORITY ALERT: New evidence has been discovered at the crime scene. All detective units report immediately for briefing."
-                        </div>
-                    </div>
-                    
-                    <div class="technique-card">
-                        <h4>🎭 Role-Playing Elements</h4>
-                        <p>Encourage students to fully embody their detective roles with specialized vocabulary and professional presentation.</p>
-                        <div class="example">
-                            <strong>Example:</strong> Students address each other by role titles and present findings as formal case reports.
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
     }
 
     async loadCompletePackage() {
