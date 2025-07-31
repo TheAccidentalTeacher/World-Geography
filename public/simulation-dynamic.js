@@ -19,6 +19,176 @@ class SimulationInterface {
                 this.switchPanel(targetPanel);
             });
         });
+
+        // Initialize the CLASSIFIED and ACTIVE CASE buttons
+        this.initializeStatusButtons();
+    }
+
+    initializeStatusButtons() {
+        const classifiedBtn = document.querySelector('.badge.classified');
+        const activeCaseBtn = document.querySelector('.badge.active-case');
+        
+        if (classifiedBtn) {
+            classifiedBtn.style.cursor = 'pointer';
+            classifiedBtn.addEventListener('click', () => this.toggleClassifiedMode());
+        }
+        
+        if (activeCaseBtn) {
+            activeCaseBtn.style.cursor = 'pointer';
+            activeCaseBtn.addEventListener('click', () => this.toggleActiveCaseStatus());
+        }
+    }
+
+    toggleClassifiedMode() {
+        const isClassified = document.body.classList.toggle('classified-mode');
+        
+        if (isClassified) {
+            this.showClassifiedAlert();
+            // Add special styling for classified mode
+            document.body.style.filter = 'sepia(0.2) contrast(1.1)';
+            localStorage.setItem('classifiedMode', 'true');
+        } else {
+            document.body.style.filter = '';
+            localStorage.removeItem('classifiedMode');
+            this.hideSpecialElements('.classified-content');
+        }
+    }
+
+    toggleActiveCaseStatus() {
+        const caseStatuses = ['ACTIVE CASE', 'CASE CLOSED', 'UNDER INVESTIGATION', 'CODE RED', 'PRIORITY ALERT'];
+        const activeCaseBtn = document.querySelector('.badge.active-case');
+        
+        let currentIndex = caseStatuses.indexOf(activeCaseBtn.textContent);
+        currentIndex = (currentIndex + 1) % caseStatuses.length;
+        
+        const newStatus = caseStatuses[currentIndex];
+        activeCaseBtn.textContent = newStatus;
+        
+        // Update styling based on status
+        activeCaseBtn.className = `badge active-case ${newStatus.toLowerCase().replace(/\s+/g, '-')}`;
+        
+        this.showCaseStatusAlert(newStatus);
+        localStorage.setItem('currentCaseStatus', newStatus);
+    }
+
+    showClassifiedAlert() {
+        const alert = document.createElement('div');
+        alert.className = 'classified-alert';
+        alert.innerHTML = `
+            <div class="alert-content">
+                <div class="alert-icon">🔒</div>
+                <div class="alert-text">
+                    <h3>CLASSIFIED MODE ACTIVATED</h3>
+                    <p>🕵️ Detective-level access granted. Sensitive investigation materials now visible.</p>
+                    <p><strong>Teacher Note:</strong> This mode reveals additional implementation details and advanced case materials.</p>
+                </div>
+                <button class="alert-close" onclick="this.parentElement.parentElement.remove()">×</button>
+            </div>
+        `;
+        
+        document.body.appendChild(alert);
+        
+        // Auto-remove after 5 seconds
+        setTimeout(() => {
+            if (alert.parentElement) {
+                alert.remove();
+            }
+        }, 5000);
+        
+        // Show classified content
+        this.revealClassifiedContent();
+    }
+
+    showCaseStatusAlert(status) {
+        const statusMessages = {
+            'ACTIVE CASE': '🔍 Investigation in progress. All units stand by.',
+            'CASE CLOSED': '✅ Mission accomplished. Case successfully resolved.',
+            'UNDER INVESTIGATION': '🕵️ Deep investigation mode. Gathering evidence.',
+            'CODE RED': '🚨 URGENT: High priority case. Immediate action required.',
+            'PRIORITY ALERT': '⚠️ Priority status activated. All resources deployed.'
+        };
+        
+        const alert = document.createElement('div');
+        alert.className = 'case-status-alert';
+        alert.innerHTML = `
+            <div class="alert-content status-${status.toLowerCase().replace(/\s+/g, '-')}">
+                <div class="alert-text">
+                    <h3>CASE STATUS UPDATE</h3>
+                    <p>${statusMessages[status]}</p>
+                </div>
+                <button class="alert-close" onclick="this.parentElement.parentElement.remove()">×</button>
+            </div>
+        `;
+        
+        document.body.appendChild(alert);
+        
+        // Auto-remove after 4 seconds
+        setTimeout(() => {
+            if (alert.parentElement) {
+                alert.remove();
+            }
+        }, 4000);
+    }
+
+    revealClassifiedContent() {
+        // Add classified badges to sensitive content
+        const teacherSections = document.querySelectorAll('.learning-objective, .assessment-note, .implementation-checklist');
+        teacherSections.forEach(section => {
+            if (!section.querySelector('.classified-badge')) {
+                const badge = document.createElement('span');
+                badge.className = 'classified-badge';
+                badge.innerHTML = '🔒 CLASSIFIED';
+                badge.style.cssText = `
+                    background: #dc3545;
+                    color: white;
+                    padding: 0.2rem 0.5rem;
+                    border-radius: 3px;
+                    font-size: 0.7rem;
+                    font-weight: bold;
+                    margin-left: 0.5rem;
+                    animation: pulse 2s infinite;
+                `;
+                section.appendChild(badge);
+            }
+        });
+        
+        // Show additional teacher tips
+        this.addClassifiedTeacherTips();
+    }
+
+    addClassifiedTeacherTips() {
+        const classifiedTips = `
+            <div class="classified-content" style="background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); color: white; padding: 1.5rem; border-radius: 10px; margin: 2rem 0; border-left: 5px solid #e74c3c;">
+                <h4 style="color: #e74c3c; margin: 0 0 1rem 0;">🔒 CLASSIFIED TEACHER INTELLIGENCE</h4>
+                <div style="display: grid; gap: 1rem;">
+                    <div class="tip-item">
+                        <strong>🎯 Advanced Engagement:</strong> Use the status buttons during class to create authentic "mission updates" and maintain student immersion.
+                    </div>
+                    <div class="tip-item">
+                        <strong>🕵️ Role-Play Enhancement:</strong> Toggle case status when students complete major milestones to simulate real detective work progression.
+                    </div>
+                    <div class="tip-item">
+                        <strong>📊 Assessment Strategy:</strong> Classified mode reveals detailed rubrics and advanced assessment techniques for deeper evaluation.
+                    </div>
+                    <div class="tip-item">
+                        <strong>⚡ Emergency Protocols:</strong> Use "CODE RED" status for time-sensitive activities or when you need immediate student attention.
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        const teacherGuide = document.getElementById('teacher-guide');
+        if (teacherGuide && !teacherGuide.querySelector('.classified-content')) {
+            const guideContent = teacherGuide.querySelector('.guide-content');
+            if (guideContent) {
+                guideContent.insertAdjacentHTML('afterbegin', classifiedTips);
+            }
+        }
+    }
+
+    hideSpecialElements(selector) {
+        document.querySelectorAll(selector).forEach(el => el.remove());
+        document.querySelectorAll('.classified-badge').forEach(badge => badge.remove());
     }
 
     async switchPanel(panelId) {
@@ -750,6 +920,156 @@ const dynamicStyles = `
         0% { opacity: 1; }
         50% { opacity: 0.5; }
         100% { opacity: 1; }
+    }
+
+    /* Status Button Enhancements */
+    .badge.classified:hover, .badge.active-case:hover {
+        transform: scale(1.05);
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+
+    .badge.code-red {
+        background: #dc3545 !important;
+        animation: urgent-pulse 1s infinite;
+    }
+
+    .badge.priority-alert {
+        background: #fd7e14 !important;
+        animation: priority-glow 2s infinite;
+    }
+
+    .badge.case-closed {
+        background: #28a745 !important;
+    }
+
+    .badge.under-investigation {
+        background: #6f42c1 !important;
+        animation: investigate-pulse 3s infinite;
+    }
+
+    @keyframes urgent-pulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.7; transform: scale(1.1); }
+    }
+
+    @keyframes priority-glow {
+        0%, 100% { box-shadow: 0 0 5px #fd7e14; }
+        50% { box-shadow: 0 0 15px #fd7e14, 0 0 25px #fd7e14; }
+    }
+
+    @keyframes investigate-pulse {
+        0%, 100% { opacity: 1; }
+        33% { opacity: 0.8; }
+        66% { opacity: 0.6; }
+    }
+
+    /* Alert Styles */
+    .classified-alert, .case-status-alert {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: rgba(0, 0, 0, 0.95);
+        color: white;
+        border-radius: 10px;
+        padding: 0;
+        min-width: 400px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        z-index: 10000;
+        animation: slideInRight 0.5s ease;
+        border: 2px solid #ffd700;
+    }
+
+    .alert-content {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 1.5rem;
+        position: relative;
+    }
+
+    .alert-content.status-code-red {
+        border-left: 5px solid #dc3545;
+        background: linear-gradient(135deg, rgba(220, 53, 69, 0.2), rgba(0, 0, 0, 0.95));
+    }
+
+    .alert-content.status-priority-alert {
+        border-left: 5px solid #fd7e14;
+        background: linear-gradient(135deg, rgba(253, 126, 20, 0.2), rgba(0, 0, 0, 0.95));
+    }
+
+    .alert-content.status-case-closed {
+        border-left: 5px solid #28a745;
+        background: linear-gradient(135deg, rgba(40, 167, 69, 0.2), rgba(0, 0, 0, 0.95));
+    }
+
+    .alert-icon {
+        font-size: 2rem;
+        line-height: 1;
+    }
+
+    .alert-text h3 {
+        margin: 0 0 0.5rem 0;
+        color: #ffd700;
+        font-size: 1.1rem;
+    }
+
+    .alert-text p {
+        margin: 0.3rem 0;
+        line-height: 1.4;
+    }
+
+    .alert-close {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        background: none;
+        border: none;
+        color: #ffd700;
+        font-size: 1.5rem;
+        cursor: pointer;
+        padding: 0;
+        width: 25px;
+        height: 25px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .alert-close:hover {
+        color: white;
+        background: rgba(255, 215, 0, 0.2);
+        border-radius: 50%;
+    }
+
+    @keyframes slideInRight {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    /* Classified Mode Effects */
+    body.classified-mode {
+        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%) !important;
+    }
+
+    body.classified-mode .header {
+        background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%) !important;
+        border-bottom: 3px solid #e74c3c;
+    }
+
+    body.classified-mode .nav-container {
+        background: rgba(44, 62, 80, 0.9) !important;
+    }
+
+    @keyframes classifiedPulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; }
     }
 </style>
 `;

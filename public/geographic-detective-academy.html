@@ -433,14 +433,18 @@
 
         <!-- PRESENTATION PANEL -->
         <div id="gamma-prompts" class="content-panel hidden">
-            <h2>📽️ Interactive Presentation</h2>
-            <p>Interactive elements and prompts will be loaded here...</p>
+            <div class="loading-indicator">
+                <h2>📽️ Loading Interactive Presentation...</h2>
+                <p>Preparing your detective presentation system...</p>
+            </div>
         </div>
 
         <!-- COMPLETE PACKAGE PANEL -->
         <div id="complete-package" class="content-panel hidden">
-            <h2>📦 Complete Package</h2>
-            <p>Full simulation bundle and resources will be loaded here...</p>
+            <div class="loading-indicator">
+                <h2>📦 Loading Complete Package...</h2>
+                <p>Preparing your comprehensive simulation resources...</p>
+            </div>
         </div>
     </main>
 
@@ -467,6 +471,11 @@
                     const targetElement = document.getElementById(targetPanel);
                     if (targetElement) {
                         targetElement.classList.remove('hidden');
+                        
+                        // Load dynamic content if SimulationInterface is available
+                        if (window.simulationInterface && typeof window.simulationInterface.loadPanel === 'function') {
+                            window.simulationInterface.loadPanel(targetPanel);
+                        }
                     }
                 });
             });
@@ -475,6 +484,16 @@
     
     <!-- Load dynamic content system -->
     <script src="/simulation-dynamic.js"></script>
+    
+    <!-- Initialize dynamic interface system -->
+    <script>
+        // Initialize the dynamic content system
+        document.addEventListener('DOMContentLoaded', function() {
+            // Create the main interface controller
+            window.simulationInterface = new SimulationInterface();
+            console.log('🎯 SimulationInterface initialized successfully');
+        });
+    </script>
     
     <!-- Load presentation system -->
     <script>
