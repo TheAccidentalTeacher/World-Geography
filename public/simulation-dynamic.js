@@ -856,28 +856,6 @@ class SimulationInterface {
                     <p>We're working to restore the teacher guide. Please try again in a moment.</p>
                 </div>
             `;
-                        ${data.data.facilitation.map(phase => `
-                            <div class="facilitation-card">
-                                <h4>${phase.phase}</h4>
-                                <ul>
-                                    ${phase.techniques.map(technique => `<li>${technique}</li>`).join('')}
-                                </ul>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-                
-                <div class="guide-section">
-                    <h3>🔧 Extension Opportunities</h3>
-                    <div class="extensions-grid">
-                        ${data.data.extensions.map(extension => `
-                            <div class="extension-card">
-                                <p>${extension}</p>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            `;
         }
     }
 
