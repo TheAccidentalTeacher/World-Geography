@@ -548,22 +548,30 @@ class SimulationInterface {
                             <h4>👥 Detective Team Roles</h4>
                             <div class="roles-grid">
                                 <div class="role-card">
-                                    <div class="role-icon">🗂️</div>
+                                    <div class="role-image">
+                                        <img src="/images/role-cards/evidence manager.png" alt="Evidence Manager" class="role-card-img">
+                                    </div>
                                     <h5>Evidence Manager</h5>
                                     <p>Tracks clues, maintains chain of custody, organizes physical evidence and artifacts</p>
                                 </div>
                                 <div class="role-card">
-                                    <div class="role-icon">🗺️</div>
+                                    <div class="role-image">
+                                        <img src="/images/role-cards/geography specialist.png" alt="Geography Specialist" class="role-card-img">
+                                    </div>
                                     <h5>Geography Specialist</h5>
                                     <p>Analyzes spatial data, interprets maps, provides coordinate system expertise</p>
                                 </div>
                                 <div class="role-card">
-                                    <div class="role-icon">💰</div>
+                                    <div class="role-image">
+                                        <img src="/images/role-cards/resource tracker.png" alt="Resource Tracker" class="role-card-img">
+                                    </div>
                                     <h5>Resource Tracker</h5>
                                     <p>Manages investigation budget, equipment procurement, logistical planning</p>
                                 </div>
                                 <div class="role-card">
-                                    <div class="role-icon">📝</div>
+                                    <div class="role-image">
+                                        <img src="/images/role-cards/case chronicler.png" alt="Case Chronicler" class="role-card-img">
+                                    </div>
                                     <h5>Case Chronicler</h5>
                                     <p>Documents investigation progress, maintains case journal, prepares reports</p>
                                 </div>
