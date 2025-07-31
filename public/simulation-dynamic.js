@@ -416,158 +416,446 @@ class SimulationInterface {
 
     async loadTeacherGuide() {
         try {
-            // Load the expanded teacher guide markdown file
-            const response = await fetch('/simulation-files/TEACHER-GUIDE-EXPANDED.md');
-            const markdown = await response.text();
-            
-            const panel = document.getElementById('teacher-guide');
-            
-            // Simple markdown-to-HTML conversion for the key elements
-            let html = markdown
-                // Headers
-                .replace(/^### (.*$)/gm, '<h3>$1</h3>')
-                .replace(/^## (.*$)/gm, '<h2>$1</h2>')
-                .replace(/^# (.*$)/gm, '<h1>$1</h1>')
-                // Bold text
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                // Italic text
-                .replace(/\*(.*?)\*/g, '<em>$1</em>')
-                // Code blocks (simplified)
-                .replace(/`([^`]+)`/g, '<code>$1</code>')
-                // Tables (basic conversion)
-                .replace(/\|([^|]+)\|/g, (match, content) => {
-                    const cells = content.split('|').map(cell => cell.trim());
-                    return '<tr>' + cells.map(cell => `<td>${cell}</td>`).join('') + '</tr>';
-                })
-                // Lists (simplified)
-                .replace(/^- (.*$)/gm, '<li>$1</li>')
-                // Line breaks
-                .replace(/\n/g, '<br>');
-            
-            // Wrap lists
-            html = html.replace(/(<li>.*?<\/li>)/g, '<ul>$1</ul>');
-            
-            // Add some basic styling
-            panel.innerHTML = `
-                <div class="teacher-guide-content" style="
-                    font-family: 'Segoe UI', sans-serif;
-                    line-height: 1.6;
-                    max-width: none;
-                    color: #333;
-                ">
-                    <style>
-                        .teacher-guide-content h1 { 
-                            color: #1e3c72; 
-                            border-bottom: 3px solid #ffd700; 
-                            padding-bottom: 0.5rem; 
-                            margin: 2rem 0 1rem 0;
-                            font-size: 2rem;
-                        }
-                        .teacher-guide-content h2 { 
-                            color: #2a5298; 
-                            margin: 1.5rem 0 1rem 0; 
-                            font-size: 1.5rem;
-                            background: linear-gradient(45deg, #f8f9fa, #e9ecef);
-                            padding: 0.75rem;
-                            border-radius: 5px;
-                            border-left: 4px solid #ffd700;
-                        }
-                        .teacher-guide-content h3 { 
-                            color: #1e3c72; 
-                            margin: 1rem 0 0.5rem 0; 
-                            font-size: 1.2rem;
-                            font-weight: 600;
-                        }
-                        .teacher-guide-content ul {
-                            margin: 0.5rem 0;
-                            padding-left: 1.5rem;
-                        }
-                        .teacher-guide-content li {
-                            margin: 0.25rem 0;
-                        }
-                        .teacher-guide-content strong {
-                            color: #dc3545;
-                            font-weight: 600;
-                        }
-                        .teacher-guide-content em {
-                            color: #28a745;
-                            font-style: italic;
-                        }
-                        .teacher-guide-content code {
-                            background: #f8f9fa;
-                            padding: 0.2rem 0.4rem;
-                            border-radius: 3px;
-                            font-family: 'Courier New', monospace;
-                            border: 1px solid #e9ecef;
-                        }
-                        .teacher-guide-content table {
-                            width: 100%;
-                            border-collapse: collapse;
-                            margin: 1rem 0;
-                            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-                        }
-                        .teacher-guide-content th,
-                        .teacher-guide-content td {
-                            border: 1px solid #ddd;
-                            padding: 0.75rem;
-                            text-align: left;
-                        }
-                        .teacher-guide-content th {
-                            background: linear-gradient(45deg, #1e3c72, #2a5298);
-                            color: white;
-                            font-weight: 600;
-                        }
-                        .teacher-guide-content tr:nth-child(even) {
-                            background: #f8f9fa;
-                        }
-                        .teacher-guide-content blockquote {
-                            background: #e3f2fd;
-                            border-left: 4px solid #2196f3;
-                            margin: 1rem 0;
-                            padding: 1rem;
-                            border-radius: 0 5px 5px 0;
-                        }
-                    </style>
-                    ${html}
-                </div>
-            `;
-        } catch (error) {
-            console.error('❌ Error loading expanded teacher guide:', error);
-            
-            // Fallback to the original API-based teacher guide
+            // Load structured teacher guide data from API
             const response = await fetch(`${this.apiBase}/teacher-guide`);
             const data = await response.json();
             
             const panel = document.getElementById('teacher-guide');
             panel.innerHTML = `
-                <h2>📖 ${data.data.title}</h2>
-                <p class="subtitle">${data.data.description}</p>
-                
-                <div class="guide-section">
-                    <h3>🚀 Preparation Checklist</h3>
-                    <div class="preparation-grid">
-                        <div class="prep-card">
-                            <h4>Before Implementation</h4>
-                            <ul class="checklist">
-                                ${data.data.preparation.beforeImplementation.map(item => `
-                                    <li><input type="checkbox"> ${item}</li>
-                                `).join('')}
-                            </ul>
+                <div class="teacher-guide-professional">
+                    <style>
+                        .teacher-guide-professional {
+                            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                            background: #ffffff;
+                            color: #2c3e50;
+                            line-height: 1.7;
+                            max-width: none;
+                            margin: 0;
+                        }
+                        
+                        .guide-header {
+                            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+                            color: white;
+                            padding: 2rem;
+                            border-radius: 12px;
+                            margin-bottom: 2rem;
+                            box-shadow: 0 8px 25px rgba(30, 60, 114, 0.2);
+                        }
+                        
+                        .guide-header h1 {
+                            margin: 0;
+                            font-size: 2.5rem;
+                            font-weight: 700;
+                            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+                        }
+                        
+                        .guide-header .subtitle {
+                            margin: 1rem 0 0 0;
+                            font-size: 1.2rem;
+                            opacity: 0.95;
+                            font-weight: 300;
+                        }
+                        
+                        .guide-overview {
+                            display: grid;
+                            grid-template-columns: 2fr 1fr;
+                            gap: 2rem;
+                            margin-bottom: 2rem;
+                        }
+                        
+                        .overview-content {
+                            background: #f8f9fa;
+                            padding: 2rem;
+                            border-radius: 12px;
+                            border-left: 6px solid #ffd700;
+                        }
+                        
+                        .quick-stats {
+                            display: grid;
+                            gap: 1rem;
+                        }
+                        
+                        .stat-card {
+                            background: white;
+                            padding: 1.5rem;
+                            border-radius: 8px;
+                            text-align: center;
+                            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                            border-top: 4px solid #1e3c72;
+                        }
+                        
+                        .stat-number {
+                            font-size: 2rem;
+                            font-weight: 700;
+                            color: #1e3c72;
+                            display: block;
+                        }
+                        
+                        .stat-label {
+                            font-size: 0.9rem;
+                            color: #6c757d;
+                            text-transform: uppercase;
+                            font-weight: 600;
+                            letter-spacing: 0.5px;
+                        }
+                        
+                        .guide-section {
+                            background: white;
+                            border-radius: 12px;
+                            padding: 2rem;
+                            margin-bottom: 2rem;
+                            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+                            border: 1px solid #e9ecef;
+                        }
+                        
+                        .section-header {
+                            display: flex;
+                            align-items: center;
+                            margin-bottom: 1.5rem;
+                            padding-bottom: 1rem;
+                            border-bottom: 2px solid #e9ecef;
+                        }
+                        
+                        .section-icon {
+                            font-size: 2rem;
+                            margin-right: 1rem;
+                        }
+                        
+                        .section-title {
+                            font-size: 1.8rem;
+                            font-weight: 600;
+                            color: #1e3c72;
+                            margin: 0;
+                        }
+                        
+                        .prep-grid {
+                            display: grid;
+                            grid-template-columns: 1fr 1fr;
+                            gap: 2rem;
+                        }
+                        
+                        .prep-card {
+                            background: #f8f9fa;
+                            padding: 2rem;
+                            border-radius: 8px;
+                            border-left: 5px solid #28a745;
+                        }
+                        
+                        .prep-card h4 {
+                            color: #1e3c72;
+                            margin: 0 0 1rem 0;
+                            font-size: 1.3rem;
+                            font-weight: 600;
+                        }
+                        
+                        .checklist {
+                            list-style: none;
+                            padding: 0;
+                            margin: 0;
+                        }
+                        
+                        .checklist li {
+                            display: flex;
+                            align-items: center;
+                            margin: 0.75rem 0;
+                            padding: 0.5rem;
+                            background: white;
+                            border-radius: 6px;
+                            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+                        }
+                        
+                        .checklist input[type="checkbox"] {
+                            width: 18px;
+                            height: 18px;
+                            margin-right: 0.75rem;
+                            accent-color: #1e3c72;
+                        }
+                        
+                        .facilitation-cards {
+                            display: grid;
+                            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                            gap: 1.5rem;
+                        }
+                        
+                        .facilitation-card {
+                            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+                            padding: 2rem;
+                            border-radius: 12px;
+                            border: 1px solid #e9ecef;
+                            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                            transition: transform 0.2s ease, box-shadow 0.2s ease;
+                        }
+                        
+                        .facilitation-card:hover {
+                            transform: translateY(-4px);
+                            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+                        }
+                        
+                        .card-icon {
+                            font-size: 3rem;
+                            margin-bottom: 1rem;
+                            display: block;
+                        }
+                        
+                        .card-title {
+                            font-size: 1.4rem;
+                            font-weight: 600;
+                            color: #1e3c72;
+                            margin: 0 0 1rem 0;
+                        }
+                        
+                        .timing-grid {
+                            display: grid;
+                            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                            gap: 1rem;
+                        }
+                        
+                        .timing-block {
+                            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+                            color: white;
+                            padding: 1.5rem;
+                            border-radius: 8px;
+                            text-align: center;
+                        }
+                        
+                        .timing-duration {
+                            font-size: 2rem;
+                            font-weight: 700;
+                            display: block;
+                            margin-bottom: 0.5rem;
+                        }
+                        
+                        .timing-activity {
+                            font-size: 1.1rem;
+                            opacity: 0.9;
+                        }
+                        
+                        .assessment-rubric {
+                            background: #f8f9fa;
+                            border-radius: 8px;
+                            overflow: hidden;
+                            margin: 1rem 0;
+                        }
+                        
+                        .rubric-header {
+                            background: #1e3c72;
+                            color: white;
+                            padding: 1rem;
+                            font-weight: 600;
+                            text-align: center;
+                        }
+                        
+                        .rubric-grid {
+                            display: grid;
+                            grid-template-columns: 1fr 1fr 1fr 1fr;
+                            gap: 0;
+                        }
+                        
+                        .rubric-cell {
+                            padding: 1rem;
+                            border-right: 1px solid #dee2e6;
+                            border-bottom: 1px solid #dee2e6;
+                            min-height: 120px;
+                        }
+                        
+                        .rubric-level {
+                            font-weight: 600;
+                            color: #1e3c72;
+                            margin-bottom: 0.5rem;
+                        }
+                        
+                        .tips-container {
+                            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+                            border-radius: 12px;
+                            padding: 2rem;
+                            border-left: 6px solid #2196f3;
+                        }
+                        
+                        .tip-item {
+                            background: white;
+                            margin: 1rem 0;
+                            padding: 1.5rem;
+                            border-radius: 8px;
+                            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                            border-left: 4px solid #ffd700;
+                        }
+                        
+                        .tip-title {
+                            font-weight: 600;
+                            color: #1e3c72;
+                            margin-bottom: 0.5rem;
+                            font-size: 1.1rem;
+                        }
+                        
+                        @media (max-width: 768px) {
+                            .guide-overview {
+                                grid-template-columns: 1fr;
+                            }
+                            
+                            .prep-grid {
+                                grid-template-columns: 1fr;
+                            }
+                            
+                            .rubric-grid {
+                                grid-template-columns: 1fr 1fr;
+                            }
+                        }
+                    </style>
+                    
+                    <!-- Header Section -->
+                    <div class="guide-header">
+                        <h1>🎓 ${data.data.title}</h1>
+                        <p class="subtitle">${data.data.description}</p>
+                    </div>
+                    
+                    <!-- Overview Section -->
+                    <div class="guide-overview">
+                        <div class="overview-content">
+                            <h3 style="color: #1e3c72; margin-top: 0;">📋 Simulation Overview</h3>
+                            <p>The Geographic Detective Academy transforms traditional geography lessons into an immersive, role-based investigation experience. Students become geographic crime specialists, solving mysteries that require deep understanding of physical, cultural, and economic geography.</p>
+                            
+                            <p><strong>Learning Approach:</strong> Problem-based learning through geographic mysteries</p>
+                            <p><strong>Student Engagement:</strong> Role-playing as professional geographic detectives</p>
+                            <p><strong>Assessment Method:</strong> Performance-based evaluation through case solutions</p>
                         </div>
-                        <div class="prep-card">
-                            <h4>Classroom Setup</h4>
-                            <ul class="checklist">
-                                ${data.data.preparation.classroomSetup.map(item => `
-                                    <li><input type="checkbox"> ${item}</li>
-                                `).join('')}
+                        
+                        <div class="quick-stats">
+                            <div class="stat-card">
+                                <span class="stat-number">5</span>
+                                <span class="stat-label">Days</span>
+                            </div>
+                            <div class="stat-card">
+                                <span class="stat-number">45</span>
+                                <span class="stat-label">Min/Day</span>
+                            </div>
+                            <div class="stat-card">
+                                <span class="stat-number">6</span>
+                                <span class="stat-label">Team Roles</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Preparation Section -->
+                    <div class="guide-section">
+                        <div class="section-header">
+                            <span class="section-icon">🚀</span>
+                            <h2 class="section-title">Implementation Preparation</h2>
+                        </div>
+                        
+                        <div class="prep-grid">
+                            <div class="prep-card">
+                                <h4>📋 Before Implementation</h4>
+                                <ul class="checklist">
+                                    ${data.data.preparation.beforeImplementation.map(item => `
+                                        <li><input type="checkbox"> ${item}</li>
+                                    `).join('')}
+                                </ul>
+                            </div>
+                            
+                            <div class="prep-card">
+                                <h4>🏫 Classroom Setup</h4>
+                                <ul class="checklist">
+                                    ${data.data.preparation.classroomSetup.map(item => `
+                                        <li><input type="checkbox"> ${item}</li>
+                                    `).join('')}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Facilitation Strategies -->
+                    <div class="guide-section">
+                        <div class="section-header">
+                            <span class="section-icon">🎭</span>
+                            <h2 class="section-title">Facilitation Strategies</h2>
+                        </div>
+                        
+                        <div class="facilitation-cards">
+                            ${Object.entries(data.data.facilitation).map(([key, strategy]) => `
+                                <div class="facilitation-card">
+                                    <span class="card-icon">${strategy.icon}</span>
+                                    <h4 class="card-title">${strategy.title}</h4>
+                                    <p>${strategy.description}</p>
+                                    <ul style="margin-top: 1rem;">
+                                        ${strategy.techniques.map(technique => `<li>${technique}</li>`).join('')}
+                                    </ul>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    
+                    <!-- Daily Timing Guide -->
+                    <div class="guide-section">
+                        <div class="section-header">
+                            <span class="section-icon">⏰</span>
+                            <h2 class="section-title">Daily Timing Guide</h2>
+                        </div>
+                        
+                        <div class="timing-grid">
+                            ${data.data.timing.dailyBreakdown.map(activity => `
+                                <div class="timing-block">
+                                    <span class="timing-duration">${activity.duration}</span>
+                                    <span class="timing-activity">${activity.activity}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                        
+                        <div style="margin-top: 2rem; padding: 1.5rem; background: #fff3cd; border-radius: 8px; border-left: 4px solid #ffc107;">
+                            <h4 style="color: #856404; margin: 0 0 1rem 0;">⚡ Pacing Tips</h4>
+                            <ul style="margin: 0; color: #856404;">
+                                ${data.data.timing.pacingTips.map(tip => `<li>${tip}</li>`).join('')}
                             </ul>
                         </div>
                     </div>
+                    
+                    <!-- Assessment Rubric -->
+                    <div class="guide-section">
+                        <div class="section-header">
+                            <span class="section-icon">📊</span>
+                            <h2 class="section-title">Assessment Framework</h2>
+                        </div>
+                        
+                        <div class="assessment-rubric">
+                            <div class="rubric-header">Geographic Detective Skills Assessment</div>
+                            <div class="rubric-grid">
+                                ${Object.entries(data.data.assessment.rubric).map(([level, criteria]) => `
+                                    <div class="rubric-cell">
+                                        <div class="rubric-level">${level}</div>
+                                        <ul style="margin: 0; padding-left: 1rem; font-size: 0.9rem;">
+                                            ${criteria.map(criterion => `<li>${criterion}</li>`).join('')}
+                                        </ul>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Professional Teaching Tips -->
+                    <div class="guide-section">
+                        <div class="section-header">
+                            <span class="section-icon">💡</span>
+                            <h2 class="section-title">Professional Teaching Tips</h2>
+                        </div>
+                        
+                        <div class="tips-container">
+                            ${data.data.tips.map(tip => `
+                                <div class="tip-item">
+                                    <div class="tip-title">${tip.title}</div>
+                                    <p style="margin: 0;">${tip.description}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
                 </div>
-                
-                <div class="guide-section">
-                    <h3>🎭 Facilitation Strategies</h3>
-                    <div class="facilitation-grid">
+            `;
+        } catch (error) {
+            console.error('❌ Error loading teacher guide:', error);
+            document.getElementById('teacher-guide').innerHTML = `
+                <div style="text-align: center; padding: 2rem; color: #dc3545;">
+                    <h3>📋 Teacher Guide Temporarily Unavailable</h3>
+                    <p>We're working to restore the teacher guide. Please try again in a moment.</p>
+                </div>
+            `;
                         ${data.data.facilitation.map(phase => `
                             <div class="facilitation-card">
                                 <h4>${phase.phase}</h4>
