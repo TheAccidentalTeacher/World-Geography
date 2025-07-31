@@ -191,6 +191,11 @@ class SimulationInterface {
         document.querySelectorAll('.classified-badge').forEach(badge => badge.remove());
     }
 
+    // Add alias method for HTML compatibility
+    async loadPanel(panelId) {
+        return await this.loadPanelContent(panelId);
+    }
+
     async switchPanel(panelId) {
         // Update navigation state
         document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));

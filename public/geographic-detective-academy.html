@@ -458,23 +458,18 @@
                 item.addEventListener('click', function() {
                     const targetPanel = this.getAttribute('data-panel');
                     
-                    // Remove active class from all nav items
-                    navItems.forEach(nav => nav.classList.remove('active'));
-                    
-                    // Add active class to clicked item
-                    this.classList.add('active');
-                    
-                    // Hide all panels
-                    panels.forEach(panel => panel.classList.add('hidden'));
-                    
-                    // Show target panel
-                    const targetElement = document.getElementById(targetPanel);
-                    if (targetElement) {
-                        targetElement.classList.remove('hidden');
+                    // Use the SimulationInterface for navigation if available
+                    if (window.simulationInterface && typeof window.simulationInterface.switchPanel === 'function') {
+                        window.simulationInterface.switchPanel(targetPanel);
+                    } else {
+                        // Fallback navigation method
+                        navItems.forEach(nav => nav.classList.remove('active'));
+                        this.classList.add('active');
+                        panels.forEach(panel => panel.classList.add('hidden'));
                         
-                        // Load dynamic content if SimulationInterface is available
-                        if (window.simulationInterface && typeof window.simulationInterface.loadPanel === 'function') {
-                            window.simulationInterface.loadPanel(targetPanel);
+                        const targetElement = document.getElementById(targetPanel);
+                        if (targetElement) {
+                            targetElement.classList.remove('hidden');
                         }
                     }
                 });
@@ -489,9 +484,21 @@
     <script>
         // Initialize the dynamic content system
         document.addEventListener('DOMContentLoaded', function() {
-            // Create the main interface controller
-            window.simulationInterface = new SimulationInterface();
-            console.log('🎯 SimulationInterface initialized successfully');
+            // Small delay to ensure all DOM elements are ready
+            setTimeout(() => {
+                // Create the main interface controller
+                window.simulationInterface = new SimulationInterface();
+                console.log('🎯 SimulationInterface initialized successfully');
+                
+                // Verify status buttons are working
+                const classifiedBtn = document.querySelector('.badge.classified');
+                const activeCaseBtn = document.querySelector('.badge.active-case');
+                if (classifiedBtn && activeCaseBtn) {
+                    console.log('✅ Status buttons found and ready');
+                } else {
+                    console.warn('⚠️ Status buttons not found');
+                }
+            }, 100);
         });
     </script>
     
