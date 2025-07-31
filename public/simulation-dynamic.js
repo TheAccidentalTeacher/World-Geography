@@ -156,7 +156,7 @@ class SimulationInterface {
     }
 
     async loadTeamRoles() {
-        const response = await fetch(`${this.apiBase}/framework`);
+        const response = await fetch(`${this.apiBase}/team-roles`);
         const data = await response.json();
         
         const panel = document.getElementById('team-roles');
@@ -165,19 +165,34 @@ class SimulationInterface {
             <p class="subtitle">Each student takes on a specialized role within their detective unit</p>
             
             <div class="roles-grid">
-                ${data.data.teamRoles.map(role => `
-                    <div class="role-card">
+                ${data.data.map(role => `
+                    <div class="role-card enhanced">
+                        <div class="role-image-placeholder">
+                            <strong>${role.icon} AI IMAGE: ${role.title}</strong><br>
+                            <em>${role.imagePrompt}</em>
+                        </div>
                         <div class="role-header">
                             <span class="role-icon">${role.icon}</span>
                             <h3>${role.title}</h3>
                         </div>
                         <div class="role-content">
-                            <p class="role-description">${role.description}</p>
+                            <div class="mission-section">
+                                <h4>🎯 Your Mission:</h4>
+                                <p class="role-mission">${role.description}</p>
+                            </div>
+                            <div class="activities-section">
+                                <h4>⚡ What You'll Do:</h4>
+                                <p class="role-activities">${role.activities}</p>
+                            </div>
                             <div class="skills-section">
-                                <h4>Key Skills Developed:</h4>
+                                <h4>🎓 Skills You'll Master:</h4>
                                 <ul>
                                     ${role.skills.map(skill => `<li>${skill}</li>`).join('')}
                                 </ul>
+                            </div>
+                            <div class="appeal-section">
+                                <h4>✨ Why It's Awesome:</h4>
+                                <p class="role-appeal">${role.appeal}</p>
                             </div>
                         </div>
                     </div>
@@ -198,6 +213,11 @@ class SimulationInterface {
                     <div class="tip-card">
                         <h4>Role Rotation Option</h4>
                         <p>Consider rotating roles mid-simulation to give students experience with different perspectives and skills.</p>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
                     </div>
                 </div>
             </div>
@@ -909,6 +929,32 @@ const dynamicStyles = `
         padding: 2rem;
         box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         border: 1px solid #dee2e6;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .role-card.enhanced {
+        border: 2px solid #007bff;
+    }
+    
+    .role-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,123,255,0.2);
+    }
+    
+    .role-image-placeholder {
+        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+        border: 2px dashed #2196f3;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        color: #1565c0;
+        font-size: 0.85rem;
+        line-height: 1.4;
+        min-height: 100px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
     }
     
     .role-header {
@@ -927,6 +973,38 @@ const dynamicStyles = `
         display: flex;
         align-items: center;
         justify-content: center;
+    }
+    
+    .mission-section, .activities-section, .skills-section, .appeal-section {
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #e9ecef;
+    }
+    
+    .appeal-section {
+        border-bottom: none;
+        background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+        padding: 1rem;
+        border-radius: 8px;
+        margin-top: 1rem;
+    }
+    
+    .mission-section h4, .activities-section h4, .skills-section h4, .appeal-section h4 {
+        color: #1e3c72;
+        margin-bottom: 0.5rem;
+        font-size: 1rem;
+        font-weight: 600;
+    }
+    
+    .role-mission, .role-activities, .role-appeal {
+        margin: 0;
+        line-height: 1.6;
+        color: #2d3748;
+    }
+    
+    .role-appeal {
+        font-weight: 600;
+        color: #1a202c;
     }
     
     .cases-container {

@@ -27,30 +27,46 @@ const simulationFramework = {
         {
             id: 'evidence-manager',
             title: 'Evidence Manager',
-            description: 'Collects, analyzes, and preserves all case evidence with meticulous attention to detail.',
-            skills: ['Evidence preservation', 'Forensic analysis', 'Documentation'],
-            icon: '🔍'
+            description: "You're the mastermind who spots patterns others miss! As the Evidence Manager, you collect every geographic clue—from satellite images to population data—and turn chaos into crystal-clear evidence.",
+            mission: 'Pattern-spotting mastermind who organizes and analyzes all geographic evidence',
+            activities: 'Organize crime scene photos, analyze map coordinates, catalog witness statements, and create evidence timelines. You\'re like a geographic CSI investigator!',
+            skills: ['Critical thinking', 'Pattern recognition', 'Data organization', 'Digital research techniques'],
+            appeal: 'Every case gets solved because YOU found the missing piece of the puzzle!',
+            icon: '🔍',
+            imagePrompt: 'A confident 7th grade student wearing a detective badge and magnifying glass, surrounded by floating geographic maps, charts, and digital evidence screens. The character has a determined expression while organizing colorful geographic clues on a high-tech evidence board.'
         },
         {
             id: 'geography-specialist',
             title: 'Geography Specialist', 
-            description: 'Interprets maps, coordinates, and terrain to solve location-based mysteries.',
-            skills: ['Map reading', 'Coordinate systems', 'Terrain analysis'],
-            icon: '🗺️'
+            description: "You're the walking encyclopedia of world knowledge! When the team needs to know about ANY place on Earth, you're their go-to expert with instant answers.",
+            mission: 'Walking encyclopedia of world knowledge and regional expertise',
+            activities: 'Analyze terrain features, explain climate patterns, identify cultural landmarks, and decode geographic mysteries. You make every location come alive with stories!',
+            skills: ['Map reading', 'Cultural awareness', 'Environmental analysis', 'Geographic reasoning'],
+            appeal: 'You become the ultimate world explorer without leaving your seat—and everyone relies on YOUR expertise!',
+            icon: '🌍',
+            imagePrompt: 'A young geographic expert student standing confidently in front of a massive interactive world globe, with holographic regional displays floating around them. They\'re pointing at different continents while geographic data streams flow in the background.'
         },
         {
             id: 'resource-tracker',
             title: 'Resource Tracker',
-            description: 'Manages team equipment, budget, and logistical planning for investigations.',
-            skills: ['Resource management', 'Logistics', 'Budget analysis'],
-            icon: '📊'
+            description: "You're the detective who follows the money, resources, and people! Nothing moves around the world without YOU tracking its path and uncovering the connections.",
+            mission: 'Detective who follows money, resources, and people across the globe',
+            activities: 'Trace trade routes, monitor population movements, track natural resources, and spot economic patterns. You\'re like a geographic spy following secret trails!',
+            skills: ['Economic analysis', 'Logistics thinking', 'Cause-and-effect reasoning', 'Global connections'],
+            appeal: 'You discover how everything in the world is connected—and predict what happens next!',
+            icon: '🎯',
+            imagePrompt: 'A tech-savvy 7th grade student monitoring multiple digital screens showing trade routes, population movements, and resource flows across a dynamic world map. They\'re using advanced tracking tools with arrows and pathways lighting up across continents.'
         },
         {
             id: 'case-chronicler',
             title: 'Case Chronicler',
-            description: 'Documents findings, maintains case files, and tracks investigation progress.',
-            skills: ['Documentation', 'Report writing', 'Case tracking'],
-            icon: '📝'
+            description: "You're the storyteller who makes sure no discovery gets lost! As the Case Chronicler, you document every breakthrough and create the official case files that solve the mystery.",
+            mission: 'Storyteller who ensures no discovery gets lost, creates official case files',
+            activities: 'Write investigation reports, create case timelines, organize team findings, and present final conclusions. You turn detective work into compelling stories!',
+            skills: ['Scientific writing', 'Communication skills', 'Report organization', 'Presentation techniques'],
+            appeal: 'Your words become the official record that cracks the case and shares the victory with the world!',
+            icon: '�',
+            imagePrompt: 'A detail-oriented student detective with a digital tablet and smart pen, surrounded by floating case files, investigation reports, and timeline displays. They\'re documenting discoveries with geographic evidence photos and notes appearing as holographic displays.'
         }
     ],
     
