@@ -95,8 +95,7 @@ class SimulationInterface {
                 await this.loadStudentMaterials();
                 break;
             case 'gamma-prompts':
-                // Skip loading - embedded presentation system handles this panel
-                console.log('📽️ Presentation panel handled by embedded system');
+                await this.loadGammaPrompts();
                 break;
             case 'complete-package':
                 await this.loadCompletePackage();
@@ -416,404 +415,33 @@ class SimulationInterface {
 
     async loadTeacherGuide() {
         try {
-            // Load the comprehensive teacher guide from markdown file
-            console.log('📚 Loading COMPREHENSIVE Teacher Guide (596 lines)...');
+            console.log('📚 Loading Teacher Guide from markdown file...');
             const response = await fetch('/simulation-files/TEACHER-GUIDE-EXPANDED.md');
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                throw new Error(`Failed to load: ${response.status} ${response.statusText}`);
             }
             
-            const markdownContent = await response.text();
-            console.log('📄 Loaded markdown content, converting to HTML...');
-            const htmlContent = this.convertComprehensiveMarkdownToHTML(markdownContent);
+            const text = await response.text();
+            const htmlContent = this.convertComprehensiveMarkdownToHTML(text);
             
-            const panel = document.getElementById('teacher-guide');
-            panel.innerHTML = `
-                <div class="teacher-guide-professional">
-                    <style>
-                        .teacher-guide-professional {
-                            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                            background: #ffffff;
-                            color: #2c3e50;
-                            line-height: 1.7;
-                            max-width: none;
-                            margin: 0;
-                        }
-                        
-                        .guide-header {
-                            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-                            color: white;
-                            padding: 2rem;
-                            border-radius: 12px;
-                            margin-bottom: 2rem;
-                            box-shadow: 0 8px 25px rgba(30, 60, 114, 0.2);
-                        }
-                        
-                        .guide-header h1 {
-                            margin: 0;
-                            font-size: 2.5rem;
-                            font-weight: 700;
-                            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-                        }
-                        
-                        .guide-header .subtitle {
-                            margin: 1rem 0 0 0;
-                            font-size: 1.2rem;
-                            opacity: 0.95;
-                            font-weight: 300;
-                        }
-                        
-                        .guide-overview {
-                            display: grid;
-                            grid-template-columns: 2fr 1fr;
-                            gap: 2rem;
-                            margin-bottom: 2rem;
-                        }
-                        
-                        .overview-content {
-                            background: #f8f9fa;
-                            padding: 2rem;
-                            border-radius: 12px;
-                            border-left: 6px solid #ffd700;
-                        }
-                        
-                        .quick-stats {
-                            display: grid;
-                            gap: 1rem;
-                        }
-                        
-                        .stat-card {
-                            background: white;
-                            padding: 1.5rem;
-                            border-radius: 8px;
-                            text-align: center;
-                            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-                            border-top: 4px solid #1e3c72;
-                        }
-                        
-                        .stat-number {
-                            font-size: 2rem;
-                            font-weight: 700;
-                            color: #1e3c72;
-                            display: block;
-                        }
-                        
-                        .stat-label {
-                            font-size: 0.9rem;
-                            color: #6c757d;
-                            text-transform: uppercase;
-                            font-weight: 600;
-                            letter-spacing: 0.5px;
-                        }
-                        
-                        .guide-section {
-                            background: white;
-                            border-radius: 12px;
-                            padding: 2rem;
-                            margin-bottom: 2rem;
-                            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-                            border: 1px solid #e9ecef;
-                        }
-                        
-                        .section-header {
-                            display: flex;
-                            align-items: center;
-                            margin-bottom: 1.5rem;
-                            padding-bottom: 1rem;
-                            border-bottom: 2px solid #e9ecef;
-                        }
-                        
-                        .section-icon {
-                            font-size: 2rem;
-                            margin-right: 1rem;
-                        }
-                        
-                        .section-title {
-                            font-size: 1.8rem;
-                            font-weight: 600;
-                            color: #1e3c72;
-                            margin: 0;
-                        }
-                        
-                        .prep-grid {
-                            display: grid;
-                            grid-template-columns: 1fr 1fr;
-                            gap: 2rem;
-                        }
-                        
-                        .prep-card {
-                            background: #f8f9fa;
-                            padding: 2rem;
-                            border-radius: 8px;
-                            border-left: 5px solid #28a745;
-                        }
-                        
-                        .prep-card h4 {
-                            color: #1e3c72;
-                            margin: 0 0 1rem 0;
-                            font-size: 1.3rem;
-                            font-weight: 600;
-                        }
-                        
-                        .checklist {
-                            list-style: none;
-                            padding: 0;
-                            margin: 0;
-                        }
-                        
-                        .checklist li {
-                            display: flex;
-                            align-items: center;
-                            margin: 0.75rem 0;
-                            padding: 0.5rem;
-                            background: white;
-                            border-radius: 6px;
-                            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-                        }
-                        
-                        .checklist input[type="checkbox"] {
-                            width: 18px;
-                            height: 18px;
-                            margin-right: 0.75rem;
-                            accent-color: #1e3c72;
-                        }
-                        
-                        .facilitation-cards {
-                            display: grid;
-                            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-                            gap: 1.5rem;
-                        }
-                        
-                        .facilitation-card {
-                            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
-                            padding: 2rem;
-                            border-radius: 12px;
-                            border: 1px solid #e9ecef;
-                            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-                            transition: transform 0.2s ease, box-shadow 0.2s ease;
-                        }
-                        
-                        .facilitation-card:hover {
-                            transform: translateY(-4px);
-                            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-                        }
-                        
-                        .card-icon {
-                            font-size: 3rem;
-                            margin-bottom: 1rem;
-                            display: block;
-                        }
-                        
-                        .card-title {
-                            font-size: 1.4rem;
-                            font-weight: 600;
-                            color: #1e3c72;
-                            margin: 0 0 1rem 0;
-                        }
-                        
-                        .timing-grid {
-                            display: grid;
-                            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-                            gap: 1rem;
-                        }
-                        
-                        .timing-block {
-                            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-                            color: white;
-                            padding: 1.5rem;
-                            border-radius: 8px;
-                            text-align: center;
-                        }
-                        
-                        .timing-duration {
-                            font-size: 2rem;
-                            font-weight: 700;
-                            display: block;
-                            margin-bottom: 0.5rem;
-                        }
-                        
-                        .timing-activity {
-                            font-size: 1.1rem;
-                            opacity: 0.9;
-                        }
-                        
-                        .assessment-rubric {
-                            background: #f8f9fa;
-                            border-radius: 8px;
-                            overflow: hidden;
-                            margin: 1rem 0;
-                        }
-                        
-                        .rubric-header {
-                            background: #1e3c72;
-                            color: white;
-                            padding: 1rem;
-                            font-weight: 600;
-                            text-align: center;
-                        }
-                        
-                        .rubric-grid {
-                            display: grid;
-                            grid-template-columns: 1fr 1fr 1fr 1fr;
-                            gap: 0;
-                        }
-                        
-                        .rubric-cell {
-                            padding: 1rem;
-                            border-right: 1px solid #dee2e6;
-                            border-bottom: 1px solid #dee2e6;
-                            min-height: 120px;
-                        }
-                        
-                        .rubric-level {
-                            font-weight: 600;
-                            color: #1e3c72;
-                            margin-bottom: 0.5rem;
-                        }
-                        
-                        .tips-container {
-                            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-                            border-radius: 12px;
-                            padding: 2rem;
-                            border-left: 6px solid #2196f3;
-                        }
-                        
-                        .tip-item {
-                            background: white;
-                            margin: 1rem 0;
-                            padding: 1.5rem;
-                            border-radius: 8px;
-                            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-                            border-left: 4px solid #ffd700;
-                        }
-                        
-                        .tip-title {
-                            font-weight: 600;
-                            color: #1e3c72;
-                            margin-bottom: 0.5rem;
-                            font-size: 1.1rem;
-                        }
-                        
-                        @media (max-width: 768px) {
-                            .guide-overview {
-                                grid-template-columns: 1fr;
-                            }
-                            
-                            .prep-grid {
-                                grid-template-columns: 1fr;
-                            }
-                            
-                            .rubric-grid {
-                                grid-template-columns: 1fr 1fr;
-                            }
-                        }
-                    </style>
-                    
-                    <!-- Header Section -->
-                    <div class="guide-header">
-                        <h1>🎓 ${data.data.title}</h1>
-                        <p class="subtitle">${data.data.description}</p>
+            document.getElementById('teacher-guide').innerHTML = `
+                <div class="comprehensive-teacher-guide">
+                    <div class="guide-header" style="background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%); color: white; padding: 2rem; border-radius: 12px; margin-bottom: 2rem; text-align: center;">
+                        <h1 style="margin: 0; font-size: 2.5rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">📚 Geographic Detective Academy - Teacher's Guide</h1>
+                        <p style="margin: 0.5rem 0 0 0; font-size: 1.2rem; opacity: 0.9;">Complete Implementation Guide</p>
                     </div>
                     
-                    <!-- Overview Section -->
-                    <div class="guide-overview">
-                        <div class="overview-content">
-                            <h3 style="color: #1e3c72; margin-top: 0;">📋 Simulation Overview</h3>
-                            <p>The Geographic Detective Academy transforms traditional geography lessons into an immersive, role-based investigation experience. Students become geographic crime specialists, solving mysteries that require deep understanding of physical, cultural, and economic geography.</p>
-                            
-                            <p><strong>Learning Approach:</strong> Problem-based learning through geographic mysteries</p>
-                            <p><strong>Student Engagement:</strong> Role-playing as professional geographic detectives</p>
-                            <p><strong>Assessment Method:</strong> Performance-based evaluation through case solutions</p>
-                        </div>
-                        
-                        <div class="quick-stats">
-                            <div class="stat-card">
-                                <span class="stat-number">5</span>
-                                <span class="stat-label">Days</span>
-                            </div>
-                            <div class="stat-card">
-                                <span class="stat-number">45</span>
-                                <span class="stat-label">Min/Day</span>
-                            </div>
-                            <div class="stat-card">
-                                <span class="stat-number">6</span>
-                                <span class="stat-label">Team Roles</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Preparation Section -->
-                    <div class="guide-section">
-                        <div class="section-header">
-                            <span class="section-icon">🚀</span>
-                            <h2 class="section-title">Implementation Preparation</h2>
-                        </div>
-                        
-                        <div class="prep-grid">
-                            <div class="prep-card">
-                                <h4>📋 Before Implementation</h4>
-                                <ul class="checklist">
-                                    ${data.data.preparation.beforeImplementation.map(item => `
-                                        <li><input type="checkbox"> ${item}</li>
-                                    `).join('')}
-                                </ul>
-                            </div>
-                            
-                            <div class="prep-card">
-                                <h4>🏫 Classroom Setup</h4>
-                                <ul class="checklist">
-                                    ${data.data.preparation.classroomSetup.map(item => `
-                                        <li><input type="checkbox"> ${item}</li>
-                                    `).join('')}
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Facilitation Strategies -->
-                    <div class="guide-section">
-                        <div class="section-header">
-                            <span class="section-icon">🎭</span>
-                            <h2 class="section-title">Facilitation Strategies</h2>
-                        </div>
-                        
-                        <div class="facilitation-cards">
-                            ${data.data.facilitation.map((strategy, index) => `
-                                <div class="facilitation-card">
-                                    <span class="card-icon">${index === 0 ? '🚀' : index === 1 ? '🔍' : '🎯'}</span>
-                                    <h4 class="card-title">${strategy.phase}</h4>
-                                    <ul style="margin-top: 1rem;">
-                                        ${strategy.techniques.map(technique => `<li>${technique}</li>`).join('')}
-                                    </ul>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                    
-                    <!-- Extension Opportunities -->
-                    <div class="guide-section">
-                        <div class="section-header">
-                            <span class="section-icon">�</span>
-                            <h2 class="section-title">Extension Opportunities</h2>
-                        </div>
-                        
-                        <div class="tips-container">
-                            ${data.data.extensions.map(extension => `
-                                <div class="tip-item">
-                                    <div class="tip-title">Enhancement Opportunity</div>
-                                    <p style="margin: 0;">${extension}</p>
-                                </div>
-                            `).join('')}
-                        </div>
+                    <div class="guide-content" style="display: grid; gap: 2rem;">
+                        ${htmlContent}
                     </div>
                 </div>
             `;
         } catch (error) {
-            console.error('❌ Error loading comprehensive teacher guide:', error);
+            console.error('❌ Error loading teacher guide:', error);
             document.getElementById('teacher-guide').innerHTML = `
                 <div class="error-message" style="text-align: center; padding: 2rem; color: #dc3545; background: #f8d7da; border-radius: 8px; margin: 2rem;">
-                    <h3>⚠️ Unable to Load Comprehensive Teacher Guide</h3>
-                    <p>There was an error loading the complete 596-line teacher implementation guide. Please try refreshing the page.</p>
+                    <h3>⚠️ Unable to Load Teacher Guide</h3>
+                    <p>There was an error loading the teacher implementation guide. Please try refreshing the page.</p>
                     <details style="margin-top: 1rem;">
                         <summary style="cursor: pointer; font-weight: bold;">Technical Details</summary>
                         <code style="display: block; margin-top: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 4px;">${error.message}</code>
@@ -852,29 +480,6 @@ class SimulationInterface {
                         </ul>
                     </div>
                 </div>
-                
-                <div class="presentation-demo">
-                    <h4>🎬 Presentation Preview</h4>
-                    <div class="demo-container">
-                        <div class="demo-slide">
-                            <div class="demo-header">
-                                <h3>🕵️ Geographic Detective Academy</h3>
-                                <div class="slide-counter">Slide 1 of 60</div>
-                            </div>
-                            <div class="demo-content">
-                                <div class="demo-image-placeholder">
-                                    <span class="demo-icon">🗺️</span>
-                                    <p>Your presentation slides will appear here</p>
-                                </div>
-                                <div class="demo-controls">
-                                    <button class="demo-btn">◀️ Previous</button>
-                                    <button class="demo-btn">⛶ Fullscreen</button>
-                                    <button class="demo-btn">▶️ Next</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
             
             <div class="prompts-section">
@@ -894,57 +499,6 @@ class SimulationInterface {
                         <div class="example">
                             <strong>Example:</strong> Students address each other by role titles and present findings as formal case reports.
                         </div>
-                    </div>
-                    
-                    <div class="technique-card">
-                        <h4>🏆 Badge Progression System</h4>
-                        <p>Visual progression tracking to maintain motivation and recognize skill development milestones.</p>
-                        <div class="example">
-                            <strong>Example:</strong> Display badge charts showing each student's progression from Rookie to Specialist level.
-                        </div>
-                    </div>
-                    
-                    <div class="technique-card">
-                        <h4>📱 Technology Integration</h4>
-                        <p>Use digital tools to simulate real detective work and enhance authentic investigation experience.</p>
-                        <div class="example">
-                            <strong>Example:</strong> QR codes for "evidence scanning" or online databases for "background research."
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="prompts-section">
-                <h3>🎯 Interactive Prompts Library</h3>
-                <div class="prompts-grid">
-                    <div class="prompt-card">
-                        <div class="prompt-type">Daily Opener</div>
-                        <div class="prompt-text">"Detective units, new intelligence has arrived overnight. Check your case files for updated evidence and prepare for immediate deployment."</div>
-                    </div>
-                    
-                    <div class="prompt-card">
-                        <div class="prompt-type">Evidence Analysis</div>
-                        <div class="prompt-text">"This coordinate appears to be encoded. Use your geographic knowledge to decode the location and identify the significance."</div>
-                    </div>
-                    
-                    <div class="prompt-card">
-                        <div class="prompt-type">Team Challenge</div>
-                        <div class="prompt-text">"Multiple units are investigating the same case. Share your findings and coordinate your investigation strategy."</div>
-                    </div>
-                    
-                    <div class="prompt-card">
-                        <div class="prompt-type">Reflection Prompt</div>
-                        <div class="prompt-text">"Document in your detective journal: What geographic skills were essential for solving today's case?"</div>
-                    </div>
-                    
-                    <div class="prompt-card">
-                        <div class="prompt-type">Investigation Briefing</div>
-                        <div class="prompt-text">"Bureau Alert: We've received reports of suspicious geographic activity. Your team has been assigned to investigate. What's your first move?"</div>
-                    </div>
-                    
-                    <div class="prompt-card">
-                        <div class="prompt-type">Critical Thinking</div>
-                        <div class="prompt-text">"The evidence points to three possible locations. Use your geographic analysis skills to determine which is most likely and justify your reasoning."</div>
                     </div>
                 </div>
             </div>
@@ -977,85 +531,6 @@ class SimulationInterface {
                     </div>
                 </div>
             </div>
-            
-            <div class="package-components">
-                <h3>📋 Package Components</h3>
-                <div class="components-grid">
-                    <div class="component-section">
-                        <h4>📚 Curriculum Materials</h4>
-                        <ul>
-                            <li>Complete 12-day lesson plan sequence</li>
-                            <li>Daily objective and activity guides</li>
-                            <li>Geographic skill progression framework</li>
-                            <li>Standards alignment documentation</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="component-section">
-                        <h4>👥 Student Resources</h4>
-                        <ul>
-                            <li>Detective handbook and reference guides</li>
-                            <li>Evidence collection and analysis worksheets</li>
-                            <li>Case report templates and rubrics</li>
-                            <li>Team role responsibility guides</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="component-section">
-                        <h4>📖 Teacher Support</h4>
-                        <ul>
-                            <li>Implementation guide and timeline</li>
-                            <li>Facilitation strategies and tips</li>
-                            <li>Assessment rubrics and tools</li>
-                            <li>Extension activities and modifications</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="component-section">
-                        <h4>💻 Digital Assets</h4>
-                        <ul>
-                            <li>Interactive mapping tools and databases</li>
-                            <li>Digital evidence files and resources</li>
-                            <li>Online collaboration platforms</li>
-                            <li>Progress tracking and badge systems</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="implementation-guide">
-                <h3>🚀 Quick Start Implementation</h3>
-                <div class="steps-timeline">
-                    <div class="step-item">
-                        <div class="step-number">1</div>
-                        <div class="step-content">
-                            <h4>Week Before: Preparation</h4>
-                            <p>Review materials, set up classroom, prepare evidence packets</p>
-                        </div>
-                    </div>
-                    <div class="step-item">
-                        <div class="step-number">2</div>
-                        <div class="step-content">
-                            <h4>Day 0: Launch</h4>
-                            <p>Academy orientation, team formation, role assignments</p>
-                        </div>
-                    </div>
-                    <div class="step-item">
-                        <div class="step-number">3</div>
-                        <div class="step-content">
-                            <h4>Days 1-10: Investigation</h4>
-                            <p>Daily cases with progressive skill building and assessment</p>
-                        </div>
-                    </div>
-                    <div class="step-item">
-                        <div class="step-number">4</div>
-                        <div class="step-content">
-                            <h4>Day 11: Graduation</h4>
-                            <p>Final case presentation and academy graduation ceremony</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
         `;
     }
 
@@ -1075,91 +550,43 @@ class SimulationInterface {
         console.log('🔄 Converting comprehensive markdown to HTML...');
         
         let html = markdown
-            // Convert headers with proper styling
             .replace(/^# (.*$)/gm, '<h1>$1</h1>')
             .replace(/^## (.*$)/gm, '<h2>$1</h2>')
             .replace(/^### (.*$)/gm, '<h3>$1</h3>')
             .replace(/^#### (.*$)/gm, '<h4>$1</h4>')
-            
-            // Convert special day headers
             .replace(/^## (Day \d+: .*$)/gm, '<div class="day-header">$1</div>')
-            
-            // Convert case files
             .replace(/\*\*(CASE FILE \d+.*?)\*\*/g, '<div class="case-file">$1</div>')
-            
-            // Convert slide references with special styling
             .replace(/\[(Slide \d+[^\]]*)\]/g, '<span class="slide-reference">$1</span>')
-            
-            // Convert timing notes
             .replace(/\*\*Timing:\*\* (.*$)/gm, '<div class="timing-note">⏰ Timing: $1</div>')
-            
-            // Convert learning objectives
             .replace(/\*\*Learning Objective:\*\* (.*$)/gm, '<div class="learning-objective">🎯 <strong>Learning Objective:</strong> $1</div>')
-            
-            // Convert assessment notes
             .replace(/\*\*Assessment:\*\* (.*$)/gm, '<div class="assessment-note">📊 <strong>Assessment:</strong> $1</div>')
-            
-            // Convert implementation checklists
             .replace(/\*\*Implementation Checklist:\*\*/g, '<div class="implementation-checklist"><strong>📋 Implementation Checklist:</strong>')
             .replace(/\*\*Materials Needed:\*\*/g, '<div class="implementation-checklist"><strong>📦 Materials Needed:</strong>')
             .replace(/\*\*Preparation Steps:\*\*/g, '<div class="implementation-checklist"><strong>🔧 Preparation Steps:</strong>')
-            
-            // Convert bold text
             .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-            
-            // Convert italic text
             .replace(/\*(.*?)\*/g, '<em>$1</em>')
-            
-            // Convert code blocks
             .replace(/```[\s\S]*?```/g, function(match) {
-                const content = match.replace(/```/g, '');
-                return '<pre><code>' + content + '</code></pre>';
+                return '<pre><code>' + match.replace(/```/g, '').trim() + '</code></pre>';
             })
-            
-            // Convert inline code
             .replace(/`([^`]+)`/g, '<code>$1</code>')
-            
-            // Convert unordered lists
             .replace(/^- (.*$)/gm, '<li>$1</li>')
             .replace(/^\* (.*$)/gm, '<li>$1</li>')
-            
-            // Convert ordered lists
             .replace(/^\d+\. (.*$)/gm, '<li>$1</li>')
-            
-            // Wrap consecutive list items in ul/ol tags
             .replace(/(<li>.*<\/li>)/gs, function(match) {
                 return '<ul>' + match + '</ul>';
             })
-            
-            // Convert blockquotes
             .replace(/^> (.*$)/gm, '<blockquote>$1</blockquote>')
-            
-            // Convert horizontal rules
             .replace(/^---$/gm, '<hr class="section-divider">')
-            
-            // Convert line breaks to paragraphs
             .split('\n\n')
             .map(paragraph => {
-                // Don't wrap already wrapped elements
-                const trimmed = paragraph.trim();
-                if (trimmed.startsWith('<div') || 
-                    trimmed.startsWith('<h') || 
-                    trimmed.startsWith('<ul') || 
-                    trimmed.startsWith('<ol') || 
-                    trimmed.startsWith('<blockquote') ||
-                    trimmed.startsWith('<hr') ||
-                    trimmed.startsWith('<pre') ||
-                    trimmed === '') {
+                if (paragraph.trim().length === 0) return '';
+                if (paragraph.includes('<h') || paragraph.includes('<div') || paragraph.includes('<ul') || paragraph.includes('<hr') || paragraph.includes('<blockquote')) {
                     return paragraph;
                 }
-                return '<p>' + paragraph + '</p>';
+                return `<p>${paragraph}</p>`;
             })
             .join('\n')
-            
-            // Close any open implementation checklist divs
             .replace(/(<div class="implementation-checklist">[\s\S]*?)(<h|<div class="day-header"|<div class="case-file"|$)/g, '$1</div>$2')
-            
-            // Clean up extra newlines
             .replace(/\n{3,}/g, '\n\n')
             .trim();
             
@@ -1167,7 +594,8 @@ class SimulationInterface {
         return html;
     }
 }
-// Initialize the simulation interface when the page loads
+
+// Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
     new SimulationInterface();
 });
@@ -1175,6 +603,97 @@ document.addEventListener('DOMContentLoaded', function() {
 // Add enhanced styling for the dynamic content
 const dynamicStyles = `
 <style>
+    .comprehensive-teacher-guide {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+    
+    .day-header {
+        background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+        color: white;
+        padding: 1.5rem 2rem;
+        border-radius: 10px;
+        margin: 2rem 0 1.5rem 0;
+        font-size: 1.4rem;
+        font-weight: 600;
+        box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+    }
+    
+    .case-file {
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        margin: 1.5rem 0;
+        font-weight: 600;
+        box-shadow: 0 3px 12px rgba(220, 53, 69, 0.3);
+    }
+    
+    .slide-reference {
+        background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+        color: #212529;
+        padding: 0.4rem 0.8rem;
+        border-radius: 15px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin: 0 0.3rem;
+        box-shadow: 0 2px 8px rgba(255, 193, 7, 0.4);
+        display: inline-block;
+    }
+    
+    .timing-note {
+        background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+        color: white;
+        padding: 0.8rem 1.2rem;
+        border-radius: 8px;
+        margin: 1rem 0;
+        font-weight: 500;
+        box-shadow: 0 3px 10px rgba(23, 162, 184, 0.3);
+    }
+    
+    .learning-objective {
+        background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        margin: 1.5rem 0;
+        box-shadow: 0 3px 12px rgba(40, 167, 69, 0.3);
+    }
+    
+    .assessment-note {
+        background: linear-gradient(135deg, #6f42c1 0%, #59359a 100%);
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        margin: 1.5rem 0;
+        box-shadow: 0 3px 12px rgba(111, 66, 193, 0.3);
+    }
+    
+    .implementation-checklist {
+        background: #f8f9fa;
+        border-left: 4px solid #007bff;
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+        border-radius: 0 8px 8px 0;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .implementation-checklist strong {
+        color: #007bff;
+        font-size: 1.1rem;
+    }
+    
+    .section-divider {
+        border: none;
+        height: 3px;
+        background: linear-gradient(to right, #007bff, #28a745, #ffc107, #dc3545);
+        margin: 3rem 0;
+        border-radius: 2px;
+    }
+
     .subtitle {
         color: #666;
         font-size: 1.1rem;
@@ -1213,225 +732,7 @@ const dynamicStyles = `
         border-left: 3px solid #28a745;
         color: #155724;
     }
-    
-    .weeks-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 1.5rem;
-        margin-top: 2rem;
-    }
-    
-    .week-card {
-        background: linear-gradient(145deg, #f8f9fa, #e9ecef);
-        padding: 1.5rem;
-        border-radius: 10px;
-        border: 1px solid #dee2e6;
-    }
-    
-    .day-item {
-        background: white;
-        padding: 0.8rem;
-        margin: 0.5rem 0;
-        border-radius: 5px;
-        border-left: 3px solid #007bff;
-    }
-    
-    .roles-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-        gap: 2rem;
-        margin: 2rem 0;
-    }
-    
-    .role-card {
-        background: linear-gradient(145deg, #ffffff, #f8f9fa);
-        border-radius: 15px;
-        padding: 2rem;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        border: 1px solid #dee2e6;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    
-    .role-card.enhanced {
-        border: 2px solid #007bff;
-    }
-    
-    .role-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 25px rgba(0,123,255,0.2);
-    }
-    
-    .role-image-placeholder {
-        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-        border: 2px dashed #2196f3;
-        border-radius: 8px;
-        padding: 1rem;
-        margin-bottom: 1.5rem;
-        text-align: center;
-        color: #1565c0;
-        font-size: 0.85rem;
-        line-height: 1.4;
-        min-height: 100px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    }
-    
-    .role-header {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        margin-bottom: 1rem;
-    }
-    
-    .role-icon {
-        font-size: 2.5rem;
-        background: #ffd700;
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    
-    .mission-section, .activities-section, .skills-section, .appeal-section {
-        margin-bottom: 1.5rem;
-        padding-bottom: 1rem;
-        border-bottom: 1px solid #e9ecef;
-    }
-    
-    .appeal-section {
-        border-bottom: none;
-        background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
-        padding: 1rem;
-        border-radius: 8px;
-        margin-top: 1rem;
-    }
-    
-    .mission-section h4, .activities-section h4, .skills-section h4, .appeal-section h4 {
-        color: #1e3c72;
-        margin-bottom: 0.5rem;
-        font-size: 1rem;
-        font-weight: 600;
-    }
-    
-    .role-mission, .role-activities, .role-appeal {
-        margin: 0;
-        line-height: 1.6;
-        color: #2d3748;
-    }
-    
-    .role-appeal {
-        font-weight: 600;
-        color: #1a202c;
-    }
-    
-    .cases-container {
-        display: flex;
-        flex-direction: column;
-        gap: 2rem;
-    }
-    
-    .case-card {
-        background: white;
-        border-radius: 15px;
-        padding: 2rem;
-        box-shadow: 0 6px 20px rgba(0,0,0,0.1);
-        border-left: 5px solid #007bff;
-    }
-    
-    .case-card.rookie {
-        border-left-color: #28a745;
-    }
-    
-    .case-card.detective {
-        border-left-color: #ffc107;
-    }
-    
-    .case-card.specialist {
-        border-left-color: #dc3545;
-    }
-    
-    .case-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        margin-bottom: 1.5rem;
-    }
-    
-    .case-badges {
-        display: flex;
-        gap: 0.5rem;
-        margin-top: 0.5rem;
-    }
-    
-    .badge {
-        padding: 0.3rem 0.8rem;
-        border-radius: 12px;
-        font-size: 0.8rem;
-        font-weight: bold;
-        text-transform: uppercase;
-    }
-    
-    .level-rookie {
-        background: #d4edda;
-        color: #155724;
-    }
-    
-    .level-detective {
-        background: #fff3cd;
-        color: #856404;
-    }
-    
-    .level-specialist {
-        background: #f8d7da;
-        color: #721c24;
-    }
-    
-    .skills-list {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        margin-top: 0.5rem;
-    }
-    
-    .skill-tag {
-        background: #e9ecef;
-        color: #495057;
-        padding: 0.4rem 0.8rem;
-        border-radius: 15px;
-        font-size: 0.9rem;
-    }
-    
-    .evidence-grid {
-        display: grid;
-        gap: 1rem;
-        margin-top: 1rem;
-    }
-    
-    .evidence-item {
-        background: #f8f9fa;
-        padding: 1rem;
-        border-radius: 8px;
-        border-left: 3px solid #007bff;
-    }
-    
-    .materials-grid, .tools-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-        gap: 1.5rem;
-        margin: 1.5rem 0;
-    }
-    
-    .material-card, .tool-card {
-        background: white;
-        padding: 1.5rem;
-        border-radius: 10px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        border: 1px solid #dee2e6;
-    }
-    
+
     .error-message {
         text-align: center;
         padding: 3rem;
@@ -1449,166 +750,6 @@ const dynamicStyles = `
         0% { opacity: 1; }
         50% { opacity: 0.5; }
         100% { opacity: 1; }
-    }
-    
-    .checklist {
-        list-style: none;
-        padding-left: 0;
-    }
-    
-    .checklist li {
-        margin: 0.5rem 0;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-    
-    .package-stats {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 2rem;
-        margin: 2rem 0;
-        text-align: center;
-    }
-    
-    .stat-item {
-        background: linear-gradient(145deg, #007bff, #0056b3);
-        color: white;
-        padding: 2rem;
-        border-radius: 15px;
-    }
-    
-    .stat-number {
-        font-size: 3rem;
-        font-weight: bold;
-        margin-bottom: 0.5rem;
-    }
-    
-    .steps-timeline {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 2rem;
-        margin: 2rem 0;
-    }
-    
-    .step-item {
-        display: flex;
-        align-items: flex-start;
-        gap: 1rem;
-    }
-    
-    .step-number {
-        background: #007bff;
-        color: white;
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
-        flex-shrink: 0;
-    }
-    
-    .presentation-section {
-        background: linear-gradient(145deg, #f8f9fa, #e9ecef);
-        border-radius: 15px;
-        padding: 2rem;
-        margin: 2rem 0;
-        border: 1px solid #dee2e6;
-    }
-    
-    .presentation-info {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 1.5rem;
-        margin: 1.5rem 0;
-    }
-    
-    .info-card {
-        background: white;
-        padding: 1.5rem;
-        border-radius: 10px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        border-left: 4px solid #007bff;
-    }
-    
-    .upload-status {
-        background: #e8f4f8;
-        padding: 0.8rem;
-        border-radius: 5px;
-        margin-top: 1rem;
-        font-family: monospace;
-        font-size: 0.9rem;
-        border: 1px solid #b8daff;
-    }
-    
-    .presentation-demo {
-        margin-top: 2rem;
-    }
-    
-    .demo-container {
-        background: #2c3e50;
-        border-radius: 10px;
-        padding: 1rem;
-        margin-top: 1rem;
-    }
-    
-    .demo-slide {
-        background: #34495e;
-        border-radius: 8px;
-        overflow: hidden;
-    }
-    
-    .demo-header {
-        background: linear-gradient(135deg, #3498db, #2980b9);
-        color: white;
-        padding: 1rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    
-    .demo-content {
-        padding: 2rem;
-        text-align: center;
-    }
-    
-    .demo-image-placeholder {
-        background: #4a6741;
-        border-radius: 8px;
-        padding: 3rem;
-        margin-bottom: 1rem;
-        border: 2px dashed #7f8c8d;
-        color: #bdc3c7;
-    }
-    
-    .demo-icon {
-        font-size: 4rem;
-        display: block;
-        margin-bottom: 1rem;
-    }
-    
-    .demo-controls {
-        display: flex;
-        justify-content: center;
-        gap: 1rem;
-    }
-    
-    .demo-btn {
-        background: #3498db;
-        color: white;
-        border: none;
-        padding: 0.8rem 1.5rem;
-        border-radius: 20px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-weight: bold;
-    }
-    
-    .demo-btn:hover {
-        background: #2980b9;
-        transform: translateY(-2px);
     }
 </style>
 `;
