@@ -1220,82 +1220,74 @@ function createFallbackPrompt(description) {
 
 // Stability AI integration
 async function generateWithStabilityAI(prompt) {
+  console.log('🎨 Attempting Stability AI generation...');
+  
   const response = await fetch('https://api.stability.ai/v2beta/stable-image/generate/core', {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${process.env.STABILITY_AI_API_KEY}`,
       'Content-Type': 'application/json',
+      'Accept': 'application/json',
     },
     body: JSON.stringify({
       prompt: prompt,
-      output_format: 'jpeg',
-      aspect_ratio: '1:1',
-      style_preset: 'photographic'
+      output_format: 'png',
+      aspect_ratio: '1:1'
     })
   });
 
+  console.log('📡 Stability AI response status:', response.status);
+  
   if (!response.ok) {
-    throw new Error(`Stability AI error: ${response.statusText}`);
+    const errorText = await response.text();
+    console.error('❌ Stability AI error response:', errorText);
+    throw new Error(`Stability AI error: ${response.status} ${response.statusText} - ${errorText}`);
   }
 
   const data = await response.json();
-  return data.image; // Returns base64 or URL depending on API response
+  console.log('✅ Stability AI response received:', Object.keys(data));
+  
+  // Stability AI returns base64 image data
+  if (data.image) {
+    return `data:image/png;base64,${data.image}`;
+  } else {
+    throw new Error('Stability AI: No image data in response');
+  }
 }
 
-// Replicate integration  
+// Replicate integration using proper SDK
 async function generateWithReplicate(prompt) {
-  const response = await fetch('https://api.replicate.com/v1/predictions', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Token ${process.env.REPLICATE_API_TOKEN}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      version: "stability-ai/stable-diffusion:27b93a2413e7f36cd83da926f3656280b2931564ff050bf9575f1fdf9bcd7478",
-      input: {
-        prompt: prompt,
-        width: 1024,
-        height: 1024,
-        num_inference_steps: 30
-      }
-    })
-  });
-
-  if (!response.ok) {
-    throw new Error(`Replicate error: ${response.statusText}`);
-  }
-
-  const prediction = await response.json();
+  console.log('🔄 Attempting Replicate generation...');
   
-  // Wait for completion (simplified - in production you'd use webhooks)
-  let completed = false;
-  let attempts = 0;
-  
-  while (!completed && attempts < 10) {
-    await new Promise(resolve => setTimeout(resolve, 2000));
+  try {
+    const input = {
+      prompt: prompt,
+      output_format: "png",
+      aspect_ratio: "1:1"
+    };
+
+    console.log('📤 Replicate input:', input);
     
-    const statusResponse = await fetch(`https://api.replicate.com/v1/predictions/${prediction.id}`, {
-      headers: {
-        'Authorization': `Token ${process.env.REPLICATE_API_TOKEN}`,
-      }
-    });
+    const output = await replicate.run(
+      "black-forest-labs/flux-schnell",
+      { input }
+    );
+
+    console.log('📥 Replicate output type:', typeof output);
+    console.log('📥 Replicate output:', output);
     
-    const status = await statusResponse.json();
-    
-    if (status.status === 'succeeded') {
-      completed = true;
-      return status.output[0];
-    } else if (status.status === 'failed') {
-      throw new Error('Replicate generation failed');
+    if (Array.isArray(output) && output.length > 0) {
+      return output[0];
+    } else if (typeof output === 'string') {
+      return output;
+    } else {
+      throw new Error('Replicate: Unexpected output format');
     }
-    
-    attempts++;
+  } catch (error) {
+    console.error('❌ Replicate error:', error.message);
+    throw error;
   }
-  
-  throw new Error('Replicate generation timeout');
-}
-
-// Daily Dashboard Route
+}// Daily Dashboard Route
 app.get('/dashboard', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'dashboard.html'));
 });
