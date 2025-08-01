@@ -19,7 +19,7 @@
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
             background: white;
             border-radius: 20px;
@@ -96,18 +96,19 @@
         }
 
         .sidebar {
-            width: 350px;
+            width: 320px;
             background: #f8f9fa;
             border-right: 1px solid #e9ecef;
-            padding: 30px;
+            padding: 25px;
             overflow-y: auto;
             height: fit-content;
         }
 
         .main-content {
             flex: 1;
-            padding: 30px;
+            padding: 30px 50px;
             overflow-y: auto;
+            max-width: calc(100% - 320px);
             display: flex;
             flex-direction: column;
             min-height: 100%;
@@ -349,16 +350,20 @@
 
         .tab-button {
             flex: 1;
-            min-width: 70px;
-            padding: 8px 12px;
+            min-width: 90px;
+            padding: 10px 8px;
             border: none;
             background: #f8f9fa;
             color: #6c757d;
             border-radius: 6px;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 500;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .tab-button.active {
@@ -695,9 +700,11 @@
         }
 
         .lesson-reading p {
-            margin-bottom: 15px;
+            margin-bottom: 18px;
             color: #495057;
-            font-size: 1.05rem;
+            font-size: 1.1rem;
+            line-height: 1.7;
+            max-width: 800px;
         }
 
         .lesson-reading ul {
@@ -706,8 +713,9 @@
         }
 
         .lesson-reading li {
-            margin: 8px 0;
+            margin: 10px 0;
             color: #495057;
+            line-height: 1.6;
         }
 
         .lesson-reading strong {
@@ -774,11 +782,17 @@
         .tab-button {
             background: #e9ecef;
             border: none;
-            padding: 12px 24px;
+            padding: 12px 20px;
             border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s;
+            font-size: 0.8rem;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            min-width: 90px;
         }
 
         .tab-button.active {
