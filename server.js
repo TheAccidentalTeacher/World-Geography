@@ -1297,6 +1297,10 @@ async function generateWithReplicate(prompt) {
       return status.output[0];
     } else if (status.status === 'failed') {
       throw new Error('Replicate generation failed');
+    }
+    
+    attempts++;
+  }
   
   throw new Error('Replicate generation timeout');
 }
@@ -1847,6 +1851,22 @@ app.get('/admin', (req, res) => {
 // Start server
 const startServer = async () => {
   const dbConnected = await connectDB();
+  
+  if (!dbConnected) {
+    console.log('⚠️  Starting server without database connection');
+  }
+  
+  app.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+    console.log(`📱 Visit: http://localhost:${PORT}`);
+    console.log(`🔗 API Health: http://localhost:${PORT}/api/health`);
+    if (dbConnected) {
+      console.log(`📚 Browse lessons: http://localhost:${PORT}/browse`);
+    }
+  });
+};
+
+startServer();
   
   if (!dbConnected) {
     console.log('⚠️  Starting server without database connection');
