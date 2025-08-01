@@ -739,6 +739,14 @@
                                     <p style="margin-top: 10px; font-size: 14px; color: #666; font-style: italic;">🔍 Click image to view full-screen for classroom display</p>
                                 </div>
                             ` : ''}
+                            ${data.optimizedPrompt ? `
+                                <div class="optimized-prompt" style="margin: 15px 0;">
+                                    <h5 style="color: #2c5aa0; margin-bottom: 8px;">🎯 AI-Optimized Prompt:</h5>
+                                    <div style="background: rgba(44, 90, 160, 0.1); padding: 12px; border-radius: 8px; font-size: 14px; line-height: 1.4;">
+                                        ${data.optimizedPrompt}
+                                    </div>
+                                </div>
+                            ` : ''}
                             ${data.mapDescription ? `
                                 <div class="map-description">
                                     <h5>Map Description:</h5>

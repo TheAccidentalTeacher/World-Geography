@@ -906,12 +906,51 @@ app.post('/api/ai/generate-map', async (req, res) => {
       });
     }
 
-    // Generate an actual map image using DALL-E
+    // Step 1: Use GPT-4-mini to create an optimized prompt for map generation
+    console.log('🎯 Analyzing request and optimizing prompt...');
+    const promptOptimization = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        {
+          role: "system",
+          content: `You are an expert cartographer and educational content specialist. Your job is to take a user's map request and create the PERFECT prompt for DALL-E to generate a clear, educational, and accurate map.
+
+CRITICAL REQUIREMENTS for educational maps:
+- Text must be LARGE and READABLE (specify "large bold text labels")
+- Geographic accuracy is essential
+- Clear color contrast (specify exact colors)
+- Educational elements should be prominent
+- Avoid artistic flourishes that reduce readability
+
+PROMPT STRUCTURE you should follow:
+1. Start with "Create a clear, educational map of [location]"
+2. Specify "Style: clean educational cartography, large bold readable text labels"
+3. List specific geographic features to include
+4. Specify color scheme (e.g., "blue oceans, green lowlands, brown mountains")
+5. Add "Text must be large, bold, and clearly readable for classroom use"
+6. End with "Avoid decorative elements that reduce readability"
+
+Return ONLY the optimized DALL-E prompt, nothing else.`
+        },
+        {
+          role: "user",
+          content: `Create an optimized DALL-E prompt for: ${description}`
+        }
+      ],
+      max_tokens: 200,
+      temperature: 0.3, // Lower temperature for more consistent, focused prompts
+    });
+
+    const optimizedPrompt = promptOptimization.choices[0].message.content.trim();
+    console.log('📝 Optimized prompt:', optimizedPrompt);
+
+    // Step 2: Generate the map with the optimized prompt
+    console.log('🎨 Generating map with optimized prompt...');
     const imageResponse = await openai.images.generate({
       model: "dall-e-3",
-      prompt: `Create an educational map illustration of ${description}. Style: clean, educational cartography with clear labels, geographic features prominently marked, suitable for middle school geography students. Include major landmarks, cities, geographic features, and educational elements. Use bright, clear colors and readable text labels.`,
+      prompt: optimizedPrompt,
       size: "1024x1024",
-      quality: "standard",
+      quality: "hd", // Use HD quality for better text readability
       n: 1,
     });
 
@@ -920,9 +959,10 @@ app.post('/api/ai/generate-map', async (req, res) => {
     res.json({
       description: description,
       imageUrl: imageUrl,
+      optimizedPrompt: optimizedPrompt,
       status: 'image_generated',
-      message: 'Map illustration generated successfully!',
-      source: 'OpenAI DALL-E 3'
+      message: 'Map illustration generated with AI-optimized prompt!',
+      source: 'OpenAI GPT-4o-mini + DALL-E 3 HD'
     });
 
   } catch (error) {
