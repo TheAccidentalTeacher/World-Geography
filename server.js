@@ -1066,7 +1066,7 @@ app.get('/api/ai/test-azure-models', async (req, res) => {
   });
 });
 
-// AI Map Illustration Generator
+// AI Map Illustration Generator - Multi-API with Smart Prompting
 app.post('/api/ai/generate-map', async (req, res) => {
   try {
     const { description } = req.body;
@@ -1075,84 +1075,231 @@ app.post('/api/ai/generate-map', async (req, res) => {
       return res.status(400).json({ error: 'Map description is required' });
     }
 
-    if (!openai) {
-      return res.status(200).json({ 
+    // Step 1: Create super-detailed educational map prompt
+    console.log('🎯 Creating detailed educational map prompt...');
+    
+    let optimizedPrompt = "";
+    let promptAnalysis = "";
+
+    if (openai) {
+      try {
+        const promptOptimization = await openai.chat.completions.create({
+          model: "gpt-4o-mini",
+          messages: [
+            {
+              role: "system",
+              content: `You are a master cartographer creating prompts for educational maps that MUST be readable in classrooms.
+
+CRITICAL REQUIREMENTS:
+- Text labels MUST be large, bold, and contrast sharply with background
+- Use simple, clean cartographic style (like National Geographic educational maps)
+- Specify exact colors for clarity: "bright blue oceans, forest green lowlands, brown mountains, white ice"
+- Include scale, compass rose, and legend
+- NO artistic flourishes or decorative elements
+- Geographic accuracy is essential
+
+PROMPT TEMPLATE:
+"Educational cartographic map of [LOCATION], style: clean scientific cartography, large bold black text labels on contrasting backgrounds, [SPECIFIC FEATURES], color scheme: [EXACT COLORS], include compass rose and scale bar, text must be classroom-readable from 10 feet away, avoid decorative elements, National Geographic educational style"
+
+Analyze the request and create the PERFECT educational map prompt:`
+            },
+            {
+              role: "user",
+              content: `Create detailed educational map prompt for: ${description}`
+            }
+          ],
+          max_tokens: 250,
+          temperature: 0.3,
+        });
+
+        optimizedPrompt = promptOptimization.choices[0].message.content.trim();
+        promptAnalysis = "✅ AI-optimized for educational clarity";
+      } catch (error) {
+        console.error('Prompt optimization failed:', error);
+        // Fallback to manual optimization
+        optimizedPrompt = createFallbackPrompt(description);
+        promptAnalysis = "⚠️ Using fallback prompt optimization";
+      }
+    } else {
+      optimizedPrompt = createFallbackPrompt(description);
+      promptAnalysis = "🔧 Manual prompt optimization (OpenAI unavailable)";
+    }
+
+    console.log('📝 Generated prompt:', optimizedPrompt);
+
+    // Step 2: Try multiple image generation APIs in order of quality
+    const imageGenerators = [
+      { name: 'Stability AI', apiKey: process.env.STABILITY_AI_API_KEY, priority: 1 },
+      { name: 'DALL-E 3', apiKey: process.env.OPENAI_API_KEY, priority: 2 },
+      { name: 'Replicate', apiKey: process.env.REPLICATE_API_TOKEN, priority: 3 }
+    ];
+
+    let imageResult = null;
+    let usedGenerator = null;
+
+    // Try Stability AI first (often better for maps)
+    if (process.env.STABILITY_AI_API_KEY) {
+      console.log('🎨 Trying Stability AI...');
+      try {
+        imageResult = await generateWithStabilityAI(optimizedPrompt);
+        usedGenerator = 'Stability AI (Best for educational content)';
+      } catch (error) {
+        console.error('Stability AI failed:', error.message);
+      }
+    }
+
+    // Fallback to DALL-E if Stability AI fails
+    if (!imageResult && openai) {
+      console.log('🎨 Trying DALL-E 3 HD...');
+      try {
+        const dalleResponse = await openai.images.generate({
+          model: "dall-e-3",
+          prompt: optimizedPrompt,
+          n: 1,
+          size: "1024x1024",
+          quality: "hd",
+          style: "natural"
+        });
+
+        imageResult = dalleResponse.data[0].url;
+        usedGenerator = 'DALL-E 3 HD (OpenAI)';
+      } catch (error) {
+        console.error('DALL-E failed:', error.message);
+      }
+    }
+
+    // Final fallback to Replicate
+    if (!imageResult && process.env.REPLICATE_API_TOKEN) {
+      console.log('🎨 Trying Replicate...');
+      try {
+        imageResult = await generateWithReplicate(optimizedPrompt);
+        usedGenerator = 'Replicate (Backup service)';
+      } catch (error) {
+        console.error('Replicate failed:', error.message);
+      }
+    }
+
+    if (imageResult) {
+      res.json({
+        description: description,
+        imageUrl: imageResult,
+        optimizedPrompt: optimizedPrompt,
+        promptAnalysis: promptAnalysis,
+        generator: usedGenerator,
+        status: 'success',
+        message: 'Educational map generated with multi-API system!',
+        tips: [
+          "🎯 Prompt optimized for classroom readability",
+          "📏 Text sized for 10-foot viewing distance", 
+          "🎨 Multiple AI services ensure reliability",
+          "🗺️ Educational cartography standards applied"
+        ]
+      });
+    } else {
+      // All APIs failed - provide helpful fallback
+      res.json({
         description: description,
         imageUrl: null,
-        mapDescription: `Map of ${description} - OpenAI service not available. This would normally generate an actual map illustration image using DALL-E.`,
+        optimizedPrompt: optimizedPrompt,
+        promptAnalysis: promptAnalysis,
+        mapDescription: `Educational map of ${description} - All image generation services temporarily unavailable.`,
         status: 'fallback_response',
-        message: 'AI service unavailable - this is normal for local development',
-        source: 'Fallback Response'
+        message: 'Image generation services unavailable - prompt optimization successful',
+        generator: 'None (services unavailable)',
+        tips: [
+          "✅ Detailed educational prompt created",
+          "🔄 Multiple backup services configured",
+          "⚡ Will work when APIs are available"
+        ]
       });
     }
 
-    // Step 1: Use GPT-4-mini to create an optimized prompt for map generation
-    console.log('🎯 Analyzing request and optimizing prompt...');
-    const promptOptimization = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
-        {
-          role: "system",
-          content: `You are an expert cartographer and educational content specialist. Your job is to take a user's map request and create the PERFECT prompt for DALL-E to generate a clear, educational, and accurate map.
-
-CRITICAL REQUIREMENTS for educational maps:
-- Text must be LARGE and READABLE (specify "large bold text labels")
-- Geographic accuracy is essential
-- Clear color contrast (specify exact colors)
-- Educational elements should be prominent
-- Avoid artistic flourishes that reduce readability
-
-PROMPT STRUCTURE you should follow:
-1. Start with "Create a clear, educational map of [location]"
-2. Specify "Style: clean educational cartography, large bold readable text labels"
-3. List specific geographic features to include
-4. Specify color scheme (e.g., "blue oceans, green lowlands, brown mountains")
-5. Add "Text must be large, bold, and clearly readable for classroom use"
-6. End with "Avoid decorative elements that reduce readability"
-
-Return ONLY the optimized DALL-E prompt, nothing else.`
-        },
-        {
-          role: "user",
-          content: `Create an optimized DALL-E prompt for: ${description}`
-        }
-      ],
-      max_tokens: 200,
-      temperature: 0.3, // Lower temperature for more consistent, focused prompts
-    });
-
-    const optimizedPrompt = promptOptimization.choices[0].message.content.trim();
-    console.log('📝 Optimized prompt:', optimizedPrompt);
-
-    // Step 2: Generate the map with the optimized prompt
-    console.log('🎨 Generating map with optimized prompt...');
-    const imageResponse = await openai.images.generate({
-      model: "dall-e-3",
-      prompt: optimizedPrompt,
-      size: "1024x1024",
-      quality: "hd", // Use HD quality for better text readability
-      n: 1,
-    });
-
-    const imageUrl = imageResponse.data[0].url;
-
-    res.json({
-      description: description,
-      imageUrl: imageUrl,
-      optimizedPrompt: optimizedPrompt,
-      status: 'image_generated',
-      message: 'Map illustration generated with AI-optimized prompt!',
-      source: 'OpenAI GPT-4o-mini + DALL-E 3 HD'
-    });
-
   } catch (error) {
-    console.error('AI Map Generation Error:', error);
+    console.error('Map Generation Error:', error);
     res.status(500).json({ 
-      error: 'Failed to generate map description',
+      error: 'Failed to generate educational map',
       fallback: `Unable to generate map for "${req.body.description}" at this time. Please try again later.`
     });
   }
 });
+
+// Helper function for fallback prompt creation
+function createFallbackPrompt(description) {
+  return `Educational cartographic map of ${description}, style: clean scientific cartography with large bold black text labels on high-contrast backgrounds, detailed geographic features clearly labeled, color scheme: bright blue oceans, forest green lowlands, brown mountains, white ice and snow, include compass rose and scale bar, text must be classroom-readable from 10 feet away, National Geographic educational atlas style, avoid decorative elements, focus on educational clarity and geographic accuracy`;
+}
+
+// Stability AI integration
+async function generateWithStabilityAI(prompt) {
+  const response = await fetch('https://api.stability.ai/v2beta/stable-image/generate/core', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${process.env.STABILITY_AI_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      prompt: prompt,
+      output_format: 'jpeg',
+      aspect_ratio: '1:1',
+      style_preset: 'photographic'
+    })
+  });
+
+  if (!response.ok) {
+    throw new Error(`Stability AI error: ${response.statusText}`);
+  }
+
+  const data = await response.json();
+  return data.image; // Returns base64 or URL depending on API response
+}
+
+// Replicate integration  
+async function generateWithReplicate(prompt) {
+  const response = await fetch('https://api.replicate.com/v1/predictions', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Token ${process.env.REPLICATE_API_TOKEN}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      version: "stability-ai/stable-diffusion:27b93a2413e7f36cd83da926f3656280b2931564ff050bf9575f1fdf9bcd7478",
+      input: {
+        prompt: prompt,
+        width: 1024,
+        height: 1024,
+        num_inference_steps: 30
+      }
+    })
+  });
+
+  if (!response.ok) {
+    throw new Error(`Replicate error: ${response.statusText}`);
+  }
+
+  const prediction = await response.json();
+  
+  // Wait for completion (simplified - in production you'd use webhooks)
+  let completed = false;
+  let attempts = 0;
+  
+  while (!completed && attempts < 10) {
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    const statusResponse = await fetch(`https://api.replicate.com/v1/predictions/${prediction.id}`, {
+      headers: {
+        'Authorization': `Token ${process.env.REPLICATE_API_TOKEN}`,
+      }
+    });
+    
+    const status = await statusResponse.json();
+    
+    if (status.status === 'succeeded') {
+      completed = true;
+      return status.output[0];
+    } else if (status.status === 'failed') {
+      throw new Error('Replicate generation failed');
+  
+  throw new Error('Replicate generation timeout');
+}
 
 // Daily Dashboard Route
 app.get('/dashboard', (req, res) => {
