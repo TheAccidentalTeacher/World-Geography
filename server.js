@@ -720,9 +720,11 @@ app.get('/api/dashboard/calendar', (req, res) => {
 
 // AI API Integration
 const OpenAI = require('openai');
+const Replicate = require('replicate');
 
 let openai = null;
 let azureAI = null;
+let replicate = null;
 
 // Initialize OpenAI only if API key is available
 if (process.env.OPENAI_API_KEY) {
@@ -732,6 +734,16 @@ if (process.env.OPENAI_API_KEY) {
   console.log('🤖 OpenAI API initialized');
 } else {
   console.log('⚠️ OpenAI API key not found - AI features will return fallback responses');
+}
+
+// Initialize Replicate only if API key is available
+if (process.env.REPLICATE_API_TOKEN) {
+  replicate = new Replicate({
+    auth: process.env.REPLICATE_API_TOKEN,
+  });
+  console.log('🔄 Replicate API initialized');
+} else {
+  console.log('⚠️ Replicate API key not found - Replicate features will be unavailable');
 }
 
 // Initialize Azure AI Foundry only if API key is available
@@ -1222,6 +1234,13 @@ function createFallbackPrompt(description) {
 async function generateWithStabilityAI(prompt) {
   console.log('🎨 Attempting Stability AI generation...');
   
+  const requestBody = {
+    prompt: prompt,
+    output_format: 'png'
+  };
+  
+  console.log('📤 Stability AI request body:', requestBody);
+  
   const response = await fetch('https://api.stability.ai/v2beta/stable-image/generate/core', {
     method: 'POST',
     headers: {
@@ -1229,14 +1248,11 @@ async function generateWithStabilityAI(prompt) {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
     },
-    body: JSON.stringify({
-      prompt: prompt,
-      output_format: 'png',
-      aspect_ratio: '1:1'
-    })
+    body: JSON.stringify(requestBody)
   });
 
   console.log('📡 Stability AI response status:', response.status);
+  console.log('📡 Stability AI response headers:', Object.fromEntries(response.headers.entries()));
   
   if (!response.ok) {
     const errorText = await response.text();
@@ -1247,10 +1263,12 @@ async function generateWithStabilityAI(prompt) {
   const data = await response.json();
   console.log('✅ Stability AI response received:', Object.keys(data));
   
-  // Stability AI returns base64 image data
+  // Stability AI v2beta returns base64 image data in 'image' field
   if (data.image) {
+    console.log('✅ Stability AI image data found, length:', data.image.length);
     return `data:image/png;base64,${data.image}`;
   } else {
+    console.error('❌ Stability AI response structure:', data);
     throw new Error('Stability AI: No image data in response');
   }
 }
@@ -1258,6 +1276,10 @@ async function generateWithStabilityAI(prompt) {
 // Replicate integration using proper SDK
 async function generateWithReplicate(prompt) {
   console.log('🔄 Attempting Replicate generation...');
+  
+  if (!replicate) {
+    throw new Error('Replicate not initialized - API key missing');
+  }
   
   try {
     const input = {
