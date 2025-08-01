@@ -718,6 +718,151 @@ app.get('/api/dashboard/calendar', (req, res) => {
   }
 });
 
+// AI API Integration
+const OpenAI = require('openai');
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+// AI Definition Lookup
+app.post('/api/ai/define', async (req, res) => {
+  try {
+    const { term } = req.body;
+    
+    if (!term) {
+      return res.status(400).json({ error: 'Term is required' });
+    }
+
+    if (!process.env.OPENAI_API_KEY) {
+      return res.status(500).json({ error: 'OpenAI API key not configured' });
+    }
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [
+        {
+          role: "system",
+          content: "You are a geography expert helping students understand geographic terms. Provide clear, concise definitions focused on geographic concepts. If the term is not geographic, politely explain it's not a geography term and suggest a related geographic concept."
+        },
+        {
+          role: "user",
+          content: `Define the geographic term: ${term}`
+        }
+      ],
+      max_tokens: 150,
+      temperature: 0.7,
+    });
+
+    const definition = completion.choices[0].message.content.trim();
+
+    res.json({
+      term: term,
+      definition: definition,
+      source: 'OpenAI GPT-3.5'
+    });
+
+  } catch (error) {
+    console.error('AI Definition Error:', error);
+    res.status(500).json({ 
+      error: 'Failed to get AI definition',
+      fallback: `${req.body.term} - Unable to get definition at this time. Please try again later.`
+    });
+  }
+});
+
+// AI Concept Explanation
+app.post('/api/ai/explain', async (req, res) => {
+  try {
+    const { concept } = req.body;
+    
+    if (!concept) {
+      return res.status(400).json({ error: 'Concept is required' });
+    }
+
+    if (!process.env.OPENAI_API_KEY) {
+      return res.status(500).json({ error: 'OpenAI API key not configured' });
+    }
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [
+        {
+          role: "system",
+          content: "You are a geography teacher explaining concepts to middle school students. Make explanations clear, engaging, and include real-world examples."
+        },
+        {
+          role: "user",
+          content: `Explain this geographic concept for middle school students: ${concept}`
+        }
+      ],
+      max_tokens: 200,
+      temperature: 0.7,
+    });
+
+    const explanation = completion.choices[0].message.content.trim();
+
+    res.json({
+      concept: concept,
+      explanation: explanation,
+      source: 'OpenAI GPT-3.5'
+    });
+
+  } catch (error) {
+    console.error('AI Explanation Error:', error);
+    res.status(500).json({ 
+      error: 'Failed to get AI explanation',
+      fallback: `Unable to explain ${req.body.concept} at this time. Please try again later.`
+    });
+  }
+});
+
+// AI Cross-Curricular Connections
+app.post('/api/ai/connections', async (req, res) => {
+  try {
+    const { topic } = req.body;
+    
+    if (!topic) {
+      return res.status(400).json({ error: 'Topic is required' });
+    }
+
+    if (!process.env.OPENAI_API_KEY) {
+      return res.status(500).json({ error: 'OpenAI API key not configured' });
+    }
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [
+        {
+          role: "system",
+          content: "You are an educational consultant helping teachers find cross-curricular connections. Provide specific, practical connections between geography topics and other subjects like science, math, history, language arts, and arts."
+        },
+        {
+          role: "user",
+          content: `Find cross-curricular connections for this geography topic: ${topic}`
+        }
+      ],
+      max_tokens: 250,
+      temperature: 0.7,
+    });
+
+    const connections = completion.choices[0].message.content.trim();
+
+    res.json({
+      topic: topic,
+      connections: connections,
+      source: 'OpenAI GPT-3.5'
+    });
+
+  } catch (error) {
+    console.error('AI Connections Error:', error);
+    res.status(500).json({ 
+      error: 'Failed to get AI connections',
+      fallback: `Unable to find connections for ${req.body.topic} at this time. Please try again later.`
+    });
+  }
+});
+
 // Daily Dashboard Route
 app.get('/dashboard', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'dashboard.html'));

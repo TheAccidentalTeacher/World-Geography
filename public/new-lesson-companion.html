@@ -2908,9 +2908,12 @@
 
         // Tab switching
         function showTab(tabName) {
+            console.log('Switching to tab:', tabName);
+            
             // Hide all tabs
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
+                console.log('Hiding tab:', tab.id);
             });
             
             // Remove active class from all buttons
@@ -2919,10 +2922,19 @@
             });
             
             // Show selected tab
-            document.getElementById(tabName + '-tab').classList.add('active');
+            const targetTab = document.getElementById(tabName + '-tab');
+            if (targetTab) {
+                targetTab.classList.add('active');
+                console.log('Showing tab:', tabName + '-tab');
+            } else {
+                console.error('Tab not found:', tabName + '-tab');
+            }
             
             // Activate corresponding button
-            event.target.classList.add('active');
+            if (event && event.target) {
+                event.target.classList.add('active');
+                console.log('Activated button:', event.target.textContent);
+            }
         }
 
         // Navigation functions
@@ -4564,18 +4576,88 @@
         // =================================
 
         function launchBlooketGame(gameType) {
+            console.log('Launching Blooket game:', gameType);
+            
+            // Create a more engaging in-app experience
+            const gameModal = createGameModal(gameType);
+            document.body.appendChild(gameModal);
+            
+            // Optional: Open actual Blooket if URLs are available
             const gameUrls = {
                 'vocabulary': 'https://dashboard.blooket.com/set/676a8f5e2e5a9b7f8c123456', // Example ID
-                'geography-basics': 'https://dashboard.blooket.com/set/676a8f5e2e5a9b7f8c123457',
+                'terms': 'https://dashboard.blooket.com/set/676a8f5e2e5a9b7f8c123457',
                 'detective-challenge': 'https://dashboard.blooket.com/set/676a8f5e2e5a9b7f8c123458'
             };
 
-            // Open in new tab
-            if (gameUrls[gameType]) {
-                window.open(gameUrls[gameType], '_blank');
+            // For now, let's create an engaging in-app game experience
+            if (gameType === 'vocabulary') {
+                startVocabularyGame();
+            } else if (gameType === 'terms') {
+                startTermsQuiz();
             } else {
                 alert('This Blooket game will be available soon! Game sets are being prepared for this content.');
             }
+        }
+        
+        function createGameModal(gameType) {
+            const modal = document.createElement('div');
+            modal.className = 'game-modal';
+            modal.innerHTML = `
+                <div class="game-modal-content">
+                    <h2>🎮 ${gameType === 'vocabulary' ? 'Vocabulary Challenge' : 'Geographic Terms Quiz'}</h2>
+                    <p>Get ready for an exciting geography challenge!</p>
+                    <div class="game-buttons">
+                        <button onclick="startInAppGame('${gameType}')" class="game-start-btn">
+                            🚀 Start Game
+                        </button>
+                        <button onclick="closeGameModal()" class="game-close-btn">
+                            ❌ Close
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            // Add styles
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.8);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+            `;
+            
+            return modal;
+        }
+        
+        function closeGameModal() {
+            const modal = document.querySelector('.game-modal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+        
+        function startInAppGame(gameType) {
+            closeGameModal();
+            if (gameType === 'vocabulary') {
+                startVocabularyGame();
+            } else {
+                startTermsQuiz();
+            }
+        }
+        
+        function startVocabularyGame() {
+            // Simple vocabulary matching game
+            alert('🎮 Vocabulary Game Loading! Match the terms with their definitions. (This will be a full interactive game in the next update!)');
+        }
+        
+        function startTermsQuiz() {
+            // Simple terms quiz
+            alert('🎯 Terms Quiz Loading! Test your knowledge of geographic terms. (This will be a full quiz interface in the next update!)');
         }
 
         // =================================
@@ -4598,18 +4680,41 @@
             display.classList.add('show');
 
             try {
-                // Simulate AI API call (replace with actual OpenAI integration)
-                await new Promise(resolve => setTimeout(resolve, 1500));
-                
-                // Mock response - replace with actual API
-                const mockDefinition = generateMockDefinition(term);
-                
+                // Call the real AI API
+                const response = await fetch('/api/ai/define', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ term: term })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    display.innerHTML = `
+                        <h5 style="color: #6f42c1; margin: 0 0 10px 0;">${data.term}</h5>
+                        <p style="margin: 0; line-height: 1.5;">${data.definition}</p>
+                        <small style="color: #6c757d; font-style: italic;">Source: ${data.source}</small>
+                    `;
+                } else {
+                    // Fallback if API fails
+                    const fallback = data.fallback || generateMockDefinition(term);
+                    display.innerHTML = `
+                        <h5 style="color: #6f42c1; margin: 0 0 10px 0;">${term}</h5>
+                        <p style="margin: 0; line-height: 1.5;">${fallback}</p>
+                        <small style="color: #dc3545; font-style: italic;">⚠️ Using fallback definition - AI service unavailable</small>
+                    `;
+                }
+            } catch (error) {
+                console.error('Definition lookup error:', error);
+                // Fallback to mock definition
+                const fallback = generateMockDefinition(term);
                 display.innerHTML = `
                     <h5 style="color: #6f42c1; margin: 0 0 10px 0;">${term}</h5>
-                    <p style="margin: 0; line-height: 1.5;">${mockDefinition}</p>
+                    <p style="margin: 0; line-height: 1.5;">${fallback}</p>
+                    <small style="color: #dc3545; font-style: italic;">⚠️ Using fallback definition - network error</small>
                 `;
-            } catch (error) {
-                display.innerHTML = '<div style="color: #dc3545;">Sorry, there was an error looking up that term. Please try again.</div>';
             }
         }
 
@@ -4642,16 +4747,50 @@
             result.innerHTML = '<div style="text-align: center; color: #6c757d;">🤖 Generating explanation...</div>';
             result.classList.add('show');
 
-            // Simulate AI processing
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            
-            result.innerHTML = `
-                <h5 style="color: #4dabf7;">Concept Explanation: ${concept}</h5>
-                <p>This is where an AI-powered explanation would appear, breaking down complex geographic concepts into student-friendly language with examples and connections to the current lesson.</p>
-                <div style="background: #f8f9fa; padding: 10px; border-radius: 6px; margin-top: 10px;">
-                    <strong>💡 Teaching Tip:</strong> Consider using visual aids or real-world examples to reinforce this concept.
-                </div>
-            `;
+            try {
+                // Call the real AI API
+                const response = await fetch('/api/ai/explain', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ concept: concept })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    result.innerHTML = `
+                        <h5 style="color: #4dabf7;">Concept Explanation: ${data.concept}</h5>
+                        <p style="line-height: 1.6;">${data.explanation}</p>
+                        <div style="background: #f8f9fa; padding: 10px; border-radius: 6px; margin-top: 10px;">
+                            <strong>💡 Teaching Tip:</strong> This explanation was generated by AI to help students understand geographic concepts.
+                        </div>
+                        <small style="color: #6c757d; font-style: italic;">Source: ${data.source}</small>
+                    `;
+                } else {
+                    // Fallback
+                    result.innerHTML = `
+                        <h5 style="color: #4dabf7;">Concept Explanation: ${concept}</h5>
+                        <p>This is where an AI-powered explanation would appear, breaking down complex geographic concepts into student-friendly language with examples and connections to the current lesson.</p>
+                        <div style="background: #f8f9fa; padding: 10px; border-radius: 6px; margin-top: 10px;">
+                            <strong>💡 Teaching Tip:</strong> Consider using visual aids or real-world examples to reinforce this concept.
+                        </div>
+                        <small style="color: #dc3545; font-style: italic;">⚠️ AI service unavailable - using fallback content</small>
+                    `;
+                }
+            } catch (error) {
+                console.error('Concept explanation error:', error);
+                // Fallback response
+                result.innerHTML = `
+                    <h5 style="color: #4dabf7;">Concept Explanation: ${concept}</h5>
+                    <p>This is where an AI-powered explanation would appear, breaking down complex geographic concepts into student-friendly language with examples and connections to the current lesson.</p>
+                    <div style="background: #f8f9fa; padding: 10px; border-radius: 6px; margin-top: 10px;">
+                        <strong>💡 Teaching Tip:</strong> Consider using visual aids or real-world examples to reinforce this concept.
+                    </div>
+                    <small style="color: #dc3545; font-style: italic;">⚠️ Network error - using fallback content</small>
+                `;
+            }
         }
 
         async function generateQuestions() {
@@ -4706,6 +4845,86 @@
                     <p><strong>Project Ideas:</strong> Collaborative activities that combine geographic thinking with ${subject} skills.</p>
                     <p><strong>Assessment Opportunities:</strong> Ways to evaluate student understanding across both subjects.</p>
                 </div>
+            `;
+        }
+
+        async function findConnections() {
+            const result = document.getElementById('connections-result');
+            
+            // Get current lesson topic if available
+            const lessonTitle = document.getElementById('lesson-title')?.textContent || 'geography topics';
+            
+            result.innerHTML = '<div style="text-align: center; color: #6c757d;">🌍 Finding cross-curricular connections...</div>';
+            result.classList.add('show');
+
+            try {
+                // Call the real AI API
+                const response = await fetch('/api/ai/connections', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ topic: lessonTitle })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    result.innerHTML = `
+                        <h5 style="color: #4dabf7;">🔗 Cross-Curricular Connections</h5>
+                        <div style="background: #f8f9fa; border-left: 4px solid #007bff; padding: 15px; margin: 10px 0;">
+                            <h6 style="color: #2c5aa0; margin: 0 0 10px 0;">Topic: ${data.topic}</h6>
+                            <div style="line-height: 1.6; white-space: pre-line;">${data.connections}</div>
+                        </div>
+                        <div style="background: #e3f2fd; padding: 10px; border-radius: 6px; margin-top: 15px;">
+                            <strong>💡 Teaching Tip:</strong> Use these connections to make geography relevant and engaging for students!
+                        </div>
+                        <small style="color: #6c757d; font-style: italic;">Source: ${data.source}</small>
+                    `;
+                } else {
+                    // Fallback to mock connections
+                    showMockConnections(result, lessonTitle);
+                }
+            } catch (error) {
+                console.error('Connections error:', error);
+                // Fallback to mock connections
+                showMockConnections(result, lessonTitle);
+            }
+        }
+
+        function showMockConnections(result, topic) {
+            // Mock current events related to geography
+            const currentEvents = [
+                {
+                    title: "Climate Change Impact on Coastal Cities",
+                    description: "Rising sea levels affecting urban planning worldwide",
+                    connection: "Links to lessons on coastal geography and urban development"
+                },
+                {
+                    title: "International Trade Routes Disruption", 
+                    description: "Global supply chain challenges highlight geographic dependencies",
+                    connection: "Connects to economic geography and transportation networks"
+                },
+                {
+                    title: "Migration Patterns and Geography",
+                    description: "Human movement shaped by physical and political geography",
+                    connection: "Relates to population distribution and political boundaries"
+                }
+            ];
+            
+            result.innerHTML = `
+                <h5 style="color: #4dabf7;">🔗 Real-World Connections</h5>
+                ${currentEvents.map(event => `
+                    <div style="background: #f8f9fa; border-left: 4px solid #007bff; padding: 12px; margin: 10px 0;">
+                        <h6 style="color: #2c5aa0; margin: 0 0 5px 0;">${event.title}</h6>
+                        <p style="margin: 0 0 8px 0; font-size: 0.9rem;">${event.description}</p>
+                        <small style="color: #6c757d; font-style: italic;">${event.connection}</small>
+                    </div>
+                `).join('')}
+                <div style="background: #e3f2fd; padding: 10px; border-radius: 6px; margin-top: 15px;">
+                    <strong>💡 Teaching Tip:</strong> Use these connections to make geography relevant and engaging for students!
+                </div>
+                <small style="color: #dc3545; font-style: italic;">⚠️ AI service unavailable - showing example connections</small>
             `;
         }
 
