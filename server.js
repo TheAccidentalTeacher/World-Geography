@@ -1233,6 +1233,7 @@ function createFallbackPrompt(description) {
 // Stability AI integration
 async function generateWithStabilityAI(prompt) {
   console.log('🎨 Attempting Stability AI generation...');
+  console.log('🔑 API Key available:', !!process.env.STABILITY_AI_API_KEY);
   
   const requestBody = {
     prompt: prompt,
@@ -1256,19 +1257,20 @@ async function generateWithStabilityAI(prompt) {
   
   if (!response.ok) {
     const errorText = await response.text();
-    console.error('❌ Stability AI error response:', errorText);
-    throw new Error(`Stability AI error: ${response.status} ${response.statusText} - ${errorText}`);
+    console.error('❌ Stability AI full error response:', errorText);
+    throw new Error(`Stability AI API error: ${response.status} ${response.statusText}. Response: ${errorText}`);
   }
 
   const data = await response.json();
-  console.log('✅ Stability AI response received:', Object.keys(data));
+  console.log('✅ Stability AI response received. Keys:', Object.keys(data));
+  console.log('📄 Full response data:', data);
   
   // Stability AI v2beta returns base64 image data in 'image' field
   if (data.image) {
     console.log('✅ Stability AI image data found, length:', data.image.length);
     return `data:image/png;base64,${data.image}`;
   } else {
-    console.error('❌ Stability AI response structure:', data);
+    console.error('❌ Stability AI response structure unexpected:', data);
     throw new Error('Stability AI: No image data in response');
   }
 }
