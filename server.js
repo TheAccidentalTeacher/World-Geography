@@ -898,39 +898,31 @@ app.post('/api/ai/generate-map', async (req, res) => {
     if (!openai) {
       return res.status(200).json({ 
         description: description,
-        mapDescription: `Map of ${description} - OpenAI service not available. This would normally generate a detailed description for creating educational map illustrations with geographic features, landmarks, and educational elements.`,
+        imageUrl: null,
+        mapDescription: `Map of ${description} - OpenAI service not available. This would normally generate an actual map illustration image using DALL-E.`,
         status: 'fallback_response',
         message: 'AI service unavailable - this is normal for local development',
         source: 'Fallback Response'
       });
     }
 
-    // For now, we'll generate a detailed text description of the map
-    // Later we can integrate with DALL-E or Stability AI for actual image generation
-    const completion = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
-      messages: [
-        {
-          role: "system",
-          content: "You are a geography expert and cartographer. Create detailed descriptions for educational map illustrations. Describe the geographic features, landmarks, and educational elements that should be included in the map."
-        },
-        {
-          role: "user",
-          content: `Create a detailed description for an educational map illustration: ${description}`
-        }
-      ],
-      max_tokens: 300,
-      temperature: 0.7,
+    // Generate an actual map image using DALL-E
+    const imageResponse = await openai.images.generate({
+      model: "dall-e-3",
+      prompt: `Create an educational map illustration of ${description}. Style: clean, educational cartography with clear labels, geographic features prominently marked, suitable for middle school geography students. Include major landmarks, cities, geographic features, and educational elements. Use bright, clear colors and readable text labels.`,
+      size: "1024x1024",
+      quality: "standard",
+      n: 1,
     });
 
-    const mapDescription = completion.choices[0].message.content.trim();
+    const imageUrl = imageResponse.data[0].url;
 
     res.json({
       description: description,
-      mapDescription: mapDescription,
-      status: 'description_generated',
-      message: 'Map description generated successfully. Image generation coming soon!',
-      source: 'OpenAI GPT-3.5'
+      imageUrl: imageUrl,
+      status: 'image_generated',
+      message: 'Map illustration generated successfully!',
+      source: 'OpenAI DALL-E 3'
     });
 
   } catch (error) {
