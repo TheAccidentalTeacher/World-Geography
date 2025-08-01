@@ -868,6 +868,11 @@ app.get('/dashboard', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'dashboard.html'));
 });
 
+// AI Geography Hub Route
+app.get('/ai-geography-hub', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'ai-geography-hub.html'));
+});
+
 // Lesson Companion Route
 app.get('/lesson-companion', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'lesson-companion.html'));

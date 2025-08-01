@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Geography Hub - World Geography Tools</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .header {
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo h1 {
+            color: #ffd700;
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .tool-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .tool-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .tool-icon {
+            font-size: 2.5rem;
+        }
+
+        .tool-title {
+            color: #2c5aa0;
+            font-size: 1.4rem;
+            font-weight: bold;
+        }
+
+        .tool-description {
+            color: #666;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .tool-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+
+        .tool-button {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        .tool-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.4);
+        }
+
+        .tool-result {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+            display: none;
+        }
+
+        .tool-result.show {
+            display: block;
+        }
+
+        .section-title {
+            color: white;
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .section-subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            text-align: center;
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .loading {
+            text-align: center;
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        .error {
+            color: #dc3545;
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 0.75rem;
+            border-radius: 4px;
+            margin-top: 1rem;
+        }
+
+        .success {
+            color: #155724;
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            padding: 0.75rem;
+            border-radius: 4px;
+            margin-top: 1rem;
+        }
+
+        /* Category Sections */
+        .category-section {
+            margin: 3rem 0;
+        }
+
+        .category-header {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .category-title {
+            color: white;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .category-description {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .tools-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .container {
+                padding: 0 1rem;
+            }
+            
+            .tool-card {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <span style="font-size: 2rem;">🤖</span>
+            <div>
+                <h1>AI Geography Hub</h1>
+                <p style="font-size: 0.9rem; opacity: 0.8;">Powered by Advanced AI Tools</p>
+            </div>
+        </div>
+        <div class="nav-buttons">
+            <a href="/new-lesson-companion.html" class="nav-btn">📚 Lesson Companion</a>
+            <a href="/geographic-detective-academy.html" class="nav-btn">🕵️ Simulations</a>
+            <a href="/" class="nav-btn">🏠 Home</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1 class="section-title">🌍 AI Geography Hub</h1>
+        <p class="section-subtitle">Advanced AI-powered tools for geographic learning, research, and content creation</p>
+
+        <!-- AI CONTENT GENERATION SECTION -->
+        <div class="category-section">
+            <div class="category-header">
+                <h2 class="category-title">🧠 AI Content Generation</h2>
+                <p class="category-description">Create lesson content, explanations, and educational materials using advanced AI</p>
+            </div>
+
+            <div class="tools-grid">
+                <!-- AI Definition & Explanation -->
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <span class="tool-icon">🔍</span>
+                        <h3 class="tool-title">AI Definition Lookup</h3>
+                    </div>
+                    <p class="tool-description">Get instant, accurate definitions of geographic terms powered by advanced AI</p>
+                    <input type="text" class="tool-input" id="definition-input" placeholder="Enter geographic term (e.g., monsoon, fjord, urbanization)">
+                    <button class="tool-button" onclick="getAIDefinition()">🤖 Get AI Definition</button>
+                    <div class="tool-result" id="definition-result"></div>
+                </div>
+
+                <!-- Concept Explainer -->
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <span class="tool-icon">🎓</span>
+                        <h3 class="tool-title">Concept Explainer</h3>
+                    </div>
+                    <p class="tool-description">Break down complex geographic concepts into student-friendly explanations</p>
+                    <input type="text" class="tool-input" id="concept-input" placeholder="Enter concept to explain (e.g., plate tectonics, climate change)">
+                    <button class="tool-button" onclick="explainConcept()">✨ Explain This Concept</button>
+                    <div class="tool-result" id="concept-result"></div>
+                </div>
+
+                <!-- Lesson Plan Generator -->
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <span class="tool-icon">📝</span>
+                        <h3 class="tool-title">Lesson Plan Generator</h3>
+                    </div>
+                    <p class="tool-description">Generate complete lesson plans for any geographic topic</p>
+                    <input type="text" class="tool-input" id="lesson-topic-input" placeholder="Enter lesson topic (e.g., Rivers of Asia, Climate Zones)">
+                    <select class="tool-input" id="grade-level-select">
+                        <option value="">Select Grade Level</option>
+                        <option value="6th">6th Grade</option>
+                        <option value="7th">7th Grade</option>
+                        <option value="8th">8th Grade</option>
+                        <option value="9th">9th Grade</option>
+                        <option value="high-school">High School</option>
+                    </select>
+                    <button class="tool-button" onclick="generateLessonPlan()">📚 Generate Lesson Plan</button>
+                    <div class="tool-result" id="lesson-plan-result"></div>
+                </div>
+
+                <!-- Cross-Curricular Connections -->
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <span class="tool-icon">🔗</span>
+                        <h3 class="tool-title">Cross-Curricular Connections</h3>
+                    </div>
+                    <p class="tool-description">Find connections between geography and other subjects</p>
+                    <input type="text" class="tool-input" id="connection-topic-input" placeholder="Enter geography topic">
+                    <button class="tool-button" onclick="findConnections()">🌐 Find Connections</button>
+                    <div class="tool-result" id="connections-result"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VISUAL CONTENT GENERATION SECTION -->
+        <div class="category-section">
+            <div class="category-header">
+                <h2 class="category-title">🎨 Visual Content Generation</h2>
+                <p class="category-description">Create maps, diagrams, and illustrations using AI image generation</p>
+            </div>
+
+            <div class="tools-grid">
+                <!-- Map Illustration Generator -->
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <span class="tool-icon">🗺️</span>
+                        <h3 class="tool-title">Map Illustration Generator</h3>
+                    </div>
+                    <p class="tool-description">Generate custom map illustrations and geographic diagrams</p>
+                    <input type="text" class="tool-input" id="map-prompt-input" placeholder="Describe the map you want (e.g., Mountain ranges of South America)">
+                    <button class="tool-button" onclick="generateMapIllustration()">🎨 Generate Map</button>
+                    <div class="tool-result" id="map-result"></div>
+                </div>
+
+                <!-- Geographic Photo Finder -->
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <span class="tool-icon">📸</span>
+                        <h3 class="tool-title">Geographic Photo Library</h3>
+                    </div>
+                    <p class="tool-description">Find high-quality photos of any geographic location or feature</p>
+                    <input type="text" class="tool-input" id="photo-search-input" placeholder="Search for photos (e.g., Amazon rainforest, Tokyo skyline)">
+                    <button class="tool-button" onclick="searchPhotos()">📷 Find Photos</button>
+                    <div class="tool-result" id="photo-result"></div>
+                </div>
+
+                <!-- Infographic Creator -->
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <span class="tool-icon">📊</span>
+                        <h3 class="tool-title">Geographic Infographic Creator</h3>
+                    </div>
+                    <p class="tool-description">Create data visualizations and infographics for geographic data</p>
+                    <input type="text" class="tool-input" id="infographic-topic-input" placeholder="Enter topic for infographic (e.g., Population density, Climate data)">
+                    <button class="tool-button" onclick="createInfographic()">📈 Create Infographic</button>
+                    <div class="tool-result" id="infographic-result"></div>
+                </div>
+
+                <!-- Historical Comparison Tool -->
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <span class="tool-icon">⏳</span>
+                        <h3 class="tool-title">Then vs Now Generator</h3>
+                    </div>
+                    <p class="tool-description">Create historical geographic comparisons and visualizations</p>
+                    <input type="text" class="tool-input" id="comparison-location-input" placeholder="Enter location (e.g., Dubai, Amazon rainforest)">
+                    <button class="tool-button" onclick="generateComparison()">🔄 Generate Comparison</button>
+                    <div class="tool-result" id="comparison-result"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CURRENT EVENTS & NEWS SECTION -->
+        <div class="category-section">
+            <div class="category-header">
+                <h2 class="category-title">📰 Current Events & News</h2>
+                <p class="category-description">Connect geography with current events and real-world happenings</p>
+            </div>
+
+            <div class="tools-grid">
+                <!-- Geography News Finder -->
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <span class="tool-icon">📡</span>
+                        <h3 class="tool-title">Geography in the Headlines</h3>
+                    </div>
+                    <p class="tool-description">Find current news stories related to geographic topics and locations</p>
+                    <input type="text" class="tool-input" id="news-topic-input" placeholder="Enter topic or location (e.g., climate change, Indonesia)">
+                    <button class="tool-button" onclick="findGeographyNews()">📰 Find Related News</button>
+                    <div class="tool-result" id="news-result"></div>
+                </div>
+
+                <!-- Crisis Mapping Tool -->
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <span class="tool-icon">🚨</span>
+                        <h3 class="tool-title">Crisis & Natural Disaster Tracker</h3>
+                    </div>
+                    <p class="tool-description">Track current natural disasters and their geographic impacts</p>
+                    <select class="tool-input" id="crisis-type-select">
+                        <option value="">Select Crisis Type</option>
+                        <option value="earthquake">Earthquakes</option>
+                        <option value="hurricane">Hurricanes/Typhoons</option>
+                        <option value="wildfire">Wildfires</option>
+                        <option value="flood">Floods</option>
+                        <option value="volcano">Volcanic Activity</option>
+                    </select>
+                    <button class="tool-button" onclick="trackCrisis()">🌪️ Track Current Events</button>
+                    <div class="tool-result" id="crisis-result"></div>
+                </div>
+
+                <!-- YouTube Geography Videos -->
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <span class="tool-icon">📺</span>
+                        <h3 class="tool-title">Educational Video Finder</h3>
+                    </div>
+                    <p class="tool-description">Find relevant YouTube videos for any geographic topic</p>
+                    <input type="text" class="tool-input" id="video-topic-input" placeholder="Enter topic (e.g., Himalayas formation, urban planning)">
+                    <button class="tool-button" onclick="findEducationalVideos()">🎥 Find Videos</button>
+                    <div class="tool-result" id="video-result"></div>
+                </div>
+
+                <!-- Social Geography Insights -->
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <span class="tool-icon">💬</span>
+                        <h3 class="tool-title">Social Geography Insights</h3>
+                    </div>
+                    <p class="tool-description">Discover what people are saying about places and geographic topics</p>
+                    <input type="text" class="tool-input" id="social-topic-input" placeholder="Enter location or topic">
+                    <button class="tool-button" onclick="getSocialInsights()">🗣️ Get Social Insights</button>
+                    <div class="tool-result" id="social-result"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RESEARCH & ANALYSIS SECTION -->
+        <div class="category-section">
+            <div class="category-header">
+                <h2 class="category-title">🔬 Research & Analysis</h2>
+                <p class="category-description">Advanced research tools for deeper geographic understanding</p>
+            </div>
+
+            <div class="tools-grid">
+                <!-- Academic Research Finder -->
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <span class="tool-icon">🎓</span>
+                        <h3 class="tool-title">Academic Research Finder</h3>
+                    </div>
+                    <p class="tool-description">Find scholarly articles and research papers on geographic topics</p>
+                    <input type="text" class="tool-input" id="research-topic-input" placeholder="Enter research topic (e.g., urban heat islands, migration patterns)">
+                    <button class="tool-button" onclick="findAcademicResearch()">📚 Find Research</button>
+                    <div class="tool-result" id="research-result"></div>
+                </div>
+
+                <!-- Data Analysis Assistant -->
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <span class="tool-icon">📊</span>
+                        <h3 class="tool-title">Geographic Data Analyzer</h3>
+                    </div>
+                    <p class="tool-description">Analyze and interpret geographic data with AI assistance</p>
+                    <textarea class="tool-input" id="data-input" rows="4" placeholder="Paste geographic data or describe your dataset"></textarea>
+                    <button class="tool-button" onclick="analyzeData()">🔍 Analyze Data</button>
+                    <div class="tool-result" id="data-analysis-result"></div>
+                </div>
+
+                <!-- Geography Quiz Generator -->
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <span class="tool-icon">❓</span>
+                        <h3 class="tool-title">Smart Quiz Generator</h3>
+                    </div>
+                    <p class="tool-description">Generate custom quizzes and assessments for any geographic topic</p>
+                    <input type="text" class="tool-input" id="quiz-topic-input" placeholder="Enter topic for quiz (e.g., European capitals, landforms)">
+                    <select class="tool-input" id="quiz-difficulty-select">
+                        <option value="">Select Difficulty</option>
+                        <option value="easy">Easy</option>
+                        <option value="medium">Medium</option>
+                        <option value="hard">Hard</option>
+                    </select>
+                    <button class="tool-button" onclick="generateQuiz()">🧩 Generate Quiz</button>
+                    <div class="tool-result" id="quiz-result"></div>
+                </div>
+
+                <!-- AI Geography Tutor -->
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <span class="tool-icon">🤖</span>
+                        <h3 class="tool-title">AI Geography Tutor</h3>
+                    </div>
+                    <p class="tool-description">Get personalized help and explanations from your AI geography tutor</p>
+                    <textarea class="tool-input" id="tutor-question-input" rows="3" placeholder="Ask any geography question..."></textarea>
+                    <button class="tool-button" onclick="askGeographyTutor()">🧠 Ask AI Tutor</button>
+                    <div class="tool-result" id="tutor-result"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =================================
+        // AI CONTENT GENERATION FUNCTIONS
+        // =================================
+
+        async function getAIDefinition() {
+            const input = document.getElementById('definition-input');
+            const result = document.getElementById('definition-result');
+            const term = input.value.trim();
+
+            if (!term) {
+                showError(result, 'Please enter a term to define');
+                return;
+            }
+
+            showLoading(result, 'Getting AI definition...');
+            
+            try {
+                const response = await fetch('/api/ai/define', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ term })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    result.innerHTML = `
+                        <h5 style="color: #2c5aa0;">${data.term}</h5>
+                        <p style="margin: 10px 0; line-height: 1.6;">${data.definition}</p>
+                        <small style="color: #6c757d;">Source: ${data.source}</small>
+                    `;
+                } else {
+                    showError(result, data.error || 'Failed to get definition');
+                }
+            } catch (error) {
+                showError(result, 'Network error. Please try again.');
+            }
+        }
+
+        async function explainConcept() {
+            const input = document.getElementById('concept-input');
+            const result = document.getElementById('concept-result');
+            const concept = input.value.trim();
+
+            if (!concept) {
+                showError(result, 'Please enter a concept to explain');
+                return;
+            }
+
+            showLoading(result, 'Generating explanation...');
+            
+            try {
+                const response = await fetch('/api/ai/explain', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ concept })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    result.innerHTML = `
+                        <h5 style="color: #2c5aa0;">${data.concept}</h5>
+                        <p style="margin: 10px 0; line-height: 1.6;">${data.explanation}</p>
+                        <small style="color: #6c757d;">Source: ${data.source}</small>
+                    `;
+                } else {
+                    showError(result, data.error || 'Failed to explain concept');
+                }
+            } catch (error) {
+                showError(result, 'Network error. Please try again.');
+            }
+        }
+
+        async function generateLessonPlan() {
+            const topicInput = document.getElementById('lesson-topic-input');
+            const gradeSelect = document.getElementById('grade-level-select');
+            const result = document.getElementById('lesson-plan-result');
+            
+            const topic = topicInput.value.trim();
+            const gradeLevel = gradeSelect.value;
+
+            if (!topic) {
+                showError(result, 'Please enter a lesson topic');
+                return;
+            }
+
+            if (!gradeLevel) {
+                showError(result, 'Please select a grade level');
+                return;
+            }
+
+            showLoading(result, 'Generating lesson plan...');
+            
+            // TODO: Implement lesson plan generation
+            showPlaceholder(result, 'Lesson Plan Generator', 'Complete lesson plans with objectives, activities, and assessments');
+        }
+
+        async function findConnections() {
+            const input = document.getElementById('connection-topic-input');
+            const result = document.getElementById('connections-result');
+            const topic = input.value.trim();
+
+            if (!topic) {
+                showError(result, 'Please enter a topic');
+                return;
+            }
+
+            showLoading(result, 'Finding connections...');
+            
+            try {
+                const response = await fetch('/api/ai/connections', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ topic })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    result.innerHTML = `
+                        <h5 style="color: #2c5aa0;">Cross-Curricular Connections: ${data.topic}</h5>
+                        <div style="margin: 10px 0; line-height: 1.6; white-space: pre-line;">${data.connections}</div>
+                        <small style="color: #6c757d;">Source: ${data.source}</small>
+                    `;
+                } else {
+                    showError(result, data.error || 'Failed to find connections');
+                }
+            } catch (error) {
+                showError(result, 'Network error. Please try again.');
+            }
+        }
+
+        // =================================
+        // VISUAL CONTENT GENERATION FUNCTIONS
+        // =================================
+
+        async function generateMapIllustration() {
+            const input = document.getElementById('map-prompt-input');
+            const result = document.getElementById('map-result');
+            
+            showLoading(result, 'Generating map illustration...');
+            showPlaceholder(result, 'Map Illustration Generator', 'AI-generated maps and geographic diagrams using Stability AI');
+        }
+
+        async function searchPhotos() {
+            const input = document.getElementById('photo-search-input');
+            const result = document.getElementById('photo-result');
+            
+            showLoading(result, 'Searching photos...');
+            showPlaceholder(result, 'Geographic Photo Library', 'High-quality photos from Unsplash, Pexels, and Pixabay');
+        }
+
+        async function createInfographic() {
+            const input = document.getElementById('infographic-topic-input');
+            const result = document.getElementById('infographic-result');
+            
+            showLoading(result, 'Creating infographic...');
+            showPlaceholder(result, 'Infographic Creator', 'Data visualizations and infographics');
+        }
+
+        async function generateComparison() {
+            const input = document.getElementById('comparison-location-input');
+            const result = document.getElementById('comparison-result');
+            
+            showLoading(result, 'Generating comparison...');
+            showPlaceholder(result, 'Historical Comparison Tool', 'Then vs Now visualizations');
+        }
+
+        // =================================
+        // CURRENT EVENTS & NEWS FUNCTIONS
+        // =================================
+
+        async function findGeographyNews() {
+            const input = document.getElementById('news-topic-input');
+            const result = document.getElementById('news-result');
+            
+            showLoading(result, 'Finding related news...');
+            showPlaceholder(result, 'Geography News Finder', 'Current events related to geographic topics using News API');
+        }
+
+        async function trackCrisis() {
+            const select = document.getElementById('crisis-type-select');
+            const result = document.getElementById('crisis-result');
+            
+            showLoading(result, 'Tracking current events...');
+            showPlaceholder(result, 'Crisis Tracker', 'Real-time natural disaster and crisis information');
+        }
+
+        async function findEducationalVideos() {
+            const input = document.getElementById('video-topic-input');
+            const result = document.getElementById('video-result');
+            
+            showLoading(result, 'Finding educational videos...');
+            showPlaceholder(result, 'Educational Video Finder', 'Relevant YouTube videos using YouTube Data API');
+        }
+
+        async function getSocialInsights() {
+            const input = document.getElementById('social-topic-input');
+            const result = document.getElementById('social-result');
+            
+            showLoading(result, 'Getting social insights...');
+            showPlaceholder(result, 'Social Geography Insights', 'Social media insights using Reddit API');
+        }
+
+        // =================================
+        // RESEARCH & ANALYSIS FUNCTIONS
+        // =================================
+
+        async function findAcademicResearch() {
+            const input = document.getElementById('research-topic-input');
+            const result = document.getElementById('research-result');
+            
+            showLoading(result, 'Finding academic research...');
+            showPlaceholder(result, 'Academic Research Finder', 'Scholarly articles using SerpAPI Google Scholar');
+        }
+
+        async function analyzeData() {
+            const input = document.getElementById('data-input');
+            const result = document.getElementById('data-analysis-result');
+            
+            showLoading(result, 'Analyzing data...');
+            showPlaceholder(result, 'Data Analysis Assistant', 'AI-powered geographic data analysis');
+        }
+
+        async function generateQuiz() {
+            const topicInput = document.getElementById('quiz-topic-input');
+            const difficultySelect = document.getElementById('quiz-difficulty-select');
+            const result = document.getElementById('quiz-result');
+            
+            showLoading(result, 'Generating quiz...');
+            showPlaceholder(result, 'Smart Quiz Generator', 'Custom quizzes and assessments');
+        }
+
+        async function askGeographyTutor() {
+            const input = document.getElementById('tutor-question-input');
+            const result = document.getElementById('tutor-result');
+            
+            showLoading(result, 'Consulting AI tutor...');
+            showPlaceholder(result, 'AI Geography Tutor', 'Personalized geography tutoring using advanced AI');
+        }
+
+        // =================================
+        // UTILITY FUNCTIONS
+        // =================================
+
+        function showLoading(element, message) {
+            element.innerHTML = `<div class="loading">🔄 ${message}</div>`;
+            element.classList.add('show');
+        }
+
+        function showError(element, message) {
+            element.innerHTML = `<div class="error">❌ ${message}</div>`;
+            element.classList.add('show');
+        }
+
+        function showSuccess(element, message) {
+            element.innerHTML = `<div class="success">✅ ${message}</div>`;
+            element.classList.add('show');
+        }
+
+        function showPlaceholder(element, title, description) {
+            setTimeout(() => {
+                element.innerHTML = `
+                    <div style="text-align: center; padding: 20px;">
+                        <h5 style="color: #2c5aa0; margin-bottom: 10px;">${title}</h5>
+                        <p style="color: #666; margin-bottom: 15px;">${description}</p>
+                        <div style="background: #e3f2fd; padding: 15px; border-radius: 8px;">
+                            <strong>🚀 Coming Soon!</strong><br>
+                            This feature will be implemented with full API integration.
+                        </div>
+                    </div>
+                `;
+            }, 1500);
+        }
+    </script>
+</body>
+</html>
