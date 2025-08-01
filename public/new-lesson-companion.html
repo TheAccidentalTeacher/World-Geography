@@ -96,7 +96,7 @@
         }
 
         .sidebar {
-            width: 320px;
+            width: 720px;
             background: #f8f9fa;
             border-right: 1px solid #e9ecef;
             padding: 25px;
@@ -108,7 +108,7 @@
             flex: 1;
             padding: 30px 50px;
             overflow-y: auto;
-            max-width: calc(100% - 320px);
+            max-width: calc(100% - 720px);
             display: flex;
             flex-direction: column;
             min-height: 100%;
@@ -806,6 +806,17 @@
 
         .tab-content.active {
             display: block;
+        }
+
+        /* Tablet responsive design */
+        @media (max-width: 1200px) and (min-width: 769px) {
+            .sidebar {
+                width: 480px;
+            }
+            
+            .main-content {
+                max-width: calc(100% - 480px);
+            }
         }
 
         @media (max-width: 768px) {
