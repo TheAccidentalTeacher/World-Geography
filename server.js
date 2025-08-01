@@ -721,9 +721,17 @@ app.get('/api/dashboard/calendar', (req, res) => {
 // AI API Integration
 const OpenAI = require('openai');
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+let openai = null;
+
+// Initialize OpenAI only if API key is available
+if (process.env.OPENAI_API_KEY) {
+  openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  });
+  console.log('🤖 OpenAI API initialized');
+} else {
+  console.log('⚠️ OpenAI API key not found - AI features will return fallback responses');
+}
 
 // AI Definition Lookup
 app.post('/api/ai/define', async (req, res) => {
@@ -734,8 +742,13 @@ app.post('/api/ai/define', async (req, res) => {
       return res.status(400).json({ error: 'Term is required' });
     }
 
-    if (!process.env.OPENAI_API_KEY) {
-      return res.status(500).json({ error: 'OpenAI API key not configured' });
+    if (!openai) {
+      return res.status(200).json({ 
+        term: term,
+        definition: `${term} - OpenAI service not available. This would normally provide a detailed geographic definition.`,
+        source: 'Fallback Response',
+        note: 'AI service unavailable - this is normal for local development'
+      });
     }
 
     const completion = await openai.chat.completions.create({
@@ -780,8 +793,13 @@ app.post('/api/ai/explain', async (req, res) => {
       return res.status(400).json({ error: 'Concept is required' });
     }
 
-    if (!process.env.OPENAI_API_KEY) {
-      return res.status(500).json({ error: 'OpenAI API key not configured' });
+    if (!openai) {
+      return res.status(200).json({ 
+        concept: concept,
+        explanation: `${concept} - OpenAI service not available. This would normally provide a detailed explanation suitable for middle school students.`,
+        source: 'Fallback Response',
+        note: 'AI service unavailable - this is normal for local development'
+      });
     }
 
     const completion = await openai.chat.completions.create({
@@ -826,8 +844,13 @@ app.post('/api/ai/connections', async (req, res) => {
       return res.status(400).json({ error: 'Topic is required' });
     }
 
-    if (!process.env.OPENAI_API_KEY) {
-      return res.status(500).json({ error: 'OpenAI API key not configured' });
+    if (!openai) {
+      return res.status(200).json({ 
+        topic: topic,
+        connections: `${topic} - OpenAI service not available. This would normally provide cross-curricular connections to science, math, history, language arts, and other subjects.`,
+        source: 'Fallback Response',
+        note: 'AI service unavailable - this is normal for local development'
+      });
     }
 
     const completion = await openai.chat.completions.create({
@@ -859,6 +882,62 @@ app.post('/api/ai/connections', async (req, res) => {
     res.status(500).json({ 
       error: 'Failed to get AI connections',
       fallback: `Unable to find connections for ${req.body.topic} at this time. Please try again later.`
+    });
+  }
+});
+
+// AI Map Illustration Generator
+app.post('/api/ai/generate-map', async (req, res) => {
+  try {
+    const { description } = req.body;
+    
+    if (!description) {
+      return res.status(400).json({ error: 'Map description is required' });
+    }
+
+    if (!openai) {
+      return res.status(200).json({ 
+        description: description,
+        mapDescription: `Map of ${description} - OpenAI service not available. This would normally generate a detailed description for creating educational map illustrations with geographic features, landmarks, and educational elements.`,
+        status: 'fallback_response',
+        message: 'AI service unavailable - this is normal for local development',
+        source: 'Fallback Response'
+      });
+    }
+
+    // For now, we'll generate a detailed text description of the map
+    // Later we can integrate with DALL-E or Stability AI for actual image generation
+    const completion = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [
+        {
+          role: "system",
+          content: "You are a geography expert and cartographer. Create detailed descriptions for educational map illustrations. Describe the geographic features, landmarks, and educational elements that should be included in the map."
+        },
+        {
+          role: "user",
+          content: `Create a detailed description for an educational map illustration: ${description}`
+        }
+      ],
+      max_tokens: 300,
+      temperature: 0.7,
+    });
+
+    const mapDescription = completion.choices[0].message.content.trim();
+
+    res.json({
+      description: description,
+      mapDescription: mapDescription,
+      status: 'description_generated',
+      message: 'Map description generated successfully. Image generation coming soon!',
+      source: 'OpenAI GPT-3.5'
+    });
+
+  } catch (error) {
+    console.error('AI Map Generation Error:', error);
+    res.status(500).json({ 
+      error: 'Failed to generate map description',
+      fallback: `Unable to generate map for "${req.body.description}" at this time. Please try again later.`
     });
   }
 });
