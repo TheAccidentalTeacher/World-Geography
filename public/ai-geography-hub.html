@@ -318,6 +318,18 @@
             </div>
 
             <div class="tools-grid">
+                <!-- AI Multi-Model Comparison - NEW TOP FEATURE -->
+                <div class="tool-card" style="border: 2px solid #ffd700; background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 255, 255, 0.1));">
+                    <div class="tool-header">
+                        <span class="tool-icon">🚀</span>
+                        <h3 class="tool-title">AI Model Comparison <span style="color: #ffd700; font-size: 0.8rem;">✨ NEW</span></h3>
+                    </div>
+                    <p class="tool-description">Ask the same question to GPT-4, Claude 3.5, and Gemini Pro - compare AI perspectives!</p>
+                    <input type="text" class="tool-input" id="compare-input" placeholder="Ask any geography question (e.g., Why do deserts form near mountains?)">
+                    <button class="tool-button" onclick="compareAIModels()" style="background: linear-gradient(135deg, #ffd700, #ff6b35);">🤖 Compare AI Models</button>
+                    <div class="tool-result" id="compare-result"></div>
+                </div>
+
                 <!-- AI Definition & Explanation -->
                 <div class="tool-card">
                     <div class="tool-header">
@@ -568,6 +580,66 @@
         // =================================
         // AI CONTENT GENERATION FUNCTIONS
         // =================================
+
+        async function compareAIModels() {
+            const input = document.getElementById('compare-input');
+            const result = document.getElementById('compare-result');
+            const question = input.value.trim();
+
+            if (!question) {
+                showError(result, 'Please enter a geography question to compare AI responses');
+                return;
+            }
+
+            showLoading(result, 'Comparing AI models (GPT-4, Claude, Gemini)...');
+            
+            try {
+                const response = await fetch('/api/ai/compare-models', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ question })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    result.innerHTML = `
+                        <div class="result-content">
+                            <h4 style="color: #2c5aa0; margin-bottom: 15px;">🤖 AI Model Comparison: "${data.question}"</h4>
+                            
+                            <!-- GPT-4 Response -->
+                            <div style="margin-bottom: 20px; padding: 15px; background: rgba(76, 175, 80, 0.1); border-left: 4px solid #4CAF50; border-radius: 5px;">
+                                <h5 style="color: #4CAF50; margin-bottom: 8px;">🧠 ${data.results.gpt4.source}</h5>
+                                <div style="line-height: 1.6; white-space: pre-line;">${data.results.gpt4.response}</div>
+                                <small style="color: #6c757d;">Status: ${data.results.gpt4.status}</small>
+                            </div>
+                            
+                            <!-- Claude Response -->
+                            <div style="margin-bottom: 20px; padding: 15px; background: rgba(255, 152, 0, 0.1); border-left: 4px solid #FF9800; border-radius: 5px;">
+                                <h5 style="color: #FF9800; margin-bottom: 8px;">🎯 ${data.results.claude.source}</h5>
+                                <div style="line-height: 1.6; white-space: pre-line;">${data.results.claude.response}</div>
+                                <small style="color: #6c757d;">Status: ${data.results.claude.status}</small>
+                            </div>
+                            
+                            <!-- Gemini Response -->
+                            <div style="margin-bottom: 20px; padding: 15px; background: rgba(33, 150, 243, 0.1); border-left: 4px solid #2196F3; border-radius: 5px;">
+                                <h5 style="color: #2196F3; margin-bottom: 8px;">✨ ${data.results.gemini.source}</h5>
+                                <div style="line-height: 1.6; white-space: pre-line;">${data.results.gemini.response}</div>
+                                <small style="color: #6c757d;">Status: ${data.results.gemini.status}</small>
+                            </div>
+                            
+                            <div style="margin-top: 15px; padding: 10px; background: rgba(255, 215, 0, 0.1); border-radius: 5px;">
+                                <small style="color: #8B7D00;">💡 Compare different AI perspectives to get a well-rounded understanding of geography topics!</small>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    showError(result, data.error || 'Failed to compare AI models');
+                }
+            } catch (error) {
+                showError(result, 'Network error. Please try again.');
+            }
+        }
 
         async function getAIDefinition() {
             const input = document.getElementById('definition-input');

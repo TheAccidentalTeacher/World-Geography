@@ -722,6 +722,7 @@ app.get('/api/dashboard/calendar', (req, res) => {
 const OpenAI = require('openai');
 
 let openai = null;
+let azureAI = null;
 
 // Initialize OpenAI only if API key is available
 if (process.env.OPENAI_API_KEY) {
@@ -731,6 +732,17 @@ if (process.env.OPENAI_API_KEY) {
   console.log('🤖 OpenAI API initialized');
 } else {
   console.log('⚠️ OpenAI API key not found - AI features will return fallback responses');
+}
+
+// Initialize Azure AI Foundry only if API key is available
+if (process.env.AZURE_AI_FOUNDRY_KEY && process.env.AZURE_AI_FOUNDRY_ENDPOINT) {
+  azureAI = new OpenAI({
+    apiKey: process.env.AZURE_AI_FOUNDRY_KEY,
+    baseURL: process.env.AZURE_AI_FOUNDRY_ENDPOINT,
+  });
+  console.log('🚀 Azure AI Foundry initialized (GPT-4, Claude, Gemini, Llama)');
+} else {
+  console.log('⚠️ Azure AI Foundry keys not found - Multi-model features will return fallback responses');
 }
 
 // AI Definition Lookup
@@ -882,6 +894,130 @@ app.post('/api/ai/connections', async (req, res) => {
     res.status(500).json({ 
       error: 'Failed to get AI connections',
       fallback: `Unable to find connections for ${req.body.topic} at this time. Please try again later.`
+    });
+  }
+});
+
+// AI Multi-Model Comparison Tool
+app.post('/api/ai/compare-models', async (req, res) => {
+  try {
+    const { question } = req.body;
+    
+    if (!question) {
+      return res.status(400).json({ error: 'Question is required' });
+    }
+
+    const results = {};
+    const systemPrompt = "You are a geography education expert. Provide clear, accurate, and engaging answers suitable for middle school students. Be specific and include real-world examples.";
+
+    // Try GPT-4 via OpenAI
+    if (openai) {
+      try {
+        const gptResponse = await openai.chat.completions.create({
+          model: "gpt-4",
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: question }
+          ],
+          max_tokens: 300,
+          temperature: 0.7,
+        });
+        results.gpt4 = {
+          response: gptResponse.choices[0].message.content.trim(),
+          source: "GPT-4 (OpenAI)",
+          status: "success"
+        };
+      } catch (error) {
+        results.gpt4 = {
+          response: "GPT-4 temporarily unavailable",
+          source: "GPT-4 (OpenAI)", 
+          status: "error"
+        };
+      }
+    } else {
+      results.gpt4 = {
+        response: "GPT-4 not configured - would provide detailed geography explanation",
+        source: "GPT-4 (OpenAI)",
+        status: "fallback"
+      };
+    }
+
+    // Try Claude via Azure AI Foundry
+    if (azureAI) {
+      try {
+        const claudeResponse = await azureAI.chat.completions.create({
+          model: "claude-3-5-sonnet-20241022",
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: question }
+          ],
+          max_tokens: 300,
+          temperature: 0.7,
+        });
+        results.claude = {
+          response: claudeResponse.choices[0].message.content.trim(),
+          source: "Claude 3.5 Sonnet (Azure AI)",
+          status: "success"
+        };
+      } catch (error) {
+        results.claude = {
+          response: "Claude temporarily unavailable",
+          source: "Claude 3.5 Sonnet (Azure AI)",
+          status: "error"
+        };
+      }
+    } else {
+      results.claude = {
+        response: "Claude not configured - would provide analytical geography perspective",
+        source: "Claude 3.5 Sonnet (Azure AI)",
+        status: "fallback"
+      };
+    }
+
+    // Try Gemini via Azure AI Foundry
+    if (azureAI) {
+      try {
+        const geminiResponse = await azureAI.chat.completions.create({
+          model: "gemini-1.5-pro",
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: question }
+          ],
+          max_tokens: 300,
+          temperature: 0.7,
+        });
+        results.gemini = {
+          response: geminiResponse.choices[0].message.content.trim(),
+          source: "Gemini 1.5 Pro (Azure AI)",
+          status: "success"
+        };
+      } catch (error) {
+        results.gemini = {
+          response: "Gemini temporarily unavailable",
+          source: "Gemini 1.5 Pro (Azure AI)",
+          status: "error"
+        };
+      }
+    } else {
+      results.gemini = {
+        response: "Gemini not configured - would provide comprehensive geography insights",
+        source: "Gemini 1.5 Pro (Azure AI)",
+        status: "fallback"
+      };
+    }
+
+    res.json({
+      question: question,
+      results: results,
+      timestamp: new Date().toISOString(),
+      note: "Compare different AI perspectives on the same geography topic"
+    });
+
+  } catch (error) {
+    console.error('AI Model Comparison Error:', error);
+    res.status(500).json({ 
+      error: 'Failed to compare AI models',
+      fallback: `Unable to compare models for "${req.body.question}" at this time. Please try again later.`
     });
   }
 });
