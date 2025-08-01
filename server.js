@@ -1867,19 +1867,3 @@ const startServer = async () => {
 };
 
 startServer();
-  
-  if (!dbConnected) {
-    console.log('⚠️  Starting server without database connection');
-  }
-  
-  app.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`);
-    console.log(`📱 Visit: http://localhost:${PORT}`);
-    console.log(`🔗 API Health: http://localhost:${PORT}/api/health`);
-    if (dbConnected) {
-      console.log(`📚 Browse lessons: http://localhost:${PORT}/browse`);
-    }
-  });
-};
-
-startServer();
