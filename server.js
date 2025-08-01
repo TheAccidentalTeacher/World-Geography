@@ -946,7 +946,7 @@ app.post('/api/ai/compare-models', async (req, res) => {
     if (azureAI) {
       try {
         const claudeResponse = await azureAI.chat.completions.create({
-          model: "claude-3-5-sonnet-20241022",
+          model: "claude-3-5-sonnet",
           messages: [
             { role: "system", content: systemPrompt },
             { role: "user", content: question }
@@ -960,8 +960,9 @@ app.post('/api/ai/compare-models', async (req, res) => {
           status: "success"
         };
       } catch (error) {
+        console.error('Claude API Error:', error.message);
         results.claude = {
-          response: "Claude temporarily unavailable",
+          response: `Claude temporarily unavailable: ${error.message}`,
           source: "Claude 3.5 Sonnet (Azure AI)",
           status: "error"
         };
@@ -978,7 +979,7 @@ app.post('/api/ai/compare-models', async (req, res) => {
     if (azureAI) {
       try {
         const geminiResponse = await azureAI.chat.completions.create({
-          model: "gemini-1.5-pro",
+          model: "gemini-pro",
           messages: [
             { role: "system", content: systemPrompt },
             { role: "user", content: question }
@@ -992,16 +993,17 @@ app.post('/api/ai/compare-models', async (req, res) => {
           status: "success"
         };
       } catch (error) {
+        console.error('Gemini API Error:', error.message);
         results.gemini = {
-          response: "Gemini temporarily unavailable",
-          source: "Gemini 1.5 Pro (Azure AI)",
+          response: `Gemini temporarily unavailable: ${error.message}`,
+          source: "Gemini Pro (Azure AI)",
           status: "error"
         };
       }
     } else {
       results.gemini = {
         response: "Gemini not configured - would provide comprehensive geography insights",
-        source: "Gemini 1.5 Pro (Azure AI)",
+        source: "Gemini Pro (Azure AI)",
         status: "fallback"
       };
     }
@@ -1020,6 +1022,48 @@ app.post('/api/ai/compare-models', async (req, res) => {
       fallback: `Unable to compare models for "${req.body.question}" at this time. Please try again later.`
     });
   }
+});
+
+// Azure AI Model Testing Endpoint
+app.get('/api/ai/test-azure-models', async (req, res) => {
+  if (!azureAI) {
+    return res.json({
+      error: "Azure AI Foundry not configured",
+      available: false,
+      models: []
+    });
+  }
+
+  const testModels = [
+    "gpt-4",
+    "gpt-4o", 
+    "claude-3-5-sonnet",
+    "claude-3-sonnet",
+    "gemini-pro",
+    "gemini-1.5-pro",
+    "llama-3-70b"
+  ];
+
+  const results = {};
+
+  for (const model of testModels) {
+    try {
+      const testResponse = await azureAI.chat.completions.create({
+        model: model,
+        messages: [{ role: "user", content: "Hello" }],
+        max_tokens: 10,
+      });
+      results[model] = "✅ Available";
+    } catch (error) {
+      results[model] = `❌ Error: ${error.message}`;
+    }
+  }
+
+  res.json({
+    azureEndpoint: process.env.AZURE_AI_FOUNDRY_ENDPOINT,
+    testResults: results,
+    timestamp: new Date().toISOString()
+  });
 });
 
 // AI Map Illustration Generator
