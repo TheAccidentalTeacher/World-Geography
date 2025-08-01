@@ -1066,7 +1066,7 @@ app.get('/api/ai/test-azure-models', async (req, res) => {
   });
 });
 
-// AI Map Illustration Generator - Multi-API with Smart Prompting
+// AI Map Illustration Generator - Educational Maps Only (No DALL-E)
 app.post('/api/ai/generate-map', async (req, res) => {
   try {
     const { description } = req.body;
@@ -1127,56 +1127,43 @@ Analyze the request and create the PERFECT educational map prompt:`
 
     console.log('📝 Generated prompt:', optimizedPrompt);
 
-    // Step 2: Try multiple image generation APIs in order of quality
-    const imageGenerators = [
-      { name: 'Stability AI', apiKey: process.env.STABILITY_AI_API_KEY, priority: 1 },
-      { name: 'DALL-E 3', apiKey: process.env.OPENAI_API_KEY, priority: 2 },
-      { name: 'Replicate', apiKey: process.env.REPLICATE_API_TOKEN, priority: 3 }
-    ];
-
+    // Step 2: Try image generation APIs - SKIP DALL-E for educational maps (terrible quality)
     let imageResult = null;
     let usedGenerator = null;
+    let failureReasons = [];
 
-    // Try Stability AI first (often better for maps)
+    // Try Stability AI FIRST (best for educational maps)
     if (process.env.STABILITY_AI_API_KEY) {
-      console.log('🎨 Trying Stability AI...');
+      console.log('🎨 Trying Stability AI (Primary - Best for educational maps)...');
       try {
         imageResult = await generateWithStabilityAI(optimizedPrompt);
-        usedGenerator = 'Stability AI (Best for educational content)';
+        usedGenerator = 'Stability AI (Primary - Best educational quality)';
+        console.log('✅ Stability AI succeeded!');
       } catch (error) {
-        console.error('Stability AI failed:', error.message);
+        console.error('❌ Stability AI failed:', error.message);
+        failureReasons.push(`Stability AI: ${error.message}`);
       }
+    } else {
+      failureReasons.push('Stability AI: API key not configured');
     }
 
-    // Fallback to DALL-E if Stability AI fails
-    if (!imageResult && openai) {
-      console.log('🎨 Trying DALL-E 3 HD...');
-      try {
-        const dalleResponse = await openai.images.generate({
-          model: "dall-e-3",
-          prompt: optimizedPrompt,
-          n: 1,
-          size: "1024x1024",
-          quality: "hd",
-          style: "natural"
-        });
+    // Skip DALL-E completely for educational maps - it produces unreadable text
+    // DALL-E creates beautiful artistic maps but text is illegible in classrooms
+    // Save DALL-E for other projects where readability isn't critical
 
-        imageResult = dalleResponse.data[0].url;
-        usedGenerator = 'DALL-E 3 HD (OpenAI)';
-      } catch (error) {
-        console.error('DALL-E failed:', error.message);
-      }
-    }
-
-    // Final fallback to Replicate
+    // Try Replicate as backup (much better than DALL-E for maps)
     if (!imageResult && process.env.REPLICATE_API_TOKEN) {
-      console.log('🎨 Trying Replicate...');
+      console.log('🎨 Trying Replicate (Secondary - Better than DALL-E for maps)...');
       try {
         imageResult = await generateWithReplicate(optimizedPrompt);
-        usedGenerator = 'Replicate (Backup service)';
+        usedGenerator = 'Replicate (Secondary - Educational backup)';
+        console.log('✅ Replicate succeeded!');
       } catch (error) {
-        console.error('Replicate failed:', error.message);
+        console.error('❌ Replicate failed:', error.message);
+        failureReasons.push(`Replicate: ${error.message}`);
       }
+    } else if (!imageResult) {
+      failureReasons.push('Replicate: API key not configured');
     }
 
     if (imageResult) {
@@ -1187,29 +1174,32 @@ Analyze the request and create the PERFECT educational map prompt:`
         promptAnalysis: promptAnalysis,
         generator: usedGenerator,
         status: 'success',
-        message: 'Educational map generated with multi-API system!',
+        message: 'Educational map generated! (DALL-E skipped - terrible for classroom use)',
         tips: [
-          "🎯 Prompt optimized for classroom readability",
-          "📏 Text sized for 10-foot viewing distance", 
-          "🎨 Multiple AI services ensure reliability",
+          "🎯 Stability AI prioritized for best educational quality",
+          "📏 Text optimized for classroom readability", 
+          "🚫 DALL-E skipped (produces unreadable maps)",
           "🗺️ Educational cartography standards applied"
-        ]
+        ],
+        failureReasons: failureReasons.length > 0 ? failureReasons : undefined
       });
     } else {
-      // All APIs failed - provide helpful fallback
+      // All educational APIs failed - provide helpful fallback
       res.json({
         description: description,
         imageUrl: null,
         optimizedPrompt: optimizedPrompt,
         promptAnalysis: promptAnalysis,
-        mapDescription: `Educational map of ${description} - All image generation services temporarily unavailable.`,
-        status: 'fallback_response',
-        message: 'Image generation services unavailable - prompt optimization successful',
-        generator: 'None (services unavailable)',
+        mapDescription: `Educational map of ${description} - Educational image services temporarily unavailable.`,
+        status: 'all_services_failed',
+        message: 'Educational map services unavailable (DALL-E intentionally skipped)',
+        generator: 'None (educational services unavailable)',
+        failureReasons: failureReasons,
         tips: [
           "✅ Detailed educational prompt created",
-          "🔄 Multiple backup services configured",
-          "⚡ Will work when APIs are available"
+          "🎯 Stability AI + Replicate configured for classroom quality",
+          "🚫 DALL-E disabled for maps (unreadable text)",
+          "⚡ Will work when educational APIs are available"
         ]
       });
     }
