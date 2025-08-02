@@ -1109,24 +1109,24 @@ app.post('/api/ai/generate-map', async (req, res) => {
       return res.status(400).json({ error: 'Map description is required' });
     }
 
-    // AI-generated maps are too low quality for educational use
-    // Redirect to professional mapping alternatives
+    // AI-generated maps are disabled - using professional mapping alternatives instead
+    // Educational institutions require high-quality, accurate cartographic resources
     res.json({
       description: description,
       imageUrl: null,
       status: 'ai_maps_disabled',
-      message: 'AI-generated maps disabled - poor quality for educational use',
+      message: 'AI-generated maps disabled - using professional mapping alternatives for educational quality',
       alternatives: {
-        mapbox: {
+        leaflet: {
           available: true,
-          description: 'Professional interactive maps with educational features',
-          url: 'Use Mapbox GL JS for interactive educational maps'
+          description: 'Open-source interactive maps with educational tile layers',
+          implementation: 'Leaflet with OpenStreetMap, USGS, and educational data sources'
         },
         staticMaps: {
           available: true,
           description: 'High-quality static map images from professional sources',
           suggestions: [
-            'Use Mapbox Static Images API for specific regions',
+            'Use OpenStreetMap tile layers for regional maps',
             'Integrate with Natural Earth data for educational accuracy',
             'Use USGS educational map resources',
             'Link to National Geographic education maps'
@@ -1160,19 +1160,19 @@ app.post('/api/ai/generate-map', async (req, res) => {
   }
 });
 
-// Professional Educational Map Resources
+// Professional Educational Map Resources using Leaflet and OpenStreetMap
 app.get('/api/maps/educational/:region', async (req, res) => {
   try {
     const { region } = req.params;
     const { type = 'overview' } = req.query;
     
-    // Professional map resources for education
+    // Professional map resources for education using Leaflet
     const educationalMaps = {
       alaska: {
         overview: {
           title: "Alaska Regional Overview",
           description: "Professional educational map of Alaska showing major geographic features",
-          mapboxStyle: "mapbox://styles/mapbox/outdoors-v12",
+          tileLayer: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
           center: [-153.0, 64.0],
           zoom: 4,
           features: ["rivers", "mountains", "cities", "borders"],
@@ -1186,7 +1186,7 @@ app.get('/api/maps/educational/:region', async (req, res) => {
         physical: {
           title: "Alaska Physical Features",
           description: "Detailed physical geography of Alaska",
-          mapboxStyle: "mapbox://styles/mapbox/satellite-v9",
+          tileLayer: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
           center: [-153.0, 64.0],
           zoom: 5,
           features: ["topography", "rivers", "glaciers", "mountain ranges"],
@@ -1195,7 +1195,7 @@ app.get('/api/maps/educational/:region', async (req, res) => {
         rivers: {
           title: "Alaska River Systems",
           description: "Major rivers and watersheds of Alaska including the Cooper River",
-          mapboxStyle: "mapbox://styles/mapbox/outdoors-v12",
+          tileLayer: "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
           center: [-145.0, 61.5],
           zoom: 6,
           features: ["cooper_river", "yukon_river", "watersheds", "drainage_basins"],
@@ -1214,7 +1214,7 @@ app.get('/api/maps/educational/:region', async (req, res) => {
         overview: {
           title: "World Political Map",
           description: "Professional world map for educational use",
-          mapboxStyle: "mapbox://styles/mapbox/light-v11",
+          tileLayer: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
           center: [0, 20],
           zoom: 2,
           features: ["countries", "capitals", "major_cities", "borders"],
@@ -1246,22 +1246,23 @@ app.get('/api/maps/educational/:region', async (req, res) => {
       type: type,
       map: mapType,
       implementation: {
-        mapbox: {
-          required: "Mapbox GL JS library",
-          apiKey: "Requires MAPBOX_ACCESS_TOKEN environment variable",
+        leaflet: {
+          required: "Leaflet library (no API key required)",
+          tileLayer: mapType.tileLayer,
           example: `
-// Initialize map
-mapboxgl.accessToken = 'your-mapbox-token';
-const map = new mapboxgl.Map({
-  container: 'map',
-  style: '${mapType.mapboxStyle}',
-  center: [${mapType.center[0]}, ${mapType.center[1]}],
-  zoom: ${mapType.zoom}
-});`
+// Initialize Leaflet map
+const map = L.map('map').setView([${mapType.center[0]}, ${mapType.center[1]}], ${mapType.zoom});
+
+// Add tile layer
+L.tileLayer('${mapType.tileLayer}', {
+    attribution: '&copy; OpenStreetMap contributors'
+}).addTo(map);`
         },
-        static: {
-          url: `https://api.mapbox.com/styles/v1/mapbox/terrain-v12/static/${mapType.center[0]},${mapType.center[1]},${mapType.zoom}/800x600@2x?access_token=YOUR_TOKEN`,
-          description: "High-quality static image for printable materials"
+        advantages: {
+          noApiKey: "No authentication required",
+          openSource: "Free and open-source mapping solution",
+          educational: "Perfect for educational institutions",
+          reliable: "No rate limits or usage restrictions"
         }
       },
       educationalValue: {
@@ -1279,7 +1280,8 @@ const map = new mapboxgl.Map({
         "🎯 Professional cartographic accuracy guaranteed",
         "📏 Proper scale and projection for educational use",
         "🗺️ Interactive features enhance student engagement",
-        "📚 Aligns with educational standards and curricula"
+        "📚 Aligns with educational standards and curricula",
+        "🆓 No API keys or usage limits required"
       ]
     });
 
@@ -1291,13 +1293,6 @@ const map = new mapboxgl.Map({
     });
   }
 });
-
-// Mapbox Integration Endpoint
-app.get('/api/maps/mapbox/token', (req, res) => {
-  if (!process.env.MAPBOX_ACCESS_TOKEN) {
-    return res.status(503).json({
-      error: 'Mapbox not configured',
-      message: 'MAPBOX_ACCESS_TOKEN environment variable required',
       setup: 'Add your Mapbox access token to environment variables'
     });
   }

@@ -1362,12 +1362,6 @@
                 text-align: center;
             }
         }
-        
-        /* Animation for map loading spinner */
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
     </style>
 </head>
 <body>
@@ -3544,7 +3538,7 @@
         function enable3DTerrain() {
             if (!enhancedMap) return;
             
-            updateMapStatus('Note: 3D terrain requires Mapbox - switching to terrain tile layer');
+            updateMapStatus('Note: 3D terrain requires specialized mapping - switching to terrain tile layer');
             
             // Use terrain tile layer instead of 3D
             const terrainLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
@@ -3607,7 +3601,7 @@
             mapLoadedLayers.clear();
         }
 
-        // Fallback map implementation for when Mapbox fails
+        // Fallback map implementation with comprehensive error handling
         function initializeFallbackMap() {
             const mapContainer = document.getElementById('enhanced-map');
             if (!mapContainer) return;
