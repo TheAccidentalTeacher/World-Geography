@@ -3109,16 +3109,38 @@
             if (!window.mapboxgl) {
                 console.error('Mapbox GL JS not loaded');
                 updateMapStatus('Error: Mapbox GL JS not loaded');
+                initializeFallbackMap();
                 return;
             }
             
-            // Set Mapbox access token
-            mapboxgl.accessToken = 'pk.eyJ1IjoidGhlYWNjaWRlbnRhbHRlYWNoZXIiLCJhIjoiY2x6dW05ZzNrMDVnNzJscHV2aW1udWZ0OSJ9.Ddn7m7RDXfSq8xF-kFCvJw';
+            // Set Mapbox access token - using educational fallback approach
+            // Note: In production, this should be configured via environment variables
+            try {
+                mapboxgl.accessToken = 'pk.eyJ1IjoidGhlYWNjaWRlbnRhbHRlYWNoZXIiLCJhIjoiY2x6dW05ZzNrMDVnNzJscHV2aW1udWZ0OSJ9.Ddn7m7RDXfSq8xF-kFCvJw';
+                
+                // Test token validity
+                fetch(`https://api.mapbox.com/styles/v1/mapbox/streets-v12?access_token=${mapboxgl.accessToken}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Token validation failed');
+                        }
+                    })
+                    .catch(error => {
+                        console.warn('Mapbox token issue detected, using fallback mode');
+                        updateMapStatus('Map authentication issue - using educational fallback mode');
+                        initializeFallbackMap();
+                        return;
+                    });
+            } catch (error) {
+                console.error('Error setting Mapbox token:', error);
+                initializeFallbackMap();
+                return;
+            }
             
             updateMapStatus('Initializing Enhanced Maps...');
             
             try {
-                // Initialize enhanced map
+                // Initialize enhanced map with error handling
                 enhancedMap = new mapboxgl.Map({
                     container: 'enhanced-map',
                     style: 'mapbox://styles/mapbox/streets-v12',
@@ -3131,32 +3153,53 @@
                 enhancedMap.addControl(new mapboxgl.NavigationControl());
                 enhancedMap.addControl(new mapboxgl.FullscreenControl());
 
+                // Handle authentication errors
+                enhancedMap.on('error', (e) => {
+                    console.error('Enhanced Map error:', e);
+                    if (e.error && e.error.status === 401) {
+                        updateMapStatus('Map authentication error - using educational fallback mode');
+                        initializeFallbackMap();
+                    } else {
+                        updateMapStatus('Map error occurred - check console for details');
+                    }
+                });
+
                 // Map style controls
                 document.querySelectorAll('.map-style-btn').forEach(btn => {
                     btn.addEventListener('click', () => {
-                        // Update active button
-                        document.querySelectorAll('.map-style-btn').forEach(b => {
-                            b.classList.remove('active');
-                            b.style.background = 'white';
-                            b.style.color = 'black';
-                        });
-                        btn.classList.add('active');
-                        btn.style.background = '#4CAF50';
-                        btn.style.color = 'white';
-                        
-                        // Change map style
-                        const style = btn.dataset.style;
-                        enhancedMap.setStyle(`mapbox://styles/mapbox/${style}`);
-                        updateMapStatus(`Switched to ${btn.textContent} view`);
+                        try {
+                            // Update active button
+                            document.querySelectorAll('.map-style-btn').forEach(b => {
+                                b.classList.remove('active');
+                                b.style.background = 'white';
+                                b.style.color = 'black';
+                            });
+                            btn.classList.add('active');
+                            btn.style.background = '#4CAF50';
+                            btn.style.color = 'white';
+                            
+                            // Change map style
+                            const style = btn.dataset.style;
+                            enhancedMap.setStyle(`mapbox://styles/mapbox/${style}`);
+                            updateMapStatus(`Switched to ${btn.textContent} view`);
+                        } catch (error) {
+                            console.error('Error switching map style:', error);
+                            updateMapStatus('Error switching map style - using current view');
+                        }
                     });
                 });
 
-                // Feature toggles
+                // Feature toggles with error handling
                 document.getElementById('mapEarthquakeToggle').addEventListener('change', function() {
-                    if (this.checked) {
-                        loadEarthquakeData();
-                    } else {
-                        removeMapLayer('earthquakes');
+                    try {
+                        if (this.checked) {
+                            loadEarthquakeData();
+                        } else {
+                            removeMapLayer('earthquakes');
+                        }
+                    } catch (error) {
+                        console.error('Error toggling earthquake data:', error);
+                        updateMapStatus('Error toggling earthquake data');
                     }
                 });
 
@@ -3219,6 +3262,14 @@
             const moduleTitle = currentLesson.module ? currentLesson.module.title : 'Unknown Module';
             
             updateMapLessonInfo(`${moduleTitle} - ${lessonTitle}`);
+            
+            // Check if we're using fallback mode
+            if (!enhancedMap && document.getElementById('fallback-lesson-info')) {
+                updateFallbackLessonInfo();
+                updateMapStatus(`Lesson context updated: ${lessonTitle}`);
+                return;
+            }
+            
             updateMapStatus(`Synced with: ${lessonTitle}`);
             
             // Auto-focus on relevant region based on lesson content
@@ -3384,6 +3435,78 @@
         function removeAllMapLayers() {
             mapLoadedLayers.clear();
             disable3DTerrain();
+        }
+
+        // Fallback map implementation for when Mapbox fails
+        function initializeFallbackMap() {
+            const mapContainer = document.getElementById('enhanced-map');
+            if (!mapContainer) return;
+
+            // Clear existing content and create educational fallback
+            mapContainer.innerHTML = `
+                <div style="
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    height: 100%;
+                    background: linear-gradient(135deg, #e3f2fd 0%, #f5f5f5 100%);
+                    border-radius: 8px;
+                    text-align: center;
+                    padding: 40px;
+                    min-height: 400px;
+                ">
+                    <div style="font-size: 3rem; margin-bottom: 20px;">🗺️</div>
+                    <h3 style="color: #2c5aa0; margin-bottom: 15px; font-size: 1.4rem;">Educational Geography Center</h3>
+                    <p style="color: #666; margin-bottom: 20px; max-width: 400px; line-height: 1.5;">
+                        Interactive mapping is temporarily unavailable. This space provides geographic context 
+                        and lesson synchronization for your selected curriculum content.
+                    </p>
+                    <div id="fallback-lesson-info" style="
+                        background: white;
+                        padding: 20px;
+                        border-radius: 8px;
+                        border-left: 4px solid #007bff;
+                        max-width: 500px;
+                        text-align: left;
+                        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                    ">
+                        <h4 style="color: #2c5aa0; margin: 0 0 10px 0;">Current Lesson Context</h4>
+                        <p id="fallback-lesson-text" style="margin: 0; color: #495057;">Select a lesson to view relevant geographic information and learning objectives.</p>
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <button onclick="location.reload()" style="
+                            background: #28a745;
+                            color: white;
+                            border: none;
+                            padding: 10px 20px;
+                            border-radius: 6px;
+                            cursor: pointer;
+                            font-weight: 600;
+                        ">🔄 Retry Connection</button>
+                    </div>
+                </div>
+            `;
+            
+            // Update lesson info if lesson is already loaded
+            if (window.currentLesson) {
+                updateFallbackLessonInfo();
+            }
+        }
+
+        // Update fallback lesson information
+        function updateFallbackLessonInfo() {
+            const fallbackTextElement = document.getElementById('fallback-lesson-text');
+            if (fallbackTextElement && window.currentLesson) {
+                const lessonTitle = currentLesson.title || 'Current Lesson';
+                const moduleTitle = currentLesson.module ? currentLesson.module.title : 'Geography Module';
+                fallbackTextElement.innerHTML = `
+                    <strong>📚 ${moduleTitle}</strong><br>
+                    <em>${lessonTitle}</em><br><br>
+                    This lesson focuses on important geographic concepts and regional studies. 
+                    Refer to your lesson content for detailed geographic information and activities.
+                `;
+            }
         }
 
         function updateMapStatus(message) {

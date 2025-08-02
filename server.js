@@ -19,16 +19,17 @@ let slidesBucket;
 app.use(cors());
 app.use(express.json());
 
-// Content Security Policy for Mapbox
+// Content Security Policy for Mapbox with comprehensive font support
 app.use((req, res, next) => {
   res.setHeader('Content-Security-Policy', 
     "default-src 'self'; " +
-    "script-src 'self' 'unsafe-inline' https://api.mapbox.com; " +
-    "style-src 'self' 'unsafe-inline' https://api.mapbox.com; " +
-    "font-src 'self' https://api.mapbox.com; " +
-    "img-src 'self' data: https://api.mapbox.com https://*.tiles.mapbox.com; " +
-    "connect-src 'self' https://api.mapbox.com https://events.mapbox.com; " +
-    "worker-src 'self' blob:;"
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://api.mapbox.com https://cdn.jsdelivr.net https://unpkg.com; " +
+    "style-src 'self' 'unsafe-inline' https://api.mapbox.com https://fonts.googleapis.com https://cdn.jsdelivr.net; " +
+    "font-src 'self' data: https://api.mapbox.com https://*.mapbox.com https://fonts.gstatic.com https://fonts.googleapis.com; " +
+    "img-src 'self' data: blob: https://api.mapbox.com https://*.tiles.mapbox.com https://*.mapbox.com; " +
+    "connect-src 'self' https://api.mapbox.com https://events.mapbox.com https://*.tiles.mapbox.com; " +
+    "worker-src 'self' blob:; " +
+    "child-src 'self' blob:;"
   );
   next();
 });
