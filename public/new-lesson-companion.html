@@ -5,9 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Geography Lesson Companion</title>
     
-    <!-- Mapbox GL JS v3.0.1 for Enhanced Maps -->
-    <script src='https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js'></script>
-    <link href='https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css' rel='stylesheet' />
+    <!-- Leaflet for Enhanced Maps - No API Keys Required! -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" 
+          crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" 
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" 
+            crossorigin=""></script>
     <style>
         * {
             margin: 0;
@@ -3106,54 +3110,48 @@
         function initializeEnhancedMaps() {
             if (enhancedMap) return; // Already initialized
             
-            if (!window.mapboxgl) {
-                console.error('Mapbox GL JS not loaded');
-                updateMapStatus('Error: Mapbox GL JS not loaded');
+            if (!window.L) {
+                console.error('Leaflet not loaded');
+                updateMapStatus('Error: Leaflet library not loaded');
                 initializeFallbackMap();
                 return;
             }
             
-            // Set Mapbox access token - using your account token
-            mapboxgl.accessToken = 'pk.eyJ1Ijoic2NvdHRzb21lcnMiLCJhIjoiY21kdXVtcmxuMTJrdTJxcHo3bW16cnd0ZCJ9.0Kbs8RoflQ6OIxvRJVZ8hQ';
-            
-            updateMapStatus('Initializing Enhanced Maps...');
+            updateMapStatus('Initializing Enhanced Maps with Leaflet...');
             
             try {
-                // Initialize enhanced map with proper educational geography settings
-                enhancedMap = new mapboxgl.Map({
-                    container: 'enhanced-map',
-                    style: 'mapbox://styles/mapbox/streets-v12',
-                    center: [15, 50], // Center on Europe for Byzantine Empire context
-                    zoom: 4,
-                    projection: 'mercator' // Standard flat map projection for education
+                // Initialize Leaflet map
+                enhancedMap = L.map('enhanced-map', {
+                    center: [20, 0], // Global view
+                    zoom: 2,
+                    worldCopyJump: true,
+                    maxBounds: [[-90, -180], [90, 180]]
                 });
 
-                // Add navigation controls
-                enhancedMap.addControl(new mapboxgl.NavigationControl());
-                enhancedMap.addControl(new mapboxgl.FullscreenControl());
+                // Add default tile layer (OpenStreetMap - no API key needed!)
+                const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors',
+                    maxZoom: 18
+                }).addTo(enhancedMap);
 
-                // Handle authentication errors
-                enhancedMap.on('error', (e) => {
-                    console.error('Enhanced Map error details:', e);
-                    if (e.error) {
-                        console.error('Error status:', e.error.status);
-                        console.error('Error message:', e.error.message);
-                        
-                        if (e.error.status === 403) {
-                            updateMapStatus('Map access forbidden - Check token URL restrictions in Mapbox dashboard');
-                            initializeFallbackMap();
-                        } else if (e.error.status === 401) {
-                            updateMapStatus('Map authentication error - Token invalid or expired');
-                            initializeFallbackMap();
-                        } else {
-                            updateMapStatus(`Map error: ${e.error.message || 'Unknown error'}`);
-                        }
-                    } else {
-                        updateMapStatus('Map error occurred - check console for details');
-                    }
-                });
+                // Store base layers for style switching
+                const baseLayers = {
+                    'Streets': osmLayer,
+                    'Satellite': L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                        attribution: '© Esri'
+                    }),
+                    'Terrain': L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+                        attribution: '© OpenTopoMap contributors'
+                    }),
+                    'Light': L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+                        attribution: '© OpenStreetMap contributors, HOT'
+                    })
+                };
 
-                // Map style controls
+                // Add layer control for style switching
+                L.control.layers(baseLayers).addTo(enhancedMap);
+
+                // Map style controls - update the existing button handlers
                 document.querySelectorAll('.map-style-btn').forEach(btn => {
                     btn.addEventListener('click', () => {
                         try {
@@ -3167,9 +3165,29 @@
                             btn.style.background = '#4CAF50';
                             btn.style.color = 'white';
                             
-                            // Change map style
+                            // Change map layer based on button
                             const style = btn.dataset.style;
-                            enhancedMap.setStyle(`mapbox://styles/mapbox/${style}`);
+                            enhancedMap.eachLayer(layer => {
+                                if (layer._url && layer._url.includes('tile')) {
+                                    enhancedMap.removeLayer(layer);
+                                }
+                            });
+                            
+                            let newLayer;
+                            switch(style) {
+                                case 'satellite-streets-v12':
+                                    newLayer = baseLayers['Satellite'];
+                                    break;
+                                case 'outdoors-v12':
+                                    newLayer = baseLayers['Terrain'];
+                                    break;
+                                case 'light-v11':
+                                    newLayer = baseLayers['Light'];
+                                    break;
+                                default:
+                                    newLayer = baseLayers['Streets'];
+                            }
+                            newLayer.addTo(enhancedMap);
                             updateMapStatus(`Switched to ${btn.textContent} view`);
                         } catch (error) {
                             console.error('Error switching map style:', error);
@@ -3178,7 +3196,7 @@
                     });
                 });
 
-                // Feature toggles with error handling
+                // Feature toggles with real implementations
                 document.getElementById('mapEarthquakeToggle').addEventListener('change', function() {
                     try {
                         if (this.checked) {
@@ -3221,9 +3239,10 @@
                 document.getElementById('showLessonData').addEventListener('click', showLessonData);
                 document.getElementById('resetMapView').addEventListener('click', resetEnhancedMapView);
 
-                enhancedMap.on('load', () => {
-                    updateMapStatus('Enhanced Maps ready - Professional educational mapping system');
-                    console.log('Enhanced Maps initialized successfully');
+                // Map is ready
+                enhancedMap.whenReady(() => {
+                    updateMapStatus('Enhanced Maps ready - Educational mapping system loaded');
+                    console.log('Leaflet Enhanced Maps initialized successfully');
                     
                     // Sync with current lesson if one is loaded
                     syncMapWithCurrentLesson();
@@ -3273,25 +3292,27 @@
             
             // Define region mappings based on lesson content
             const regionMappings = {
-                'north america': { center: [-100, 45], zoom: 3, name: 'North America' },
-                'south america': { center: [-60, -15], zoom: 3, name: 'South America' },
-                'europe': { center: [10, 50], zoom: 4, name: 'Europe' },
-                'africa': { center: [20, 0], zoom: 3, name: 'Africa' },
-                'asia': { center: [100, 30], zoom: 3, name: 'Asia' },
-                'oceania': { center: [140, -25], zoom: 4, name: 'Oceania' },
-                'australia': { center: [133, -25], zoom: 4, name: 'Australia' },
-                'antarctica': { center: [0, -85], zoom: 3, name: 'Antarctica' },
-                'united states': { center: [-100, 40], zoom: 4, name: 'United States' },
-                'canada': { center: [-106, 56], zoom: 3, name: 'Canada' },
-                'mexico': { center: [-102, 23], zoom: 5, name: 'Mexico' },
-                'brazil': { center: [-55, -10], zoom: 4, name: 'Brazil' },
-                'china': { center: [104, 35], zoom: 4, name: 'China' },
-                'india': { center: [78, 20], zoom: 4, name: 'India' },
-                'russia': { center: [105, 61], zoom: 3, name: 'Russia' },
-                'middle east': { center: [47, 29], zoom: 4, name: 'Middle East' },
-                'arctic': { center: [0, 80], zoom: 3, name: 'Arctic' },
-                'pacific': { center: [-155, 0], zoom: 3, name: 'Pacific Ocean' },
-                'atlantic': { center: [-30, 0], zoom: 3, name: 'Atlantic Ocean' }
+                'north america': { center: [45, -100], zoom: 3, name: 'North America' },
+                'south america': { center: [-15, -60], zoom: 3, name: 'South America' },
+                'europe': { center: [50, 10], zoom: 4, name: 'Europe' },
+                'africa': { center: [0, 20], zoom: 3, name: 'Africa' },
+                'asia': { center: [30, 100], zoom: 3, name: 'Asia' },
+                'oceania': { center: [-25, 140], zoom: 4, name: 'Oceania' },
+                'australia': { center: [-25, 133], zoom: 4, name: 'Australia' },
+                'antarctica': { center: [-85, 0], zoom: 3, name: 'Antarctica' },
+                'united states': { center: [40, -100], zoom: 4, name: 'United States' },
+                'canada': { center: [56, -106], zoom: 3, name: 'Canada' },
+                'mexico': { center: [23, -102], zoom: 5, name: 'Mexico' },
+                'brazil': { center: [-10, -55], zoom: 4, name: 'Brazil' },
+                'china': { center: [35, 104], zoom: 4, name: 'China' },
+                'india': { center: [20, 78], zoom: 4, name: 'India' },
+                'russia': { center: [61, 105], zoom: 3, name: 'Russia' },
+                'middle east': { center: [29, 47], zoom: 4, name: 'Middle East' },
+                'byzantine': { center: [39, 35], zoom: 6, name: 'Byzantine Empire' },
+                'mediterranean': { center: [35, 20], zoom: 5, name: 'Mediterranean' },
+                'arctic': { center: [80, 0], zoom: 3, name: 'Arctic' },
+                'pacific': { center: [0, -155], zoom: 3, name: 'Pacific Ocean' },
+                'atlantic': { center: [0, -30], zoom: 3, name: 'Atlantic Ocean' }
             };
             
             // Find matching region
@@ -3304,11 +3325,7 @@
             }
             
             if (targetRegion) {
-                enhancedMap.flyTo({
-                    center: targetRegion.center,
-                    zoom: targetRegion.zoom,
-                    duration: 2000
-                });
+                enhancedMap.setView(targetRegion.center, targetRegion.zoom);
                 updateMapStatus(`Focused on ${targetRegion.name} for current lesson`);
             } else {
                 // Default to global view
@@ -3340,11 +3357,7 @@
         function resetEnhancedMapView() {
             if (!enhancedMap) return;
             
-            enhancedMap.flyTo({
-                center: [0, 20],
-                zoom: 2,
-                duration: 1500
-            });
+            enhancedMap.setView([20, 0], 2);
             
             // Reset all toggles
             document.querySelectorAll('#maps-tab input[type="checkbox"]').forEach(input => {
@@ -3359,67 +3372,239 @@
 
         function loadEarthquakeData() {
             updateMapStatus('Loading recent earthquake data...');
-            // Placeholder for earthquake layer implementation
-            setTimeout(() => {
-                mapLoadedLayers.add('earthquakes');
-                updateMapStatus('Earthquake data loaded (demo)');
-            }, 1000);
+            
+            // Real USGS earthquake data
+            fetch('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_week.geojson')
+                .then(response => response.json())
+                .then(data => {
+                    // Create earthquake layer
+                    const earthquakeLayer = L.geoJSON(data, {
+                        pointToLayer: function(feature, latlng) {
+                            const magnitude = feature.properties.mag;
+                            const radius = Math.max(magnitude * 3, 5);
+                            
+                            return L.circleMarker(latlng, {
+                                radius: radius,
+                                fillColor: magnitude > 6 ? '#ff0000' : magnitude > 4 ? '#ff8800' : '#ffff00',
+                                color: '#000',
+                                weight: 1,
+                                opacity: 1,
+                                fillOpacity: 0.7
+                            });
+                        },
+                        onEachFeature: function(feature, layer) {
+                            const props = feature.properties;
+                            layer.bindPopup(`
+                                <h4>🌍 Earthquake Alert</h4>
+                                <p><strong>Magnitude:</strong> ${props.mag}</p>
+                                <p><strong>Location:</strong> ${props.place}</p>
+                                <p><strong>Time:</strong> ${new Date(props.time).toLocaleDateString()}</p>
+                                <p><strong>Depth:</strong> ${feature.geometry.coordinates[2]} km</p>
+                            `);
+                        }
+                    });
+                    
+                    // Store layer for removal later
+                    enhancedMap.earthquakeLayer = earthquakeLayer;
+                    earthquakeLayer.addTo(enhancedMap);
+                    mapLoadedLayers.add('earthquakes');
+                    updateMapStatus(`Loaded ${data.features.length} recent earthquakes`);
+                })
+                .catch(error => {
+                    console.error('Error loading earthquake data:', error);
+                    updateMapStatus('Error loading earthquake data - using demo markers');
+                    loadDemoEarthquakes();
+                });
+        }
+
+        function loadDemoEarthquakes() {
+            // Demo earthquake markers if real data fails
+            const demoQuakes = [
+                { lat: 35.6762, lng: 139.6503, mag: 5.2, place: "Tokyo, Japan" },
+                { lat: 37.7749, lng: -122.4194, mag: 4.1, place: "San Francisco, CA" },
+                { lat: -33.8688, lng: 151.2093, mag: 3.8, place: "Sydney, Australia" }
+            ];
+            
+            const earthquakeLayer = L.layerGroup();
+            demoQuakes.forEach(quake => {
+                const marker = L.circleMarker([quake.lat, quake.lng], {
+                    radius: quake.mag * 3,
+                    fillColor: '#ff8800',
+                    color: '#000',
+                    weight: 1,
+                    opacity: 1,
+                    fillOpacity: 0.7
+                });
+                
+                marker.bindPopup(`
+                    <h4>🌍 Demo Earthquake</h4>
+                    <p><strong>Magnitude:</strong> ${quake.mag}</p>
+                    <p><strong>Location:</strong> ${quake.place}</p>
+                `);
+                
+                earthquakeLayer.addLayer(marker);
+            });
+            
+            enhancedMap.earthquakeLayer = earthquakeLayer;
+            earthquakeLayer.addTo(enhancedMap);
+            mapLoadedLayers.add('earthquakes');
+            updateMapStatus('Loaded demo earthquake data');
         }
 
         function loadCitiesData() {
             updateMapStatus('Loading major cities...');
-            // Placeholder for cities layer implementation
-            setTimeout(() => {
-                mapLoadedLayers.add('cities');
-                updateMapStatus('Major cities data loaded (demo)');
-            }, 800);
+            
+            // Major world cities
+            const majorCities = [
+                { name: "Tokyo", lat: 35.6762, lng: 139.6503, pop: "37.4M" },
+                { name: "Delhi", lat: 28.7041, lng: 77.1025, pop: "30.3M" },
+                { name: "Shanghai", lat: 31.2304, lng: 121.4737, pop: "27.1M" },
+                { name: "São Paulo", lat: -23.5505, lng: -46.6333, pop: "22.0M" },
+                { name: "Mexico City", lat: 19.4326, lng: -99.1332, pop: "21.8M" },
+                { name: "Cairo", lat: 30.0444, lng: 31.2357, pop: "20.9M" },
+                { name: "Mumbai", lat: 19.0760, lng: 72.8777, pop: "20.4M" },
+                { name: "Beijing", lat: 39.9042, lng: 116.4074, pop: "20.4M" },
+                { name: "Dhaka", lat: 23.8103, lng: 90.4125, pop: "20.3M" },
+                { name: "Osaka", lat: 34.6937, lng: 135.5023, pop: "19.3M" }
+            ];
+            
+            const citiesLayer = L.layerGroup();
+            majorCities.forEach(city => {
+                const marker = L.marker([city.lat, city.lng], {
+                    icon: L.divIcon({
+                        className: 'city-marker',
+                        html: '🏙️',
+                        iconSize: [20, 20],
+                        iconAnchor: [10, 10]
+                    })
+                });
+                
+                marker.bindPopup(`
+                    <h4>🏙️ ${city.name}</h4>
+                    <p><strong>Population:</strong> ${city.pop}</p>
+                    <p><strong>Coordinates:</strong> ${city.lat.toFixed(2)}, ${city.lng.toFixed(2)}</p>
+                `);
+                
+                citiesLayer.addLayer(marker);
+            });
+            
+            enhancedMap.citiesLayer = citiesLayer;
+            citiesLayer.addTo(enhancedMap);
+            mapLoadedLayers.add('cities');
+            updateMapStatus('Loaded major world cities');
         }
 
         function loadClimateData() {
             updateMapStatus('Loading climate zones...');
-            // Placeholder for climate layer implementation
-            setTimeout(() => {
-                mapLoadedLayers.add('climate');
-                updateMapStatus('Climate zones loaded (demo)');
-            }, 1200);
+            
+            // Simple climate zone overlay
+            const climateZones = [
+                {
+                    name: "Tropical",
+                    bounds: [[-23.5, -180], [23.5, 180]], 
+                    color: '#ff6b6b',
+                    description: "Hot and humid year-round"
+                },
+                {
+                    name: "Arid", 
+                    bounds: [[15, -140], [40, 60]], 
+                    color: '#ffa726',
+                    description: "Very dry with little precipitation"
+                },
+                {
+                    name: "Temperate",
+                    bounds: [[30, -130], [60, 140]], 
+                    color: '#66bb6a',
+                    description: "Moderate temperatures and precipitation"
+                }
+            ];
+            
+            const climateLayer = L.layerGroup();
+            climateZones.forEach(zone => {
+                const rectangle = L.rectangle(zone.bounds, {
+                    color: zone.color,
+                    weight: 2,
+                    fillOpacity: 0.3
+                });
+                
+                rectangle.bindPopup(`
+                    <h4>🌡️ ${zone.name} Climate</h4>
+                    <p>${zone.description}</p>
+                `);
+                
+                climateLayer.addLayer(rectangle);
+            });
+            
+            enhancedMap.climateLayer = climateLayer;
+            climateLayer.addTo(enhancedMap);
+            mapLoadedLayers.add('climate');
+            updateMapStatus('Climate zones loaded');
         }
 
         function enable3DTerrain() {
             if (!enhancedMap) return;
             
-            updateMapStatus('Enabling 3D terrain...');
+            updateMapStatus('Note: 3D terrain requires Mapbox - switching to terrain tile layer');
             
-            enhancedMap.addSource('mapbox-dem', {
-                'type': 'raster-dem',
-                'url': 'mapbox://mapbox.mapbox-terrain-dem-v1',
-                'tileSize': 512,
-                'maxzoom': 14
+            // Use terrain tile layer instead of 3D
+            const terrainLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenTopoMap contributors'
             });
             
-            enhancedMap.setTerrain({ 'source': 'mapbox-dem', 'exaggeration': 1.5 });
+            // Remove current base layer and add terrain
+            enhancedMap.eachLayer(layer => {
+                if (layer._url && layer._url.includes('tile')) {
+                    enhancedMap.removeLayer(layer);
+                }
+            });
+            
+            terrainLayer.addTo(enhancedMap);
+            enhancedMap.terrainLayer = terrainLayer;
             mapLoadedLayers.add('terrain');
-            updateMapStatus('3D terrain enabled');
+            updateMapStatus('Terrain view enabled');
         }
 
         function disable3DTerrain() {
             if (!enhancedMap) return;
             
-            enhancedMap.setTerrain(null);
-            if (enhancedMap.getSource('mapbox-dem')) {
-                enhancedMap.removeSource('mapbox-dem');
+            // Switch back to default OpenStreetMap
+            if (enhancedMap.terrainLayer) {
+                enhancedMap.removeLayer(enhancedMap.terrainLayer);
+                delete enhancedMap.terrainLayer;
             }
+            
+            const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors',
+                maxZoom: 18
+            }).addTo(enhancedMap);
+            
             mapLoadedLayers.delete('terrain');
-            updateMapStatus('3D terrain disabled');
+            updateMapStatus('Switched back to street view');
         }
 
         function removeMapLayer(layerName) {
+            const layerMap = {
+                'earthquakes': 'earthquakeLayer',
+                'cities': 'citiesLayer', 
+                'climate': 'climateLayer'
+            };
+            
+            const layerProperty = layerMap[layerName];
+            if (enhancedMap[layerProperty]) {
+                enhancedMap.removeLayer(enhancedMap[layerProperty]);
+                delete enhancedMap[layerProperty];
+            }
+            
             mapLoadedLayers.delete(layerName);
             updateMapStatus(`${layerName} layer removed`);
         }
 
         function removeAllMapLayers() {
-            mapLoadedLayers.clear();
+            removeMapLayer('earthquakes');
+            removeMapLayer('cities');
+            removeMapLayer('climate');
             disable3DTerrain();
+            mapLoadedLayers.clear();
         }
 
         // Fallback map implementation for when Mapbox fails
