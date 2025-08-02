@@ -18,6 +18,21 @@ let slidesBucket;
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Content Security Policy for Mapbox
+app.use((req, res, next) => {
+  res.setHeader('Content-Security-Policy', 
+    "default-src 'self'; " +
+    "script-src 'self' 'unsafe-inline' https://api.mapbox.com; " +
+    "style-src 'self' 'unsafe-inline' https://api.mapbox.com; " +
+    "font-src 'self' https://api.mapbox.com; " +
+    "img-src 'self' data: https://api.mapbox.com https://*.tiles.mapbox.com; " +
+    "connect-src 'self' https://api.mapbox.com https://events.mapbox.com; " +
+    "worker-src 'self' blob:;"
+  );
+  next();
+});
+
 app.use(express.static('public'));
 
 // Serve PDF files statically
