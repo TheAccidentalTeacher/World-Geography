@@ -1165,7 +1165,7 @@ app.get('/api/maps/educational/:region', async (req, res) => {
         overview: {
           title: "Alaska Regional Overview",
           description: "Professional educational map of Alaska showing major geographic features",
-          mapboxStyle: "mapbox://styles/mapbox/terrain-v12",
+          mapboxStyle: "mapbox://styles/mapbox/outdoors-v12",
           center: [-153.0, 64.0],
           zoom: 4,
           features: ["rivers", "mountains", "cities", "borders"],

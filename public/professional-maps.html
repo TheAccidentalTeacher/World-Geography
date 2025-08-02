@@ -380,18 +380,32 @@
                         map.remove();
                     }
 
-                    map = new mapboxgl.Map({
-                        container: 'map',
-                        style: mapData.map.mapboxStyle,
-                        center: mapData.map.center,
-                        zoom: mapData.map.zoom,
-                        projection: 'mercator'
-                    });
+                    try {
+                        map = new mapboxgl.Map({
+                            container: 'map',
+                            style: mapData.map.mapboxStyle,
+                            center: mapData.map.center,
+                            zoom: mapData.map.zoom,
+                            projection: 'mercator'
+                        });
 
-                    map.addControl(new mapboxgl.NavigationControl());
-                    map.addControl(new mapboxgl.ScaleControl());
+                        map.on('load', function() {
+                            console.log('Map loaded successfully:', mapData.map.title);
+                            showMessage(`✅ Professional ${mapData.map.title} loaded successfully!`, 'success');
+                        });
 
-                    showMessage(`✅ Professional ${mapData.map.title} loaded successfully!`, 'success');
+                        map.on('error', function(e) {
+                            console.error('Mapbox error:', e);
+                            showMessage(`❌ Map display error: ${e.error ? e.error.message : 'Unknown error'}`, 'error');
+                        });
+
+                        map.addControl(new mapboxgl.NavigationControl());
+                        map.addControl(new mapboxgl.ScaleControl());
+
+                    } catch (mapError) {
+                        console.error('Map initialization error:', mapError);
+                        showMessage(`❌ Failed to initialize map: ${mapError.message}`, 'error');
+                    }
                 } else {
                     showMessage('🗺️ Map data loaded! Configure Mapbox to display interactive map.', 'success');
                 }
