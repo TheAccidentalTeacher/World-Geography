@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Curriculum Maps - World Geography</title>
+    
+    <!-- Mapbox GL JS v3.0.1 -->
+    <script src='https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css' rel='stylesheet' />
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            border-bottom: 3px solid #4CAF50;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            text-align: center;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header p {
+            text-align: center;
+            color: #34495e;
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 0.9em;
+        }
+
+        select, button {
+            padding: 10px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        select {
+            background: white;
+            min-width: 180px;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #4CAF50;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+        }
+
+        button {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            min-width: 120px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .map-container {
+            flex: 1;
+            position: relative;
+            margin: 20px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+            min-height: 600px;
+        }
+
+        .map-overlay {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
+            min-width: 200px;
+        }
+
+        .map-overlay h3 {
+            margin-bottom: 10px;
+            color: #2c3e50;
+            font-size: 1.1em;
+        }
+
+        .style-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .style-btn {
+            padding: 8px 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .style-btn:hover {
+            border-color: #4CAF50;
+            background: #f8f9fa;
+        }
+
+        .style-btn.active {
+            background: #4CAF50;
+            color: white;
+            border-color: #4CAF50;
+        }
+
+        .feature-controls {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .feature-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+
+        .feature-toggle input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        .feature-toggle label {
+            cursor: pointer;
+            font-size: 13px;
+            color: #2c3e50;
+        }
+
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 2000;
+            display: none;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4CAF50;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .status-bar {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px 20px;
+            text-align: center;
+            font-size: 14px;
+            color: #2c3e50;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .map-container {
+                margin: 10px;
+            }
+            
+            .map-overlay {
+                position: relative;
+                top: auto;
+                right: auto;
+                margin: 10px;
+                width: calc(100% - 20px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🌍 Enhanced Curriculum Maps</h1>
+        <p>Professional Educational Mapping System for World Geography</p>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label for="moduleSelect">Select Module:</label>
+                <select id="moduleSelect">
+                    <option value="">Choose a Module...</option>
+                    <option value="module1">Module 1: Physical Geography</option>
+                    <option value="module2">Module 2: Climate and Weather</option>
+                    <option value="module3">Module 3: Population Patterns</option>
+                    <option value="module4">Module 4: Cultural Geography</option>
+                    <option value="module5">Module 5: Economic Systems</option>
+                    <option value="module6">Module 6: Political Geography</option>
+                    <option value="module7">Module 7: Urban Geography</option>
+                    <option value="module8">Module 8: Environmental Issues</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <label for="regionSelect">Focus Region:</label>
+                <select id="regionSelect">
+                    <option value="">Global View</option>
+                    <option value="north-america">North America</option>
+                    <option value="south-america">South America</option>
+                    <option value="europe">Europe</option>
+                    <option value="africa">Africa</option>
+                    <option value="asia">Asia</option>
+                    <option value="oceania">Oceania</option>
+                    <option value="antarctica">Antarctica</option>
+                </select>
+            </div>
+            
+            <button id="loadModule">Load Module Data</button>
+            <button id="resetView">Reset View</button>
+        </div>
+    </div>
+
+    <div class="map-container">
+        <div id="map"></div>
+        
+        <div class="map-overlay">
+            <h3>Map Controls</h3>
+            
+            <div class="style-buttons">
+                <button class="style-btn active" data-style="streets-v12">Streets</button>
+                <button class="style-btn" data-style="satellite-streets-v12">Satellite</button>
+                <button class="style-btn" data-style="outdoors-v12">Outdoors</button>
+                <button class="style-btn" data-style="light-v11">Light</button>
+            </div>
+            
+            <div class="feature-controls">
+                <h4 style="margin-bottom: 10px; color: #2c3e50; font-size: 14px;">Data Layers</h4>
+                
+                <div class="feature-toggle">
+                    <input type="checkbox" id="earthquakeToggle">
+                    <label for="earthquakeToggle">Recent Earthquakes</label>
+                </div>
+                
+                <div class="feature-toggle">
+                    <input type="checkbox" id="citiesToggle">
+                    <label for="citiesToggle">Major Cities</label>
+                </div>
+                
+                <div class="feature-toggle">
+                    <input type="checkbox" id="climateToggle">
+                    <label for="climateToggle">Climate Zones</label>
+                </div>
+                
+                <div class="feature-toggle">
+                    <input type="checkbox" id="terrainToggle">
+                    <label for="terrainToggle">3D Terrain</label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="loading" id="loadingIndicator">
+            <div class="spinner"></div>
+            <div>Loading map data...</div>
+        </div>
+    </div>
+
+    <div class="status-bar" id="statusBar">
+        Ready - Select a module to begin exploring
+    </div>
+
+    <script>
+        // Mapbox access token - Replace with your token
+        mapboxgl.accessToken = 'pk.eyJ1IjoidGhlYWNjaWRlbnRhbHRlYWNoZXIiLCJhIjoiY2x6dW05ZzNrMDVnNzJscHV2aW1udWZ0OSJ9.Ddn7m7RDXfSq8xF-kFCvJw';
+
+        // Initialize map
+        const map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/streets-v12',
+            center: [0, 20],
+            zoom: 2,
+            projection: 'globe'
+        });
+
+        // Add navigation controls
+        map.addControl(new mapboxgl.NavigationControl());
+        map.addControl(new mapboxgl.FullscreenControl());
+
+        // Global variables
+        let currentModule = null;
+        let loadedLayers = new Set();
+
+        // DOM elements
+        const moduleSelect = document.getElementById('moduleSelect');
+        const regionSelect = document.getElementById('regionSelect');
+        const loadModuleBtn = document.getElementById('loadModule');
+        const resetViewBtn = document.getElementById('resetView');
+        const statusBar = document.getElementById('statusBar');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+
+        // Map style controls
+        document.querySelectorAll('.style-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Update active button
+                document.querySelectorAll('.style-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                // Change map style
+                const style = btn.dataset.style;
+                map.setStyle(`mapbox://styles/mapbox/${style}`);
+                updateStatus(`Switched to ${btn.textContent} view`);
+            });
+        });
+
+        // Feature toggles
+        document.getElementById('earthquakeToggle').addEventListener('change', function() {
+            if (this.checked) {
+                loadEarthquakeData();
+            } else {
+                removeLayer('earthquakes');
+            }
+        });
+
+        document.getElementById('citiesToggle').addEventListener('change', function() {
+            if (this.checked) {
+                loadCitiesData();
+            } else {
+                removeLayer('cities');
+            }
+        });
+
+        document.getElementById('climateToggle').addEventListener('change', function() {
+            if (this.checked) {
+                loadClimateData();
+            } else {
+                removeLayer('climate');
+            }
+        });
+
+        document.getElementById('terrainToggle').addEventListener('change', function() {
+            if (this.checked) {
+                enable3DTerrain();
+            } else {
+                disable3DTerrain();
+            }
+        });
+
+        // Module loading
+        loadModuleBtn.addEventListener('click', loadSelectedModule);
+        resetViewBtn.addEventListener('click', resetMapView);
+
+        function loadSelectedModule() {
+            const selectedModule = moduleSelect.value;
+            const selectedRegion = regionSelect.value;
+            
+            if (!selectedModule) {
+                updateStatus('Please select a module first');
+                return;
+            }
+            
+            showLoading(true);
+            currentModule = selectedModule;
+            
+            // Simulate module loading
+            setTimeout(() => {
+                updateStatus(`Loaded ${moduleSelect.options[moduleSelect.selectedIndex].text}`);
+                
+                if (selectedRegion) {
+                    focusOnRegion(selectedRegion);
+                }
+                
+                showLoading(false);
+            }, 1500);
+        }
+
+        function focusOnRegion(region) {
+            const regionCoords = {
+                'north-america': { center: [-100, 45], zoom: 3 },
+                'south-america': { center: [-60, -15], zoom: 3 },
+                'europe': { center: [10, 50], zoom: 4 },
+                'africa': { center: [20, 0], zoom: 3 },
+                'asia': { center: [100, 30], zoom: 3 },
+                'oceania': { center: [140, -25], zoom: 4 },
+                'antarctica': { center: [0, -85], zoom: 3 }
+            };
+            
+            if (regionCoords[region]) {
+                map.flyTo({
+                    center: regionCoords[region].center,
+                    zoom: regionCoords[region].zoom,
+                    duration: 2000
+                });
+                updateStatus(`Focused on ${region.replace('-', ' ').toUpperCase()}`);
+            }
+        }
+
+        function resetMapView() {
+            map.flyTo({
+                center: [0, 20],
+                zoom: 2,
+                duration: 1500
+            });
+            
+            // Reset all toggles
+            document.querySelectorAll('.feature-toggle input').forEach(input => {
+                input.checked = false;
+            });
+            
+            // Remove all layers
+            removeAllLayers();
+            
+            updateStatus('View reset to global perspective');
+        }
+
+        function loadEarthquakeData() {
+            // This would integrate with USGS API
+            updateStatus('Loading recent earthquake data...');
+            
+            // Placeholder for earthquake layer
+            setTimeout(() => {
+                loadedLayers.add('earthquakes');
+                updateStatus('Earthquake data loaded (demo)');
+            }, 1000);
+        }
+
+        function loadCitiesData() {
+            updateStatus('Loading major cities...');
+            
+            // Placeholder for cities layer
+            setTimeout(() => {
+                loadedLayers.add('cities');
+                updateStatus('Major cities data loaded (demo)');
+            }, 800);
+        }
+
+        function loadClimateData() {
+            updateStatus('Loading climate zones...');
+            
+            // Placeholder for climate layer
+            setTimeout(() => {
+                loadedLayers.add('climate');
+                updateStatus('Climate zones loaded (demo)');
+            }, 1200);
+        }
+
+        function enable3DTerrain() {
+            updateStatus('Enabling 3D terrain...');
+            
+            map.addSource('mapbox-dem', {
+                'type': 'raster-dem',
+                'url': 'mapbox://mapbox.mapbox-terrain-dem-v1',
+                'tileSize': 512,
+                'maxzoom': 14
+            });
+            
+            map.setTerrain({ 'source': 'mapbox-dem', 'exaggeration': 1.5 });
+            loadedLayers.add('terrain');
+            updateStatus('3D terrain enabled');
+        }
+
+        function disable3DTerrain() {
+            map.setTerrain(null);
+            if (map.getSource('mapbox-dem')) {
+                map.removeSource('mapbox-dem');
+            }
+            loadedLayers.delete('terrain');
+            updateStatus('3D terrain disabled');
+        }
+
+        function removeLayer(layerName) {
+            loadedLayers.delete(layerName);
+            updateStatus(`${layerName} layer removed`);
+        }
+
+        function removeAllLayers() {
+            loadedLayers.clear();
+            disable3DTerrain();
+        }
+
+        function showLoading(show) {
+            loadingIndicator.style.display = show ? 'block' : 'none';
+        }
+
+        function updateStatus(message) {
+            statusBar.textContent = message;
+            console.log('Status:', message);
+        }
+
+        // Initialize map on load
+        map.on('load', () => {
+            updateStatus('Enhanced Curriculum Maps ready - Professional educational mapping system');
+            console.log('Enhanced Curriculum Maps initialized with Mapbox GL JS v3.0.1');
+        });
+
+        // Handle map errors
+        map.on('error', (e) => {
+            console.error('Map error:', e);
+            updateStatus('Map error occurred - check console for details');
+        });
+
+        // Log interactions for educational analytics
+        map.on('click', (e) => {
+            console.log('Map clicked at:', e.lngLat);
+        });
+
+        map.on('zoom', () => {
+            console.log('Map zoom level:', Math.round(map.getZoom() * 100) / 100);
+        });
+    </script>
+</body>
+</html>
