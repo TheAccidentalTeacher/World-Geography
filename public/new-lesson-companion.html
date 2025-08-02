@@ -3113,29 +3113,9 @@
                 return;
             }
             
-            // Set Mapbox access token - using educational fallback approach
-            // Note: In production, this should be configured via environment variables
-            try {
-                mapboxgl.accessToken = 'pk.eyJ1IjoidGhlYWNjaWRlbnRhbHRlYWNoZXIiLCJhIjoiY2x6dW05ZzNrMDVnNzJscHV2aW1udWZ0OSJ9.Ddn7m7RDXfSq8xF-kFCvJw';
-                
-                // Test token validity
-                fetch(`https://api.mapbox.com/styles/v1/mapbox/streets-v12?access_token=${mapboxgl.accessToken}`)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Token validation failed');
-                        }
-                    })
-                    .catch(error => {
-                        console.warn('Mapbox token issue detected, using fallback mode');
-                        updateMapStatus('Map authentication issue - using educational fallback mode');
-                        initializeFallbackMap();
-                        return;
-                    });
-            } catch (error) {
-                console.error('Error setting Mapbox token:', error);
-                initializeFallbackMap();
-                return;
-            }
+            // Set Mapbox access token - using demo token for educational purposes
+            // Note: This should be replaced with a valid token for production use
+            mapboxgl.accessToken = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
             
             updateMapStatus('Initializing Enhanced Maps...');
             
@@ -3240,14 +3220,10 @@
                     syncMapWithCurrentLesson();
                 });
 
-                enhancedMap.on('error', (e) => {
-                    console.error('Enhanced Map error:', e);
-                    updateMapStatus('Map error occurred - check console for details');
-                });
-
             } catch (error) {
                 console.error('Error initializing Enhanced Maps:', error);
                 updateMapStatus('Error initializing map: ' + error.message);
+                initializeFallbackMap();
             }
         }
 
