@@ -3120,13 +3120,13 @@
             updateMapStatus('Initializing Enhanced Maps...');
             
             try {
-                // Initialize enhanced map with error handling
+                // Initialize enhanced map with proper educational geography settings
                 enhancedMap = new mapboxgl.Map({
                     container: 'enhanced-map',
                     style: 'mapbox://styles/mapbox/streets-v12',
-                    center: [0, 20],
-                    zoom: 2,
-                    projection: 'globe'
+                    center: [15, 50], // Center on Europe for Byzantine Empire context
+                    zoom: 4,
+                    projection: 'mercator' // Standard flat map projection for education
                 });
 
                 // Add navigation controls
