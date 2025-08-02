@@ -1358,6 +1358,12 @@
                 text-align: center;
             }
         }
+        
+        /* Animation for map loading spinner */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -3054,11 +3060,19 @@
                 console.error('Tab not found:', tabName + '-tab');
             }
             
-            // Activate corresponding button
-            if (event && event.target) {
-                event.target.classList.add('active');
-                console.log('Activated button:', event.target.textContent);
-            }
+            // Find and activate the corresponding button
+            const buttons = document.querySelectorAll('.tab-button');
+            buttons.forEach(btn => {
+                const buttonText = btn.textContent.toLowerCase();
+                if ((tabName === 'teacher' && buttonText.includes('teacher')) ||
+                    (tabName === 'vocabulary' && buttonText.includes('vocabulary')) ||
+                    (tabName === 'maps' && buttonText.includes('maps')) ||
+                    (tabName === 'ai-tools' && buttonText.includes('ai tools')) ||
+                    (tabName === 'connections' && buttonText.includes('connections'))) {
+                    btn.classList.add('active');
+                    console.log('Activated button:', btn.textContent);
+                }
+            });
             
             // Initialize Enhanced Maps when Maps tab is shown
             if (tabName === 'maps') {
