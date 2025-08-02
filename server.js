@@ -19,15 +19,21 @@ let slidesBucket;
 app.use(cors());
 app.use(express.json());
 
-// Content Security Policy for Mapbox with comprehensive font support
+// Content Security Policy for Leaflet with OpenStreetMap and educational tile sources
 app.use((req, res, next) => {
   res.setHeader('Content-Security-Policy', 
     "default-src 'self'; " +
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://api.mapbox.com https://cdn.jsdelivr.net https://unpkg.com; " +
-    "style-src 'self' 'unsafe-inline' https://api.mapbox.com https://fonts.googleapis.com https://cdn.jsdelivr.net; " +
-    "font-src 'self' data: https://api.mapbox.com https://*.mapbox.com https://fonts.gstatic.com https://fonts.googleapis.com; " +
-    "img-src 'self' data: blob: https://api.mapbox.com https://*.tiles.mapbox.com https://*.mapbox.com; " +
-    "connect-src 'self' https://api.mapbox.com https://events.mapbox.com https://*.tiles.mapbox.com; " +
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://cdn.jsdelivr.net; " +
+    "style-src 'self' 'unsafe-inline' https://unpkg.com https://fonts.googleapis.com https://cdn.jsdelivr.net; " +
+    "font-src 'self' data: https://fonts.gstatic.com https://fonts.googleapis.com; " +
+    "img-src 'self' data: blob: " +
+      "https://*.tile.openstreetmap.org " +
+      "https://server.arcgisonline.com " +
+      "https://*.tile.opentopomap.org " +
+      "https://*.tile.openstreetmap.fr " +
+      "https://earthquake.usgs.gov " +
+      "https://*.esri.com; " +
+    "connect-src 'self' https://earthquake.usgs.gov https://*.openstreetmap.org; " +
     "worker-src 'self' blob:; " +
     "child-src 'self' blob:;"
   );
