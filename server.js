@@ -1293,21 +1293,6 @@ L.tileLayer('${mapType.tileLayer}', {
     });
   }
 });
-      setup: 'Add your Mapbox access token to environment variables'
-    });
-  }
-
-  res.json({
-    token: process.env.MAPBOX_ACCESS_TOKEN,
-    styles: {
-      terrain: 'mapbox://styles/mapbox/terrain-v12',
-      satellite: 'mapbox://styles/mapbox/satellite-v9',
-      outdoors: 'mapbox://styles/mapbox/outdoors-v12',
-      light: 'mapbox://styles/mapbox/light-v11'
-    },
-    educational: true
-  });
-});
 
 // Stability AI integration
 async function generateWithStabilityAI(prompt) {
