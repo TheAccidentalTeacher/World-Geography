@@ -3036,47 +3036,65 @@
             return html;
         }
 
-        // Tab switching
+        // Tab switching with enhanced error handling
         function showTab(tabName) {
-            console.log('Switching to tab:', tabName);
+            console.log('showTab called with:', tabName);
             
-            // Hide all tabs
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.remove('active');
-                console.log('Hiding tab:', tab.id);
-            });
-            
-            // Remove active class from all buttons
-            document.querySelectorAll('.tab-button').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            
-            // Show selected tab
-            const targetTab = document.getElementById(tabName + '-tab');
-            if (targetTab) {
-                targetTab.classList.add('active');
-                console.log('Showing tab:', tabName + '-tab');
-            } else {
-                console.error('Tab not found:', tabName + '-tab');
-            }
-            
-            // Find and activate the corresponding button
-            const buttons = document.querySelectorAll('.tab-button');
-            buttons.forEach(btn => {
-                const buttonText = btn.textContent.toLowerCase();
-                if ((tabName === 'teacher' && buttonText.includes('teacher')) ||
-                    (tabName === 'vocabulary' && buttonText.includes('vocabulary')) ||
-                    (tabName === 'maps' && buttonText.includes('maps')) ||
-                    (tabName === 'ai-tools' && buttonText.includes('ai tools')) ||
-                    (tabName === 'connections' && buttonText.includes('connections'))) {
-                    btn.classList.add('active');
-                    console.log('Activated button:', btn.textContent);
+            try {
+                // Hide all tabs
+                const allTabs = document.querySelectorAll('.tab-content');
+                console.log('Found', allTabs.length, 'tab contents');
+                allTabs.forEach(tab => {
+                    tab.classList.remove('active');
+                    console.log('Hiding tab:', tab.id);
+                });
+                
+                // Remove active class from all buttons
+                const allButtons = document.querySelectorAll('.tab-button');
+                console.log('Found', allButtons.length, 'tab buttons');
+                allButtons.forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                // Show selected tab
+                const targetTab = document.getElementById(tabName + '-tab');
+                console.log('Looking for tab:', tabName + '-tab');
+                if (targetTab) {
+                    targetTab.classList.add('active');
+                    console.log('Successfully showing tab:', tabName + '-tab');
+                } else {
+                    console.error('Tab not found:', tabName + '-tab');
+                    console.log('Available tabs:', Array.from(document.querySelectorAll('[id$="-tab"]')).map(t => t.id));
                 }
-            });
-            
-            // Initialize Enhanced Maps when Maps tab is shown
-            if (tabName === 'maps') {
-                initializeEnhancedMaps();
+                
+                // Find and activate the corresponding button
+                const buttons = document.querySelectorAll('.tab-button');
+                let buttonActivated = false;
+                buttons.forEach(btn => {
+                    const buttonText = btn.textContent.toLowerCase();
+                    console.log('Checking button:', buttonText, 'for tab:', tabName);
+                    if ((tabName === 'teacher' && buttonText.includes('teacher')) ||
+                        (tabName === 'vocabulary' && buttonText.includes('vocabulary')) ||
+                        (tabName === 'maps' && buttonText.includes('maps')) ||
+                        (tabName === 'ai-tools' && buttonText.includes('ai tools')) ||
+                        (tabName === 'connections' && buttonText.includes('connections'))) {
+                        btn.classList.add('active');
+                        buttonActivated = true;
+                        console.log('Activated button:', btn.textContent);
+                    }
+                });
+                
+                if (!buttonActivated) {
+                    console.error('No button was activated for tab:', tabName);
+                }
+                
+                // Initialize Enhanced Maps when Maps tab is shown
+                if (tabName === 'maps') {
+                    setTimeout(() => initializeEnhancedMaps(), 100);
+                }
+                
+            } catch (error) {
+                console.error('Error in showTab function:', error);
             }
         }
 
@@ -5409,6 +5427,59 @@
             if (e.key === 'Enter' && e.target.classList.contains('lookup-input')) {
                 lookupDefinition();
             }
+        });
+
+        // =================================
+        // DEBUGGING AND INITIALIZATION
+        // =================================
+        
+        // Add click event listeners directly to buttons as backup
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM Content Loaded - Setting up tab debugging');
+            
+            // Test if showTab function exists
+            if (typeof showTab === 'function') {
+                console.log('showTab function is available');
+            } else {
+                console.error('showTab function is NOT available');
+            }
+            
+            // Find all tab buttons and add backup click handlers
+            const tabButtons = document.querySelectorAll('.tab-button');
+            console.log('Found', tabButtons.length, 'tab buttons');
+            
+            tabButtons.forEach((button, index) => {
+                console.log(`Button ${index}:`, button.textContent, 'onclick:', button.getAttribute('onclick'));
+                
+                // Add backup click handler
+                button.addEventListener('click', function(e) {
+                    console.log('Direct click handler triggered for:', this.textContent);
+                    e.preventDefault();
+                    
+                    // Determine tab name from button text
+                    const text = this.textContent.toLowerCase();
+                    let tabName = '';
+                    if (text.includes('teacher')) tabName = 'teacher';
+                    else if (text.includes('vocabulary')) tabName = 'vocabulary';
+                    else if (text.includes('maps')) tabName = 'maps';
+                    else if (text.includes('ai tools')) tabName = 'ai-tools';
+                    else if (text.includes('connections')) tabName = 'connections';
+                    
+                    if (tabName) {
+                        console.log('Calling showTab with:', tabName);
+                        showTab(tabName);
+                    } else {
+                        console.error('Could not determine tab name for button:', this.textContent);
+                    }
+                });
+            });
+            
+            // Test initial tab setup
+            const allTabs = document.querySelectorAll('.tab-content');
+            console.log('Found', allTabs.length, 'tab content divs:');
+            allTabs.forEach(tab => {
+                console.log(' -', tab.id, 'active:', tab.classList.contains('active'));
+            });
         });
     </script>
 </body>
