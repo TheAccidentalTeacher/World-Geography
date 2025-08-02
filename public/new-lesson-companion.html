@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Geography Lesson Companion</title>
+    
+    <!-- Mapbox GL JS v3.0.1 for Enhanced Maps -->
+    <script src='https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css' rel='stylesheet' />
     <style>
         * {
             margin: 0;
@@ -1335,6 +1339,12 @@
             }
         }
         
+        /* Enhanced Maps Animations */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
         @media (max-width: 768px) {
             .cross-curricular-grid {
                 grid-template-columns: 1fr;
@@ -1433,6 +1443,7 @@
                 <div class="tab-buttons">
                     <button class="tab-button active" onclick="showTab('teacher')">Teacher Guide</button>
                     <button class="tab-button" onclick="showTab('vocabulary')">📚 Vocabulary</button>
+                    <button class="tab-button" onclick="showTab('maps')">🗺️ Enhanced Maps</button>
                     <button class="tab-button" onclick="showTab('ai-tools')">🤖 AI Tools</button>
                     <button class="tab-button" onclick="showTab('connections')">🔗 Connections</button>
                 </div>
@@ -1617,6 +1628,72 @@
                             <p>AI creates engaging narratives about geographic regions</p>
                             <button class="placeholder-btn" disabled>🔒 Phase 2 Feature</button>
                         </div>
+                    </div>
+                </div>
+
+                <!-- ENHANCED MAPS TAB -->
+                <div id="maps-tab" class="tab-content">
+                    <div class="lesson-info">
+                        <h3>🗺️ Enhanced Curriculum Maps</h3>
+                        <p style="margin-bottom: 15px; color: #666;">Interactive educational mapping system that automatically syncs with your selected lesson content.</p>
+                        
+                        <div id="map-lesson-info" style="background: #e7f3ff; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #007bff;">
+                            <strong>Current Lesson:</strong> <span id="map-current-lesson">Select a lesson to view relevant geographic content</span>
+                        </div>
+                        
+                        <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+                            <button id="focusLessonRegion" style="background: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">📍 Focus on Lesson Region</button>
+                            <button id="showLessonData" style="background: #17a2b8; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">📊 Show Lesson Data</button>
+                            <button id="resetMapView" style="background: #6c757d; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">🌍 Global View</button>
+                        </div>
+                    </div>
+                    
+                    <div class="enhanced-map-container" style="height: 600px; border-radius: 12px; overflow: hidden; position: relative; background: #f8f9fa; border: 2px solid #dee2e6;">
+                        <div id="enhanced-map" style="width: 100%; height: 100%;"></div>
+                        
+                        <div class="map-overlay" style="position: absolute; top: 15px; right: 15px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 15px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 1000; min-width: 200px;">
+                            <h4 style="margin-bottom: 10px; color: #2c3e50; font-size: 1em;">Map Controls</h4>
+                            
+                            <div class="style-buttons" style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 15px;">
+                                <button class="map-style-btn active" data-style="streets-v12" style="padding: 6px 10px; border: 2px solid #ddd; border-radius: 6px; background: #4CAF50; color: white; cursor: pointer; font-size: 11px;">Streets</button>
+                                <button class="map-style-btn" data-style="satellite-streets-v12" style="padding: 6px 10px; border: 2px solid #ddd; border-radius: 6px; background: white; cursor: pointer; font-size: 11px;">Satellite</button>
+                                <button class="map-style-btn" data-style="outdoors-v12" style="padding: 6px 10px; border: 2px solid #ddd; border-radius: 6px; background: white; cursor: pointer; font-size: 11px;">Outdoors</button>
+                                <button class="map-style-btn" data-style="light-v11" style="padding: 6px 10px; border: 2px solid #ddd; border-radius: 6px; background: white; cursor: pointer; font-size: 11px;">Light</button>
+                            </div>
+                            
+                            <div class="feature-controls" style="border-top: 1px solid #eee; padding-top: 10px;">
+                                <h5 style="margin-bottom: 8px; color: #2c3e50; font-size: 12px;">Data Layers</h5>
+                                
+                                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px; cursor: pointer;">
+                                    <input type="checkbox" id="mapEarthquakeToggle" style="width: 14px; height: 14px;">
+                                    <label for="mapEarthquakeToggle" style="cursor: pointer; font-size: 11px; color: #2c3e50;">Recent Earthquakes</label>
+                                </div>
+                                
+                                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px; cursor: pointer;">
+                                    <input type="checkbox" id="mapCitiesToggle" style="width: 14px; height: 14px;">
+                                    <label for="mapCitiesToggle" style="cursor: pointer; font-size: 11px; color: #2c3e50;">Major Cities</label>
+                                </div>
+                                
+                                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px; cursor: pointer;">
+                                    <input type="checkbox" id="mapClimateToggle" style="width: 14px; height: 14px;">
+                                    <label for="mapClimateToggle" style="cursor: pointer; font-size: 11px; color: #2c3e50;">Climate Zones</label>
+                                </div>
+                                
+                                <div style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                                    <input type="checkbox" id="mapTerrainToggle" style="width: 14px; height: 14px;">
+                                    <label for="mapTerrainToggle" style="cursor: pointer; font-size: 11px; color: #2c3e50;">3D Terrain</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="map-loading" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(255, 255, 255, 0.95); padding: 20px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 2000; display: none;">
+                            <div style="width: 30px; height: 30px; border: 3px solid #f3f3f3; border-top: 3px solid #4CAF50; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 10px;"></div>
+                            <div style="font-size: 14px; color: #2c3e50;">Loading map data...</div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(255, 255, 255, 0.9); padding: 10px 15px; text-align: center; font-size: 13px; color: #2c3e50; border-radius: 0 0 12px 12px; border: 2px solid #dee2e6; border-top: none;">
+                        <span id="map-status">Enhanced Maps ready - Select a lesson to see relevant geographic content</span>
                     </div>
                 </div>
 
@@ -2982,6 +3059,315 @@
                 event.target.classList.add('active');
                 console.log('Activated button:', event.target.textContent);
             }
+            
+            // Initialize Enhanced Maps when Maps tab is shown
+            if (tabName === 'maps') {
+                initializeEnhancedMaps();
+            }
+        }
+
+        // Enhanced Maps Integration
+        let enhancedMap = null;
+        let mapLoadedLayers = new Set();
+        let currentMapLesson = null;
+
+        function initializeEnhancedMaps() {
+            if (enhancedMap) return; // Already initialized
+            
+            if (!window.mapboxgl) {
+                console.error('Mapbox GL JS not loaded');
+                updateMapStatus('Error: Mapbox GL JS not loaded');
+                return;
+            }
+            
+            // Set Mapbox access token
+            mapboxgl.accessToken = 'pk.eyJ1IjoidGhlYWNjaWRlbnRhbHRlYWNoZXIiLCJhIjoiY2x6dW05ZzNrMDVnNzJscHV2aW1udWZ0OSJ9.Ddn7m7RDXfSq8xF-kFCvJw';
+            
+            updateMapStatus('Initializing Enhanced Maps...');
+            
+            try {
+                // Initialize enhanced map
+                enhancedMap = new mapboxgl.Map({
+                    container: 'enhanced-map',
+                    style: 'mapbox://styles/mapbox/streets-v12',
+                    center: [0, 20],
+                    zoom: 2,
+                    projection: 'globe'
+                });
+
+                // Add navigation controls
+                enhancedMap.addControl(new mapboxgl.NavigationControl());
+                enhancedMap.addControl(new mapboxgl.FullscreenControl());
+
+                // Map style controls
+                document.querySelectorAll('.map-style-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        // Update active button
+                        document.querySelectorAll('.map-style-btn').forEach(b => {
+                            b.classList.remove('active');
+                            b.style.background = 'white';
+                            b.style.color = 'black';
+                        });
+                        btn.classList.add('active');
+                        btn.style.background = '#4CAF50';
+                        btn.style.color = 'white';
+                        
+                        // Change map style
+                        const style = btn.dataset.style;
+                        enhancedMap.setStyle(`mapbox://styles/mapbox/${style}`);
+                        updateMapStatus(`Switched to ${btn.textContent} view`);
+                    });
+                });
+
+                // Feature toggles
+                document.getElementById('mapEarthquakeToggle').addEventListener('change', function() {
+                    if (this.checked) {
+                        loadEarthquakeData();
+                    } else {
+                        removeMapLayer('earthquakes');
+                    }
+                });
+
+                document.getElementById('mapCitiesToggle').addEventListener('change', function() {
+                    if (this.checked) {
+                        loadCitiesData();
+                    } else {
+                        removeMapLayer('cities');
+                    }
+                });
+
+                document.getElementById('mapClimateToggle').addEventListener('change', function() {
+                    if (this.checked) {
+                        loadClimateData();
+                    } else {
+                        removeMapLayer('climate');
+                    }
+                });
+
+                document.getElementById('mapTerrainToggle').addEventListener('change', function() {
+                    if (this.checked) {
+                        enable3DTerrain();
+                    } else {
+                        disable3DTerrain();
+                    }
+                });
+
+                // Lesson control buttons
+                document.getElementById('focusLessonRegion').addEventListener('click', focusOnLessonRegion);
+                document.getElementById('showLessonData').addEventListener('click', showLessonData);
+                document.getElementById('resetMapView').addEventListener('click', resetEnhancedMapView);
+
+                enhancedMap.on('load', () => {
+                    updateMapStatus('Enhanced Maps ready - Professional educational mapping system');
+                    console.log('Enhanced Maps initialized successfully');
+                    
+                    // Sync with current lesson if one is loaded
+                    syncMapWithCurrentLesson();
+                });
+
+                enhancedMap.on('error', (e) => {
+                    console.error('Enhanced Map error:', e);
+                    updateMapStatus('Map error occurred - check console for details');
+                });
+
+            } catch (error) {
+                console.error('Error initializing Enhanced Maps:', error);
+                updateMapStatus('Error initializing map: ' + error.message);
+            }
+        }
+
+        function syncMapWithCurrentLesson() {
+            if (!currentLesson) {
+                updateMapLessonInfo('Select a lesson to view relevant geographic content');
+                return;
+            }
+            
+            currentMapLesson = currentLesson;
+            const lessonTitle = currentLesson.title || 'Unknown Lesson';
+            const moduleTitle = currentLesson.module ? currentLesson.module.title : 'Unknown Module';
+            
+            updateMapLessonInfo(`${moduleTitle} - ${lessonTitle}`);
+            updateMapStatus(`Synced with: ${lessonTitle}`);
+            
+            // Auto-focus on relevant region based on lesson content
+            focusOnLessonRegion();
+        }
+
+        function focusOnLessonRegion() {
+            if (!enhancedMap || !currentMapLesson) {
+                updateMapStatus('No lesson selected for region focus');
+                return;
+            }
+            
+            const lessonContent = (currentMapLesson.content || '').toLowerCase();
+            const lessonTitle = (currentMapLesson.title || '').toLowerCase();
+            const searchText = lessonContent + ' ' + lessonTitle;
+            
+            // Define region mappings based on lesson content
+            const regionMappings = {
+                'north america': { center: [-100, 45], zoom: 3, name: 'North America' },
+                'south america': { center: [-60, -15], zoom: 3, name: 'South America' },
+                'europe': { center: [10, 50], zoom: 4, name: 'Europe' },
+                'africa': { center: [20, 0], zoom: 3, name: 'Africa' },
+                'asia': { center: [100, 30], zoom: 3, name: 'Asia' },
+                'oceania': { center: [140, -25], zoom: 4, name: 'Oceania' },
+                'australia': { center: [133, -25], zoom: 4, name: 'Australia' },
+                'antarctica': { center: [0, -85], zoom: 3, name: 'Antarctica' },
+                'united states': { center: [-100, 40], zoom: 4, name: 'United States' },
+                'canada': { center: [-106, 56], zoom: 3, name: 'Canada' },
+                'mexico': { center: [-102, 23], zoom: 5, name: 'Mexico' },
+                'brazil': { center: [-55, -10], zoom: 4, name: 'Brazil' },
+                'china': { center: [104, 35], zoom: 4, name: 'China' },
+                'india': { center: [78, 20], zoom: 4, name: 'India' },
+                'russia': { center: [105, 61], zoom: 3, name: 'Russia' },
+                'middle east': { center: [47, 29], zoom: 4, name: 'Middle East' },
+                'arctic': { center: [0, 80], zoom: 3, name: 'Arctic' },
+                'pacific': { center: [-155, 0], zoom: 3, name: 'Pacific Ocean' },
+                'atlantic': { center: [-30, 0], zoom: 3, name: 'Atlantic Ocean' }
+            };
+            
+            // Find matching region
+            let targetRegion = null;
+            for (const [keyword, region] of Object.entries(regionMappings)) {
+                if (searchText.includes(keyword)) {
+                    targetRegion = region;
+                    break;
+                }
+            }
+            
+            if (targetRegion) {
+                enhancedMap.flyTo({
+                    center: targetRegion.center,
+                    zoom: targetRegion.zoom,
+                    duration: 2000
+                });
+                updateMapStatus(`Focused on ${targetRegion.name} for current lesson`);
+            } else {
+                // Default to global view
+                resetEnhancedMapView();
+                updateMapStatus('No specific region detected - showing global view');
+            }
+        }
+
+        function showLessonData() {
+            if (!enhancedMap || !currentMapLesson) {
+                updateMapStatus('No lesson selected for data display');
+                return;
+            }
+            
+            // For now, just enable some relevant data layers
+            // In the future, this could be more sophisticated based on lesson content
+            const earthquakeToggle = document.getElementById('mapEarthquakeToggle');
+            const citiesToggle = document.getElementById('mapCitiesToggle');
+            
+            earthquakeToggle.checked = true;
+            citiesToggle.checked = true;
+            
+            loadEarthquakeData();
+            loadCitiesData();
+            
+            updateMapStatus('Loaded relevant data layers for current lesson');
+        }
+
+        function resetEnhancedMapView() {
+            if (!enhancedMap) return;
+            
+            enhancedMap.flyTo({
+                center: [0, 20],
+                zoom: 2,
+                duration: 1500
+            });
+            
+            // Reset all toggles
+            document.querySelectorAll('#maps-tab input[type="checkbox"]').forEach(input => {
+                input.checked = false;
+            });
+            
+            // Remove all layers
+            removeAllMapLayers();
+            
+            updateMapStatus('View reset to global perspective');
+        }
+
+        function loadEarthquakeData() {
+            updateMapStatus('Loading recent earthquake data...');
+            // Placeholder for earthquake layer implementation
+            setTimeout(() => {
+                mapLoadedLayers.add('earthquakes');
+                updateMapStatus('Earthquake data loaded (demo)');
+            }, 1000);
+        }
+
+        function loadCitiesData() {
+            updateMapStatus('Loading major cities...');
+            // Placeholder for cities layer implementation
+            setTimeout(() => {
+                mapLoadedLayers.add('cities');
+                updateMapStatus('Major cities data loaded (demo)');
+            }, 800);
+        }
+
+        function loadClimateData() {
+            updateMapStatus('Loading climate zones...');
+            // Placeholder for climate layer implementation
+            setTimeout(() => {
+                mapLoadedLayers.add('climate');
+                updateMapStatus('Climate zones loaded (demo)');
+            }, 1200);
+        }
+
+        function enable3DTerrain() {
+            if (!enhancedMap) return;
+            
+            updateMapStatus('Enabling 3D terrain...');
+            
+            enhancedMap.addSource('mapbox-dem', {
+                'type': 'raster-dem',
+                'url': 'mapbox://mapbox.mapbox-terrain-dem-v1',
+                'tileSize': 512,
+                'maxzoom': 14
+            });
+            
+            enhancedMap.setTerrain({ 'source': 'mapbox-dem', 'exaggeration': 1.5 });
+            mapLoadedLayers.add('terrain');
+            updateMapStatus('3D terrain enabled');
+        }
+
+        function disable3DTerrain() {
+            if (!enhancedMap) return;
+            
+            enhancedMap.setTerrain(null);
+            if (enhancedMap.getSource('mapbox-dem')) {
+                enhancedMap.removeSource('mapbox-dem');
+            }
+            mapLoadedLayers.delete('terrain');
+            updateMapStatus('3D terrain disabled');
+        }
+
+        function removeMapLayer(layerName) {
+            mapLoadedLayers.delete(layerName);
+            updateMapStatus(`${layerName} layer removed`);
+        }
+
+        function removeAllMapLayers() {
+            mapLoadedLayers.clear();
+            disable3DTerrain();
+        }
+
+        function updateMapStatus(message) {
+            const statusElement = document.getElementById('map-status');
+            if (statusElement) {
+                statusElement.textContent = message;
+            }
+            console.log('Map Status:', message);
+        }
+
+        function updateMapLessonInfo(message) {
+            const infoElement = document.getElementById('map-current-lesson');
+            if (infoElement) {
+                infoElement.textContent = message;
+            }
+        }
         }
 
         // Navigation functions
@@ -3160,6 +3546,12 @@
         // Function to generate cross-curricular content based on current lesson
         function generateCrossCurricularContent(lesson) {
             currentLesson = lesson;
+            
+            // Sync Enhanced Maps with the new lesson
+            if (enhancedMap && lesson) {
+                syncMapWithCurrentLesson();
+            }
+            
             generateELAContent(lesson);
             generateScienceContent(lesson);
         }
@@ -4993,8 +5385,9 @@
                 switch(e.key) {
                     case '1': showTab('teacher'); break;
                     case '2': showTab('vocabulary'); break;
-                    case '3': showTab('ai-tools'); break;
-                    case '4': showTab('connections'); break;
+                    case '3': showTab('maps'); break;
+                    case '4': showTab('ai-tools'); break;
+                    case '5': showTab('connections'); break;
                 }
             }
             
