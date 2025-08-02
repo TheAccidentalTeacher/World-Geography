@@ -1078,7 +1078,7 @@ app.get('/api/ai/test-azure-models', async (req, res) => {
   });
 });
 
-// AI Map Illustration Generator - Educational Maps Only (No DALL-E)
+// AI Map Illustration Generator - DISABLED: Professional Maps Only
 app.post('/api/ai/generate-map', async (req, res) => {
   try {
     const { description } = req.body;
@@ -1087,148 +1087,210 @@ app.post('/api/ai/generate-map', async (req, res) => {
       return res.status(400).json({ error: 'Map description is required' });
     }
 
-    // Step 1: Create super-detailed educational map prompt
-    console.log('🎯 Creating detailed educational map prompt...');
-    
-    let optimizedPrompt = "";
-    let promptAnalysis = "";
-
-    if (openai) {
-      try {
-        const promptOptimization = await openai.chat.completions.create({
-          model: "gpt-4o-mini",
-          messages: [
-            {
-              role: "system",
-              content: `You are a master cartographer creating prompts for educational maps that MUST be readable in classrooms.
-
-CRITICAL REQUIREMENTS:
-- Text labels MUST be large, bold, and contrast sharply with background
-- Use simple, clean cartographic style (like National Geographic educational maps)
-- Specify exact colors for clarity: "bright blue oceans, forest green lowlands, brown mountains, white ice"
-- Include scale, compass rose, and legend
-- NO artistic flourishes or decorative elements
-- Geographic accuracy is essential
-
-PROMPT TEMPLATE:
-"Educational cartographic map of [LOCATION], style: clean scientific cartography, large bold black text labels on contrasting backgrounds, [SPECIFIC FEATURES], color scheme: [EXACT COLORS], include compass rose and scale bar, text must be classroom-readable from 10 feet away, avoid decorative elements, National Geographic educational style"
-
-Analyze the request and create the PERFECT educational map prompt:`
-            },
-            {
-              role: "user",
-              content: `Create detailed educational map prompt for: ${description}`
-            }
-          ],
-          max_tokens: 250,
-          temperature: 0.3,
-        });
-
-        optimizedPrompt = promptOptimization.choices[0].message.content.trim();
-        promptAnalysis = "✅ AI-optimized for educational clarity";
-      } catch (error) {
-        console.error('Prompt optimization failed:', error);
-        // Fallback to manual optimization
-        optimizedPrompt = createFallbackPrompt(description);
-        promptAnalysis = "⚠️ Using fallback prompt optimization";
-      }
-    } else {
-      optimizedPrompt = createFallbackPrompt(description);
-      promptAnalysis = "🔧 Manual prompt optimization (OpenAI unavailable)";
-    }
-
-    console.log('📝 Generated prompt:', optimizedPrompt);
-
-    // Step 2: Try image generation APIs - SKIP DALL-E for educational maps (terrible quality)
-    let imageResult = null;
-    let usedGenerator = null;
-    let failureReasons = [];
-
-    // Try Stability AI FIRST (best for educational maps)
-    if (process.env.STABILITY_AI_API_KEY) {
-      console.log('🎨 Trying Stability AI (Primary - Best for educational maps)...');
-      try {
-        imageResult = await generateWithStabilityAI(optimizedPrompt);
-        usedGenerator = 'Stability AI (Primary - Best educational quality)';
-        console.log('✅ Stability AI succeeded!');
-      } catch (error) {
-        console.error('❌ Stability AI failed:', error.message);
-        failureReasons.push(`Stability AI: ${error.message}`);
-      }
-    } else {
-      failureReasons.push('Stability AI: API key not configured');
-    }
-
-    // Skip DALL-E completely for educational maps - it produces unreadable text
-    // DALL-E creates beautiful artistic maps but text is illegible in classrooms
-    // Save DALL-E for other projects where readability isn't critical
-
-    // Try Replicate as backup (much better than DALL-E for maps)
-    if (!imageResult && process.env.REPLICATE_API_TOKEN) {
-      console.log('🎨 Trying Replicate (Secondary - Better than DALL-E for maps)...');
-      try {
-        imageResult = await generateWithReplicate(optimizedPrompt);
-        usedGenerator = 'Replicate (Secondary - Educational backup)';
-        console.log('✅ Replicate succeeded!');
-      } catch (error) {
-        console.error('❌ Replicate failed:', error.message);
-        failureReasons.push(`Replicate: ${error.message}`);
-      }
-    } else if (!imageResult) {
-      failureReasons.push('Replicate: API key not configured');
-    }
-
-    if (imageResult) {
-      res.json({
-        description: description,
-        imageUrl: imageResult,
-        optimizedPrompt: optimizedPrompt,
-        promptAnalysis: promptAnalysis,
-        generator: usedGenerator,
-        status: 'success',
-        message: 'Educational map generated! (DALL-E skipped - terrible for classroom use)',
-        tips: [
-          "🎯 Stability AI prioritized for best educational quality",
-          "📏 Text optimized for classroom readability", 
-          "🚫 DALL-E skipped (produces unreadable maps)",
-          "🗺️ Educational cartography standards applied"
-        ],
-        failureReasons: failureReasons.length > 0 ? failureReasons : undefined
-      });
-    } else {
-      // All educational APIs failed - provide helpful fallback
-      res.json({
-        description: description,
-        imageUrl: null,
-        optimizedPrompt: optimizedPrompt,
-        promptAnalysis: promptAnalysis,
-        mapDescription: `Educational map of ${description} - Educational image services temporarily unavailable.`,
-        status: 'all_services_failed',
-        message: 'Educational map services unavailable (DALL-E intentionally skipped)',
-        generator: 'None (educational services unavailable)',
-        failureReasons: failureReasons,
-        tips: [
-          "✅ Detailed educational prompt created",
-          "🎯 Stability AI + Replicate configured for classroom quality",
-          "🚫 DALL-E disabled for maps (unreadable text)",
-          "⚡ Will work when educational APIs are available"
-        ]
-      });
-    }
+    // AI-generated maps are too low quality for educational use
+    // Redirect to professional mapping alternatives
+    res.json({
+      description: description,
+      imageUrl: null,
+      status: 'ai_maps_disabled',
+      message: 'AI-generated maps disabled - poor quality for educational use',
+      alternatives: {
+        mapbox: {
+          available: true,
+          description: 'Professional interactive maps with educational features',
+          url: 'Use Mapbox GL JS for interactive educational maps'
+        },
+        staticMaps: {
+          available: true,
+          description: 'High-quality static map images from professional sources',
+          suggestions: [
+            'Use Mapbox Static Images API for specific regions',
+            'Integrate with Natural Earth data for educational accuracy',
+            'Use USGS educational map resources',
+            'Link to National Geographic education maps'
+          ]
+        },
+        educationalResources: {
+          available: true,
+          suggestions: [
+            'National Geographic Education maps',
+            'USGS educational materials',
+            'World Bank data visualization',
+            'UN geographic information systems'
+          ]
+        }
+      },
+      recommendation: 'Use professional mapping tools instead of AI generation for educational quality',
+      tips: [
+        "🏆 Professional maps ensure geographic accuracy",
+        "📏 Proper scale and projection for educational use", 
+        "🗺️ Consistent cartographic standards",
+        "⚡ Interactive features enhance learning"
+      ]
+    });
 
   } catch (error) {
-    console.error('Map Generation Error:', error);
+    console.error('Map Service Error:', error);
     res.status(500).json({ 
-      error: 'Failed to generate educational map',
-      fallback: `Unable to generate map for "${req.body.description}" at this time. Please try again later.`
+      error: 'Map service unavailable',
+      fallback: `Professional mapping tools recommended for "${req.body.description}".`
     });
   }
 });
 
-// Helper function for fallback prompt creation
-function createFallbackPrompt(description) {
-  return `Educational cartographic map of ${description}, style: clean scientific cartography with large bold black text labels on high-contrast backgrounds, detailed geographic features clearly labeled, color scheme: bright blue oceans, forest green lowlands, brown mountains, white ice and snow, include compass rose and scale bar, text must be classroom-readable from 10 feet away, National Geographic educational atlas style, avoid decorative elements, focus on educational clarity and geographic accuracy`;
-}
+// Professional Educational Map Resources
+app.get('/api/maps/educational/:region', async (req, res) => {
+  try {
+    const { region } = req.params;
+    const { type = 'overview' } = req.query;
+    
+    // Professional map resources for education
+    const educationalMaps = {
+      alaska: {
+        overview: {
+          title: "Alaska Regional Overview",
+          description: "Professional educational map of Alaska showing major geographic features",
+          mapboxStyle: "mapbox://styles/mapbox/terrain-v12",
+          center: [-153.0, 64.0],
+          zoom: 4,
+          features: ["rivers", "mountains", "cities", "borders"],
+          educationalFocus: "Physical geography and regional overview",
+          resources: {
+            nationalGeographic: "https://education.nationalgeographic.org/resource/alaska/",
+            usgs: "https://www.usgs.gov/centers/alaska-science-center",
+            data: "Natural Earth, USGS, Alaska Department of Natural Resources"
+          }
+        },
+        physical: {
+          title: "Alaska Physical Features",
+          description: "Detailed physical geography of Alaska",
+          mapboxStyle: "mapbox://styles/mapbox/satellite-v9",
+          center: [-153.0, 64.0],
+          zoom: 5,
+          features: ["topography", "rivers", "glaciers", "mountain ranges"],
+          educationalFocus: "Physical geography and landforms"
+        },
+        rivers: {
+          title: "Alaska River Systems",
+          description: "Major rivers and watersheds of Alaska including the Cooper River",
+          mapboxStyle: "mapbox://styles/mapbox/outdoors-v12",
+          center: [-145.0, 61.5],
+          zoom: 6,
+          features: ["cooper_river", "yukon_river", "watersheds", "drainage_basins"],
+          educationalFocus: "Hydrology and river systems",
+          highlights: {
+            cooper_river: {
+              description: "Major river system in south-central Alaska",
+              length: "300 miles",
+              source: "Copper Glacier",
+              mouth: "Gulf of Alaska"
+            }
+          }
+        }
+      },
+      world: {
+        overview: {
+          title: "World Political Map",
+          description: "Professional world map for educational use",
+          mapboxStyle: "mapbox://styles/mapbox/light-v11",
+          center: [0, 20],
+          zoom: 2,
+          features: ["countries", "capitals", "major_cities", "borders"],
+          educationalFocus: "Political geography and world overview"
+        }
+      }
+    };
+
+    const mapData = educationalMaps[region.toLowerCase()];
+    if (!mapData) {
+      return res.status(404).json({ 
+        error: 'Region not found',
+        availableRegions: Object.keys(educationalMaps),
+        suggestion: 'Try: alaska, world'
+      });
+    }
+
+    const mapType = mapData[type];
+    if (!mapType) {
+      return res.status(404).json({
+        error: 'Map type not found',
+        availableTypes: Object.keys(mapData),
+        suggestion: 'Try: overview, physical, rivers'
+      });
+    }
+
+    res.json({
+      region: region,
+      type: type,
+      map: mapType,
+      implementation: {
+        mapbox: {
+          required: "Mapbox GL JS library",
+          apiKey: "Requires MAPBOX_ACCESS_TOKEN environment variable",
+          example: `
+// Initialize map
+mapboxgl.accessToken = 'your-mapbox-token';
+const map = new mapboxgl.Map({
+  container: 'map',
+  style: '${mapType.mapboxStyle}',
+  center: [${mapType.center[0]}, ${mapType.center[1]}],
+  zoom: ${mapType.zoom}
+});`
+        },
+        static: {
+          url: `https://api.mapbox.com/styles/v1/mapbox/terrain-v12/static/${mapType.center[0]},${mapType.center[1]},${mapType.zoom}/800x600@2x?access_token=YOUR_TOKEN`,
+          description: "High-quality static image for printable materials"
+        }
+      },
+      educationalValue: {
+        gradeLevel: "6-12",
+        subjects: ["Geography", "Earth Science", "Social Studies"],
+        standards: ["National Geography Standards", "Next Generation Science Standards"],
+        activities: [
+          "Location identification exercises",
+          "Scale and distance calculations", 
+          "Feature classification and analysis",
+          "Cross-curricular connections"
+        ]
+      },
+      tips: [
+        "🎯 Professional cartographic accuracy guaranteed",
+        "📏 Proper scale and projection for educational use",
+        "🗺️ Interactive features enhance student engagement",
+        "📚 Aligns with educational standards and curricula"
+      ]
+    });
+
+  } catch (error) {
+    console.error('Educational Map Service Error:', error);
+    res.status(500).json({ 
+      error: 'Educational map service unavailable',
+      fallback: 'Please try again or use alternative mapping resources'
+    });
+  }
+});
+
+// Mapbox Integration Endpoint
+app.get('/api/maps/mapbox/token', (req, res) => {
+  if (!process.env.MAPBOX_ACCESS_TOKEN) {
+    return res.status(503).json({
+      error: 'Mapbox not configured',
+      message: 'MAPBOX_ACCESS_TOKEN environment variable required',
+      setup: 'Add your Mapbox access token to environment variables'
+    });
+  }
+
+  res.json({
+    token: process.env.MAPBOX_ACCESS_TOKEN,
+    styles: {
+      terrain: 'mapbox://styles/mapbox/terrain-v12',
+      satellite: 'mapbox://styles/mapbox/satellite-v9',
+      outdoors: 'mapbox://styles/mapbox/outdoors-v12',
+      light: 'mapbox://styles/mapbox/light-v11'
+    },
+    educational: true
+  });
+});
 
 // Stability AI integration
 async function generateWithStabilityAI(prompt) {

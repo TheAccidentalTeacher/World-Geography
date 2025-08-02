@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Educational Maps - World Geography Hub</title>
+    <script src='https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css' rel='stylesheet' />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            border-bottom: 3px solid #4CAF50;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .controls {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .control-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .control-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .control-item label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .control-item select, .control-item button {
+            padding: 0.75rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .control-item select:focus, .control-item button:hover {
+            border-color: #4CAF50;
+            outline: none;
+        }
+
+        .load-map-btn {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .load-map-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .map-container {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            min-height: 600px;
+            position: relative;
+        }
+
+        #map {
+            width: 100%;
+            height: 600px;
+        }
+
+        .map-info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1rem;
+            border-radius: 10px;
+            max-width: 300px;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .map-info h3 {
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .map-info p {
+            color: #666;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .educational-resources {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin-top: 2rem;
+        }
+
+        .educational-resources h2 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .resource-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .resource-card {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 5px solid #4CAF50;
+        }
+
+        .resource-card h3 {
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .resource-card p {
+            color: #666;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .resource-link {
+            display: inline-block;
+            background: #4CAF50;
+            color: white;
+            padding: 0.5rem 1rem;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .resource-link:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+            font-size: 1.2rem;
+            color: #666;
+        }
+
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border-left: 5px solid #c62828;
+        }
+
+        .success {
+            background: #e8f5e8;
+            color: #2e7d32;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border-left: 5px solid #4CAF50;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+            
+            .control-group {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                padding: 1rem;
+            }
+            
+            .header h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🗺️ Professional Educational Maps</h1>
+        <p>High-quality, classroom-ready maps powered by professional cartographic sources</p>
+    </div>
+
+    <div class="container">
+        <div class="controls">
+            <div class="control-group">
+                <div class="control-item">
+                    <label for="regionSelect">Geographic Region:</label>
+                    <select id="regionSelect">
+                        <option value="">Select a region...</option>
+                        <option value="alaska">Alaska</option>
+                        <option value="world">World Overview</option>
+                    </select>
+                </div>
+                
+                <div class="control-item">
+                    <label for="mapTypeSelect">Map Type:</label>
+                    <select id="mapTypeSelect">
+                        <option value="">Select map type...</option>
+                        <option value="overview">Overview</option>
+                        <option value="physical">Physical Features</option>
+                        <option value="rivers">River Systems</option>
+                    </select>
+                </div>
+                
+                <div class="control-item">
+                    <label>&nbsp;</label>
+                    <button class="load-map-btn" onclick="loadEducationalMap()">Load Professional Map</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="loading" id="loading">
+            🗺️ Loading professional educational map...
+        </div>
+
+        <div class="map-container">
+            <div id="map"></div>
+            <div class="map-info" id="mapInfo" style="display: none;">
+                <h3 id="mapTitle">Map Title</h3>
+                <p id="mapDescription">Map description will appear here.</p>
+            </div>
+        </div>
+
+        <div class="educational-resources">
+            <h2>📚 Professional Educational Resources</h2>
+            <p style="text-align: center; color: #666; margin-bottom: 2rem;">
+                These professional mapping tools and resources ensure classroom-quality accuracy and educational value.
+            </p>
+            
+            <div class="resource-grid">
+                <div class="resource-card">
+                    <h3>🌍 Mapbox Educational</h3>
+                    <p>Professional interactive mapping platform with educational pricing and classroom-ready accuracy. Perfect for creating custom educational maps.</p>
+                    <a href="https://www.mapbox.com/education/" target="_blank" class="resource-link">Explore Mapbox Education</a>
+                </div>
+                
+                <div class="resource-card">
+                    <h3>🏔️ USGS Educational Resources</h3>
+                    <p>United States Geological Survey provides the most accurate topographic and geographic data for educational use.</p>
+                    <a href="https://www.usgs.gov/educational-resources" target="_blank" class="resource-link">Visit USGS Education</a>
+                </div>
+                
+                <div class="resource-card">
+                    <h3>📖 National Geographic Education</h3>
+                    <p>World-class educational maps and geographic resources designed specifically for classroom instruction.</p>
+                    <a href="https://education.nationalgeographic.org/" target="_blank" class="resource-link">National Geographic Maps</a>
+                </div>
+                
+                <div class="resource-card">
+                    <h3>🌐 Natural Earth Data</h3>
+                    <p>Free, public domain map dataset designed for cartographers. Perfect for creating custom educational materials.</p>
+                    <a href="https://www.naturalearthdata.com/" target="_blank" class="resource-link">Download Map Data</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let map = null;
+        let mapboxToken = null;
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeMapbox();
+        });
+
+        async function initializeMapbox() {
+            try {
+                const response = await fetch('/api/maps/mapbox/token');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    mapboxToken = data.token;
+                    mapboxgl.accessToken = mapboxToken;
+                    showMessage('✅ Professional mapping system ready!', 'success');
+                } else {
+                    showMessage('⚠️ Mapbox configuration needed. Add MAPBOX_ACCESS_TOKEN to environment variables.', 'error');
+                }
+            } catch (error) {
+                console.error('Mapbox initialization error:', error);
+                showMessage('⚠️ Professional mapping system not configured. Using demo mode.', 'error');
+            }
+        }
+
+        async function loadEducationalMap() {
+            const region = document.getElementById('regionSelect').value;
+            const mapType = document.getElementById('mapTypeSelect').value;
+            
+            if (!region || !mapType) {
+                showMessage('Please select both a region and map type.', 'error');
+                return;
+            }
+
+            const loading = document.getElementById('loading');
+            loading.style.display = 'block';
+
+            try {
+                const response = await fetch(`/api/maps/educational/${region}?type=${mapType}`);
+                const mapData = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(mapData.error || 'Failed to load map');
+                }
+
+                // Display map information
+                const mapInfo = document.getElementById('mapInfo');
+                const mapTitle = document.getElementById('mapTitle');
+                const mapDescription = document.getElementById('mapDescription');
+                
+                mapTitle.textContent = mapData.map.title;
+                mapDescription.textContent = mapData.map.description;
+                mapInfo.style.display = 'block';
+
+                // Initialize or update map
+                if (mapboxToken) {
+                    if (map) {
+                        map.remove();
+                    }
+
+                    map = new mapboxgl.Map({
+                        container: 'map',
+                        style: mapData.map.mapboxStyle,
+                        center: mapData.map.center,
+                        zoom: mapData.map.zoom,
+                        projection: 'mercator'
+                    });
+
+                    map.addControl(new mapboxgl.NavigationControl());
+                    map.addControl(new mapboxgl.ScaleControl());
+
+                    showMessage(`✅ Professional ${mapData.map.title} loaded successfully!`, 'success');
+                } else {
+                    showMessage('🗺️ Map data loaded! Configure Mapbox to display interactive map.', 'success');
+                }
+
+                // Log educational information
+                console.log('Educational Map Data:', mapData);
+
+            } catch (error) {
+                console.error('Map loading error:', error);
+                showMessage(`❌ Error loading map: ${error.message}`, 'error');
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+
+        function showMessage(message, type) {
+            // Remove existing messages
+            const existingMessages = document.querySelectorAll('.message');
+            existingMessages.forEach(msg => msg.remove());
+
+            // Create new message
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            messageDiv.textContent = message;
+
+            // Insert after controls
+            const controls = document.querySelector('.controls');
+            controls.parentNode.insertBefore(messageDiv, controls.nextSibling);
+
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                if (messageDiv.parentNode) {
+                    messageDiv.remove();
+                }
+            }, 5000);
+        }
+
+        // Update map type options based on region selection
+        document.getElementById('regionSelect').addEventListener('change', function() {
+            const mapTypeSelect = document.getElementById('mapTypeSelect');
+            const region = this.value;
+            
+            // Reset map type selection
+            mapTypeSelect.innerHTML = '<option value="">Select map type...</option>';
+            
+            if (region === 'alaska') {
+                mapTypeSelect.innerHTML += `
+                    <option value="overview">Alaska Overview</option>
+                    <option value="physical">Physical Features</option>
+                    <option value="rivers">River Systems (Cooper River)</option>
+                `;
+            } else if (region === 'world') {
+                mapTypeSelect.innerHTML += `
+                    <option value="overview">World Political Map</option>
+                `;
+            }
+        });
+    </script>
+</body>
+</html>
