@@ -3737,7 +3737,21 @@
                 
                 // Initialize Enhanced Maps when Maps tab is shown
                 if (tabName === 'maps') {
-                    setTimeout(() => initializeEnhancedMaps(), 100);
+                    // Ensure DOM is ready and map container exists
+                    setTimeout(() => {
+                        const mapContainer = document.getElementById('enhanced-map');
+                        if (mapContainer) {
+                            try {
+                                initializeEnhancedMaps();
+                            } catch (error) {
+                                console.error('Failed to initialize enhanced maps:', error);
+                                updateMapStatus('Map initialization failed: ' + error.message);
+                            }
+                        } else {
+                            console.error('Map container not found');
+                            updateMapStatus('Map container not found');
+                        }
+                    }, 150);
                 }
                 
             } catch (error) {
@@ -3859,178 +3873,328 @@
                     });
                 });
 
-                // Feature toggles with real implementations
-                document.getElementById('mapEarthquakeToggle').addEventListener('change', function() {
-                    try {
-                        if (this.checked) {
-                            loadEarthquakeData();
-                        } else {
-                            removeMapLayer('earthquakes');
+                // Feature toggles with real implementations - with null checks
+                const earthquakeToggle = document.getElementById('mapEarthquakeToggle');
+                if (earthquakeToggle) {
+                    earthquakeToggle.addEventListener('change', function() {
+                        try {
+                            if (this.checked) {
+                                loadEarthquakeData();
+                            } else {
+                                removeMapLayer('earthquakes');
+                            }
+                        } catch (error) {
+                            console.error('Error toggling earthquake data:', error);
+                            updateMapStatus('Error toggling earthquake data');
                         }
-                    } catch (error) {
-                        console.error('Error toggling earthquake data:', error);
-                        updateMapStatus('Error toggling earthquake data');
-                    }
-                });
+                    });
+                }
 
-                document.getElementById('mapCitiesToggle').addEventListener('change', function() {
-                    if (this.checked) {
-                        loadCitiesData();
-                    } else {
-                        removeMapLayer('cities');
-                    }
-                });
+                const citiesToggle = document.getElementById('mapCitiesToggle');
+                if (citiesToggle) {
+                    citiesToggle.addEventListener('change', function() {
+                        if (this.checked) {
+                            loadCitiesData();
+                        } else {
+                            removeMapLayer('cities');
+                        }
+                    });
+                }
 
-                document.getElementById('mapClimateToggle').addEventListener('change', function() {
-                    if (this.checked) {
-                        loadClimateData();
-                    } else {
-                        removeMapLayer('climate');
-                    }
-                });
+                const climateToggle = document.getElementById('mapClimateToggle');
+                if (climateToggle) {
+                    climateToggle.addEventListener('change', function() {
+                        if (this.checked) {
+                            loadClimateData();
+                        } else {
+                            removeMapLayer('climate');
+                        }
+                    });
+                }
 
-                document.getElementById('mapTerrainToggle').addEventListener('change', function() {
-                    if (this.checked) {
-                        enable3DTerrain();
-                    } else {
-                        disable3DTerrain();
-                    }
-                });
+                const terrainToggle = document.getElementById('mapTerrainToggle');
+                if (terrainToggle) {
+                    terrainToggle.addEventListener('change', function() {
+                        if (this.checked) {
+                            enable3DTerrain();
+                        } else {
+                            disable3DTerrain();
+                        }
+                    });
+                }
 
-                // NEW EDUCATIONAL LAYER TOGGLES
+                // NEW EDUCATIONAL LAYER TOGGLES - with null checks
 
                 // Physical Geography Layers
-                document.getElementById('mapVolcanoToggle').addEventListener('change', function() {
-                    if (this.checked) {
-                        loadVolcanoData();
-                    } else {
-                        removeMapLayer('volcano');
-                    }
-                });
+                const volcanoToggle = document.getElementById('mapVolcanoToggle');
+                if (volcanoToggle) {
+                    volcanoToggle.addEventListener('change', function() {
+                        if (this.checked) {
+                            loadVolcanoData();
+                        } else {
+                            removeMapLayer('volcano');
+                        }
+                    });
+                }
 
-                document.getElementById('mapOceanCurrentsToggle').addEventListener('change', function() {
-                    if (this.checked) {
-                        loadOceanCurrentsData();
-                    } else {
-                        removeMapLayer('oceancurrents');
-                    }
-                });
+                const oceanCurrentsToggle = document.getElementById('mapOceanCurrentsToggle');
+                if (oceanCurrentsToggle) {
+                    oceanCurrentsToggle.addEventListener('change', function() {
+                        if (this.checked) {
+                            loadOceanCurrentsData();
+                        } else {
+                            removeMapLayer('oceancurrents');
+                        }
+                    });
+                }
 
-                document.getElementById('mapPlateToggle').addEventListener('change', function() {
-                    if (this.checked) {
-                        loadTectonicPlatesData();
-                    } else {
-                        removeMapLayer('plates');
-                    }
-                });
+                const plateToggle = document.getElementById('mapPlateToggle');
+                if (plateToggle) {
+                    plateToggle.addEventListener('change', function() {
+                        if (this.checked) {
+                            loadTectonicPlatesData();
+                        } else {
+                            removeMapLayer('plates');
+                        }
+                    });
+                }
 
                 // Political Geography Layers
-                document.getElementById('mapNatoToggle').addEventListener('change', function() {
-                    if (this.checked) {
-                        loadNatoData();
-                    } else {
-                        removeMapLayer('nato');
-                    }
-                });
+                const natoToggle = document.getElementById('mapNatoToggle');
+                if (natoToggle) {
+                    natoToggle.addEventListener('change', function() {
+                        if (this.checked) {
+                            loadNatoData();
+                        } else {
+                            removeMapLayer('nato');
+                        }
+                    });
+                }
 
-                document.getElementById('mapEuToggle').addEventListener('change', function() {
-                    if (this.checked) {
-                        loadEuData();
-                    } else {
-                        removeMapLayer('eu');
-                    }
-                });
+                const euToggle = document.getElementById('mapEuToggle');
+                if (euToggle) {
+                    euToggle.addEventListener('change', function() {
+                        if (this.checked) {
+                            loadEuData();
+                        } else {
+                            removeMapLayer('eu');
+                        }
+                    });
+                }
 
-                document.getElementById('mapG7Toggle').addEventListener('change', function() {
-                    if (this.checked) {
-                        loadG7Data();
-                    } else {
-                        removeMapLayer('g7');
-                    }
-                });
+                const g7Toggle = document.getElementById('mapG7Toggle');
+                if (g7Toggle) {
+                    g7Toggle.addEventListener('change', function() {
+                        if (this.checked) {
+                            loadG7Data();
+                        } else {
+                            removeMapLayer('g7');
+                        }
+                    });
+                }
 
-                document.getElementById('mapConflictToggle').addEventListener('change', function() {
-                    if (this.checked) {
-                        loadConflictData();
-                    } else {
-                        removeMapLayer('conflict');
-                    }
-                });
+                const conflictToggle = document.getElementById('mapConflictToggle');
+                if (conflictToggle) {
+                    conflictToggle.addEventListener('change', function() {
+                        if (this.checked) {
+                            loadConflictData();
+                        } else {
+                            removeMapLayer('conflict');
+                        }
+                    });
+                }
 
                 // Economic Geography Layers
-                document.getElementById('mapTradeToggle').addEventListener('change', function() {
-                    if (this.checked) {
-                        loadTradeData();
-                    } else {
-                        removeMapLayer('trade');
-                    }
-                });
+                const tradeToggle = document.getElementById('mapTradeToggle');
+                if (tradeToggle) {
+                    tradeToggle.addEventListener('change', function() {
+                        if (this.checked) {
+                            loadTradeData();
+                        } else {
+                            removeMapLayer('trade');
+                        }
+                    });
+                }
 
-                document.getElementById('mapOilToggle').addEventListener('change', function() {
-                    if (this.checked) {
-                        loadOilData();
-                    } else {
-                        removeMapLayer('oil');
-                    }
-                });
+                const oilToggle = document.getElementById('mapOilToggle');
+                if (oilToggle) {
+                    oilToggle.addEventListener('change', function() {
+                        if (this.checked) {
+                            loadOilData();
+                        } else {
+                            removeMapLayer('oil');
+                        }
+                    });
+                }
 
-                document.getElementById('mapCurrencyToggle').addEventListener('change', function() {
-                    if (this.checked) {
-                        loadCurrencyData();
-                    } else {
-                        removeMapLayer('currency');
-                    }
-                });
+                const currencyToggle = document.getElementById('mapCurrencyToggle');
+                if (currencyToggle) {
+                    currencyToggle.addEventListener('change', function() {
+                        if (this.checked) {
+                            loadCurrencyData();
+                        } else {
+                            removeMapLayer('currency');
+                        }
+                    });
+                }
 
-                document.getElementById('mapGdpToggle').addEventListener('change', function() {
-                    if (this.checked) {
-                        loadGdpData();
-                    } else {
-                        removeMapLayer('gdp');
-                    }
-                });
+                const gdpToggle = document.getElementById('mapGdpToggle');
+                if (gdpToggle) {
+                    gdpToggle.addEventListener('change', function() {
+                        if (this.checked) {
+                            loadGdpData();
+                        } else {
+                            removeMapLayer('gdp');
+                        }
+                    });
+                }
 
                 // Historical Geography Layers
-                document.getElementById('mapSilkRoadToggle').addEventListener('change', function() {
-                    if (this.checked) {
-                        loadSilkRoadData();
-                    } else {
-                        removeMapLayer('silkroad');
-                    }
-                });
+                const silkRoadToggle = document.getElementById('mapSilkRoadToggle');
+                if (silkRoadToggle) {
+                    silkRoadToggle.addEventListener('change', function() {
+                        if (this.checked) {
+                            loadSilkRoadData();
+                        } else {
+                            removeMapLayer('silkroad');
+                        }
+                    });
+                }
 
-                document.getElementById('mapColonialToggle').addEventListener('change', function() {
-                    if (this.checked) {
-                        loadColonialData();
-                    } else {
-                        removeMapLayer('colonial');
-                    }
-                });
+                const colonialToggle = document.getElementById('mapColonialToggle');
+                if (colonialToggle) {
+                    colonialToggle.addEventListener('change', function() {
+                        if (this.checked) {
+                            loadColonialData();
+                        } else {
+                            removeMapLayer('colonial');
+                        }
+                    });
+                }
 
-                document.getElementById('mapAncientToggle').addEventListener('change', function() {
-                    if (this.checked) {
-                        loadAncientData();
-                    } else {
-                        removeMapLayer('ancient');
-                    }
-                });
+                const ancientToggle = document.getElementById('mapAncientToggle');
+                if (ancientToggle) {
+                    ancientToggle.addEventListener('change', function() {
+                        if (this.checked) {
+                            loadAncientData();
+                        } else {
+                            removeMapLayer('ancient');
+                        }
+                    });
+                }
 
-                document.getElementById('mapColdWarToggle').addEventListener('change', function() {
-                    if (this.checked) {
-                        loadColdWarData();
-                    } else {
-                        removeMapLayer('coldwar');
-                    }
-                });
+                const coldWarToggle = document.getElementById('mapColdWarToggle');
+                if (coldWarToggle) {
+                    coldWarToggle.addEventListener('change', function() {
+                        if (this.checked) {
+                            loadColdWarData();
+                        } else {
+                            removeMapLayer('coldwar');
+                        }
+                    });
+                }
 
                 // Cultural Geography Layers
-                document.getElementById('mapLanguageToggle').addEventListener('change', function() {
-                    if (this.checked) {
-                        loadLanguageData();
-                    } else {
-                        removeMapLayer('language');
-                    }
-                });
+                const languageToggle = document.getElementById('mapLanguageToggle');
+                if (languageToggle) {
+                    languageToggle.addEventListener('change', function() {
+                        if (this.checked) {
+                            loadLanguageData();
+                        } else {
+                            removeMapLayer('language');
+                        }
+                    });
+                }
+
+                const religionToggle = document.getElementById('mapReligionToggle');
+                if (religionToggle) {
+                    religionToggle.addEventListener('change', function() {
+                        if (this.checked) {
+                            loadReligionData();
+                        } else {
+                            removeMapLayer('religion');
+                        }
+                    });
+                }
+
+                const heritageToggle = document.getElementById('mapHeritageToggle');
+                if (heritageToggle) {
+                    heritageToggle.addEventListener('change', function() {
+                        if (this.checked) {
+                            loadHeritageData();
+                        } else {
+                            removeMapLayer('heritage');
+                        }
+                    });
+                }
+
+                const migrationToggle = document.getElementById('mapMigrationToggle');
+                if (migrationToggle) {
+                    migrationToggle.addEventListener('change', function() {
+                        if (this.checked) {
+                            loadMigrationData();
+                        } else {
+                            removeMapLayer('migration');
+                        }
+                    });
+                }
+
+                // Urban Geography Layers
+                const megacitiesToggle = document.getElementById('mapMegacitiesToggle');
+                if (megacitiesToggle) {
+                    megacitiesToggle.addEventListener('change', function() {
+                        if (this.checked) {
+                            loadMegacitiesData();
+                        } else {
+                            removeMapLayer('megacities');
+                        }
+                    });
+                }
+
+                const popDensityToggle = document.getElementById('mapPopDensityToggle');
+                if (popDensityToggle) {
+                    popDensityToggle.addEventListener('change', function() {
+                        if (this.checked) {
+                            loadPopDensityData();
+                        } else {
+                            removeMapLayer('popdensity');
+                        }
+                    });
+                }
+
+                const timeZoneToggle = document.getElementById('mapTimeZoneToggle');
+                if (timeZoneToggle) {
+                    timeZoneToggle.addEventListener('change', function() {
+                        if (this.checked) {
+                            loadTimeZoneData();
+                        } else {
+                            removeMapLayer('timezone');
+                        }
+                    });
+                }
+
+                // Environmental Layers
+                const deforestationToggle = document.getElementById('mapDeforestationToggle');
+                if (deforestationToggle) {
+                    deforestationToggle.addEventListener('change', function() {
+                        if (this.checked) {
+                            loadDeforestationData();
+                        } else {
+                            removeMapLayer('deforestation');
+                        }
+                    });
+                }
+
+                const biodiversityToggle = document.getElementById('mapBiodiversityToggle');
+                if (biodiversityToggle) {
+                    biodiversityToggle.addEventListener('change', function() {
+                        if (this.checked) {
+                            loadBiodiversityData();
+                        } else {
+                            removeMapLayer('biodiversity');
+                        }
+                    });
+                }
 
                 document.getElementById('mapReligionToggle').addEventListener('change', function() {
                     if (this.checked) {
