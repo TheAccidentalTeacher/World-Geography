@@ -3232,17 +3232,21 @@
                     maxZoom: 18
                 }).addTo(enhancedMap);
 
-                // Store base layers for style switching
+                // Store base layers for style switching with better tile sources
                 const baseLayers = {
                     'Streets': osmLayer,
                     'Satellite': L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-                        attribution: '© Esri'
+                        attribution: '© Esri',
+                        maxZoom: 17
                     }),
                     'Terrain': L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-                        attribution: '© OpenTopoMap contributors'
+                        attribution: '© OpenTopoMap contributors',
+                        maxZoom: 17
                     }),
-                    'Light': L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
-                        attribution: '© OpenStreetMap contributors, HOT'
+                    'Light': L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                        attribution: '© OpenStreetMap contributors © CARTO',
+                        subdomains: 'abcd',
+                        maxZoom: 19
                     })
                 };
 
@@ -3566,75 +3570,148 @@
         }
 
         function loadEarthquakeData() {
-            updateMapStatus('Loading recent earthquake data...');
+            updateMapStatus('Loading recent earthquake data from USGS...');
             
-            // Real USGS earthquake data
+            // Try to load real USGS earthquake data first
             fetch('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_week.geojson')
                 .then(response => response.json())
                 .then(data => {
-                    // Create earthquake layer
-                    const earthquakeLayer = L.geoJSON(data, {
-                        pointToLayer: function(feature, latlng) {
-                            const magnitude = feature.properties.mag;
-                            const radius = Math.max(magnitude * 3, 5);
-                            
-                            return L.circleMarker(latlng, {
-                                radius: radius,
-                                fillColor: magnitude > 6 ? '#ff0000' : magnitude > 4 ? '#ff8800' : '#ffff00',
-                                color: '#000',
-                                weight: 1,
-                                opacity: 1,
-                                fillOpacity: 0.7
-                            });
-                        },
-                        onEachFeature: function(feature, layer) {
-                            const props = feature.properties;
-                            layer.bindPopup(`
-                                <h4>🌍 Earthquake Alert</h4>
-                                <p><strong>Magnitude:</strong> ${props.mag}</p>
-                                <p><strong>Location:</strong> ${props.place}</p>
-                                <p><strong>Time:</strong> ${new Date(props.time).toLocaleDateString()}</p>
-                                <p><strong>Depth:</strong> ${feature.geometry.coordinates[2]} km</p>
-                            `);
-                        }
-                    });
-                    
-                    // Store layer for removal later
-                    enhancedMap.earthquakeLayer = earthquakeLayer;
-                    earthquakeLayer.addTo(enhancedMap);
-                    mapLoadedLayers.add('earthquakes');
-                    updateMapStatus(`Loaded ${data.features.length} recent earthquakes`);
+                    createEarthquakeLayer(data, 'significant');
                 })
                 .catch(error => {
-                    console.error('Error loading earthquake data:', error);
-                    updateMapStatus('Error loading earthquake data - using demo markers');
-                    loadDemoEarthquakes();
+                    console.log('Significant earthquakes not available, trying all M4.5+ earthquakes...');
+                    // Try M4.5+ earthquakes from past week if significant ones fail
+                    fetch('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_week.geojson')
+                        .then(response => response.json())
+                        .then(data => {
+                            createEarthquakeLayer(data, 'magnitude_4.5+');
+                        })
+                        .catch(error => {
+                            console.error('Error loading earthquake data:', error);
+                            updateMapStatus('Error loading live earthquake data - using educational demo data');
+                            loadEducationalEarthquakeData();
+                        });
                 });
         }
 
-        function loadDemoEarthquakes() {
-            // Demo earthquake markers if real data fails
-            const demoQuakes = [
-                { lat: 35.6762, lng: 139.6503, mag: 5.2, place: "Tokyo, Japan" },
-                { lat: 37.7749, lng: -122.4194, mag: 4.1, place: "San Francisco, CA" },
-                { lat: -33.8688, lng: 151.2093, mag: 3.8, place: "Sydney, Australia" }
+        function createEarthquakeLayer(data, dataType) {
+            const earthquakeLayer = L.geoJSON(data, {
+                pointToLayer: function(feature, latlng) {
+                    const magnitude = feature.properties.mag;
+                    const depth = feature.geometry.coordinates[2];
+                    
+                    // Size based on magnitude
+                    const radius = Math.max(magnitude * 2.5, 4);
+                    
+                    // Color based on magnitude and depth
+                    let fillColor = '#ffff00'; // Default yellow
+                    if (magnitude >= 7) fillColor = '#8B0000'; // Dark red for major
+                    else if (magnitude >= 6) fillColor = '#ff0000'; // Red for strong
+                    else if (magnitude >= 5) fillColor = '#ff6600'; // Orange for moderate
+                    else if (magnitude >= 4) fillColor = '#ffcc00'; // Yellow-orange for light
+                    
+                    // Adjust opacity based on depth (deeper = more transparent)
+                    const opacity = depth > 100 ? 0.6 : depth > 50 ? 0.7 : 0.9;
+                    
+                    return L.circleMarker(latlng, {
+                        radius: radius,
+                        fillColor: fillColor,
+                        color: '#000',
+                        weight: 1,
+                        opacity: 1,
+                        fillOpacity: opacity
+                    });
+                },
+                onEachFeature: function(feature, layer) {
+                    const props = feature.properties;
+                    const magnitude = props.mag;
+                    const depth = feature.geometry.coordinates[2];
+                    const time = new Date(props.time);
+                    
+                    // Educational magnitude scale info
+                    let magnitudeInfo = '';
+                    if (magnitude >= 7) magnitudeInfo = 'Major earthquake - can cause serious damage';
+                    else if (magnitude >= 6) magnitudeInfo = 'Strong earthquake - can be destructive';
+                    else if (magnitude >= 5) magnitudeInfo = 'Moderate earthquake - can cause damage';
+                    else if (magnitude >= 4) magnitudeInfo = 'Light earthquake - often felt by people';
+                    else magnitudeInfo = 'Minor earthquake - usually not felt';
+                    
+                    layer.bindPopup(`
+                        <h4>🌍 Earthquake Information</h4>
+                        <p><strong>Magnitude:</strong> ${magnitude} (${magnitudeInfo})</p>
+                        <p><strong>Location:</strong> ${props.place}</p>
+                        <p><strong>Date/Time:</strong> ${time.toLocaleString()}</p>
+                        <p><strong>Depth:</strong> ${depth.toFixed(1)} km ${depth > 70 ? '(Deep)' : depth > 35 ? '(Intermediate)' : '(Shallow)'}</p>
+                        <p><strong>Coordinates:</strong> ${feature.geometry.coordinates[1].toFixed(3)}°, ${feature.geometry.coordinates[0].toFixed(3)}°</p>
+                        <hr style="margin: 8px 0;">
+                        <p style="font-size: 0.9em; color: #666;">
+                            💡 <strong>Educational Note:</strong> ${magnitudeInfo.toLowerCase()}. 
+                            ${depth > 70 ? 'Deep earthquakes cause less surface damage.' : 'Shallow earthquakes can be more destructive.'}
+                        </p>
+                        <p style="font-size: 0.85em; color: #888;">Data: USGS Earthquake Hazards Program</p>
+                    `);
+                }
+            });
+            
+            // Store layer for removal later
+            enhancedMap.earthquakeLayer = earthquakeLayer;
+            earthquakeLayer.addTo(enhancedMap);
+            mapLoadedLayers.add('earthquakes');
+            updateMapStatus(`Loaded ${data.features.length} recent earthquakes (${dataType}) from USGS`);
+        }
+
+        function loadEducationalEarthquakeData() {
+            // Educational demo earthquakes showing major tectonic plate boundaries
+            const educationalQuakes = [
+                // Pacific Ring of Fire
+                { lat: 35.6762, lng: 139.6503, mag: 6.1, place: "Near Tokyo, Japan - Pacific Plate", depth: 45, info: "Part of the Pacific Ring of Fire" },
+                { lat: 37.7749, lng: -122.4194, mag: 5.2, place: "San Francisco Bay Area, CA - San Andreas Fault", depth: 12, info: "Transform plate boundary" },
+                { lat: -33.8688, lng: 151.2093, mag: 4.8, place: "Near Sydney, Australia - Australian Plate", depth: 25, info: "Intraplate earthquake" },
+                { lat: 19.4326, lng: -155.5, mag: 5.5, place: "Hawaii - Volcanic Activity", depth: 8, info: "Volcanic hotspot earthquake" },
+                
+                // Mid-Atlantic Ridge
+                { lat: 64.1466, lng: -21.9426, mag: 4.2, place: "Iceland - Mid-Atlantic Ridge", depth: 15, info: "Divergent plate boundary" },
+                
+                // Mediterranean
+                { lat: 38.7223, lng: 27.1426, mag: 5.8, place: "Western Turkey - Anatolian Fault", depth: 18, info: "Complex tectonic setting" },
+                { lat: 37.9755, lng: 23.7348, mag: 4.9, place: "Athens, Greece - Aegean Sea Plate", depth: 35, info: "Convergent boundary effects" },
+                
+                // Himalayas
+                { lat: 28.2380, lng: 83.9956, mag: 6.3, place: "Nepal Himalayas - Indian Plate collision", depth: 55, info: "Continental collision zone" },
+                
+                // Andes Mountains
+                { lat: -12.0464, lng: -77.0428, mag: 5.9, place: "Near Lima, Peru - Nazca Plate subduction", depth: 65, info: "Oceanic-continental convergence" },
+                { lat: -33.4489, lng: -70.6693, mag: 6.7, place: "Santiago, Chile - Nazca Plate", depth: 85, info: "Deep subduction zone" }
             ];
             
             const earthquakeLayer = L.layerGroup();
-            demoQuakes.forEach(quake => {
+            educationalQuakes.forEach(quake => {
+                const radius = Math.max(quake.mag * 2.5, 4);
+                let fillColor = '#ffff00';
+                if (quake.mag >= 6.5) fillColor = '#8B0000';
+                else if (quake.mag >= 6) fillColor = '#ff0000';
+                else if (quake.mag >= 5.5) fillColor = '#ff6600';
+                else if (quake.mag >= 5) fillColor = '#ffcc00';
+                
                 const marker = L.circleMarker([quake.lat, quake.lng], {
-                    radius: quake.mag * 3,
-                    fillColor: '#ff8800',
+                    radius: radius,
+                    fillColor: fillColor,
                     color: '#000',
                     weight: 1,
                     opacity: 1,
-                    fillOpacity: 0.7
+                    fillOpacity: 0.8
                 });
                 
                 marker.bindPopup(`
-                    <h4>🌍 Demo Earthquake</h4>
+                    <h4>🌍 Educational Earthquake Example</h4>
                     <p><strong>Magnitude:</strong> ${quake.mag}</p>
                     <p><strong>Location:</strong> ${quake.place}</p>
+                    <p><strong>Depth:</strong> ${quake.depth} km</p>
+                    <p><strong>Tectonic Setting:</strong> ${quake.info}</p>
+                    <hr style="margin: 8px 0;">
+                    <p style="font-size: 0.9em; color: #666;">
+                        💡 <strong>Why here?</strong> This location demonstrates important tectonic processes in geography education.
+                    </p>
                 `);
                 
                 earthquakeLayer.addLayer(marker);
@@ -3643,41 +3720,94 @@
             enhancedMap.earthquakeLayer = earthquakeLayer;
             earthquakeLayer.addTo(enhancedMap);
             mapLoadedLayers.add('earthquakes');
-            updateMapStatus('Loaded demo earthquake data');
+            updateMapStatus(`Loaded ${educationalQuakes.length} educational earthquake examples showing tectonic boundaries`);
         }
 
         function loadCitiesData() {
-            updateMapStatus('Loading major cities...');
+            updateMapStatus('Loading major world cities...');
             
-            // Major world cities
+            // Comprehensive world cities data for educational purposes
             const majorCities = [
-                { name: "Tokyo", lat: 35.6762, lng: 139.6503, pop: "37.4M" },
-                { name: "Delhi", lat: 28.7041, lng: 77.1025, pop: "30.3M" },
-                { name: "Shanghai", lat: 31.2304, lng: 121.4737, pop: "27.1M" },
-                { name: "São Paulo", lat: -23.5505, lng: -46.6333, pop: "22.0M" },
-                { name: "Mexico City", lat: 19.4326, lng: -99.1332, pop: "21.8M" },
-                { name: "Cairo", lat: 30.0444, lng: 31.2357, pop: "20.9M" },
-                { name: "Mumbai", lat: 19.0760, lng: 72.8777, pop: "20.4M" },
-                { name: "Beijing", lat: 39.9042, lng: 116.4074, pop: "20.4M" },
-                { name: "Dhaka", lat: 23.8103, lng: 90.4125, pop: "20.3M" },
-                { name: "Osaka", lat: 34.6937, lng: 135.5023, pop: "19.3M" }
+                // Asia
+                { name: "Tokyo", country: "Japan", lat: 35.6762, lng: 139.6503, pop: "37.4M", continent: "Asia" },
+                { name: "Delhi", country: "India", lat: 28.7041, lng: 77.1025, pop: "30.3M", continent: "Asia" },
+                { name: "Shanghai", country: "China", lat: 31.2304, lng: 121.4737, pop: "27.1M", continent: "Asia" },
+                { name: "Mumbai", country: "India", lat: 19.0760, lng: 72.8777, pop: "20.4M", continent: "Asia" },
+                { name: "Beijing", country: "China", lat: 39.9042, lng: 116.4074, pop: "20.4M", continent: "Asia" },
+                { name: "Dhaka", country: "Bangladesh", lat: 23.8103, lng: 90.4125, pop: "20.3M", continent: "Asia" },
+                { name: "Osaka", country: "Japan", lat: 34.6937, lng: 135.5023, pop: "19.3M", continent: "Asia" },
+                { name: "Karachi", country: "Pakistan", lat: 24.8607, lng: 67.0011, pop: "15.4M", continent: "Asia" },
+                { name: "Istanbul", country: "Turkey", lat: 41.0082, lng: 28.9784, pop: "15.2M", continent: "Asia/Europe" },
+                { name: "Chongqing", country: "China", lat: 29.5630, lng: 106.5516, pop: "15.0M", continent: "Asia" },
+                
+                // Americas
+                { name: "São Paulo", country: "Brazil", lat: -23.5505, lng: -46.6333, pop: "22.0M", continent: "South America" },
+                { name: "Mexico City", country: "Mexico", lat: 19.4326, lng: -99.1332, pop: "21.8M", continent: "North America" },
+                { name: "Buenos Aires", country: "Argentina", lat: -34.6118, lng: -58.3960, pop: "15.0M", continent: "South America" },
+                { name: "Rio de Janeiro", country: "Brazil", lat: -22.9068, lng: -43.1729, pop: "13.3M", continent: "South America" },
+                { name: "New York", country: "USA", lat: 40.7128, lng: -74.0060, pop: "8.3M", continent: "North America" },
+                { name: "Los Angeles", country: "USA", lat: 34.0522, lng: -118.2437, pop: "4.0M", continent: "North America" },
+                { name: "Lima", country: "Peru", lat: -12.0464, lng: -77.0428, pop: "10.7M", continent: "South America" },
+                { name: "Bogotá", country: "Colombia", lat: 4.7110, lng: -74.0721, pop: "10.6M", continent: "South America" },
+                
+                // Africa
+                { name: "Cairo", country: "Egypt", lat: 30.0444, lng: 31.2357, pop: "20.9M", continent: "Africa" },
+                { name: "Lagos", country: "Nigeria", lat: 6.5244, lng: 3.3792, pop: "14.9M", continent: "Africa" },
+                { name: "Kinshasa", country: "DR Congo", lat: -4.4419, lng: 15.2663, pop: "14.3M", continent: "Africa" },
+                { name: "Johannesburg", country: "South Africa", lat: -26.2041, lng: 28.0473, pop: "9.6M", continent: "Africa" },
+                { name: "Luanda", country: "Angola", lat: -8.8390, lng: 13.2894, pop: "8.3M", continent: "Africa" },
+                { name: "Dar es Salaam", country: "Tanzania", lat: -6.7924, lng: 39.2083, pop: "6.7M", continent: "Africa" },
+                
+                // Europe
+                { name: "Moscow", country: "Russia", lat: 55.7558, lng: 37.6176, pop: "12.5M", continent: "Europe" },
+                { name: "London", country: "UK", lat: 51.5074, lng: -0.1278, pop: "9.0M", continent: "Europe" },
+                { name: "Paris", country: "France", lat: 48.8566, lng: 2.3522, pop: "10.9M", continent: "Europe" },
+                { name: "Madrid", country: "Spain", lat: 40.4168, lng: -3.7038, pop: "6.6M", continent: "Europe" },
+                { name: "Barcelona", country: "Spain", lat: 41.3851, lng: 2.1734, pop: "5.6M", continent: "Europe" },
+                { name: "Berlin", country: "Germany", lat: 52.5200, lng: 13.4050, pop: "3.7M", continent: "Europe" },
+                
+                // Oceania
+                { name: "Sydney", country: "Australia", lat: -33.8688, lng: 151.2093, pop: "5.3M", continent: "Oceania" },
+                { name: "Melbourne", country: "Australia", lat: -37.8136, lng: 144.9631, pop: "5.0M", continent: "Oceania" }
             ];
             
             const citiesLayer = L.layerGroup();
+            
+            // Create continent-based color coding
+            const continentColors = {
+                'Asia': '#ff6b6b',
+                'Europe': '#4ecdc4', 
+                'Africa': '#45b7d1',
+                'North America': '#96ceb4',
+                'South America': '#ffeaa7',
+                'Oceania': '#dda0dd',
+                'Asia/Europe': '#fd79a8'
+            };
+            
             majorCities.forEach(city => {
-                const marker = L.marker([city.lat, city.lng], {
-                    icon: L.divIcon({
-                        className: 'city-marker',
-                        html: '🏙️',
-                        iconSize: [20, 20],
-                        iconAnchor: [10, 10]
-                    })
+                const popSize = parseFloat(city.pop) * 1000000; // Convert to actual number
+                let markerSize = 8;
+                if (popSize > 20000000) markerSize = 16;
+                else if (popSize > 15000000) markerSize = 14;
+                else if (popSize > 10000000) markerSize = 12;
+                else if (popSize > 5000000) markerSize = 10;
+                
+                const marker = L.circleMarker([city.lat, city.lng], {
+                    radius: markerSize,
+                    fillColor: continentColors[city.continent] || '#95a5a6',
+                    color: '#2c3e50',
+                    weight: 2,
+                    opacity: 1,
+                    fillOpacity: 0.8
                 });
                 
                 marker.bindPopup(`
                     <h4>🏙️ ${city.name}</h4>
+                    <p><strong>Country:</strong> ${city.country}</p>
+                    <p><strong>Continent:</strong> ${city.continent}</p>
                     <p><strong>Population:</strong> ${city.pop}</p>
-                    <p><strong>Coordinates:</strong> ${city.lat.toFixed(2)}, ${city.lng.toFixed(2)}</p>
+                    <p><strong>Coordinates:</strong> ${city.lat.toFixed(2)}°, ${city.lng.toFixed(2)}°</p>
+                    <p style="font-size: 0.9em; color: #666;">💡 Population shown by marker size</p>
                 `);
                 
                 citiesLayer.addLayer(marker);
@@ -3686,45 +3816,144 @@
             enhancedMap.citiesLayer = citiesLayer;
             citiesLayer.addTo(enhancedMap);
             mapLoadedLayers.add('cities');
-            updateMapStatus('Loaded major world cities');
+            updateMapStatus(`Loaded ${majorCities.length} major world cities with continent color coding`);
         }
 
         function loadClimateData() {
-            updateMapStatus('Loading climate zones...');
+            updateMapStatus('Loading Köppen climate classification zones...');
             
-            // Simple climate zone overlay
+            // Köppen Climate Classification - Educational version with major climate zones
             const climateZones = [
+                // Tropical climates (A)
                 {
-                    name: "Tropical",
-                    bounds: [[-23.5, -180], [23.5, 180]], 
-                    color: '#ff6b6b',
-                    description: "Hot and humid year-round"
+                    name: "Tropical Rainforest (Af)",
+                    bounds: [[-10, -80], [10, -50]], // Amazon Basin
+                    color: '#228B22',
+                    description: "Hot and wet year-round, dense rainforests"
                 },
                 {
-                    name: "Arid", 
-                    bounds: [[15, -140], [40, 60]], 
-                    color: '#ffa726',
-                    description: "Very dry with little precipitation"
+                    name: "Tropical Rainforest (Af)", 
+                    bounds: [[-5, 10], [5, 30]], // Central Africa
+                    color: '#228B22',
+                    description: "Hot and wet year-round, dense rainforests"
                 },
                 {
-                    name: "Temperate",
-                    bounds: [[30, -130], [60, 140]], 
-                    color: '#66bb6a',
-                    description: "Moderate temperatures and precipitation"
+                    name: "Tropical Rainforest (Af)",
+                    bounds: [[-10, 95], [10, 155]], // Southeast Asia
+                    color: '#228B22', 
+                    description: "Hot and wet year-round, dense rainforests"
+                },
+                
+                // Arid climates (B)
+                {
+                    name: "Hot Desert (BWh)",
+                    bounds: [[15, -25], [35, 55]], // Sahara & Arabian Peninsula
+                    color: '#FFD700',
+                    description: "Very hot and dry, minimal precipitation"
+                },
+                {
+                    name: "Hot Desert (BWh)",
+                    bounds: [[20, -125], [35, -105]], // Southwestern USA/Mexico
+                    color: '#FFD700',
+                    description: "Very hot and dry, minimal precipitation"
+                },
+                {
+                    name: "Cold Desert (BWk)",
+                    bounds: [[35, 75], [50, 105]], // Central Asia
+                    color: '#DEB887',
+                    description: "Cold winters, hot summers, very dry"
+                },
+                
+                // Temperate climates (C)
+                {
+                    name: "Mediterranean (Csa/Csb)",
+                    bounds: [[30, -10], [45, 45]], // Mediterranean Basin
+                    color: '#9ACD32',
+                    description: "Warm dry summers, mild wet winters"
+                },
+                {
+                    name: "Mediterranean (Csb)",
+                    bounds: [[32, -125], [42, -115]], // California
+                    color: '#9ACD32',
+                    description: "Warm dry summers, mild wet winters"
+                },
+                {
+                    name: "Humid Subtropical (Cfa)",
+                    bounds: [[25, -100], [40, -75]], // Southeastern USA
+                    color: '#90EE90',
+                    description: "Hot humid summers, mild winters"
+                },
+                {
+                    name: "Humid Subtropical (Cfa)",
+                    bounds: [[25, 100], [40, 140]], // Eastern China/Japan
+                    color: '#90EE90',
+                    description: "Hot humid summers, mild winters"
+                },
+                {
+                    name: "Oceanic (Cfb)",
+                    bounds: [[45, -10], [60, 30]], // Western Europe
+                    color: '#98FB98',
+                    description: "Mild temperatures, year-round precipitation"
+                },
+                
+                // Continental climates (D)
+                {
+                    name: "Humid Continental (Dfb)",
+                    bounds: [[45, -100], [60, -60]], // Great Lakes region
+                    color: '#20B2AA',
+                    description: "Cold snowy winters, warm summers"
+                },
+                {
+                    name: "Humid Continental (Dfb)",
+                    bounds: [[50, 20], [65, 140]], // Northern Europe/Asia
+                    color: '#20B2AA',
+                    description: "Cold snowy winters, warm summers"
+                },
+                {
+                    name: "Subarctic (Dfc)",
+                    bounds: [[60, -160], [70, 170]], // Northern Canada/Siberia
+                    color: '#4682B4',
+                    description: "Very cold winters, short cool summers"
+                },
+                
+                // Polar climates (E)
+                {
+                    name: "Tundra (ET)",
+                    bounds: [[66, -170], [80, 180]], // Arctic tundra
+                    color: '#E6E6FA',
+                    description: "Permafrost, very cold, short growing season"
+                },
+                {
+                    name: "Ice Cap (EF)",
+                    bounds: [[80, -180], [90, 180]], // Arctic ice cap
+                    color: '#F0F8FF',
+                    description: "Permanent ice cover, extremely cold"
+                },
+                {
+                    name: "Ice Cap (EF)",
+                    bounds: [[-90, -180], [-60, 180]], // Antarctica
+                    color: '#F0F8FF',
+                    description: "Permanent ice cover, extremely cold"
                 }
             ];
             
             const climateLayer = L.layerGroup();
+            
             climateZones.forEach(zone => {
                 const rectangle = L.rectangle(zone.bounds, {
                     color: zone.color,
-                    weight: 2,
-                    fillOpacity: 0.3
+                    weight: 1,
+                    fillColor: zone.color,
+                    fillOpacity: 0.4,
+                    opacity: 0.8
                 });
                 
                 rectangle.bindPopup(`
-                    <h4>🌡️ ${zone.name} Climate</h4>
-                    <p>${zone.description}</p>
+                    <h4>🌡️ ${zone.name}</h4>
+                    <p><strong>Characteristics:</strong> ${zone.description}</p>
+                    <p style="font-size: 0.9em; color: #666;">
+                        💡 Click other zones to compare climate types worldwide
+                    </p>
                 `);
                 
                 climateLayer.addLayer(rectangle);
@@ -3733,7 +3962,7 @@
             enhancedMap.climateLayer = climateLayer;
             climateLayer.addTo(enhancedMap);
             mapLoadedLayers.add('climate');
-            updateMapStatus('Climate zones loaded');
+            updateMapStatus(`Loaded Köppen climate classification with ${climateZones.length} major climate zones`);
         }
 
         function enable3DTerrain() {
