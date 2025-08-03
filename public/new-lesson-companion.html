@@ -4010,15 +4010,25 @@
         function loadLessonMapActivities() {
             if (!currentMapLesson) return;
             
+            console.log('🗺️ Loading Map Activities for:', currentMapLesson.title);
+            console.log('📊 Current Lesson Data:', currentMapLesson);
+            
             const activitiesPanel = document.getElementById('map-activities-panel');
             const activitiesList = document.getElementById('lesson-activities-list');
             
             // Extract comprehensive lesson data for intelligent analysis
             const content = (currentMapLesson.content || currentMapLesson.studentReading?.fullContent || '').toLowerCase();
             const title = (currentMapLesson.title || '').toLowerCase();
-            const moduleTitle = (currentMapLesson.moduleTitle || '').toLowerCase();
+            const moduleTitle = (currentMapLesson.moduleTitle || currentMapLesson.module?.title || '').toLowerCase();
             const vocabulary = currentMapLesson.vocabulary || [];
             const objectives = currentMapLesson.objectives || [];
+            
+            console.log('🔍 Analysis Data:');
+            console.log('  Content length:', content.length);
+            console.log('  Title:', title);
+            console.log('  Module Title:', moduleTitle);
+            console.log('  Vocabulary count:', vocabulary.length);
+            console.log('  Objectives count:', objectives.length);
             
             // Create comprehensive search text for analysis
             const searchText = [content, title, moduleTitle, 
@@ -4086,6 +4096,12 @@
 
         // INTELLIGENT ACTIVITY GENERATION SYSTEM
         function generateIntelligentActivities(searchText, title, moduleTitle, lessonData) {
+            console.log('🧠 Intelligent Activity Generation Debug:');
+            console.log('📝 Search Text:', searchText.substring(0, 200) + '...');
+            console.log('📚 Title:', title);
+            console.log('📖 Module Title:', moduleTitle);
+            console.log('🔍 Lesson Data Keys:', Object.keys(lessonData || {}));
+            
             const activities = [];
             
             // ECONOMICS LESSONS - Creative Geographic Connections
@@ -4219,6 +4235,7 @@
                 });
             }
             
+            console.log('✨ Generated Activities:', activities.length, activities.map(a => a.title));
             return activities;
         }
 
