@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="img-src 'self' data: blob: https://*.tile.openstreetmap.org https://server.arcgisonline.com https://*.tile.opentopomap.org https://*.tile.openstreetmap.fr https://earthquake.usgs.gov https://*.esri.com https://unpkg.com;">
+    <meta http-equiv="Content-Security-Policy" content="img-src 'self' data: blob: https://*.tile.openstreetmap.org https://server.arcgisonline.com https://*.tile.opentopomap.org https://*.tile.openstreetmap.fr https://earthquake.usgs.gov https://*.esri.com https://unpkg.com/*;">
     <title>Geography Lesson Companion</title>
     
     <!-- Leaflet for Enhanced Maps - No API Keys Required! -->
@@ -2748,12 +2748,13 @@
             return getNextSequentialLesson();
         }
         
-        // Find next available school day for lessons
+        // Find next available school day for lessons (OPTIMIZED)
         function findNextAvailableDay() {
             const today = new Date();
             const current = new Date(Math.max(today, schoolCalendar.curriculumStart));
             
-            for (let i = 0; i < 365; i++) { // Look ahead up to a year
+            // Limit search to 60 days instead of 365 for better performance
+            for (let i = 0; i < 60; i++) { 
                 const dateStr = current.toISOString().split('T')[0];
                 
                 if (isLessonDay(current) && !lessonAssignments[dateStr]) {
