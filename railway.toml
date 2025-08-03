@@ -1,9 +1,0 @@
-[build]
-command = "echo 'No build needed for static site'"
-
-[deploy]
-startCommand = "echo 'Static site deployed'"
-
-[environment]
-# Override Railway's default CSP headers
-CSP_HEADER = "img-src 'self' data: blob: https://*.tile.openstreetmap.org https://server.arcgisonline.com https://*.tile.opentopomap.org https://*.tile.openstreetmap.fr https://earthquake.usgs.gov https://*.esri.com https://unpkg.com/*"
