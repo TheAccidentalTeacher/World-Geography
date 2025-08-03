@@ -1526,6 +1526,188 @@
             to { opacity: 1; }
         }
 
+        /* EPIC LOAD ACTIVITIES ANIMATIONS */
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes successPulse {
+            0% { 
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(86, 171, 47, 0.7);
+            }
+            50% { 
+                transform: scale(1.05);
+                box-shadow: 0 0 0 10px rgba(86, 171, 47, 0.3);
+            }
+            100% { 
+                transform: scale(1);
+                box-shadow: 0 0 0 20px rgba(86, 171, 47, 0);
+            }
+        }
+
+        @keyframes particleExplosion {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 1;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                transform: translate(
+                    calc(cos(var(--angle)) * 150px),
+                    calc(sin(var(--angle)) * 150px)
+                ) scale(0.3);
+                opacity: 0;
+            }
+        }
+
+        @keyframes floatSparkle {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: translateY(-30px) scale(1.2);
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-60px) scale(0.8);
+                opacity: 0;
+            }
+        }
+
+        @keyframes panelReveal {
+            0% {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            60% {
+                opacity: 1;
+                transform: translateY(-5px) scale(1.02);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes cardSparkle {
+            0% {
+                transform: scale(1) rotate(0deg);
+                filter: brightness(1);
+            }
+            50% {
+                transform: scale(1.03) rotate(1deg);
+                filter: brightness(1.1);
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+                filter: brightness(1);
+            }
+        }
+
+        /* Enhanced Activity Button Hover Effects */
+        #loadLessonActivities {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        #loadLessonActivities:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(253, 126, 20, 0.4);
+        }
+
+        #loadLessonActivities:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        /* Cool ripple effect for activity cards */
+        .activity-card-cool {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .activity-card-cool::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(23, 162, 184, 0.1);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+            z-index: 1;
+        }
+
+        .activity-card-cool:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        @keyframes cardReveal {
+            0% {
+                opacity: 0;
+                transform: translateY(20px) scale(0.9);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes iconBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+
+        /* Button ripple effect */
+        .button-ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.6);
+            transform: scale(0);
+            animation: ripple 0.6s linear;
+            pointer-events: none;
+        }
+
+        @keyframes ripple {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        @keyframes skillReveal {
+            0% {
+                opacity: 0;
+                transform: translateY(30px) scale(0.8) rotate(-5deg);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1) rotate(0deg);
+            }
+        }
+
+        @keyframes skillIconFloat {
+            0%, 100% { 
+                transform: translateY(0) scale(1); 
+            }
+            50% { 
+                transform: translateY(-5px) scale(1.1); 
+            }
+        }
+
+        .skill-card-cool:hover .skill-glow {
+            opacity: 1 !important;
+        }
+
         /* Interactive Elements */
         .exploration-checklist label {
             display: block;
@@ -3727,11 +3909,33 @@
             }
             
             // Render skills
-            skillsList.innerHTML = mapSkills.map(skill => `
-                <div style="background: white; border: 1px solid #dee2e6; border-radius: 6px; padding: 12px; text-align: center;">
-                    <div style="font-size: 20px; margin-bottom: 5px;">${skill.icon}</div>
-                    <div style="font-weight: bold; font-size: 13px; margin-bottom: 5px; color: #495057;">${skill.title}</div>
-                    <div style="font-size: 11px; color: #6c757d; line-height: 1.3;">${skill.description}</div>
+            skillsList.innerHTML = mapSkills.map((skill, index) => `
+                <div class="skill-card-cool" style="
+                    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); 
+                    border: 2px solid #28a745; 
+                    border-radius: 10px; 
+                    padding: 15px; 
+                    text-align: center;
+                    position: relative;
+                    overflow: hidden;
+                    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                    animation: skillReveal 0.8s ease-out ${index * 0.15}s both;
+                    cursor: pointer;
+                " onmouseover="this.style.transform='translateY(-5px) rotate(1deg)'; this.style.boxShadow='0 10px 30px rgba(40,167,69,0.3)'" 
+                   onmouseout="this.style.transform=''; this.style.boxShadow=''">
+                    <div style="font-size: 28px; margin-bottom: 8px; animation: skillIconFloat 3s ease-in-out infinite; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));">${skill.icon}</div>
+                    <div style="font-weight: bold; font-size: 14px; margin-bottom: 8px; color: #28a745; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">${skill.title}</div>
+                    <div style="font-size: 12px; color: #6c757d; line-height: 1.4;">${skill.description}</div>
+                    <div class="skill-glow" style="
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        bottom: 0;
+                        background: linear-gradient(45deg, transparent, rgba(40,167,69,0.1), transparent);
+                        opacity: 0;
+                        transition: opacity 0.3s ease;
+                    "></div>
                 </div>
             `).join('');
             
@@ -3875,15 +4079,43 @@
                 });
             }
             
-            activitiesList.innerHTML = activities.map(activity => `
-                <div style="background: white; border: 1px solid #bee5eb; border-radius: 6px; padding: 12px;">
-                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                        <span style="font-size: 18px;">${activity.icon}</span>
-                        <strong style="font-size: 14px; color: #0c5460;">${activity.title}</strong>
+            activitiesList.innerHTML = activities.map((activity, index) => `
+                <div class="activity-card-cool" style="
+                    background: white; 
+                    border: 1px solid #bee5eb; 
+                    border-radius: 8px; 
+                    padding: 15px;
+                    position: relative;
+                    overflow: hidden;
+                    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                    animation: cardReveal 0.6s ease-out ${index * 0.1}s both;
+                    cursor: pointer;
+                " onmouseover="this.style.transform='translateY(-3px) scale(1.02)'; this.style.boxShadow='0 8px 25px rgba(23,162,184,0.3)'" 
+                   onmouseout="this.style.transform=''; this.style.boxShadow=''">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px; position: relative; z-index: 2;">
+                        <span style="font-size: 22px; animation: iconBounce 2s ease-in-out infinite;">${activity.icon}</span>
+                        <strong style="font-size: 15px; color: #0c5460; font-weight: 600;">${activity.title}</strong>
                     </div>
-                    <p style="font-size: 12px; color: #6c757d; margin: 0 0 10px 0; line-height: 1.3;">${activity.description}</p>
-                    <button onclick="${activity.action}()" style="background: #17a2b8; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 11px; cursor: pointer;">
-                        Start Activity
+                    <p style="font-size: 13px; color: #6c757d; margin: 0 0 12px 0; line-height: 1.4; position: relative; z-index: 2;">${activity.description}</p>
+                    <button onclick="${activity.action}(); createButtonRipple(event)" 
+                            style="
+                                background: linear-gradient(135deg, #17a2b8 0%, #138496 100%); 
+                                color: white; 
+                                border: none; 
+                                padding: 8px 16px; 
+                                border-radius: 20px; 
+                                font-size: 12px; 
+                                font-weight: 600;
+                                cursor: pointer;
+                                position: relative;
+                                overflow: hidden;
+                                transition: all 0.3s ease;
+                                z-index: 2;
+                                box-shadow: 0 2px 10px rgba(23,162,184,0.3);
+                            "
+                            onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 4px 15px rgba(23,162,184,0.5)'"
+                            onmouseout="this.style.transform=''; this.style.boxShadow='0 2px 10px rgba(23,162,184,0.3)'">
+                        ⚡ Start Activity
                     </button>
                 </div>
             `).join('');
@@ -5092,23 +5324,218 @@
             if (loadActivitiesBtn) {
                 loadActivitiesBtn.onclick = function() {
                     if (!currentMapLesson) {
-                        alert('Please select a lesson first to load activities.');
+                        // Cool error animation
+                        this.style.transform = 'scale(0.95)';
+                        this.style.background = '#dc3545';
+                        this.innerHTML = '❌ Select Lesson First!';
+                        setTimeout(() => {
+                            this.style.transform = 'scale(1)';
+                            this.style.background = '#fd7e14';
+                            this.innerHTML = '🎯 Load Activities';
+                        }, 1500);
                         return;
                     }
                     
-                    // Show activities panel if hidden
-                    const activitiesPanel = document.getElementById('map-activities-panel');
-                    if (activitiesPanel.style.display === 'none') {
-                        loadLessonMapActivities();
-                    } else {
-                        // Toggle between showing/hiding activities
-                        activitiesPanel.style.display = activitiesPanel.style.display === 'none' ? 'block' : 'none';
-                    }
-                    
-                    updateMapStatus('Lesson activities loaded - Choose an activity to begin');
+                    // COOL LOADING SEQUENCE! 🚀
+                    startCoolLoadingSequence(this);
                 };
             }
         });
+
+        function startCoolLoadingSequence(button) {
+            // Phase 1: Button transformation
+            button.style.transition = 'all 0.3s ease';
+            button.style.transform = 'scale(1.1)';
+            button.style.background = 'linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #ffeaa7)';
+            button.style.backgroundSize = '300% 300%';
+            button.style.animation = 'gradientShift 0.5s ease-in-out';
+            button.innerHTML = '🚀 Preparing Activities...';
+            button.disabled = true;
+            
+            // Create particle effects around the button
+            createParticleExplosion(button);
+            
+            // Phase 2: Countdown sequence
+            let countdown = 3;
+            const countdownInterval = setInterval(() => {
+                if (countdown > 0) {
+                    button.innerHTML = `⚡ Loading... ${countdown}`;
+                    countdown--;
+                } else {
+                    clearInterval(countdownInterval);
+                    
+                    // Phase 3: Success animation
+                    button.style.transform = 'scale(1)';
+                    button.style.background = 'linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%)';
+                    button.style.animation = 'successPulse 0.6s ease-out';
+                    button.innerHTML = '✨ Activities Loaded!';
+                    
+                    // Phase 4: Reveal activities with cool animations
+                    revealActivitiesWithCoolEffects();
+                    
+                    // Phase 5: Reset button after delay
+                    setTimeout(() => {
+                        button.style.background = '#fd7e14';
+                        button.style.animation = '';
+                        button.innerHTML = '🎯 Load Activities';
+                        button.disabled = false;
+                        updateMapStatus('🎉 Activities ready! Choose one to begin your geographic adventure!');
+                    }, 2000);
+                }
+            }, 800);
+        }
+
+        function createParticleExplosion(button) {
+            const rect = button.getBoundingClientRect();
+            const particles = ['⭐', '✨', '🌟', '💫', '🎯', '🗺️', '🌍', '📍'];
+            
+            for (let i = 0; i < 12; i++) {
+                const particle = document.createElement('div');
+                particle.style.cssText = `
+                    position: fixed;
+                    left: ${rect.left + rect.width/2}px;
+                    top: ${rect.top + rect.height/2}px;
+                    font-size: 20px;
+                    pointer-events: none;
+                    z-index: 10000;
+                    animation: particleExplosion 1.5s ease-out forwards;
+                `;
+                particle.textContent = particles[Math.floor(Math.random() * particles.length)];
+                
+                // Random direction for explosion
+                const angle = (i / 12) * 360;
+                particle.style.setProperty('--angle', `${angle}deg`);
+                
+                document.body.appendChild(particle);
+                
+                // Remove after animation
+                setTimeout(() => {
+                    if (particle.parentNode) {
+                        particle.parentNode.removeChild(particle);
+                    }
+                }, 1500);
+            }
+        }
+
+        function revealActivitiesWithCoolEffects() {
+            // Load the activities first
+            loadLessonMapActivities();
+            
+            // Get all the panels
+            const skillsPanel = document.getElementById('map-skills-panel');
+            const focusPanel = document.getElementById('geographic-focus-panel');
+            const activitiesPanel = document.getElementById('map-activities-panel');
+            
+            // Hide all panels initially for the reveal
+            [skillsPanel, focusPanel, activitiesPanel].forEach(panel => {
+                if (panel) {
+                    panel.style.opacity = '0';
+                    panel.style.transform = 'translateY(20px)';
+                    panel.style.transition = 'all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+                }
+            });
+            
+            // Staggered reveal with bounce effects
+            setTimeout(() => {
+                if (skillsPanel && skillsPanel.style.display !== 'none') {
+                    skillsPanel.style.opacity = '1';
+                    skillsPanel.style.transform = 'translateY(0)';
+                    addGlowEffect(skillsPanel, '#28a745');
+                }
+            }, 200);
+            
+            setTimeout(() => {
+                if (focusPanel && focusPanel.style.display !== 'none') {
+                    focusPanel.style.opacity = '1';
+                    focusPanel.style.transform = 'translateY(0)';
+                    addGlowEffect(focusPanel, '#ffc107');
+                }
+            }, 400);
+            
+            setTimeout(() => {
+                if (activitiesPanel && activitiesPanel.style.display !== 'none') {
+                    activitiesPanel.style.opacity = '1';
+                    activitiesPanel.style.transform = 'translateY(0)';
+                    addGlowEffect(activitiesPanel, '#17a2b8');
+                    
+                    // Add sparkle effects to activity cards
+                    const activityCards = activitiesPanel.querySelectorAll('[style*="background: white"]');
+                    activityCards.forEach((card, index) => {
+                        setTimeout(() => {
+                            addSparkleToCard(card);
+                        }, index * 200);
+                    });
+                }
+            }, 600);
+        }
+
+        function addGlowEffect(element, color) {
+            element.style.boxShadow = `0 0 20px ${color}40, 0 0 40px ${color}20`;
+            setTimeout(() => {
+                element.style.boxShadow = '';
+            }, 2000);
+        }
+
+        function addSparkleToCard(card) {
+            card.style.transform = 'scale(1.02)';
+            card.style.transition = 'all 0.3s ease';
+            card.style.boxShadow = '0 8px 25px rgba(0,123,255,0.3)';
+            
+            // Add floating sparkles
+            const sparkles = ['✨', '⭐', '🌟'];
+            for (let i = 0; i < 3; i++) {
+                const sparkle = document.createElement('span');
+                sparkle.textContent = sparkles[i];
+                sparkle.style.cssText = `
+                    position: absolute;
+                    font-size: 16px;
+                    pointer-events: none;
+                    animation: floatSparkle 2s ease-out forwards;
+                    z-index: 1000;
+                `;
+                
+                const rect = card.getBoundingClientRect();
+                sparkle.style.left = `${rect.left + Math.random() * rect.width}px`;
+                sparkle.style.top = `${rect.top + Math.random() * rect.height}px`;
+                
+                document.body.appendChild(sparkle);
+                
+                setTimeout(() => {
+                    if (sparkle.parentNode) {
+                        sparkle.parentNode.removeChild(sparkle);
+                    }
+                }, 2000);
+            }
+            
+            setTimeout(() => {
+                card.style.transform = '';
+                card.style.boxShadow = '';
+            }, 1000);
+        }
+
+        function createButtonRipple(event) {
+            const button = event.target;
+            const rect = button.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = event.clientX - rect.left - size / 2;
+            const y = event.clientY - rect.top - size / 2;
+            
+            const ripple = document.createElement('span');
+            ripple.className = 'button-ripple';
+            ripple.style.cssText = `
+                width: ${size}px;
+                height: ${size}px;
+                left: ${x}px;
+                top: ${y}px;
+            `;
+            
+            button.style.position = 'relative';
+            button.appendChild(ripple);
+            
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+        }
 
         // Navigation functions
         function previousLesson() {
