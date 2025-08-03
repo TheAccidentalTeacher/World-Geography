@@ -4013,69 +4013,41 @@
             const activitiesPanel = document.getElementById('map-activities-panel');
             const activitiesList = document.getElementById('lesson-activities-list');
             
-            const content = (currentMapLesson.content || '').toLowerCase();
+            // Extract comprehensive lesson data for intelligent analysis
+            const content = (currentMapLesson.content || currentMapLesson.studentReading?.fullContent || '').toLowerCase();
             const title = (currentMapLesson.title || '').toLowerCase();
-            const searchText = content + ' ' + title;
+            const moduleTitle = (currentMapLesson.moduleTitle || '').toLowerCase();
+            const vocabulary = currentMapLesson.vocabulary || [];
+            const objectives = currentMapLesson.objectives || [];
             
-            const activities = [];
+            // Create comprehensive search text for analysis
+            const searchText = [content, title, moduleTitle, 
+                               objectives.join(' '), 
+                               vocabulary.map(v => typeof v === 'string' ? v : v.term).join(' ')].join(' ').toLowerCase();
             
-            // Location-based activities
-            if (searchText.includes('location') || searchText.includes('coordinate')) {
-                activities.push({
-                    icon: '📍',
-                    title: 'Location Hunt',
-                    description: 'Find and mark specific coordinates or landmarks on the map',
-                    action: 'startLocationActivity'
-                });
-            }
+            // Intelligent activity generation based on lesson content analysis
+            const activities = generateIntelligentActivities(searchText, title, moduleTitle, currentMapLesson);
             
-            // Regional comparison activities
-            if (searchText.includes('region') || searchText.includes('compare')) {
-                activities.push({
-                    icon: '⚖️',
-                    title: 'Regional Comparison',
-                    description: 'Compare characteristics between different geographic regions',
-                    action: 'startComparisonActivity'
-                });
-            }
-            
-            // Climate analysis
-            if (searchText.includes('climate') || searchText.includes('weather')) {
-                activities.push({
-                    icon: '🌡️',
-                    title: 'Climate Analysis',
-                    description: 'Analyze climate data and patterns across different regions',
-                    action: 'startClimateActivity'
-                });
-            }
-            
-            // Population studies
-            if (searchText.includes('population') || searchText.includes('city')) {
-                activities.push({
-                    icon: '👥',
-                    title: 'Population Mapping',
-                    description: 'Study population density and urban development patterns',
-                    action: 'startPopulationActivity'
-                });
-            }
-            
-            // Distance and scale
-            if (searchText.includes('distance') || searchText.includes('scale') || searchText.includes('measurement')) {
-                activities.push({
-                    icon: '📏',
-                    title: 'Distance Calculator',
-                    description: 'Practice measuring distances and using map scales',
-                    action: 'startDistanceActivity'
-                });
-            }
-            
-            // Default activity
+            // Always ensure at least one activity
             if (activities.length === 0) {
                 activities.push({
                     icon: '🎯',
-                    title: 'Geographic Exploration',
-                    description: 'Explore the region related to this lesson with guided questions',
-                    action: 'startExplorationActivity'
+                    title: 'Geographic Context Explorer',
+                    description: 'Discover the geographic connections in this lesson',
+                    action: 'startContextExplorationActivity'
+                });
+            }
+            
+            // Intelligent activity generation based on lesson content analysis
+            const activities = generateIntelligentActivities(searchText, title, moduleTitle, currentMapLesson);
+            
+            // Always ensure at least one activity
+            if (activities.length === 0) {
+                activities.push({
+                    icon: '🎯',
+                    title: 'Geographic Context Explorer',
+                    description: 'Discover the geographic connections in this lesson',
+                    action: 'startContextExplorationActivity'
                 });
             }
             
@@ -4092,23 +4064,176 @@
                     cursor: pointer;
                 " onmouseover="this.style.transform='translateY(-3px) scale(1.02)'; this.style.boxShadow='0 8px 25px rgba(23,162,184,0.3)'" 
                    onmouseout="this.style.transform=''; this.style.boxShadow=''">
-                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px; position: relative; z-index: 2;">
-                        <span style="font-size: 22px; animation: iconBounce 2s ease-in-out infinite;">${activity.icon}</span>
-                        <strong style="font-size: 15px; color: #0c5460; font-weight: 600;">${activity.title}</strong>
+                    
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+                        <span style="font-size: 1.8rem;">${activity.icon}</span>
+                        <h4 style="margin: 0; color: #17a2b8; font-weight: 600;">${activity.title}</h4>
                     </div>
-                    <p style="font-size: 13px; color: #6c757d; margin: 0 0 12px 0; line-height: 1.4; position: relative; z-index: 2;">${activity.description}</p>
-                    <button onclick="${activity.action}(); createButtonRipple(event)" 
-                            style="
-                                background: linear-gradient(135deg, #17a2b8 0%, #138496 100%); 
-                                color: white; 
-                                border: none; 
-                                padding: 8px 16px; 
-                                border-radius: 20px; 
-                                font-size: 12px; 
-                                font-weight: 600;
-                                cursor: pointer;
-                                position: relative;
-                                overflow: hidden;
+                    
+                    <p style="margin: 0 0 12px 0; color: #495057; line-height: 1.4;">${activity.description}</p>
+                    
+                    <button onclick="${activity.action}()" style="
+                        background: linear-gradient(135deg, #17a2b8 0%, #138496 100%); 
+                        color: white; 
+                        border: none; 
+                        padding: 8px 16px; 
+                        border-radius: 20px; 
+                        font-size: 12px; 
+                        font-weight: 600;
+                        cursor: pointer;
+                        position: relative;
+                        overflow: hidden;
+                        transition: all 0.3s ease;
+                        z-index: 2;
+                        box-shadow: 0 2px 10px rgba(23,162,184,0.3);
+                    "
+                    onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 4px 15px rgba(23,162,184,0.5)'"
+                    onmouseout="this.style.transform=''; this.style.boxShadow='0 2px 10px rgba(23,162,184,0.3)'">
+                        ⚡ Start Activity
+                    </button>
+                </div>
+            `).join('');
+            
+            activitiesPanel.style.display = 'block';
+        }
+
+        // INTELLIGENT ACTIVITY GENERATION SYSTEM
+        function generateIntelligentActivities(searchText, title, moduleTitle, lessonData) {
+            const activities = [];
+            
+            // ECONOMICS LESSONS - Creative Geographic Connections
+            if (moduleTitle.includes('economic') || searchText.includes('economic') || searchText.includes('trade') || searchText.includes('money')) {
+                
+                // Global Trade Routes Activity
+                if (searchText.includes('trade') || searchText.includes('global') || searchText.includes('import') || searchText.includes('export')) {
+                    activities.push({
+                        icon: '🌐',
+                        title: 'Global Trade Routes Explorer',
+                        description: 'Discover how geography shapes global economic connections and trade patterns',
+                        action: 'startTradeRoutesActivity'
+                    });
+                }
+                
+                // Economic Geography Mapping
+                if (searchText.includes('development') || searchText.includes('resources') || searchText.includes('production')) {
+                    activities.push({
+                        icon: '💰',
+                        title: 'Economic Geography Mapper',
+                        description: 'Map economic activities and development levels across different regions',
+                        action: 'startEconomicMappingActivity'
+                    });
+                }
+                
+                // Supply Chain Geography
+                if (searchText.includes('supply') || searchText.includes('demand') || searchText.includes('factors of production')) {
+                    activities.push({
+                        icon: '🔗',
+                        title: 'Supply Chain Geography',
+                        description: 'Trace the geographic journey of goods from production to consumption',
+                        action: 'startSupplyChainActivity'
+                    });
+                }
+            }
+            
+            // PHYSICAL GEOGRAPHY LESSONS
+            if (searchText.includes('physical') || searchText.includes('climate') || searchText.includes('river') || 
+                searchText.includes('mountain') || searchText.includes('desert') || searchText.includes('ocean')) {
+                
+                activities.push({
+                    icon: '🌍',
+                    title: 'Physical Features Explorer',
+                    description: 'Identify and analyze physical geographic features related to this lesson',
+                    action: 'startPhysicalFeaturesActivity'
+                });
+                
+                if (searchText.includes('climate') || searchText.includes('weather') || searchText.includes('temperature')) {
+                    activities.push({
+                        icon: '🌡️',
+                        title: 'Climate Pattern Analysis',
+                        description: 'Explore climate data and weather patterns in your lesson region',
+                        action: 'startClimateActivity'
+                    });
+                }
+            }
+            
+            // CULTURAL/HISTORICAL LESSONS - Geographic Context
+            if (searchText.includes('dynasty') || searchText.includes('empire') || searchText.includes('culture') || 
+                searchText.includes('civilization') || searchText.includes('people')) {
+                
+                activities.push({
+                    icon: '🏛️',
+                    title: 'Cultural Geography Explorer',
+                    description: 'Discover how geography influenced the culture and history in this lesson',
+                    action: 'startCulturalGeographyActivity'
+                });
+                
+                if (searchText.includes('empire') || searchText.includes('dynasty') || searchText.includes('expansion')) {
+                    activities.push({
+                        icon: '🗺️',
+                        title: 'Historical Geography Mapper',
+                        description: 'Map the geographic extent and influence of historical civilizations',
+                        action: 'startHistoricalMappingActivity'
+                    });
+                }
+            }
+            
+            // REGIONAL STUDIES
+            if (searchText.includes('africa') || searchText.includes('asia') || searchText.includes('europe') || 
+                searchText.includes('america') || searchText.includes('region')) {
+                
+                activities.push({
+                    icon: '📍',
+                    title: 'Regional Focus Explorer',
+                    description: 'Explore the specific geographic region featured in this lesson',
+                    action: 'startRegionalFocusActivity'
+                });
+                
+                activities.push({
+                    icon: '⚖️',
+                    title: 'Regional Comparison Tool',
+                    description: 'Compare your lesson region with other areas of the world',
+                    action: 'startComparisonActivity'
+                });
+            }
+            
+            // LOCATION-BASED ACTIVITIES
+            if (searchText.includes('location') || searchText.includes('coordinate') || searchText.includes('city') || 
+                searchText.includes('capital') || searchText.includes('country')) {
+                
+                activities.push({
+                    icon: '🎯',
+                    title: 'Location Detective',
+                    description: 'Practice identifying locations and coordinates mentioned in your lesson',
+                    action: 'startLocationActivity'
+                });
+            }
+            
+            // POPULATION AND URBAN STUDIES
+            if (searchText.includes('population') || searchText.includes('urban') || searchText.includes('city') || 
+                searchText.includes('settlement') || searchText.includes('demographic')) {
+                
+                activities.push({
+                    icon: '👥',
+                    title: 'Population Pattern Explorer',
+                    description: 'Analyze population distribution and urban development patterns',
+                    action: 'startPopulationActivity'
+                });
+            }
+            
+            // ENVIRONMENTAL AND RESOURCE STUDIES
+            if (searchText.includes('environment') || searchText.includes('resource') || searchText.includes('natural') || 
+                searchText.includes('forest') || searchText.includes('water') || searchText.includes('energy')) {
+                
+                activities.push({
+                    icon: '🌱',
+                    title: 'Environmental Geography',
+                    description: 'Explore environmental issues and natural resources in your lesson area',
+                    action: 'startEnvironmentalActivity'
+                });
+            }
+            
+            return activities;
+        }
                                 transition: all 0.3s ease;
                                 z-index: 2;
                                 box-shadow: 0 2px 10px rgba(23,162,184,0.3);
@@ -5299,6 +5424,400 @@
             const randomChallenge = challenges[Math.floor(Math.random() * challenges.length)];
             const challengeList = document.getElementById('distance-challenge-list');
             challengeList.innerHTML = `<p style="color: #007bff; font-weight: bold;">• ${randomChallenge}</p>`;
+        }
+
+        // ==========================================
+        // INTELLIGENT ACTIVITY FUNCTIONS
+        // ==========================================
+
+        function startTradeRoutesActivity() {
+            if (!enhancedMap || !currentMapLesson) {
+                alert('Please select a lesson first to start trade route activities.');
+                return;
+            }
+            
+            updateMapStatus('🌐 Trade Routes Explorer: Mapping global economic connections');
+            
+            createActivityModal(
+                '🌐 Global Trade Routes Explorer',
+                `
+                <div style="margin-bottom: 15px;">
+                    <h4>Discover Economic Geography:</h4>
+                    <p>Explore how geographic features influence global trade patterns and economic relationships.</p>
+                    
+                    <div style="background: #e7f3ff; padding: 12px; border-radius: 6px; margin: 10px 0;">
+                        <h5>🎯 Your Mission:</h5>
+                        <ul style="margin: 5px 0; padding-left: 20px; font-size: 13px;">
+                            <li>Identify major shipping routes and trade corridors</li>
+                            <li>Analyze how geography affects transportation costs</li>
+                            <li>Explore economic connections between distant regions</li>
+                            <li>Understand how trade shapes cultural exchange</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: #f8f9fa; padding: 10px; border-radius: 6px; margin: 10px 0;">
+                        <h5>🌍 Trade Route Facts:</h5>
+                        <ul style="margin: 5px 0; padding-left: 20px; font-size: 13px;">
+                            <li>90% of global trade travels by sea</li>
+                            <li>The Suez Canal handles 12% of world trade</li>
+                            <li>Trade routes often follow geographic features like rivers and mountain passes</li>
+                            <li>Economic geography explains why some regions are wealthier than others</li>
+                        </ul>
+                    </div>
+                </div>
+                `,
+                [
+                    { text: 'Show Trade Data', action: 'showLessonData()' },
+                    { text: 'Close Activity', action: 'closeActivityModal()' }
+                ]
+            );
+        }
+
+        function startEconomicMappingActivity() {
+            if (!enhancedMap || !currentMapLesson) {
+                alert('Please select a lesson first to start economic mapping.');
+                return;
+            }
+            
+            updateMapStatus('📊 Economic Geography: Analyzing spatial economic patterns');
+            
+            createActivityModal(
+                '📊 Economic Geography Mapper',
+                `
+                <div style="margin-bottom: 15px;">
+                    <h4>Map Economic Patterns:</h4>
+                    <p>Understand how economic activities are distributed across space and why certain regions develop differently.</p>
+                    
+                    <div style="background: #e7f3ff; padding: 12px; border-radius: 6px; margin: 10px 0;">
+                        <h5>🎯 Exploration Areas:</h5>
+                        <ul style="margin: 5px 0; padding-left: 20px; font-size: 13px;">
+                            <li>Industrial regions and manufacturing centers</li>
+                            <li>Agricultural zones and resource extraction areas</li>
+                            <li>Service economies and financial centers</li>
+                            <li>Development patterns and economic inequality</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: #f8f9fa; padding: 10px; border-radius: 6px; margin: 10px 0;">
+                        <h5>💡 Economic Geography Insights:</h5>
+                        <ul style="margin: 5px 0; padding-left: 20px; font-size: 13px;">
+                            <li>Geographic location affects economic development</li>
+                            <li>Natural resources influence regional specialization</li>
+                            <li>Transportation networks shape economic patterns</li>
+                            <li>Climate and terrain impact agricultural productivity</li>
+                        </ul>
+                    </div>
+                </div>
+                `,
+                [
+                    { text: 'Load Economic Data', action: 'showLessonData()' },
+                    { text: 'Close Activity', action: 'closeActivityModal()' }
+                ]
+            );
+        }
+
+        function startSupplyChainActivity() {
+            if (!enhancedMap || !currentMapLesson) {
+                alert('Please select a lesson first to start supply chain mapping.');
+                return;
+            }
+            
+            updateMapStatus('🚚 Supply Chain Geography: Tracing global connections');
+            
+            createActivityModal(
+                '🚚 Supply Chain Geography',
+                `
+                <div style="margin-bottom: 15px;">
+                    <h4>Follow Global Supply Chains:</h4>
+                    <p>Discover how products travel around the world and how geography affects global supply networks.</p>
+                    
+                    <div style="background: #e7f3ff; padding: 12px; border-radius: 6px; margin: 10px 0;">
+                        <h5>🎯 Supply Chain Elements:</h5>
+                        <ul style="margin: 5px 0; padding-left: 20px; font-size: 13px;">
+                            <li>Raw material extraction and processing locations</li>
+                            <li>Manufacturing centers and assembly points</li>
+                            <li>Distribution networks and logistics hubs</li>
+                            <li>Consumer markets and retail destinations</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: #f8f9fa; padding: 10px; border-radius: 6px; margin: 10px 0;">
+                        <h5>🌐 Global Supply Chain Facts:</h5>
+                        <ul style="margin: 5px 0; padding-left: 20px; font-size: 13px;">
+                            <li>A typical smartphone contains materials from 6+ continents</li>
+                            <li>Ocean shipping carries 90% of international trade</li>
+                            <li>Geographic barriers add cost and complexity to supply chains</li>
+                            <li>Political geography affects trade relationships</li>
+                        </ul>
+                    </div>
+                </div>
+                `,
+                [
+                    { text: 'Trace a Product', action: 'generateLocationChallenge()' },
+                    { text: 'Close Activity', action: 'closeActivityModal()' }
+                ]
+            );
+        }
+
+        function startCulturalGeographyActivity() {
+            if (!enhancedMap || !currentMapLesson) {
+                alert('Please select a lesson first to start cultural geography exploration.');
+                return;
+            }
+            
+            updateMapStatus('🏛️ Cultural Geography: Exploring human-environment connections');
+            
+            createActivityModal(
+                '🏛️ Cultural Geography Explorer',
+                `
+                <div style="margin-bottom: 15px;">
+                    <h4>Discover Cultural Landscapes:</h4>
+                    <p>Explore how geography influences culture, and how human cultures shape the landscape.</p>
+                    
+                    <div style="background: #e7f3ff; padding: 12px; border-radius: 6px; margin: 10px 0;">
+                        <h5>🎯 Cultural Geography Themes:</h5>
+                        <ul style="margin: 5px 0; padding-left: 20px; font-size: 13px;">
+                            <li>How environment shapes cultural practices</li>
+                            <li>Settlement patterns and architectural styles</li>
+                            <li>Religious and cultural site locations</li>
+                            <li>Language distribution and geographic barriers</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: #f8f9fa; padding: 10px; border-radius: 6px; margin: 10px 0;">
+                        <h5>🌍 Cultural-Geographic Connections:</h5>
+                        <ul style="margin: 5px 0; padding-left: 20px; font-size: 13px;">
+                            <li>Mountain barriers create distinct cultural regions</li>
+                            <li>Rivers serve as cultural highways and boundaries</li>
+                            <li>Climate influences food, clothing, and housing</li>
+                            <li>Natural resources shape economic and social systems</li>
+                        </ul>
+                    </div>
+                </div>
+                `,
+                [
+                    { text: 'Explore Cultural Sites', action: 'focusOnLessonRegion()' },
+                    { text: 'Close Activity', action: 'closeActivityModal()' }
+                ]
+            );
+        }
+
+        function startHistoricalMappingActivity() {
+            if (!enhancedMap || !currentMapLesson) {
+                alert('Please select a lesson first to start historical mapping.');
+                return;
+            }
+            
+            updateMapStatus('🗺️ Historical Geography: Mapping civilizations through time');
+            
+            createActivityModal(
+                '🗺️ Historical Geography Mapper',
+                `
+                <div style="margin-bottom: 15px;">
+                    <h4>Map Historical Civilizations:</h4>
+                    <p>Discover how geography influenced the rise, expansion, and development of historical empires and civilizations.</p>
+                    
+                    <div style="background: #e7f3ff; padding: 12px; border-radius: 6px; margin: 10px 0;">
+                        <h5>🎯 Historical Geography Focus:</h5>
+                        <ul style="margin: 5px 0; padding-left: 20px; font-size: 13px;">
+                            <li>Geographic factors in empire expansion</li>
+                            <li>Natural boundaries and defensive positions</li>
+                            <li>Trade routes and economic centers</li>
+                            <li>Environmental challenges and adaptations</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: #f8f9fa; padding: 10px; border-radius: 6px; margin: 10px 0;">
+                        <h5>🏛️ Geography Shapes History:</h5>
+                        <ul style="margin: 5px 0; padding-left: 20px; font-size: 13px;">
+                            <li>River valleys fostered early civilizations</li>
+                            <li>Mountain ranges provided natural defenses</li>
+                            <li>Coastal locations enabled maritime trade</li>
+                            <li>Climate changes influenced migration patterns</li>
+                        </ul>
+                    </div>
+                </div>
+                `,
+                [
+                    { text: 'Focus on Historical Region', action: 'focusOnLessonRegion()' },
+                    { text: 'Close Activity', action: 'closeActivityModal()' }
+                ]
+            );
+        }
+
+        function startRegionalFocusActivity() {
+            if (!enhancedMap || !currentMapLesson) {
+                alert('Please select a lesson first to start regional exploration.');
+                return;
+            }
+            
+            updateMapStatus('📍 Regional Focus: Deep dive into your lesson region');
+            
+            // Auto-focus on the lesson region
+            focusOnLessonRegion();
+            
+            createActivityModal(
+                '📍 Regional Focus Explorer',
+                `
+                <div style="margin-bottom: 15px;">
+                    <h4>Explore Your Lesson Region:</h4>
+                    <p>Take a comprehensive look at the geographic region featured in your current lesson.</p>
+                    
+                    <div style="background: #e7f3ff; padding: 12px; border-radius: 6px; margin: 10px 0;">
+                        <h5>🎯 Regional Analysis:</h5>
+                        <ul style="margin: 5px 0; padding-left: 20px; font-size: 13px;">
+                            <li>Physical geography and landforms</li>
+                            <li>Climate patterns and weather systems</li>
+                            <li>Human settlement and population distribution</li>
+                            <li>Economic activities and resources</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: #f8f9fa; padding: 10px; border-radius: 6px; margin: 10px 0;">
+                        <h5>🔍 Investigation Questions:</h5>
+                        <ul style="margin: 5px 0; padding-left: 20px; font-size: 13px;">
+                            <li>What makes this region unique?</li>
+                            <li>How do people adapt to the environment here?</li>
+                            <li>What challenges and opportunities exist?</li>
+                            <li>How does this region connect to the wider world?</li>
+                        </ul>
+                    </div>
+                </div>
+                `,
+                [
+                    { text: 'Load Regional Data', action: 'showLessonData()' },
+                    { text: 'Close Activity', action: 'closeActivityModal()' }
+                ]
+            );
+        }
+
+        function startPhysicalFeaturesActivity() {
+            if (!enhancedMap || !currentMapLesson) {
+                alert('Please select a lesson first to start physical features exploration.');
+                return;
+            }
+            
+            updateMapStatus('🌍 Physical Features: Exploring Earth\'s landforms and natural systems');
+            
+            createActivityModal(
+                '🌍 Physical Features Explorer',
+                `
+                <div style="margin-bottom: 15px;">
+                    <h4>Discover Physical Geography:</h4>
+                    <p>Identify and analyze the physical features that shape our planet's surface and influence human activity.</p>
+                    
+                    <div style="background: #e7f3ff; padding: 12px; border-radius: 6px; margin: 10px 0;">
+                        <h5>🎯 Physical Features to Explore:</h5>
+                        <ul style="margin: 5px 0; padding-left: 20px; font-size: 13px;">
+                            <li>Mountains, valleys, and plateaus</li>
+                            <li>Rivers, lakes, and coastlines</li>
+                            <li>Deserts, forests, and grasslands</li>
+                            <li>Tectonic features and geological formations</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: #f8f9fa; padding: 10px; border-radius: 6px; margin: 10px 0;">
+                        <h5>🌋 Physical Geography Impact:</h5>
+                        <ul style="margin: 5px 0; padding-left: 20px; font-size: 13px;">
+                            <li>Landforms influence settlement patterns</li>
+                            <li>Water features provide resources and transportation</li>
+                            <li>Elevation affects climate and agriculture</li>
+                            <li>Natural barriers shape cultural boundaries</li>
+                        </ul>
+                    </div>
+                </div>
+                `,
+                [
+                    { text: 'Enable Terrain View', action: 'document.getElementById("mapTerrainToggle").checked = true; enable3DTerrain()' },
+                    { text: 'Close Activity', action: 'closeActivityModal()' }
+                ]
+            );
+        }
+
+        function startEnvironmentalActivity() {
+            if (!enhancedMap || !currentMapLesson) {
+                alert('Please select a lesson first to start environmental exploration.');
+                return;
+            }
+            
+            updateMapStatus('🌱 Environmental Geography: Exploring human-environment interactions');
+            
+            createActivityModal(
+                '🌱 Environmental Geography',
+                `
+                <div style="margin-bottom: 15px;">
+                    <h4>Explore Environmental Issues:</h4>
+                    <p>Investigate how humans interact with the environment and the geographic patterns of environmental challenges.</p>
+                    
+                    <div style="background: #e7f3ff; padding: 12px; border-radius: 6px; margin: 10px 0;">
+                        <h5>🎯 Environmental Themes:</h5>
+                        <ul style="margin: 5px 0; padding-left: 20px; font-size: 13px;">
+                            <li>Natural resource distribution and use</li>
+                            <li>Environmental challenges and solutions</li>
+                            <li>Sustainability and conservation efforts</li>
+                            <li>Climate change impacts by region</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: #f8f9fa; padding: 10px; border-radius: 6px; margin: 10px 0;">
+                        <h5>🌍 Environmental Geography Facts:</h5>
+                        <ul style="margin: 5px 0; padding-left: 20px; font-size: 13px;">
+                            <li>Geographic location affects environmental vulnerability</li>
+                            <li>Human activities create regional environmental patterns</li>
+                            <li>Resource availability influences development strategies</li>
+                            <li>Environmental issues often cross political boundaries</li>
+                        </ul>
+                    </div>
+                </div>
+                `,
+                [
+                    { text: 'Show Environmental Data', action: 'showLessonData()' },
+                    { text: 'Close Activity', action: 'closeActivityModal()' }
+                ]
+            );
+        }
+
+        function startContextExplorationActivity() {
+            if (!enhancedMap || !currentMapLesson) {
+                alert('Please select a lesson first to start context exploration.');
+                return;
+            }
+            
+            updateMapStatus('🎯 Context Explorer: Discovering geographic connections in your lesson');
+            
+            createActivityModal(
+                '🎯 Geographic Context Explorer',
+                `
+                <div style="margin-bottom: 15px;">
+                    <h4>Discover Geographic Connections:</h4>
+                    <p>Explore how geography relates to and enhances understanding of your current lesson content.</p>
+                    
+                    <div style="background: #e7f3ff; padding: 12px; border-radius: 6px; margin: 10px 0;">
+                        <h5>🎯 Geographic Context Areas:</h5>
+                        <ul style="margin: 5px 0; padding-left: 20px; font-size: 13px;">
+                            <li>Spatial patterns and relationships</li>
+                            <li>Location and place significance</li>
+                            <li>Human-environment interactions</li>
+                            <li>Regional characteristics and connections</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: #f8f9fa; padding: 10px; border-radius: 6px; margin: 10px 0;">
+                        <h5>🌍 Geographic Thinking:</h5>
+                        <ul style="margin: 5px 0; padding-left: 20px; font-size: 13px;">
+                            <li>Where do events and processes occur?</li>
+                            <li>Why do they occur where they do?</li>
+                            <li>How are different places connected?</li>
+                            <li>What are the geographic implications?</li>
+                        </ul>
+                    </div>
+                </div>
+                `,
+                [
+                    { text: 'Focus on Lesson Area', action: 'focusOnLessonRegion()' },
+                    { text: 'Close Activity', action: 'closeActivityModal()' }
+                ]
+            );
         }
 
         function rotateExplorationQuestion() {
