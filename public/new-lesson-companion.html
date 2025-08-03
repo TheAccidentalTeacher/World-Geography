@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="img-src 'self' data: blob: https://*.tile.openstreetmap.org https://server.arcgisonline.com https://*.tile.opentopomap.org https://*.tile.openstreetmap.fr https://earthquake.usgs.gov https://*.esri.com https://unpkg.com/leaflet@1.9.4/dist/images/ https://unpkg.com/*;">
+    <meta http-equiv="Content-Security-Policy" content="img-src 'self' data: blob: https://*.tile.openstreetmap.org https://server.arcgisonline.com https://*.tile.opentopomap.org https://*.tile.openstreetmap.fr https://earthquake.usgs.gov https://*.esri.com https://unpkg.com/*;">
     <meta name="cache-control" content="no-cache, no-store, must-revalidate">
     <title>Geography Lesson Companion</title>
     
@@ -3531,12 +3531,20 @@
             updateMapStatus('Initializing Enhanced Maps with Leaflet...');
             
             try {
-                // Fix Leaflet icon paths to prevent CSP issues
+                // Completely bypass Leaflet icons with simple CSS-based markers
                 delete L.Icon.Default.prototype._getIconUrl;
                 L.Icon.Default.mergeOptions({
-                    iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-                    iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-                    shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+                    iconUrl: 'data:image/svg+xml;base64,' + btoa(`
+                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="41" viewBox="0 0 25 41">
+                            <path fill="#3388ff" stroke="#fff" stroke-width="2" d="M12.5 0C5.6 0 0 5.6 0 12.5c0 8.3 12.5 28.5 12.5 28.5s12.5-20.2 12.5-28.5C25 5.6 19.4 0 12.5 0z"/>
+                            <circle fill="#fff" cx="12.5" cy="12.5" r="6"/>
+                        </svg>
+                    `),
+                    iconSize: [25, 41],
+                    iconAnchor: [12, 41],
+                    popupAnchor: [1, -34],
+                    shadowUrl: '',
+                    shadowSize: [0, 0]
                 });
                 
                 // Initialize Leaflet map
