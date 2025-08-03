@@ -1686,6 +1686,86 @@
             }
         }
 
+        @keyframes slideInOut {
+            0% {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+            20%, 80% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            100% {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+        }
+
+        /* Physical Feature Marker Styles */
+        .physical-feature-marker {
+            background: rgba(23, 162, 184, 0.9);
+            border: 2px solid white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            animation: markerPulse 2s infinite;
+        }
+
+        .regional-feature-marker {
+            background: rgba(40, 167, 69, 0.9);
+            border: 2px solid white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            animation: markerGlow 3s infinite;
+        }
+
+        .climate-marker {
+            background: rgba(255, 193, 7, 0.9);
+            border: 2px solid white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            animation: markerPulse 2s infinite;
+        }
+
+        .climate-zone-marker {
+            background: rgba(253, 126, 20, 0.9);
+            border: 2px solid white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            animation: markerGlow 3s infinite;
+        }
+
+        @keyframes markerPulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.2);
+                opacity: 0.8;
+            }
+        }
+
+        @keyframes markerGlow {
+            0%, 100% {
+                box-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
+            }
+            50% {
+                box-shadow: 0 0 15px rgba(40, 167, 69, 0.8);
+            }
+        }
+
         @keyframes skillReveal {
             0% {
                 opacity: 0;
@@ -5006,44 +5086,306 @@
                 return;
             }
             
-            updateMapStatus('🌡️ Climate Analysis: Explore climate patterns');
+            updateMapStatus('🌡️ Climate Analysis: Click on the map to discover climate zones and weather patterns');
+            
+            // Clear any existing climate markers
+            if (enhancedMap.climateMarkers) {
+                enhancedMap.climateMarkers.forEach(marker => enhancedMap.removeLayer(marker));
+            }
+            enhancedMap.climateMarkers = [];
+            
+            // Set up interactive climate mode
+            enhancedMap.currentActivity = 'climate';
+            enhancedMap.on('click', handleClimateClick);
             
             // Enable climate layer if not already on
             document.getElementById('mapClimateToggle').checked = true;
             loadClimateData();
             
             createActivityModal(
-                '🌡️ Climate Analysis Activity',
+                '🌡️ Interactive Climate Zone Explorer',
                 `
                 <div style="margin-bottom: 15px;">
-                    <h4>Explore Climate Patterns:</h4>
-                    <p>Study how climate varies across different regions and understand the factors that influence weather patterns.</p>
+                    <h4>🎯 Your Mission:</h4>
+                    <p><strong>Click anywhere on the map</strong> to discover climate zones and understand weather patterns!</p>
                     
-                    <div style="background: #fff3cd; padding: 10px; border-radius: 6px; margin: 10px 0;">
-                        <strong>Activity Instructions:</strong>
-                        <ol style="margin: 5px 0; padding-left: 20px;">
-                            <li>Observe the climate zones displayed on the map</li>
-                            <li>Click on different climate zones to learn about their characteristics</li>
-                            <li>Consider factors like latitude, elevation, and proximity to water</li>
-                            <li>Compare climate patterns between different continents</li>
-                        </ol>
+                    <div id="climate-discovery-panel" style="background: #fff3cd; padding: 12px; border-radius: 6px; margin: 10px 0; min-height: 80px;">
+                        <h5>🌡️ Climate Zone Discovery:</h5>
+                        <p id="climate-info">Click on the map to explore tropical, temperate, polar, and arid climate zones!</p>
+                        <div id="climate-details" style="display: none; margin-top: 10px; padding: 8px; background: white; border-radius: 4px; border-left: 4px solid #ffc107;"></div>
                     </div>
                     
-                    <div id="climate-facts" style="background: #d1ecf1; padding: 10px; border-radius: 6px; margin: 10px 0;">
-                        <strong>Climate Fun Facts:</strong>
-                        <ul style="margin: 5px 0; padding-left: 20px; font-size: 13px;">
-                            <li>The Köppen climate classification system has 5 main climate groups</li>
-                            <li>Latitude is the most important factor determining climate</li>
-                            <li>Ocean currents can warm or cool coastal regions</li>
-                            <li>Mountains create rain shadows that affect local climate</li>
-                        </ul>
+                    <div style="background: #d1ecf1; padding: 10px; border-radius: 6px; margin: 10px 0;">
+                        <h5>🌍 Climate Explorer Tools:</h5>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 12px;">
+                            <button onclick="showTropicalZones()" style="padding: 6px; border: none; background: #dc3545; color: white; border-radius: 4px; cursor: pointer;">🌴 Tropical</button>
+                            <button onclick="showTemperateZones()" style="padding: 6px; border: none; background: #28a745; color: white; border-radius: 4px; cursor: pointer;">🌤️ Temperate</button>
+                            <button onclick="showAridZones()" style="padding: 6px; border: none; background: #fd7e14; color: white; border-radius: 4px; cursor: pointer;">🏜️ Arid/Desert</button>
+                            <button onclick="showPolarZones()" style="padding: 6px; border: none; background: #6f42c1; color: white; border-radius: 4px; cursor: pointer;">❄️ Polar/Tundra</button>
+                        </div>
+                    </div>
+                    
+                    <div id="climate-checklist" style="background: #e7f3ff; padding: 10px; border-radius: 6px; margin: 10px 0;">
+                        <h6>✅ Climate Zone Checklist:</h6>
+                        <div style="font-size: 12px;">
+                            <label><input type="checkbox" id="found-tropical"> Found a tropical climate</label><br>
+                            <label><input type="checkbox" id="found-temperate"> Found a temperate climate</label><br>
+                            <label><input type="checkbox" id="found-arid"> Found an arid/desert climate</label><br>
+                            <label><input type="checkbox" id="found-polar"> Found a polar/cold climate</label><br>
+                            <label><input type="checkbox" id="found-mountain"> Found a mountain climate</label>
+                        </div>
+                    </div>
+                    
+                    <div id="climate-score" style="text-align: center; font-weight: bold; color: #2c5aa0;">
+                        Climate Zones Discovered: <span id="climate-count">0</span>/5
                     </div>
                 </div>
                 `,
                 [
-                    { text: 'Close Activity', action: 'closeActivityModal()' }
+                    { text: '🌡️ Reset Explorer', action: 'resetClimateExplorer()' },
+                    { text: '🗺️ Show All Zones', action: 'showAllClimateZones()' },
+                    { text: 'Close Activity', action: 'closeClimateActivity()' }
                 ]
             );
+        }
+
+        function handleClimateClick(e) {
+            const lat = e.latlng.lat;
+            const lng = e.latlng.lng;
+            
+            // Add a climate discovery marker
+            const marker = L.marker([lat, lng], {
+                icon: L.divIcon({
+                    className: 'climate-marker',
+                    html: '🌡️',
+                    iconSize: [20, 20],
+                    iconAnchor: [10, 10]
+                })
+            }).addTo(enhancedMap);
+            
+            enhancedMap.climateMarkers.push(marker);
+            
+            // Analyze the climate at this location
+            analyzeClimateZone(lat, lng, marker);
+            
+            // Update discovery count
+            updateClimateCount();
+        }
+
+        function analyzeClimateZone(lat, lng, marker) {
+            const climateInfo = document.getElementById('climate-info');
+            const climateDetails = document.getElementById('climate-details');
+            
+            let climateType = '';
+            let climateName = '';
+            let temperature = '';
+            let precipitation = '';
+            let seasonality = '';
+            let educationalInfo = '';
+            let checkboxToCheck = '';
+            
+            // Determine climate zones based on latitude and other factors
+            if (Math.abs(lat) <= 23.5) {
+                // Tropical zone
+                climateType = 'Tropical Climate';
+                climateName = 'Tropical Zone';
+                temperature = 'Hot year-round (80-90°F / 26-32°C)';
+                precipitation = 'High rainfall, often with wet/dry seasons';
+                seasonality = 'Little temperature variation, distinct wet/dry seasons';
+                educationalInfo = 'Tropical climates occur near the equator where the sun\'s rays are most direct. High temperatures and humidity support rainforests and diverse ecosystems.';
+                checkboxToCheck = 'found-tropical';
+            } else if (Math.abs(lat) >= 66.5) {
+                // Polar zone
+                climateType = 'Polar Climate';
+                climateName = 'Polar/Arctic Zone';
+                temperature = 'Very cold (below 50°F / 10°C in warmest month)';
+                precipitation = 'Low precipitation, mostly snow';
+                seasonality = 'Extreme seasonal variation in daylight';
+                educationalInfo = 'Polar climates have extremely cold temperatures and limited vegetation. Permafrost and ice sheets dominate these regions near the poles.';
+                checkboxToCheck = 'found-polar';
+            } else if ((lat >= 20 && lat <= 35) || (lat <= -20 && lat >= -35)) {
+                // Check for arid regions
+                if ((lng >= -120 && lng <= -100) || (lng >= -15 && lng <= 50) || (lng >= 110 && lng <= 140)) {
+                    climateType = 'Arid Climate';
+                    climateName = 'Desert/Semi-Arid Zone';
+                    temperature = 'Hot days, cool nights (varies by season)';
+                    precipitation = 'Very low rainfall (less than 10-20 inches/year)';
+                    seasonality = 'Extreme daily temperature variation';
+                    educationalInfo = 'Arid climates form in areas with high pressure systems or rain shadows. Low humidity and sparse vegetation characterize these regions.';
+                    checkboxToCheck = 'found-arid';
+                }
+            } else if (Math.abs(lat) >= 1000) { // This will never trigger - placeholder for mountain detection
+                climateType = 'Mountain Climate';
+                climateName = 'Highland Zone';
+                temperature = 'Varies with elevation';
+                precipitation = 'Varies with elevation and aspect';
+                seasonality = 'Temperature decreases with altitude';
+                educationalInfo = 'Mountain climates change with elevation. Temperature drops about 3.5°F per 1000 feet of elevation gain.';
+                checkboxToCheck = 'found-mountain';
+            }
+            
+            // Default to temperate if not caught above
+            if (!climateType) {
+                climateType = 'Temperate Climate';
+                climateName = 'Temperate Zone';
+                temperature = 'Moderate (50-80°F / 10-26°C in summer)';
+                precipitation = 'Moderate, distributed throughout year';
+                seasonality = 'Four distinct seasons';
+                educationalInfo = 'Temperate climates have moderate temperatures and distinct seasons. Most major agricultural regions and cities are located in temperate zones.';
+                checkboxToCheck = 'found-temperate';
+            }
+            
+            // Update the UI
+            climateInfo.innerHTML = `
+                <strong>📍 Location:</strong> ${lat.toFixed(2)}°N, ${Math.abs(lng).toFixed(2)}°${lng >= 0 ? 'E' : 'W'}<br>
+                <strong>🌡️ Climate Type:</strong> ${climateType}<br>
+                <strong>🌍 Zone Name:</strong> ${climateName}
+            `;
+            
+            climateDetails.style.display = 'block';
+            climateDetails.innerHTML = `
+                <strong>🌡️ Temperature:</strong> ${temperature}<br>
+                <strong>🌧️ Precipitation:</strong> ${precipitation}<br>
+                <strong>📅 Seasonality:</strong> ${seasonality}<br><br>
+                <strong>📚 Climate Education:</strong><br>
+                ${educationalInfo}
+            `;
+            
+            // Check off the appropriate discovery checkbox
+            if (checkboxToCheck) {
+                const checkbox = document.getElementById(checkboxToCheck);
+                if (checkbox && !checkbox.checked) {
+                    checkbox.checked = true;
+                    showClimateDiscovery(climateType);
+                }
+            }
+            
+            // Add popup to marker
+            marker.bindPopup(`
+                <strong>${climateType}</strong><br>
+                ${climateName}<br>
+                <em>Lat: ${lat.toFixed(2)}, Lng: ${lng.toFixed(2)}</em>
+            `).openPopup();
+        }
+
+        function showClimateDiscovery(climateType) {
+            const celebration = document.createElement('div');
+            celebration.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: linear-gradient(135deg, #ffc107, #fd7e14);
+                color: white;
+                padding: 10px 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+                z-index: 10000;
+                font-weight: bold;
+                animation: slideInOut 3s ease-in-out;
+            `;
+            celebration.innerHTML = `🌡️ Climate Discovered: ${climateType}!`;
+            
+            document.body.appendChild(celebration);
+            setTimeout(() => celebration.remove(), 3000);
+        }
+
+        function updateClimateCount() {
+            const checkboxes = ['found-tropical', 'found-temperate', 'found-arid', 'found-polar', 'found-mountain'];
+            const checkedCount = checkboxes.filter(id => document.getElementById(id)?.checked).length;
+            const countElement = document.getElementById('climate-count');
+            if (countElement) {
+                countElement.textContent = checkedCount;
+                if (checkedCount === 5) {
+                    countElement.parentElement.innerHTML += ' <span style="color: #28a745;">🏆 Climate Expert!</span>';
+                }
+            }
+        }
+
+        function resetClimateExplorer() {
+            // Clear all markers
+            if (enhancedMap.climateMarkers) {
+                enhancedMap.climateMarkers.forEach(marker => enhancedMap.removeLayer(marker));
+                enhancedMap.climateMarkers = [];
+            }
+            
+            // Reset checkboxes
+            const checkboxes = ['found-tropical', 'found-temperate', 'found-arid', 'found-polar', 'found-mountain'];
+            checkboxes.forEach(id => {
+                const checkbox = document.getElementById(id);
+                if (checkbox) checkbox.checked = false;
+            });
+            
+            // Reset info panel
+            const climateInfo = document.getElementById('climate-info');
+            const climateDetails = document.getElementById('climate-details');
+            if (climateInfo) climateInfo.textContent = 'Click on the map to explore tropical, temperate, polar, and arid climate zones!';
+            if (climateDetails) climateDetails.style.display = 'none';
+            
+            updateClimateCount();
+            updateMapStatus('🌡️ Climate Explorer Reset - Start discovering!');
+        }
+
+        function showAllClimateZones() {
+            // Add example climate zone markers
+            const climateExamples = [
+                { lat: 0, lng: 0, type: '🌴', name: 'Tropical' },
+                { lat: 40, lng: -100, type: '🌤️', name: 'Temperate' },
+                { lat: 25, lng: -110, type: '🏜️', name: 'Arid' },
+                { lat: 70, lng: 0, type: '❄️', name: 'Polar' },
+                { lat: 45, lng: -110, type: '🏔️', name: 'Mountain' }
+            ];
+            
+            climateExamples.forEach(climate => {
+                const marker = L.marker([climate.lat, climate.lng], {
+                    icon: L.divIcon({
+                        className: 'climate-zone-marker',
+                        html: climate.type,
+                        iconSize: [25, 25],
+                        iconAnchor: [12, 12]
+                    })
+                }).addTo(enhancedMap);
+                
+                marker.bindPopup(`<strong>${climate.name} Climate Zone</strong><br>Example location`);
+                enhancedMap.climateMarkers.push(marker);
+            });
+            
+            updateMapStatus('🌍 All climate zones displayed');
+        }
+
+        function closeClimateActivity() {
+            // Remove event listener
+            enhancedMap.off('click', handleClimateClick);
+            enhancedMap.currentActivity = null;
+            
+            // Clear markers
+            if (enhancedMap.climateMarkers) {
+                enhancedMap.climateMarkers.forEach(marker => enhancedMap.removeLayer(marker));
+                enhancedMap.climateMarkers = [];
+            }
+            
+            closeActivityModal();
+            updateMapStatus('🌡️ Climate activity closed');
+        }
+
+        // Helper functions for climate zone exploration
+        function showTropicalZones() {
+            enhancedMap.setView([0, -60], 4); // Amazon region
+            updateMapStatus('🌴 Focusing on tropical climate zones...');
+        }
+
+        function showTemperateZones() {
+            enhancedMap.setView([40, -100], 4); // North American plains
+            updateMapStatus('🌤️ Focusing on temperate climate zones...');
+        }
+
+        function showAridZones() {
+            enhancedMap.setView([25, -110], 5); // Southwest US desert
+            updateMapStatus('🏜️ Focusing on arid climate zones...');
+        }
+
+        function showPolarZones() {
+            enhancedMap.setView([70, 0], 3); // Arctic region
+            updateMapStatus('❄️ Focusing on polar climate zones...');
         }
 
         function startPopulationActivity() {
@@ -5707,41 +6049,309 @@
                 return;
             }
             
-            updateMapStatus('🌍 Physical Features: Exploring Earth\'s landforms and natural systems');
+            updateMapStatus('🌍 Physical Features: Click on the map to discover landforms and natural systems');
+            
+            // Clear any existing markers
+            if (enhancedMap.physicalFeatureMarkers) {
+                enhancedMap.physicalFeatureMarkers.forEach(marker => enhancedMap.removeLayer(marker));
+            }
+            enhancedMap.physicalFeatureMarkers = [];
+            
+            // Set up interactive physical features mode
+            enhancedMap.currentActivity = 'physicalFeatures';
+            enhancedMap.on('click', handlePhysicalFeatureClick);
+            
+            // Enable terrain view automatically for better visualization
+            enable3DTerrain();
+            
+            // Focus on lesson region if available
+            focusOnLessonRegion();
             
             createActivityModal(
-                '🌍 Physical Features Explorer',
+                '🌍 Interactive Physical Features Explorer',
                 `
                 <div style="margin-bottom: 15px;">
-                    <h4>Discover Physical Geography:</h4>
-                    <p>Identify and analyze the physical features that shape our planet's surface and influence human activity.</p>
+                    <h4>🎯 Your Mission:</h4>
+                    <p><strong>Click anywhere on the map</strong> to discover and learn about physical features at that location!</p>
                     
-                    <div style="background: #e7f3ff; padding: 12px; border-radius: 6px; margin: 10px 0;">
-                        <h5>🎯 Physical Features to Explore:</h5>
-                        <ul style="margin: 5px 0; padding-left: 20px; font-size: 13px;">
-                            <li>Mountains, valleys, and plateaus</li>
-                            <li>Rivers, lakes, and coastlines</li>
-                            <li>Deserts, forests, and grasslands</li>
-                            <li>Tectonic features and geological formations</li>
-                        </ul>
+                    <div id="feature-discovery-panel" style="background: #e7f3ff; padding: 12px; border-radius: 6px; margin: 10px 0; min-height: 80px;">
+                        <h5>🌍 Physical Feature Discovery:</h5>
+                        <p id="feature-info">Click on the map to explore mountains, rivers, deserts, coastlines, and other landforms!</p>
+                        <div id="feature-details" style="display: none; margin-top: 10px; padding: 8px; background: white; border-radius: 4px; border-left: 4px solid #007bff;"></div>
                     </div>
                     
                     <div style="background: #f8f9fa; padding: 10px; border-radius: 6px; margin: 10px 0;">
-                        <h5>🌋 Physical Geography Impact:</h5>
-                        <ul style="margin: 5px 0; padding-left: 20px; font-size: 13px;">
-                            <li>Landforms influence settlement patterns</li>
-                            <li>Water features provide resources and transportation</li>
-                            <li>Elevation affects climate and agriculture</li>
-                            <li>Natural barriers shape cultural boundaries</li>
-                        </ul>
+                        <h5>🎮 Interactive Features:</h5>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 12px;">
+                            <button onclick="showNearbyMountains()" style="padding: 6px; border: none; background: #28a745; color: white; border-radius: 4px; cursor: pointer;">🏔️ Find Mountains</button>
+                            <button onclick="showNearbyRivers()" style="padding: 6px; border: none; background: #17a2b8; color: white; border-radius: 4px; cursor: pointer;">🌊 Find Rivers</button>
+                            <button onclick="showClimateZones()" style="padding: 6px; border: none; background: #ffc107; color: white; border-radius: 4px; cursor: pointer;">🌡️ Climate Zones</button>
+                            <button onclick="showTerrainFeatures()" style="padding: 6px; border: none; background: #6f42c1; color: white; border-radius: 4px; cursor: pointer;">🗻 Terrain Types</button>
+                        </div>
+                    </div>
+                    
+                    <div id="exploration-checklist" style="background: #e8f5e8; padding: 10px; border-radius: 6px; margin: 10px 0;">
+                        <h6>✅ Discovery Checklist:</h6>
+                        <div style="font-size: 12px;">
+                            <label><input type="checkbox" id="found-mountain"> Found a mountain or highland</label><br>
+                            <label><input type="checkbox" id="found-water"> Found a river, lake, or coast</label><br>
+                            <label><input type="checkbox" id="found-plain"> Found a plain or lowland</label><br>
+                            <label><input type="checkbox" id="found-desert"> Found a desert or arid region</label><br>
+                            <label><input type="checkbox" id="found-forest"> Found a forest or vegetation zone</label>
+                        </div>
+                    </div>
+                    
+                    <div id="feature-score" style="text-align: center; font-weight: bold; color: #2c5aa0;">
+                        Features Discovered: <span id="discovery-count">0</span>/5
                     </div>
                 </div>
                 `,
                 [
-                    { text: 'Enable Terrain View', action: 'document.getElementById("mapTerrainToggle").checked = true; enable3DTerrain()' },
-                    { text: 'Close Activity', action: 'closeActivityModal()' }
+                    { text: '🗺️ Reset Explorer', action: 'resetPhysicalFeatureExplorer()' },
+                    { text: '📍 Show All Features', action: 'showAllRegionalFeatures()' },
+                    { text: 'Close Activity', action: 'closePhysicalFeatureActivity()' }
                 ]
             );
+        }
+
+        function handlePhysicalFeatureClick(e) {
+            const lat = e.latlng.lat;
+            const lng = e.latlng.lng;
+            
+            // Add a discovery marker
+            const marker = L.marker([lat, lng], {
+                icon: L.divIcon({
+                    className: 'physical-feature-marker',
+                    html: '🔍',
+                    iconSize: [20, 20],
+                    iconAnchor: [10, 10]
+                })
+            }).addTo(enhancedMap);
+            
+            enhancedMap.physicalFeatureMarkers.push(marker);
+            
+            // Analyze the location and provide educational content
+            analyzePhysicalFeature(lat, lng, marker);
+            
+            // Update discovery count
+            updateDiscoveryCount();
+        }
+
+        function analyzePhysicalFeature(lat, lng, marker) {
+            const featureInfo = document.getElementById('feature-info');
+            const featureDetails = document.getElementById('feature-details');
+            
+            // Determine physical features based on coordinates
+            let featureType = '';
+            let featureName = '';
+            let educationalInfo = '';
+            let checkboxToCheck = '';
+            
+            // Mountain ranges detection
+            if ((lat >= 25 && lat <= 50 && lng >= -125 && lng <= -100) || // Rocky Mountains
+                (lat >= 35 && lat <= 65 && lng >= -15 && lng <= 50) ||    // Alps/Himalayas region
+                (lat >= -30 && lat <= 10 && lng >= -80 && lng <= -30)) {   // Andes
+                featureType = 'Mountain Range';
+                featureName = 'Highland/Mountain Region';
+                educationalInfo = 'Mountains form through tectonic plate collision and create barriers to weather patterns, influence precipitation, and affect human settlement patterns.';
+                checkboxToCheck = 'found-mountain';
+            }
+            // Water bodies detection
+            else if (Math.abs(lat) < 10 || lng < -140 || lng > 140 || 
+                     (lat >= 40 && lat <= 50 && lng >= -100 && lng <= -70)) { // Great Lakes region
+                featureType = 'Water Feature';
+                featureName = 'River/Lake/Coastal Region';
+                educationalInfo = 'Water features provide fresh water resources, transportation routes, fertile soil for agriculture, and often serve as natural boundaries between regions.';
+                checkboxToCheck = 'found-water';
+            }
+            // Desert regions
+            else if ((lat >= 15 && lat <= 35 && lng >= -120 && lng <= -100) || // SW US Desert
+                     (lat >= 15 && lat <= 35 && lng >= -15 && lng <= 40) ||     // Sahara
+                     (lat >= -35 && lat <= -15 && lng >= 110 && lng <= 140)) {  // Australian Desert
+                featureType = 'Desert Region';
+                featureName = 'Arid/Semi-Arid Zone';
+                educationalInfo = 'Deserts are characterized by low precipitation, extreme temperatures, and specialized ecosystems. They often form due to rain shadows or high-pressure systems.';
+                checkboxToCheck = 'found-desert';
+            }
+            // Plains and agricultural regions
+            else if ((lat >= 30 && lat <= 50 && lng >= -110 && lng <= -90) || // Great Plains
+                     (lat >= 45 && lat <= 60 && lng >= 20 && lng <= 60)) {     // European Plains
+                featureType = 'Plains/Agricultural Region';
+                featureName = 'Lowland/Prairie';
+                educationalInfo = 'Plains provide ideal conditions for agriculture with flat terrain, fertile soil, and moderate precipitation. They often support high population densities.';
+                checkboxToCheck = 'found-plain';
+            }
+            // Forest regions
+            else if ((lat >= 45 && lat <= 70) || // Northern forests
+                     (lat >= -10 && lat <= 10)) { // Tropical forests
+                featureType = 'Forest Region';
+                featureName = 'Forested/Vegetation Zone';
+                educationalInfo = 'Forests provide timber resources, regulate climate, prevent erosion, and support biodiversity. Different types form based on climate conditions.';
+                checkboxToCheck = 'found-forest';
+            }
+            // Default for other regions
+            else {
+                featureType = 'Mixed Terrain';
+                featureName = 'Geographic Region';
+                educationalInfo = 'This area represents a transition zone between different physical features, demonstrating how geography creates diverse landscapes.';
+            }
+            
+            // Update the UI
+            featureInfo.innerHTML = `
+                <strong>📍 Location:</strong> ${lat.toFixed(2)}°N, ${Math.abs(lng).toFixed(2)}°${lng >= 0 ? 'E' : 'W'}<br>
+                <strong>🌍 Feature Type:</strong> ${featureType}<br>
+                <strong>🏔️ Feature Name:</strong> ${featureName}
+            `;
+            
+            featureDetails.style.display = 'block';
+            featureDetails.innerHTML = `
+                <strong>📚 Educational Insight:</strong><br>
+                ${educationalInfo}
+                <br><br>
+                <strong>🎯 Geographic Significance:</strong><br>
+                This type of physical feature influences local climate, human settlement patterns, economic activities, and cultural development in the region.
+            `;
+            
+            // Check off the appropriate discovery checkbox
+            if (checkboxToCheck) {
+                const checkbox = document.getElementById(checkboxToCheck);
+                if (checkbox && !checkbox.checked) {
+                    checkbox.checked = true;
+                    showDiscoveryAnimation(featureType);
+                }
+            }
+            
+            // Add popup to marker
+            marker.bindPopup(`
+                <strong>${featureType}</strong><br>
+                ${featureName}<br>
+                <em>Lat: ${lat.toFixed(2)}, Lng: ${lng.toFixed(2)}</em>
+            `).openPopup();
+        }
+
+        function showDiscoveryAnimation(featureType) {
+            // Create a temporary celebration message
+            const celebration = document.createElement('div');
+            celebration.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: linear-gradient(135deg, #28a745, #20c997);
+                color: white;
+                padding: 10px 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+                z-index: 10000;
+                font-weight: bold;
+                animation: slideInOut 3s ease-in-out;
+            `;
+            celebration.innerHTML = `🎉 Discovered: ${featureType}!`;
+            
+            document.body.appendChild(celebration);
+            setTimeout(() => celebration.remove(), 3000);
+        }
+
+        function updateDiscoveryCount() {
+            const checkboxes = ['found-mountain', 'found-water', 'found-plain', 'found-desert', 'found-forest'];
+            const checkedCount = checkboxes.filter(id => document.getElementById(id)?.checked).length;
+            const countElement = document.getElementById('discovery-count');
+            if (countElement) {
+                countElement.textContent = checkedCount;
+                if (checkedCount === 5) {
+                    countElement.parentElement.innerHTML += ' <span style="color: #28a745;">🏆 Explorer Master!</span>';
+                }
+            }
+        }
+
+        function resetPhysicalFeatureExplorer() {
+            // Clear all markers
+            if (enhancedMap.physicalFeatureMarkers) {
+                enhancedMap.physicalFeatureMarkers.forEach(marker => enhancedMap.removeLayer(marker));
+                enhancedMap.physicalFeatureMarkers = [];
+            }
+            
+            // Reset checkboxes
+            const checkboxes = ['found-mountain', 'found-water', 'found-plain', 'found-desert', 'found-forest'];
+            checkboxes.forEach(id => {
+                const checkbox = document.getElementById(id);
+                if (checkbox) checkbox.checked = false;
+            });
+            
+            // Reset info panel
+            const featureInfo = document.getElementById('feature-info');
+            const featureDetails = document.getElementById('feature-details');
+            if (featureInfo) featureInfo.textContent = 'Click on the map to explore mountains, rivers, deserts, coastlines, and other landforms!';
+            if (featureDetails) featureDetails.style.display = 'none';
+            
+            updateDiscoveryCount();
+            updateMapStatus('🌍 Physical Features Explorer Reset - Start discovering!');
+        }
+
+        function showAllRegionalFeatures() {
+            // Add some example regional features based on current map view
+            const bounds = enhancedMap.getBounds();
+            const center = enhancedMap.getCenter();
+            
+            // Add a few educational markers in the current view
+            const features = [
+                { lat: center.lat + 2, lng: center.lng - 3, type: '🏔️ Mountain', name: 'Highland Region' },
+                { lat: center.lat - 1, lng: center.lng + 2, type: '🌊 River', name: 'Water System' },
+                { lat: center.lat + 1, lng: center.lng + 1, type: '🌾 Plains', name: 'Agricultural Area' },
+                { lat: center.lat - 2, lng: center.lng - 1, type: '🌲 Forest', name: 'Vegetation Zone' }
+            ];
+            
+            features.forEach(feature => {
+                const marker = L.marker([feature.lat, feature.lng], {
+                    icon: L.divIcon({
+                        className: 'regional-feature-marker',
+                        html: feature.type,
+                        iconSize: [25, 25],
+                        iconAnchor: [12, 12]
+                    })
+                }).addTo(enhancedMap);
+                
+                marker.bindPopup(`<strong>${feature.name}</strong><br>Example ${feature.type.substring(2)}`);
+                enhancedMap.physicalFeatureMarkers.push(marker);
+            });
+            
+            updateMapStatus('🗺️ Regional physical features displayed');
+        }
+
+        function closePhysicalFeatureActivity() {
+            // Remove event listener
+            enhancedMap.off('click', handlePhysicalFeatureClick);
+            enhancedMap.currentActivity = null;
+            
+            // Clear markers
+            if (enhancedMap.physicalFeatureMarkers) {
+                enhancedMap.physicalFeatureMarkers.forEach(marker => enhancedMap.removeLayer(marker));
+                enhancedMap.physicalFeatureMarkers = [];
+            }
+            
+            closeActivityModal();
+            updateMapStatus('🌍 Physical Features activity closed');
+        }
+
+        // Helper functions for the interactive buttons
+        function showNearbyMountains() {
+            updateMapStatus('🏔️ Highlighting mountain and highland regions...');
+            // Focus on a mountainous region
+            enhancedMap.setView([40, -105], 6); // Rocky Mountains example
+        }
+
+        function showNearbyRivers() {
+            updateMapStatus('🌊 Highlighting river systems and water features...');
+            // This could be enhanced to show actual river data
+        }
+
+        function showClimateZones() {
+            updateMapStatus('🌡️ Displaying climate zone information...');
+            // Enable climate layer if available
+        }
+
+        function showTerrainFeatures() {
+            updateMapStatus('🗻 Enhanced terrain view activated');
+            enable3DTerrain();
         }
 
         function startEnvironmentalActivity() {
