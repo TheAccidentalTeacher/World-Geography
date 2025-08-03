@@ -4038,19 +4038,6 @@
                 });
             }
             
-            // Intelligent activity generation based on lesson content analysis
-            const activities = generateIntelligentActivities(searchText, title, moduleTitle, currentMapLesson);
-            
-            // Always ensure at least one activity
-            if (activities.length === 0) {
-                activities.push({
-                    icon: '🎯',
-                    title: 'Geographic Context Explorer',
-                    description: 'Discover the geographic connections in this lesson',
-                    action: 'startContextExplorationActivity'
-                });
-            }
-            
             activitiesList.innerHTML = activities.map((activity, index) => `
                 <div class="activity-card-cool" style="
                     background: white; 
