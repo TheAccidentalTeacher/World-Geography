@@ -2151,37 +2151,189 @@
                             <span id="controls-icon">⚙️</span> <span id="controls-text">Controls</span>
                         </button>
                         
-                        <div id="map-overlay" class="map-overlay visible" style="position: absolute; top: 60px; right: 15px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 15px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 1000; min-width: 200px;">
-                            <h4 style="margin-bottom: 10px; color: #2c3e50; font-size: 1em;">Map Controls</h4>
+                        <div id="map-overlay" class="map-overlay visible" style="position: absolute; top: 60px; right: 15px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 15px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 1000; min-width: 280px; max-height: 80vh; overflow-y: auto;">
+                            <h4 style="margin-bottom: 10px; color: #2c3e50; font-size: 1em;">📍 Educational Map Layers</h4>
                             
+                            <!-- Base Map Styles -->
                             <div class="style-buttons" style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 15px;">
                                 <button class="map-style-btn active" data-style="streets-v12" style="padding: 6px 10px; border: 2px solid #ddd; border-radius: 6px; background: #4CAF50; color: white; cursor: pointer; font-size: 11px;">Streets</button>
                                 <button class="map-style-btn" data-style="satellite-streets-v12" style="padding: 6px 10px; border: 2px solid #ddd; border-radius: 6px; background: white; cursor: pointer; font-size: 11px;">Satellite</button>
-                                <button class="map-style-btn" data-style="outdoors-v12" style="padding: 6px 10px; border: 2px solid #ddd; border-radius: 6px; background: white; cursor: pointer; font-size: 11px;">Outdoors</button>
-                                <button class="map-style-btn" data-style="light-v11" style="padding: 6px 10px; border: 2px solid #ddd; border-radius: 6px; background: white; cursor: pointer; font-size: 11px;">Light</button>
+                                <button class="map-style-btn" data-style="outdoors-v12" style="padding: 6px 10px; border: 2px solid #ddd; border-radius: 6px; background: white; cursor: pointer; font-size: 11px;">Terrain</button>
+                                <button class="map-style-btn" data-style="light-v11" style="padding: 6px 10px; border: 2px solid #ddd; border-radius: 6px; background: white; cursor: pointer; font-size: 11px;">Historical</button>
                             </div>
                             
-                            <div class="feature-controls" style="border-top: 1px solid #eee; padding-top: 10px;">
-                                <h5 style="margin-bottom: 8px; color: #2c3e50; font-size: 12px;">Data Layers</h5>
-                                
-                                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px; cursor: pointer;">
-                                    <input type="checkbox" id="mapEarthquakeToggle" style="width: 14px; height: 14px;">
-                                    <label for="mapEarthquakeToggle" style="cursor: pointer; font-size: 11px; color: #2c3e50;">Recent Earthquakes</label>
+                            <!-- Physical Geography -->
+                            <div class="layer-category" style="border-top: 1px solid #eee; padding-top: 10px; margin-bottom: 12px;">
+                                <h5 style="margin-bottom: 8px; color: #2c3e50; font-size: 12px; cursor: pointer;" onclick="toggleCategory('physical')">
+                                    🌍 Physical Geography <span id="physical-arrow">▼</span>
+                                </h5>
+                                <div id="physical-layers" style="margin-left: 8px;">
+                                    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px; cursor: pointer;">
+                                        <input type="checkbox" id="mapEarthquakeToggle" style="width: 14px; height: 14px;">
+                                        <label for="mapEarthquakeToggle" style="cursor: pointer; font-size: 11px; color: #2c3e50;">🔴 Live Earthquakes (USGS)</label>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px; cursor: pointer;">
+                                        <input type="checkbox" id="mapVolcanoToggle" style="width: 14px; height: 14px;">
+                                        <label for="mapVolcanoToggle" style="cursor: pointer; font-size: 11px; color: #2c3e50;">🌋 Active Volcanoes</label>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px; cursor: pointer;">
+                                        <input type="checkbox" id="mapOceanCurrentsToggle" style="width: 14px; height: 14px;">
+                                        <label for="mapOceanCurrentsToggle" style="cursor: pointer; font-size: 11px; color: #2c3e50;">🌊 Ocean Currents</label>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px; cursor: pointer;">
+                                        <input type="checkbox" id="mapPlateToggle" style="width: 14px; height: 14px;">
+                                        <label for="mapPlateToggle" style="cursor: pointer; font-size: 11px; color: #2c3e50;">⚡ Tectonic Plates</label>
+                                    </div>
                                 </div>
-                                
-                                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px; cursor: pointer;">
-                                    <input type="checkbox" id="mapCitiesToggle" style="width: 14px; height: 14px;">
-                                    <label for="mapCitiesToggle" style="cursor: pointer; font-size: 11px; color: #2c3e50;">Major Cities</label>
+                            </div>
+
+                            <!-- Political Geography -->
+                            <div class="layer-category" style="border-top: 1px solid #eee; padding-top: 10px; margin-bottom: 12px;">
+                                <h5 style="margin-bottom: 8px; color: #2c3e50; font-size: 12px; cursor: pointer;" onclick="toggleCategory('political')">
+                                    🏛️ Political Geography <span id="political-arrow">▼</span>
+                                </h5>
+                                <div id="political-layers" style="margin-left: 8px;">
+                                    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px; cursor: pointer;">
+                                        <input type="checkbox" id="mapNatoToggle" style="width: 14px; height: 14px;">
+                                        <label for="mapNatoToggle" style="cursor: pointer; font-size: 11px; color: #2c3e50;">🛡️ NATO Members</label>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px; cursor: pointer;">
+                                        <input type="checkbox" id="mapEuToggle" style="width: 14px; height: 14px;">
+                                        <label for="mapEuToggle" style="cursor: pointer; font-size: 11px; color: #2c3e50;">🇪🇺 European Union</label>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px; cursor: pointer;">
+                                        <input type="checkbox" id="mapG7Toggle" style="width: 14px; height: 14px;">
+                                        <label for="mapG7Toggle" style="cursor: pointer; font-size: 11px; color: #2c3e50;">💰 G7 Countries</label>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px; cursor: pointer;">
+                                        <input type="checkbox" id="mapConflictToggle" style="width: 14px; height: 14px;">
+                                        <label for="mapConflictToggle" style="cursor: pointer; font-size: 11px; color: #2c3e50;">⚔️ Current Conflicts</label>
+                                    </div>
                                 </div>
-                                
-                                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px; cursor: pointer;">
-                                    <input type="checkbox" id="mapClimateToggle" style="width: 14px; height: 14px;">
-                                    <label for="mapClimateToggle" style="cursor: pointer; font-size: 11px; color: #2c3e50;">Climate Zones</label>
+                            </div>
+
+                            <!-- Economic Geography -->
+                            <div class="layer-category" style="border-top: 1px solid #eee; padding-top: 10px; margin-bottom: 12px;">
+                                <h5 style="margin-bottom: 8px; color: #2c3e50; font-size: 12px; cursor: pointer;" onclick="toggleCategory('economic')">
+                                    💰 Economic Geography <span id="economic-arrow">▼</span>
+                                </h5>
+                                <div id="economic-layers" style="margin-left: 8px;">
+                                    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px; cursor: pointer;">
+                                        <input type="checkbox" id="mapTradeToggle" style="width: 14px; height: 14px;">
+                                        <label for="mapTradeToggle" style="cursor: pointer; font-size: 11px; color: #2c3e50;">🚢 Major Trade Routes</label>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px; cursor: pointer;">
+                                        <input type="checkbox" id="mapOilToggle" style="width: 14px; height: 14px;">
+                                        <label for="mapOilToggle" style="cursor: pointer; font-size: 11px; color: #2c3e50;">🛢️ Oil & Gas Fields</label>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px; cursor: pointer;">
+                                        <input type="checkbox" id="mapCurrencyToggle" style="width: 14px; height: 14px;">
+                                        <label for="mapCurrencyToggle" style="cursor: pointer; font-size: 11px; color: #2c3e50;">💱 Currency Zones</label>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px; cursor: pointer;">
+                                        <input type="checkbox" id="mapGdpToggle" style="width: 14px; height: 14px;">
+                                        <label for="mapGdpToggle" style="cursor: pointer; font-size: 11px; color: #2c3e50;">📊 GDP per Capita</label>
+                                    </div>
                                 </div>
-                                
-                                <div style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
-                                    <input type="checkbox" id="mapTerrainToggle" style="width: 14px; height: 14px;">
-                                    <label for="mapTerrainToggle" style="cursor: pointer; font-size: 11px; color: #2c3e50;">3D Terrain</label>
+                            </div>
+
+                            <!-- Historical Geography -->
+                            <div class="layer-category" style="border-top: 1px solid #eee; padding-top: 10px; margin-bottom: 12px;">
+                                <h5 style="margin-bottom: 8px; color: #2c3e50; font-size: 12px; cursor: pointer;" onclick="toggleCategory('historical')">
+                                    📜 Historical Geography <span id="historical-arrow">▼</span>
+                                </h5>
+                                <div id="historical-layers" style="margin-left: 8px;">
+                                    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px; cursor: pointer;">
+                                        <input type="checkbox" id="mapSilkRoadToggle" style="width: 14px; height: 14px;">
+                                        <label for="mapSilkRoadToggle" style="cursor: pointer; font-size: 11px; color: #2c3e50;">🐪 Silk Road Routes</label>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px; cursor: pointer;">
+                                        <input type="checkbox" id="mapColonialToggle" style="width: 14px; height: 14px;">
+                                        <label for="mapColonialToggle" style="cursor: pointer; font-size: 11px; color: #2c3e50;">🏴‍☠️ Colonial Empires</label>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px; cursor: pointer;">
+                                        <input type="checkbox" id="mapAncientToggle" style="width: 14px; height: 14px;">
+                                        <label for="mapAncientToggle" style="cursor: pointer; font-size: 11px; color: #2c3e50;">🏛️ Ancient Civilizations</label>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px; cursor: pointer;">
+                                        <input type="checkbox" id="mapColdWarToggle" style="width: 14px; height: 14px;">
+                                        <label for="mapColdWarToggle" style="cursor: pointer; font-size: 11px; color: #2c3e50;">❄️ Cold War Divisions</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Cultural Geography -->
+                            <div class="layer-category" style="border-top: 1px solid #eee; padding-top: 10px; margin-bottom: 12px;">
+                                <h5 style="margin-bottom: 8px; color: #2c3e50; font-size: 12px; cursor: pointer;" onclick="toggleCategory('cultural')">
+                                    🌐 Cultural Geography <span id="cultural-arrow">▼</span>
+                                </h5>
+                                <div id="cultural-layers" style="margin-left: 8px;">
+                                    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px; cursor: pointer;">
+                                        <input type="checkbox" id="mapLanguageToggle" style="width: 14px; height: 14px;">
+                                        <label for="mapLanguageToggle" style="cursor: pointer; font-size: 11px; color: #2c3e50;">🗣️ Language Families</label>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px; cursor: pointer;">
+                                        <input type="checkbox" id="mapReligionToggle" style="width: 14px; height: 14px;">
+                                        <label for="mapReligionToggle" style="cursor: pointer; font-size: 11px; color: #2c3e50;">✨ Major Religions</label>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px; cursor: pointer;">
+                                        <input type="checkbox" id="mapHeritageToggle" style="width: 14px; height: 14px;">
+                                        <label for="mapHeritageToggle" style="cursor: pointer; font-size: 11px; color: #2c3e50;">🏛️ UNESCO Heritage</label>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px; cursor: pointer;">
+                                        <input type="checkbox" id="mapMigrationToggle" style="width: 14px; height: 14px;">
+                                        <label for="mapMigrationToggle" style="cursor: pointer; font-size: 11px; color: #2c3e50;">🚶 Migration Patterns</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Urban & Population -->
+                            <div class="layer-category" style="border-top: 1px solid #eee; padding-top: 10px; margin-bottom: 12px;">
+                                <h5 style="margin-bottom: 8px; color: #2c3e50; font-size: 12px; cursor: pointer;" onclick="toggleCategory('urban')">
+                                    🏙️ Urban Geography <span id="urban-arrow">▼</span>
+                                </h5>
+                                <div id="urban-layers" style="margin-left: 8px;">
+                                    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px; cursor: pointer;">
+                                        <input type="checkbox" id="mapCitiesToggle" style="width: 14px; height: 14px;">
+                                        <label for="mapCitiesToggle" style="cursor: pointer; font-size: 11px; color: #2c3e50;">🌆 Major Cities</label>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px; cursor: pointer;">
+                                        <input type="checkbox" id="mapMegacitiesToggle" style="width: 14px; height: 14px;">
+                                        <label for="mapMegacitiesToggle" style="cursor: pointer; font-size: 11px; color: #2c3e50;">🏙️ Megacities (10M+)</label>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px; cursor: pointer;">
+                                        <input type="checkbox" id="mapPopDensityToggle" style="width: 14px; height: 14px;">
+                                        <label for="mapPopDensityToggle" style="cursor: pointer; font-size: 11px; color: #2c3e50;">👥 Population Density</label>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px; cursor: pointer;">
+                                        <input type="checkbox" id="mapTimeZoneToggle" style="width: 14px; height: 14px;">
+                                        <label for="mapTimeZoneToggle" style="cursor: pointer; font-size: 11px; color: #2c3e50;">🕒 Time Zones</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Environmental -->
+                            <div class="layer-category" style="border-top: 1px solid #eee; padding-top: 10px; margin-bottom: 12px;">
+                                <h5 style="margin-bottom: 8px; color: #2c3e50; font-size: 12px; cursor: pointer;" onclick="toggleCategory('environmental')">
+                                    🌿 Environmental <span id="environmental-arrow">▼</span>
+                                </h5>
+                                <div id="environmental-layers" style="margin-left: 8px;">
+                                    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px; cursor: pointer;">
+                                        <input type="checkbox" id="mapClimateToggle" style="width: 14px; height: 14px;">
+                                        <label for="mapClimateToggle" style="cursor: pointer; font-size: 11px; color: #2c3e50;">🌡️ Climate Zones</label>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px; cursor: pointer;">
+                                        <input type="checkbox" id="mapDeforestationToggle" style="width: 14px; height: 14px;">
+                                        <label for="mapDeforestationToggle" style="cursor: pointer; font-size: 11px; color: #2c3e50;">🌳 Deforestation</label>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px; cursor: pointer;">
+                                        <input type="checkbox" id="mapBiodiversityToggle" style="width: 14px; height: 14px;">
+                                        <label for="mapBiodiversityToggle" style="cursor: pointer; font-size: 11px; color: #2c3e50;">🦋 Biodiversity Hotspots</label>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px; cursor: pointer;">
+                                        <input type="checkbox" id="mapCarbonToggle" style="width: 14px; height: 14px;">
+                                        <label for="mapCarbonToggle" style="cursor: pointer; font-size: 11px; color: #2c3e50;">🏭 Carbon Emissions</label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -3745,6 +3897,215 @@
                     }
                 });
 
+                // NEW EDUCATIONAL LAYER TOGGLES
+
+                // Physical Geography Layers
+                document.getElementById('mapVolcanoToggle').addEventListener('change', function() {
+                    if (this.checked) {
+                        loadVolcanoData();
+                    } else {
+                        removeMapLayer('volcano');
+                    }
+                });
+
+                document.getElementById('mapOceanCurrentsToggle').addEventListener('change', function() {
+                    if (this.checked) {
+                        loadOceanCurrentsData();
+                    } else {
+                        removeMapLayer('oceancurrents');
+                    }
+                });
+
+                document.getElementById('mapPlateToggle').addEventListener('change', function() {
+                    if (this.checked) {
+                        loadTectonicPlatesData();
+                    } else {
+                        removeMapLayer('plates');
+                    }
+                });
+
+                // Political Geography Layers
+                document.getElementById('mapNatoToggle').addEventListener('change', function() {
+                    if (this.checked) {
+                        loadNatoData();
+                    } else {
+                        removeMapLayer('nato');
+                    }
+                });
+
+                document.getElementById('mapEuToggle').addEventListener('change', function() {
+                    if (this.checked) {
+                        loadEuData();
+                    } else {
+                        removeMapLayer('eu');
+                    }
+                });
+
+                document.getElementById('mapG7Toggle').addEventListener('change', function() {
+                    if (this.checked) {
+                        loadG7Data();
+                    } else {
+                        removeMapLayer('g7');
+                    }
+                });
+
+                document.getElementById('mapConflictToggle').addEventListener('change', function() {
+                    if (this.checked) {
+                        loadConflictData();
+                    } else {
+                        removeMapLayer('conflict');
+                    }
+                });
+
+                // Economic Geography Layers
+                document.getElementById('mapTradeToggle').addEventListener('change', function() {
+                    if (this.checked) {
+                        loadTradeData();
+                    } else {
+                        removeMapLayer('trade');
+                    }
+                });
+
+                document.getElementById('mapOilToggle').addEventListener('change', function() {
+                    if (this.checked) {
+                        loadOilData();
+                    } else {
+                        removeMapLayer('oil');
+                    }
+                });
+
+                document.getElementById('mapCurrencyToggle').addEventListener('change', function() {
+                    if (this.checked) {
+                        loadCurrencyData();
+                    } else {
+                        removeMapLayer('currency');
+                    }
+                });
+
+                document.getElementById('mapGdpToggle').addEventListener('change', function() {
+                    if (this.checked) {
+                        loadGdpData();
+                    } else {
+                        removeMapLayer('gdp');
+                    }
+                });
+
+                // Historical Geography Layers
+                document.getElementById('mapSilkRoadToggle').addEventListener('change', function() {
+                    if (this.checked) {
+                        loadSilkRoadData();
+                    } else {
+                        removeMapLayer('silkroad');
+                    }
+                });
+
+                document.getElementById('mapColonialToggle').addEventListener('change', function() {
+                    if (this.checked) {
+                        loadColonialData();
+                    } else {
+                        removeMapLayer('colonial');
+                    }
+                });
+
+                document.getElementById('mapAncientToggle').addEventListener('change', function() {
+                    if (this.checked) {
+                        loadAncientData();
+                    } else {
+                        removeMapLayer('ancient');
+                    }
+                });
+
+                document.getElementById('mapColdWarToggle').addEventListener('change', function() {
+                    if (this.checked) {
+                        loadColdWarData();
+                    } else {
+                        removeMapLayer('coldwar');
+                    }
+                });
+
+                // Cultural Geography Layers
+                document.getElementById('mapLanguageToggle').addEventListener('change', function() {
+                    if (this.checked) {
+                        loadLanguageData();
+                    } else {
+                        removeMapLayer('language');
+                    }
+                });
+
+                document.getElementById('mapReligionToggle').addEventListener('change', function() {
+                    if (this.checked) {
+                        loadReligionData();
+                    } else {
+                        removeMapLayer('religion');
+                    }
+                });
+
+                document.getElementById('mapHeritageToggle').addEventListener('change', function() {
+                    if (this.checked) {
+                        loadHeritageData();
+                    } else {
+                        removeMapLayer('heritage');
+                    }
+                });
+
+                document.getElementById('mapMigrationToggle').addEventListener('change', function() {
+                    if (this.checked) {
+                        loadMigrationData();
+                    } else {
+                        removeMapLayer('migration');
+                    }
+                });
+
+                // Urban Geography Layers
+                document.getElementById('mapMegacitiesToggle').addEventListener('change', function() {
+                    if (this.checked) {
+                        loadMegacitiesData();
+                    } else {
+                        removeMapLayer('megacities');
+                    }
+                });
+
+                document.getElementById('mapPopDensityToggle').addEventListener('change', function() {
+                    if (this.checked) {
+                        loadPopDensityData();
+                    } else {
+                        removeMapLayer('popdensity');
+                    }
+                });
+
+                document.getElementById('mapTimeZoneToggle').addEventListener('change', function() {
+                    if (this.checked) {
+                        loadTimeZoneData();
+                    } else {
+                        removeMapLayer('timezone');
+                    }
+                });
+
+                // Environmental Layers
+                document.getElementById('mapDeforestationToggle').addEventListener('change', function() {
+                    if (this.checked) {
+                        loadDeforestationData();
+                    } else {
+                        removeMapLayer('deforestation');
+                    }
+                });
+
+                document.getElementById('mapBiodiversityToggle').addEventListener('change', function() {
+                    if (this.checked) {
+                        loadBiodiversityData();
+                    } else {
+                        removeMapLayer('biodiversity');
+                    }
+                });
+
+                document.getElementById('mapCarbonToggle').addEventListener('change', function() {
+                    if (this.checked) {
+                        loadCarbonData();
+                    } else {
+                        removeMapLayer('carbon');
+                    }
+                });
+
                 // Lesson control buttons
                 document.getElementById('focusLessonRegion').addEventListener('click', focusOnLessonRegion);
                 document.getElementById('showLessonData').addEventListener('click', showLessonData);
@@ -4961,6 +5322,665 @@
             disable3DTerrain();
             mapLoadedLayers.clear();
         }
+
+        // Category toggle functionality for educational layers
+        function toggleCategory(categoryName) {
+            const layersDiv = document.getElementById(categoryName + '-layers');
+            const arrow = document.getElementById(categoryName + '-arrow');
+            
+            if (layersDiv.style.display === 'none') {
+                layersDiv.style.display = 'block';
+                arrow.textContent = '▼';
+            } else {
+                layersDiv.style.display = 'none';
+                arrow.textContent = '▶';
+            }
+        }
+
+        // Enhanced educational data layers
+        
+        // NATO Member Countries Layer
+        function loadNatoData() {
+            if (!enhancedMap) return;
+            
+            const natoCountries = [
+                {name: "United States", lat: 39.8283, lng: -98.5795, joined: "1949"},
+                {name: "Canada", lat: 56.1304, lng: -106.3468, joined: "1949"},
+                {name: "United Kingdom", lat: 55.3781, lng: -3.4360, joined: "1949"},
+                {name: "France", lat: 46.2276, lng: 2.2137, joined: "1949"},
+                {name: "Germany", lat: 51.1657, lng: 10.4515, joined: "1955"},
+                {name: "Turkey", lat: 38.9637, lng: 35.2433, joined: "1952"},
+                {name: "Poland", lat: 51.9194, lng: 19.1451, joined: "1999"},
+                {name: "Spain", lat: 40.4637, lng: -3.7492, joined: "1982"},
+                {name: "Italy", lat: 41.8719, lng: 12.5674, joined: "1949"},
+                {name: "Norway", lat: 60.4720, lng: 8.4689, joined: "1949"},
+                {name: "Netherlands", lat: 52.1326, lng: 5.2913, joined: "1949"},
+                {name: "Belgium", lat: 50.5039, lng: 4.4699, joined: "1949"},
+                {name: "Denmark", lat: 56.2639, lng: 9.5018, joined: "1949"},
+                {name: "Portugal", lat: 39.3999, lng: -8.2245, joined: "1949"},
+                {name: "Greece", lat: 39.0742, lng: 21.8243, joined: "1952"},
+                {name: "Czech Republic", lat: 49.8175, lng: 15.4730, joined: "1999"},
+                {name: "Hungary", lat: 47.1625, lng: 19.5033, joined: "1999"},
+                {name: "Estonia", lat: 58.5953, lng: 25.0136, joined: "2004"},
+                {name: "Latvia", lat: 56.8796, lng: 24.6032, joined: "2004"},
+                {name: "Lithuania", lat: 55.1694, lng: 23.8813, joined: "2004"},
+                {name: "Slovakia", lat: 48.6690, lng: 19.6990, joined: "2004"},
+                {name: "Slovenia", lat: 46.1512, lng: 14.9955, joined: "2004"},
+                {name: "Bulgaria", lat: 42.7339, lng: 25.4858, joined: "2004"},
+                {name: "Romania", lat: 45.9432, lng: 24.9668, joined: "2004"},
+                {name: "Albania", lat: 41.1533, lng: 20.1683, joined: "2009"},
+                {name: "Croatia", lat: 45.1000, lng: 15.2000, joined: "2009"},
+                {name: "Montenegro", lat: 42.7087, lng: 19.3744, joined: "2017"},
+                {name: "North Macedonia", lat: 41.6086, lng: 21.7453, joined: "2020"},
+                {name: "Finland", lat: 61.9241, lng: 25.7482, joined: "2023"},
+                {name: "Sweden", lat: 60.1282, lng: 18.6435, joined: "2024"}
+            ];
+            
+            const natoMarkers = L.layerGroup();
+            
+            natoCountries.forEach(country => {
+                const marker = L.circleMarker([country.lat, country.lng], {
+                    radius: 8,
+                    fillColor: '#004d98',
+                    color: '#ffffff',
+                    weight: 2,
+                    opacity: 1,
+                    fillOpacity: 0.8
+                }).bindPopup(`
+                    <strong>🛡️ NATO Member</strong><br>
+                    <strong>${country.name}</strong><br>
+                    Joined: ${country.joined}<br>
+                    <em>Article 5: Collective Defense</em>
+                `);
+                natoMarkers.addLayer(marker);
+            });
+            
+            enhancedMap.natoLayer = natoMarkers;
+            natoMarkers.addTo(enhancedMap);
+            mapLoadedLayers.add('nato');
+            updateMapStatus('NATO members loaded');
+        }
+
+        // Historical Silk Road Routes Layer
+        function loadSilkRoadData() {
+            if (!enhancedMap) return;
+            
+            // Major Silk Road cities
+            const silkRoadCities = [
+                {name: "Constantinople", lat: 41.0082, lng: 28.9784, description: "Gateway between Europe and Asia"},
+                {name: "Damascus", lat: 33.5138, lng: 36.2765, description: "Ancient trading hub"},
+                {name: "Baghdad", lat: 33.3152, lng: 44.3661, description: "Abbasid Caliphate center"},
+                {name: "Isfahan", lat: 32.6547, lng: 51.6681, description: "Persian Empire trading post"},
+                {name: "Samarkand", lat: 39.6270, lng: 66.9750, description: "Crossroads of cultures"},
+                {name: "Kashgar", lat: 39.4704, lng: 75.9896, description: "Oasis city, cultural exchange"},
+                {name: "Dunhuang", lat: 40.1424, lng: 94.6624, description: "Buddhist art center"},
+                {name: "Xi'an", lat: 34.3416, lng: 108.9398, description: "Eastern terminus, Tang Dynasty capital"},
+                {name: "Venice", lat: 45.4408, lng: 12.3155, description: "Marco Polo's hometown"},
+                {name: "Trebizond", lat: 41.0015, lng: 39.7178, description: "Black Sea trading port"}
+            ];
+            
+            // Trade routes (simplified paths)
+            const routes = [
+                [[45.4408, 12.3155], [41.0082, 28.9784], [33.5138, 36.2765], [33.3152, 44.3661], [32.6547, 51.6681], [39.6270, 66.9750], [39.4704, 75.9896], [40.1424, 94.6624], [34.3416, 108.9398]]
+            ];
+            
+            const silkRoadLayer = L.layerGroup();
+            
+            // Add cities
+            silkRoadCities.forEach(city => {
+                const marker = L.circleMarker([city.lat, city.lng], {
+                    radius: 10,
+                    fillColor: '#d4af37',
+                    color: '#8b4513',
+                    weight: 2,
+                    opacity: 1,
+                    fillOpacity: 0.8
+                }).bindPopup(`
+                    <strong>🐪 Silk Road City</strong><br>
+                    <strong>${city.name}</strong><br>
+                    ${city.description}<br>
+                    <em>Historical trading center</em>
+                `);
+                silkRoadLayer.addLayer(marker);
+            });
+            
+            // Add routes
+            routes.forEach(route => {
+                const polyline = L.polyline(route, {
+                    color: '#8b4513',
+                    weight: 4,
+                    opacity: 0.7,
+                    dashArray: '10, 5'
+                }).bindPopup('🐪 Historical Silk Road Trade Route');
+                silkRoadLayer.addLayer(polyline);
+            });
+            
+            enhancedMap.silkRoadLayer = silkRoadLayer;
+            silkRoadLayer.addTo(enhancedMap);
+            mapLoadedLayers.add('silkroad');
+            updateMapStatus('Silk Road routes loaded');
+        }
+
+        // Major Trade Routes Layer (Modern)
+        function loadTradeData() {
+            if (!enhancedMap) return;
+            
+            const majorPorts = [
+                {name: "Shanghai", lat: 31.2304, lng: 121.4737, cargo: "47.3M TEU", country: "China"},
+                {name: "Singapore", lat: 1.2966, lng: 103.7764, cargo: "37.5M TEU", country: "Singapore"},
+                {name: "Ningbo-Zhoushan", lat: 29.8683, lng: 121.5440, cargo: "33.4M TEU", country: "China"},
+                {name: "Shenzhen", lat: 22.5431, lng: 114.0579, cargo: "28.8M TEU", country: "China"},
+                {name: "Guangzhou", lat: 23.1291, lng: 113.2644, cargo: "25.2M TEU", country: "China"},
+                {name: "Busan", lat: 35.1796, lng: 129.0756, cargo: "22.9M TEU", country: "South Korea"},
+                {name: "Hong Kong", lat: 22.3193, lng: 114.1694, cargo: "17.8M TEU", country: "Hong Kong"},
+                {name: "Los Angeles", lat: 33.7701, lng: -118.1937, cargo: "10.7M TEU", country: "USA"},
+                {name: "Long Beach", lat: 33.7701, lng: -118.1937, cargo: "8.1M TEU", country: "USA"},
+                {name: "Rotterdam", lat: 51.9225, lng: 4.4792, cargo: "15.3M TEU", country: "Netherlands"}
+            ];
+            
+            const tradeLayer = L.layerGroup();
+            
+            majorPorts.forEach(port => {
+                const marker = L.circleMarker([port.lat, port.lng], {
+                    radius: 12,
+                    fillColor: '#1e88e5',
+                    color: '#ffffff',
+                    weight: 2,
+                    opacity: 1,
+                    fillOpacity: 0.8
+                }).bindPopup(`
+                    <strong>🚢 Major Port</strong><br>
+                    <strong>${port.name}</strong><br>
+                    Country: ${port.country}<br>
+                    Annual Cargo: ${port.cargo}<br>
+                    <em>Global shipping hub</em>
+                `);
+                tradeLayer.addLayer(marker);
+            });
+            
+            enhancedMap.tradeLayer = tradeLayer;
+            tradeLayer.addTo(enhancedMap);
+            mapLoadedLayers.add('trade');
+            updateMapStatus('Major trade routes loaded');
+        }
+
+        // G7 Countries Layer
+        function loadG7Data() {
+            if (!enhancedMap) return;
+            
+            const g7Countries = [
+                {name: "United States", lat: 39.8283, lng: -98.5795, gdp: "$26.9T", capital: "Washington D.C."},
+                {name: "China", lat: 35.8617, lng: 104.1954, gdp: "$17.7T", capital: "Beijing"},
+                {name: "Japan", lat: 36.2048, lng: 138.2529, gdp: "$4.2T", capital: "Tokyo"},
+                {name: "Germany", lat: 51.1657, lng: 10.4515, gdp: "$4.3T", capital: "Berlin"},
+                {name: "India", lat: 20.5937, lng: 78.9629, gdp: "$3.9T", capital: "New Delhi"},
+                {name: "United Kingdom", lat: 55.3781, lng: -3.4360, gdp: "$3.1T", capital: "London"},
+                {name: "France", lat: 46.2276, lng: 2.2137, gdp: "$2.9T", capital: "Paris"},
+                {name: "Italy", lat: 41.8719, lng: 12.5674, gdp: "$2.1T", capital: "Rome"},
+                {name: "Canada", lat: 56.1304, lng: -106.3468, gdp: "$2.1T", capital: "Ottawa"}
+            ];
+            
+            const g7Layer = L.layerGroup();
+            
+            g7Countries.forEach(country => {
+                const marker = L.circleMarker([country.lat, country.lng], {
+                    radius: 15,
+                    fillColor: '#ff9800',
+                    color: '#ffffff',
+                    weight: 3,
+                    opacity: 1,
+                    fillOpacity: 0.8
+                }).bindPopup(`
+                    <strong>💰 G7 Economy</strong><br>
+                    <strong>${country.name}</strong><br>
+                    Capital: ${country.capital}<br>
+                    GDP: ${country.gdp}<br>
+                    <em>Major world economy</em>
+                `);
+                g7Layer.addLayer(marker);
+            });
+            
+            enhancedMap.g7Layer = g7Layer;
+            g7Layer.addTo(enhancedMap);
+            mapLoadedLayers.add('g7');
+            updateMapStatus('G7 countries loaded');
+        }
+
+        // Megacities Layer (10M+ population)
+        function loadMegacitiesData() {
+            if (!enhancedMap) return;
+            
+            const megacities = [
+                {name: "Tokyo", lat: 35.6762, lng: 139.6503, pop: "37.4M", country: "Japan"},
+                {name: "Delhi", lat: 28.7041, lng: 77.1025, pop: "32.9M", country: "India"},
+                {name: "Shanghai", lat: 31.2304, lng: 121.4737, pop: "28.5M", country: "China"},
+                {name: "Dhaka", lat: 23.8103, lng: 90.4125, pop: "22.5M", country: "Bangladesh"},
+                {name: "São Paulo", lat: -23.5505, lng: -46.6333, pop: "22.6M", country: "Brazil"},
+                {name: "Cairo", lat: 30.0444, lng: 31.2357, pop: "21.3M", country: "Egypt"},
+                {name: "Mexico City", lat: 19.4326, lng: -99.1332, pop: "22.0M", country: "Mexico"},
+                {name: "Beijing", lat: 39.9042, lng: 116.4074, pop: "21.7M", country: "China"},
+                {name: "Mumbai", lat: 19.0760, lng: 72.8777, pop: "20.7M", country: "India"},
+                {name: "Osaka", lat: 34.6937, lng: 135.5023, pop: "18.9M", country: "Japan"},
+                {name: "New York", lat: 40.7128, lng: -74.0060, pop: "18.8M", country: "USA"},
+                {name: "Karachi", lat: 24.8607, lng: 67.0011, pop: "16.8M", country: "Pakistan"},
+                {name: "Chongqing", lat: 29.4316, lng: 106.9123, pop: "16.4M", country: "China"},
+                {name: "Istanbul", lat: 41.0082, lng: 28.9784, pop: "15.8M", country: "Turkey"},
+                {name: "Buenos Aires", lat: -34.6118, lng: -58.3960, pop: "15.4M", country: "Argentina"},
+                {name: "Kolkata", lat: 22.5726, lng: 88.3639, pop: "15.1M", country: "India"},
+                {name: "Lagos", lat: 6.5244, lng: 3.3792, pop: "15.4M", country: "Nigeria"},
+                {name: "Manila", lat: 14.5995, lng: 120.9842, pop: "14.2M", country: "Philippines"},
+                {name: "Rio de Janeiro", lat: -22.9068, lng: -43.1729, pop: "13.7M", country: "Brazil"},
+                {name: "Guangzhou", lat: 23.1291, lng: 113.2644, pop: "13.5M", country: "China"}
+            ];
+            
+            const megacitiesLayer = L.layerGroup();
+            
+            megacities.forEach(city => {
+                const marker = L.circleMarker([city.lat, city.lng], {
+                    radius: 18,
+                    fillColor: '#e91e63',
+                    color: '#ffffff',
+                    weight: 3,
+                    opacity: 1,
+                    fillOpacity: 0.7
+                }).bindPopup(`
+                    <strong>🏙️ Megacity</strong><br>
+                    <strong>${city.name}</strong><br>
+                    Country: ${city.country}<br>
+                    Population: ${city.pop}<br>
+                    <em>Urban agglomeration 10M+</em>
+                `);
+                megacitiesLayer.addLayer(marker);
+            });
+            
+            enhancedMap.megacitiesLayer = megacitiesLayer;
+            megacitiesLayer.addTo(enhancedMap);
+            mapLoadedLayers.add('megacities');
+            updateMapStatus('Megacities loaded');
+        }
+
+        // UNESCO World Heritage Sites Layer
+        function loadHeritageData() {
+            if (!enhancedMap) return;
+            
+            const heritageSites = [
+                {name: "Great Wall of China", lat: 40.4319, lng: 116.5704, type: "Cultural", country: "China"},
+                {name: "Machu Picchu", lat: -13.1631, lng: -72.5450, type: "Mixed", country: "Peru"},
+                {name: "Pyramids of Giza", lat: 29.9792, lng: 31.1342, type: "Cultural", country: "Egypt"},
+                {name: "Taj Mahal", lat: 27.1751, lng: 78.0421, type: "Cultural", country: "India"},
+                {name: "Stonehenge", lat: 51.1789, lng: -1.8262, type: "Cultural", country: "UK"},
+                {name: "Angkor Wat", lat: 13.4125, lng: 103.8670, type: "Cultural", country: "Cambodia"},
+                {name: "Yellowstone", lat: 44.4280, lng: -110.5885, type: "Natural", country: "USA"},
+                {name: "Galápagos Islands", lat: -0.9538, lng: -91.0238, type: "Natural", country: "Ecuador"},
+                {name: "Serengeti", lat: -2.3333, lng: 34.8333, type: "Natural", country: "Tanzania"},
+                {name: "Grand Canyon", lat: 36.1069, lng: -112.1129, type: "Natural", country: "USA"},
+                {name: "Petra", lat: 30.3285, lng: 35.4444, type: "Cultural", country: "Jordan"},
+                {name: "Chichen Itza", lat: 20.6843, lng: -88.5678, type: "Cultural", country: "Mexico"},
+                {name: "Easter Island", lat: -27.1127, lng: -109.3497, type: "Cultural", country: "Chile"},
+                {name: "Venice", lat: 45.4408, lng: 12.3155, type: "Cultural", country: "Italy"},
+                {name: "Amazon Rainforest", lat: -3.4653, lng: -62.2159, type: "Natural", country: "Brazil"},
+                {name: "Mount Fuji", lat: 35.3606, lng: 138.7274, type: "Cultural", country: "Japan"},
+                {name: "Acropolis of Athens", lat: 37.9715, lng: 23.7268, type: "Cultural", country: "Greece"},
+                {name: "Mesa Verde", lat: 37.2308, lng: -108.4618, type: "Cultural", country: "USA"},
+                {name: "Iguazu Falls", lat: -25.6953, lng: -54.4367, type: "Natural", country: "Argentina/Brazil"},
+                {name: "Sagrada Familia", lat: 41.4036, lng: 2.1744, type: "Cultural", country: "Spain"}
+            ];
+            
+            const heritageLayer = L.layerGroup();
+            
+            heritageSites.forEach(site => {
+                const color = site.type === 'Cultural' ? '#9c27b0' : site.type === 'Natural' ? '#4caf50' : '#ff9800';
+                const icon = site.type === 'Cultural' ? '🏛️' : site.type === 'Natural' ? '🌿' : '🌍';
+                
+                const marker = L.circleMarker([site.lat, site.lng], {
+                    radius: 10,
+                    fillColor: color,
+                    color: '#ffffff',
+                    weight: 2,
+                    opacity: 1,
+                    fillOpacity: 0.8
+                }).bindPopup(`
+                    <strong>${icon} UNESCO Heritage</strong><br>
+                    <strong>${site.name}</strong><br>
+                    Country: ${site.country}<br>
+                    Type: ${site.type}<br>
+                    <em>World Heritage Site</em>
+                `);
+                heritageLayer.addLayer(marker);
+            });
+            
+            enhancedMap.heritageLayer = heritageLayer;
+            heritageLayer.addTo(enhancedMap);
+            mapLoadedLayers.add('heritage');
+            updateMapStatus('UNESCO Heritage sites loaded');
+        }
+
+        // Additional Educational Layers
+
+        // European Union Layer
+        function loadEuData() {
+            if (!enhancedMap) return;
+            
+            const euCountries = [
+                {name: "Germany", lat: 51.1657, lng: 10.4515, joined: "1957", capital: "Berlin"},
+                {name: "France", lat: 46.2276, lng: 2.2137, joined: "1957", capital: "Paris"},
+                {name: "Italy", lat: 41.8719, lng: 12.5674, joined: "1957", capital: "Rome"},
+                {name: "Netherlands", lat: 52.1326, lng: 5.2913, joined: "1957", capital: "Amsterdam"},
+                {name: "Belgium", lat: 50.5039, lng: 4.4699, joined: "1957", capital: "Brussels"},
+                {name: "Luxembourg", lat: 49.8153, lng: 6.1296, joined: "1957", capital: "Luxembourg"},
+                {name: "Denmark", lat: 56.2639, lng: 9.5018, joined: "1973", capital: "Copenhagen"},
+                {name: "Ireland", lat: 53.1424, lng: -7.6921, joined: "1973", capital: "Dublin"},
+                {name: "United Kingdom", lat: 55.3781, lng: -3.4360, joined: "1973 (left 2020)", capital: "London"},
+                {name: "Greece", lat: 39.0742, lng: 21.8243, joined: "1981", capital: "Athens"},
+                {name: "Spain", lat: 40.4637, lng: -3.7492, joined: "1986", capital: "Madrid"},
+                {name: "Portugal", lat: 39.3999, lng: -8.2245, joined: "1986", capital: "Lisbon"},
+                {name: "Austria", lat: 47.5162, lng: 14.5501, joined: "1995", capital: "Vienna"},
+                {name: "Finland", lat: 61.9241, lng: 25.7482, joined: "1995", capital: "Helsinki"},
+                {name: "Sweden", lat: 60.1282, lng: 18.6435, joined: "1995", capital: "Stockholm"},
+                {name: "Cyprus", lat: 35.1264, lng: 33.4299, joined: "2004", capital: "Nicosia"},
+                {name: "Czech Republic", lat: 49.8175, lng: 15.4730, joined: "2004", capital: "Prague"},
+                {name: "Estonia", lat: 58.5953, lng: 25.0136, joined: "2004", capital: "Tallinn"},
+                {name: "Hungary", lat: 47.1625, lng: 19.5033, joined: "2004", capital: "Budapest"},
+                {name: "Latvia", lat: 56.8796, lng: 24.6032, joined: "2004", capital: "Riga"},
+                {name: "Lithuania", lat: 55.1694, lng: 23.8813, joined: "2004", capital: "Vilnius"},
+                {name: "Malta", lat: 35.9375, lng: 14.3754, joined: "2004", capital: "Valletta"},
+                {name: "Poland", lat: 51.9194, lng: 19.1451, joined: "2004", capital: "Warsaw"},
+                {name: "Slovakia", lat: 48.6690, lng: 19.6990, joined: "2004", capital: "Bratislava"},
+                {name: "Slovenia", lat: 46.1512, lng: 14.9955, joined: "2004", capital: "Ljubljana"},
+                {name: "Bulgaria", lat: 42.7339, lng: 25.4858, joined: "2007", capital: "Sofia"},
+                {name: "Romania", lat: 45.9432, lng: 24.9668, joined: "2007", capital: "Bucharest"},
+                {name: "Croatia", lat: 45.1000, lng: 15.2000, joined: "2013", capital: "Zagreb"}
+            ];
+            
+            const euLayer = L.layerGroup();
+            
+            euCountries.forEach(country => {
+                const isFormerMember = country.joined.includes('left');
+                const color = isFormerMember ? '#ff5722' : '#2196f3';
+                
+                const marker = L.circleMarker([country.lat, country.lng], {
+                    radius: 10,
+                    fillColor: color,
+                    color: '#ffffff',
+                    weight: 2,
+                    opacity: 1,
+                    fillOpacity: 0.8
+                }).bindPopup(`
+                    <strong>🇪🇺 EU ${isFormerMember ? 'Former Member' : 'Member'}</strong><br>
+                    <strong>${country.name}</strong><br>
+                    Capital: ${country.capital}<br>
+                    ${isFormerMember ? 'Left' : 'Joined'}: ${country.joined}<br>
+                    <em>European integration</em>
+                `);
+                euLayer.addLayer(marker);
+            });
+            
+            enhancedMap.euLayer = euLayer;
+            euLayer.addTo(enhancedMap);
+            mapLoadedLayers.add('eu');
+            updateMapStatus('European Union members loaded');
+        }
+
+        // Major Oil & Gas Fields Layer
+        function loadOilData() {
+            if (!enhancedMap) return;
+            
+            const oilFields = [
+                {name: "Ghawar Field", lat: 25.5, lng: 49.0, country: "Saudi Arabia", type: "Oil", reserves: "75-83 billion barrels"},
+                {name: "Burgan Field", lat: 29.1, lng: 48.1, country: "Kuwait", type: "Oil", reserves: "66-72 billion barrels"},
+                {name: "Safaniya Field", lat: 27.7, lng: 48.7, country: "Saudi Arabia", type: "Oil", reserves: "36 billion barrels"},
+                {name: "Rumaila Field", lat: 30.9, lng: 47.8, country: "Iraq", type: "Oil", reserves: "17.8 billion barrels"},
+                {name: "West Qurna Field", lat: 31.0, lng: 47.3, country: "Iraq", type: "Oil", reserves: "43 billion barrels"},
+                {name: "Prudhoe Bay", lat: 70.3, lng: -148.7, country: "USA", type: "Oil", reserves: "25 billion barrels"},
+                {name: "Cantarell Field", lat: 22.3, lng: -92.3, country: "Mexico", type: "Oil", reserves: "35 billion barrels"},
+                {name: "North Field", lat: 25.8, lng: 51.2, country: "Qatar", type: "Gas", reserves: "900 trillion cubic feet"},
+                {name: "South Pars", lat: 27.3, lng: 52.5, country: "Iran", type: "Gas", reserves: "500 trillion cubic feet"},
+                {name: "Urengoy", lat: 65.8, lng: 78.3, country: "Russia", type: "Gas", reserves: "222 trillion cubic feet"},
+                {name: "Yamburg", lat: 70.4, lng: 68.8, country: "Russia", type: "Gas", reserves: "182 trillion cubic feet"},
+                {name: "Hassi R'Mel", lat: 32.1, lng: 3.3, country: "Algeria", type: "Gas", reserves: "85 trillion cubic feet"},
+                {name: "Groningen", lat: 53.3, lng: 6.7, country: "Netherlands", type: "Gas", reserves: "60 trillion cubic feet"},
+                {name: "Marcellus Shale", lat: 40.2, lng: -78.5, country: "USA", type: "Shale Gas", reserves: "141 trillion cubic feet"},
+                {name: "Bakken Formation", lat: 47.9, lng: -103.0, country: "USA", type: "Shale Oil", reserves: "7.4 billion barrels"}
+            ];
+            
+            const oilLayer = L.layerGroup();
+            
+            oilFields.forEach(field => {
+                const color = field.type.includes('Oil') ? '#ff5722' : '#2196f3';
+                const icon = field.type.includes('Oil') ? '🛢️' : '🔥';
+                
+                const marker = L.circleMarker([field.lat, field.lng], {
+                    radius: 12,
+                    fillColor: color,
+                    color: '#ffffff',
+                    weight: 2,
+                    opacity: 1,
+                    fillOpacity: 0.8
+                }).bindPopup(`
+                    <strong>${icon} ${field.type} Field</strong><br>
+                    <strong>${field.name}</strong><br>
+                    Country: ${field.country}<br>
+                    Reserves: ${field.reserves}<br>
+                    <em>Energy resource</em>
+                `);
+                oilLayer.addLayer(marker);
+            });
+            
+            enhancedMap.oilLayer = oilLayer;
+            oilLayer.addTo(enhancedMap);
+            mapLoadedLayers.add('oil');
+            updateMapStatus('Oil & gas fields loaded');
+        }
+
+        // Active Volcanoes Layer
+        function loadVolcanoData() {
+            if (!enhancedMap) return;
+            
+            const volcanoes = [
+                {name: "Mount Vesuvius", lat: 40.8214, lng: 14.4265, country: "Italy", type: "Stratovolcano", status: "Active"},
+                {name: "Mount Etna", lat: 37.7510, lng: 14.9934, country: "Italy", type: "Stratovolcano", status: "Active"},
+                {name: "Krakatoa", lat: -6.1021, lng: 105.4230, country: "Indonesia", type: "Caldera", status: "Active"},
+                {name: "Mount Fuji", lat: 35.3606, lng: 138.7274, country: "Japan", type: "Stratovolcano", status: "Dormant"},
+                {name: "Kilauea", lat: 19.4069, lng: -155.2834, country: "USA", type: "Shield", status: "Active"},
+                {name: "Mauna Loa", lat: 19.4750, lng: -155.6080, country: "USA", type: "Shield", status: "Active"},
+                {name: "Stromboli", lat: 38.7893, lng: 15.2134, country: "Italy", type: "Stratovolcano", status: "Active"},
+                {name: "Popocatépetl", lat: 19.0218, lng: -98.6278, country: "Mexico", type: "Stratovolcano", status: "Active"},
+                {name: "Mount St. Helens", lat: 46.1912, lng: -122.1944, country: "USA", type: "Stratovolcano", status: "Active"},
+                {name: "Yellowstone", lat: 44.4280, lng: -110.5885, country: "USA", type: "Supervolcano", status: "Active"},
+                {name: "Eyjafjallajökull", lat: 63.6313, lng: -19.6210, country: "Iceland", type: "Stratovolcano", status: "Active"},
+                {name: "Mount Erebus", lat: -77.5308, lng: 167.1717, country: "Antarctica", type: "Stratovolcano", status: "Active"},
+                {name: "Cotopaxi", lat: -0.6777, lng: -78.4367, country: "Ecuador", type: "Stratovolcano", status: "Active"},
+                {name: "Mount Rainier", lat: 46.8523, lng: -121.7603, country: "USA", type: "Stratovolcano", status: "Active"},
+                {name: "Sakurajima", lat: 31.5804, lng: 130.6581, country: "Japan", type: "Stratovolcano", status: "Active"}
+            ];
+            
+            const volcanoLayer = L.layerGroup();
+            
+            volcanoes.forEach(volcano => {
+                const color = volcano.status === 'Active' ? '#ff4444' : volcano.status === 'Dormant' ? '#ff9800' : '#666666';
+                
+                const marker = L.circleMarker([volcano.lat, volcano.lng], {
+                    radius: 10,
+                    fillColor: color,
+                    color: '#ffffff',
+                    weight: 2,
+                    opacity: 1,
+                    fillOpacity: 0.8
+                }).bindPopup(`
+                    <strong>🌋 Volcano</strong><br>
+                    <strong>${volcano.name}</strong><br>
+                    Country: ${volcano.country}<br>
+                    Type: ${volcano.type}<br>
+                    Status: ${volcano.status}<br>
+                    <em>Volcanic activity</em>
+                `);
+                volcanoLayer.addLayer(marker);
+            });
+            
+            enhancedMap.volcanoLayer = volcanoLayer;
+            volcanoLayer.addTo(enhancedMap);
+            mapLoadedLayers.add('volcano');
+            updateMapStatus('Active volcanoes loaded');
+        }
+
+        // Ancient Civilizations Layer
+        function loadAncientData() {
+            if (!enhancedMap) return;
+            
+            const civilizations = [
+                {name: "Mesopotamia", lat: 33.0, lng: 44.0, period: "3500-539 BCE", achievement: "First cities, writing"},
+                {name: "Ancient Egypt", lat: 26.0, lng: 30.0, period: "3100-30 BCE", achievement: "Pyramids, hieroglyphs"},
+                {name: "Indus Valley", lat: 27.0, lng: 68.0, period: "3300-1300 BCE", achievement: "Urban planning, drainage"},
+                {name: "Ancient China", lat: 35.0, lng: 105.0, period: "2070 BCE-220 CE", achievement: "Great Wall, inventions"},
+                {name: "Maya Civilization", lat: 17.0, lng: -89.0, period: "2000 BCE-1500 CE", achievement: "Calendar, astronomy"},
+                {name: "Ancient Greece", lat: 39.0, lng: 22.0, period: "800-146 BCE", achievement: "Democracy, philosophy"},
+                {name: "Roman Empire", lat: 41.9, lng: 12.5, period: "27 BCE-476 CE", achievement: "Law, engineering"},
+                {name: "Aztec Empire", lat: 19.4, lng: -99.1, period: "1345-1521 CE", achievement: "Tenochtitlan, calendar"},
+                {name: "Inca Empire", lat: -13.5, lng: -71.0, period: "1438-1572 CE", achievement: "Machu Picchu, roads"},
+                {name: "Persian Empire", lat: 32.0, lng: 53.0, period: "550-331 BCE", achievement: "Royal Road, tolerance"},
+                {name: "Olmec", lat: 18.0, lng: -94.0, period: "1500-400 BCE", achievement: "Colossal heads, rubber"},
+                {name: "Phoenicia", lat: 33.8, lng: 35.5, period: "1200-300 BCE", achievement: "Alphabet, trade"},
+                {name: "Angkor", lat: 13.4, lng: 103.9, period: "802-1431 CE", achievement: "Angkor Wat, irrigation"},
+                {name: "Great Zimbabwe", lat: -20.3, lng: 30.9, period: "1220-1450 CE", achievement: "Stone structures, trade"},
+                {name: "Easter Island", lat: -27.1, lng: -109.3, period: "1250-1500 CE", achievement: "Moai statues"}
+            ];
+            
+            const ancientLayer = L.layerGroup();
+            
+            civilizations.forEach(civ => {
+                const marker = L.circleMarker([civ.lat, civ.lng], {
+                    radius: 12,
+                    fillColor: '#8e24aa',
+                    color: '#ffffff',
+                    weight: 2,
+                    opacity: 1,
+                    fillOpacity: 0.8
+                }).bindPopup(`
+                    <strong>🏛️ Ancient Civilization</strong><br>
+                    <strong>${civ.name}</strong><br>
+                    Period: ${civ.period}<br>
+                    Achievement: ${civ.achievement}<br>
+                    <em>Historical significance</em>
+                `);
+                ancientLayer.addLayer(marker);
+            });
+            
+            enhancedMap.ancientLayer = ancientLayer;
+            ancientLayer.addTo(enhancedMap);
+            mapLoadedLayers.add('ancient');
+            updateMapStatus('Ancient civilizations loaded');
+        }
+
+        // Current Conflicts Layer
+        function loadConflictData() {
+            if (!enhancedMap) return;
+            
+            const conflicts = [
+                {name: "Ukraine-Russia Conflict", lat: 49.0, lng: 32.0, since: "2014/2022", type: "Territorial dispute"},
+                {name: "Syrian Civil War", lat: 35.0, lng: 38.0, since: "2011", type: "Civil war"},
+                {name: "Yemen Civil War", lat: 15.0, lng: 48.0, since: "2014", type: "Civil war"},
+                {name: "Israel-Palestine", lat: 31.5, lng: 35.0, since: "1948", type: "Territorial dispute"},
+                {name: "Kashmir Dispute", lat: 34.0, lng: 76.0, since: "1947", type: "Territorial dispute"},
+                {name: "Myanmar Crisis", lat: 22.0, lng: 96.0, since: "2021", type: "Political crisis"},
+                {name: "Ethiopia Tigray", lat: 14.0, lng: 38.0, since: "2020", type: "Internal conflict"},
+                {name: "South China Sea", lat: 16.0, lng: 114.0, since: "Ongoing", type: "Maritime dispute"},
+                {name: "Mali Conflict", lat: 17.0, lng: -4.0, since: "2012", type: "Insurgency"},
+                {name: "Afghanistan Crisis", lat: 33.0, lng: 65.0, since: "2021", type: "Political crisis"}
+            ];
+            
+            const conflictLayer = L.layerGroup();
+            
+            conflicts.forEach(conflict => {
+                const marker = L.circleMarker([conflict.lat, conflict.lng], {
+                    radius: 10,
+                    fillColor: '#d32f2f',
+                    color: '#ffffff',
+                    weight: 2,
+                    opacity: 1,
+                    fillOpacity: 0.7
+                }).bindPopup(`
+                    <strong>⚔️ Current Conflict</strong><br>
+                    <strong>${conflict.name}</strong><br>
+                    Since: ${conflict.since}<br>
+                    Type: ${conflict.type}<br>
+                    <em>Ongoing geopolitical issue</em>
+                `);
+                conflictLayer.addLayer(marker);
+            });
+            
+            enhancedMap.conflictLayer = conflictLayer;
+            conflictLayer.addTo(enhancedMap);
+            mapLoadedLayers.add('conflict');
+            updateMapStatus('Current conflicts loaded');
+        }
+
+        // Time Zones Layer
+        function loadTimeZoneData() {
+            if (!enhancedMap) return;
+            
+            const timeZones = [
+                {city: "Los Angeles", lat: 34.0522, lng: -118.2437, utc: "UTC-8", zone: "PST"},
+                {city: "Denver", lat: 39.7392, lng: -104.9903, utc: "UTC-7", zone: "MST"},
+                {city: "Chicago", lat: 41.8781, lng: -87.6298, utc: "UTC-6", zone: "CST"},
+                {city: "New York", lat: 40.7128, lng: -74.0060, utc: "UTC-5", zone: "EST"},
+                {city: "London", lat: 51.5074, lng: -0.1278, utc: "UTC+0", zone: "GMT"},
+                {city: "Paris", lat: 48.8566, lng: 2.3522, utc: "UTC+1", zone: "CET"},
+                {city: "Cairo", lat: 30.0444, lng: 31.2357, utc: "UTC+2", zone: "EET"},
+                {city: "Moscow", lat: 55.7558, lng: 37.6176, utc: "UTC+3", zone: "MSK"},
+                {city: "Dubai", lat: 25.2048, lng: 55.2708, utc: "UTC+4", zone: "GST"},
+                {city: "Mumbai", lat: 19.0760, lng: 72.8777, utc: "UTC+5:30", zone: "IST"},
+                {city: "Bangkok", lat: 13.7563, lng: 100.5018, utc: "UTC+7", zone: "ICT"},
+                {city: "Beijing", lat: 39.9042, lng: 116.4074, utc: "UTC+8", zone: "CST"},
+                {city: "Tokyo", lat: 35.6762, lng: 139.6503, utc: "UTC+9", zone: "JST"},
+                {city: "Sydney", lat: -33.8688, lng: 151.2093, utc: "UTC+10", zone: "AEST"},
+                {city: "Auckland", lat: -36.8485, lng: 174.7633, utc: "UTC+12", zone: "NZST"}
+            ];
+            
+            const timezoneLayer = L.layerGroup();
+            
+            timeZones.forEach(tz => {
+                const now = new Date();
+                const utcTime = now.getTime() + (now.getTimezoneOffset() * 60000);
+                const offset = parseFloat(tz.utc.replace('UTC', '').replace('+', ''));
+                const localTime = new Date(utcTime + (offset * 3600000));
+                
+                const marker = L.circleMarker([tz.lat, tz.lng], {
+                    radius: 8,
+                    fillColor: '#607d8b',
+                    color: '#ffffff',
+                    weight: 2,
+                    opacity: 1,
+                    fillOpacity: 0.8
+                }).bindPopup(`
+                    <strong>🕒 Time Zone</strong><br>
+                    <strong>${tz.city}</strong><br>
+                    Zone: ${tz.zone} (${tz.utc})<br>
+                    Local Time: ${localTime.toLocaleTimeString()}<br>
+                    <em>World time reference</em>
+                `);
+                timezoneLayer.addLayer(marker);
+            });
+            
+            enhancedMap.timezoneLayer = timezoneLayer;
+            timezoneLayer.addTo(enhancedMap);
+            mapLoadedLayers.add('timezone');
+            updateMapStatus('Time zones loaded');
+        }
+
+        // Placeholder functions for remaining layers (to prevent errors)
+        function loadOceanCurrentsData() { updateMapStatus('Ocean currents data coming soon'); }
+        function loadTectonicPlatesData() { updateMapStatus('Tectonic plates data coming soon'); }
+        function loadCurrencyData() { updateMapStatus('Currency zones data coming soon'); }
+        function loadGdpData() { updateMapStatus('GDP data coming soon'); }
+        function loadColonialData() { updateMapStatus('Colonial empires data coming soon'); }
+        function loadColdWarData() { updateMapStatus('Cold War data coming soon'); }
+        function loadLanguageData() { updateMapStatus('Language families data coming soon'); }
+        function loadReligionData() { updateMapStatus('Religious distributions data coming soon'); }
+        function loadMigrationData() { updateMapStatus('Migration patterns data coming soon'); }
+        function loadPopDensityData() { updateMapStatus('Population density data coming soon'); }
+        function loadDeforestationData() { updateMapStatus('Deforestation data coming soon'); }
+        function loadBiodiversityData() { updateMapStatus('Biodiversity hotspots data coming soon'); }
+        function loadCarbonData() { updateMapStatus('Carbon emissions data coming soon'); }
 
         // Fallback map implementation with comprehensive error handling
         function initializeFallbackMap() {
