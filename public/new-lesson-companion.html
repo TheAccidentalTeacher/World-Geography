@@ -1349,6 +1349,100 @@
             100% { transform: rotate(360deg); }
         }
         
+        /* Map Controls Panel Animations */
+        @keyframes slideIn {
+            from { 
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to { 
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideOut {
+            from { 
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to { 
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+        
+        /* Fullscreen Map Styles */
+        .map-fullscreen {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            z-index: 9999 !important;
+            border-radius: 0 !important;
+            border: none !important;
+        }
+        
+        .map-fullscreen #enhanced-map {
+            width: 100% !important;
+            height: 100% !important;
+        }
+        
+        /* Control Toggle Buttons */
+        .map-control-toggle {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.95);
+            border: none;
+            border-radius: 6px;
+            padding: 8px 12px;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1001;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .map-control-toggle:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: scale(1.05);
+        }
+        
+        .map-fullscreen-toggle {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(255, 255, 255, 0.95);
+            border: none;
+            border-radius: 6px;
+            padding: 8px 12px;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1001;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .map-fullscreen-toggle:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: scale(1.05);
+        }
+        
+        /* Map overlay transition styles */
+        .map-overlay {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .map-overlay.hidden {
+            animation: slideOut 0.4s ease-out forwards;
+        }
+        
+        .map-overlay.visible {
+            animation: slideIn 0.4s ease-out forwards;
+        }
+        
         @media (max-width: 768px) {
             .cross-curricular-grid {
                 grid-template-columns: 1fr;
@@ -1655,7 +1749,17 @@
                     <div class="enhanced-map-container" style="height: 600px; border-radius: 12px; overflow: hidden; position: relative; background: #f8f9fa; border: 2px solid #dee2e6;">
                         <div id="enhanced-map" style="width: 100%; height: 100%;"></div>
                         
-                        <div class="map-overlay" style="position: absolute; top: 15px; right: 15px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 15px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 1000; min-width: 200px;">
+                        <!-- Fullscreen Toggle Button -->
+                        <button id="map-fullscreen-toggle" class="map-fullscreen-toggle" title="Toggle Fullscreen">
+                            <span id="fullscreen-icon">🔍</span> <span id="fullscreen-text">Fullscreen</span>
+                        </button>
+                        
+                        <!-- Controls Toggle Button -->
+                        <button id="map-controls-toggle" class="map-control-toggle" title="Toggle Map Controls">
+                            <span id="controls-icon">⚙️</span> <span id="controls-text">Controls</span>
+                        </button>
+                        
+                        <div id="map-overlay" class="map-overlay visible" style="position: absolute; top: 60px; right: 15px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 15px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 1000; min-width: 200px;">
                             <h4 style="margin-bottom: 10px; color: #2c3e50; font-size: 1em;">Map Controls</h4>
                             
                             <div class="style-buttons" style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 15px;">
@@ -3233,6 +3337,9 @@
                 document.getElementById('showLessonData').addEventListener('click', showLessonData);
                 document.getElementById('resetMapView').addEventListener('click', resetEnhancedMapView);
 
+                // Initialize new toggle controls
+                initializeMapControls();
+
                 // Map is ready
                 enhancedMap.whenReady(() => {
                     updateMapStatus('Enhanced Maps ready - Educational mapping system loaded');
@@ -3247,6 +3354,100 @@
                 updateMapStatus('Error initializing map: ' + error.message);
                 initializeFallbackMap();
             }
+        }
+
+        // Initialize Map Control Toggles
+        function initializeMapControls() {
+            let controlsVisible = true;
+            let isFullscreen = false;
+            
+            // Controls toggle functionality
+            const controlsToggle = document.getElementById('map-controls-toggle');
+            const mapOverlay = document.getElementById('map-overlay');
+            const controlsIcon = document.getElementById('controls-icon');
+            const controlsText = document.getElementById('controls-text');
+            
+            controlsToggle.addEventListener('click', () => {
+                controlsVisible = !controlsVisible;
+                
+                if (controlsVisible) {
+                    mapOverlay.classList.remove('hidden');
+                    mapOverlay.classList.add('visible');
+                    controlsIcon.textContent = '⚙️';
+                    controlsText.textContent = 'Controls';
+                    controlsToggle.title = 'Hide Map Controls';
+                } else {
+                    mapOverlay.classList.remove('visible');
+                    mapOverlay.classList.add('hidden');
+                    controlsIcon.textContent = '👁️';
+                    controlsText.textContent = 'Show';
+                    controlsToggle.title = 'Show Map Controls';
+                }
+            });
+            
+            // Fullscreen toggle functionality
+            const fullscreenToggle = document.getElementById('map-fullscreen-toggle');
+            const mapContainer = document.querySelector('.enhanced-map-container');
+            const fullscreenIcon = document.getElementById('fullscreen-icon');
+            const fullscreenText = document.getElementById('fullscreen-text');
+            
+            fullscreenToggle.addEventListener('click', () => {
+                isFullscreen = !isFullscreen;
+                
+                if (isFullscreen) {
+                    // Enter fullscreen
+                    mapContainer.classList.add('map-fullscreen');
+                    fullscreenIcon.textContent = '🔍';
+                    fullscreenText.textContent = 'Exit Fullscreen';
+                    fullscreenToggle.title = 'Exit Fullscreen';
+                    
+                    // Hide browser scroll bars
+                    document.body.style.overflow = 'hidden';
+                    
+                    // Invalidate map size after transition
+                    setTimeout(() => {
+                        if (enhancedMap) {
+                            enhancedMap.invalidateSize();
+                        }
+                    }, 100);
+                    
+                } else {
+                    // Exit fullscreen
+                    mapContainer.classList.remove('map-fullscreen');
+                    fullscreenIcon.textContent = '🔍';
+                    fullscreenText.textContent = 'Fullscreen';
+                    fullscreenToggle.title = 'Enter Fullscreen';
+                    
+                    // Restore browser scroll bars
+                    document.body.style.overflow = 'auto';
+                    
+                    // Invalidate map size after transition
+                    setTimeout(() => {
+                        if (enhancedMap) {
+                            enhancedMap.invalidateSize();
+                        }
+                    }, 100);
+                }
+            });
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                // Only work when maps tab is active
+                if (document.getElementById('maps-tab').style.display !== 'block') return;
+                
+                if (e.key === 'Escape' && isFullscreen) {
+                    // Exit fullscreen with Escape key
+                    fullscreenToggle.click();
+                } else if (e.key === 'F11') {
+                    // Prevent browser fullscreen and use our fullscreen instead
+                    e.preventDefault();
+                    fullscreenToggle.click();
+                } else if (e.ctrlKey && e.key === 'h') {
+                    // Ctrl+H to toggle controls
+                    e.preventDefault();
+                    controlsToggle.click();
+                }
+            });
         }
 
         function syncMapWithCurrentLesson() {
