@@ -1456,6 +1456,114 @@
                 text-align: center;
             }
         }
+
+        /* Enhanced Map Lesson Integration Styles */
+        #map-skills-panel, #geographic-focus-panel, #map-activities-panel {
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+
+        #map-skills-panel {
+            border-left-color: #28a745;
+        }
+
+        #geographic-focus-panel {
+            border-left-color: #ffc107;
+        }
+
+        #map-activities-panel {
+            border-left-color: #17a2b8;
+        }
+
+        .lesson-skill-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .lesson-skill-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .activity-card {
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .activity-card:hover {
+            transform: translateY(-1px);
+            border-color: #007bff !important;
+        }
+
+        .focus-area-tag {
+            transition: transform 0.2s ease;
+        }
+
+        .focus-area-tag:hover {
+            transform: scale(1.05);
+        }
+
+        /* Activity Modal Enhancements */
+        #activity-modal {
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        #activity-backdrop {
+            animation: backdropFadeIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -60%);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        @keyframes backdropFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Interactive Elements */
+        .exploration-checklist label {
+            display: block;
+            padding: 5px;
+            margin: 3px 0;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .exploration-checklist label:hover {
+            background-color: rgba(0,123,255,0.1);
+            border-radius: 3px;
+        }
+
+        .exploration-checklist input[type="checkbox"] {
+            margin-right: 8px;
+        }
+
+        /* Responsive Design for Map Panels */
+        @media (max-width: 768px) {
+            #lesson-skills-list {
+                grid-template-columns: 1fr;
+            }
+            
+            #lesson-activities-list {
+                grid-template-columns: 1fr;
+            }
+            
+            #focus-areas-list {
+                justify-content: center;
+            }
+            
+            #activity-modal {
+                margin: 10px;
+                max-width: calc(100vw - 20px);
+                max-height: calc(100vh - 20px);
+            }
+        }
     </style>
 </head>
 <body>
@@ -1733,15 +1841,35 @@
                 <div id="maps-tab" class="tab-content">
                     <div class="lesson-info">
                         <h3>🗺️ Enhanced Curriculum Maps</h3>
-                        <p style="margin-bottom: 15px; color: #666;">Interactive educational mapping system that automatically syncs with your selected lesson content.</p>
+                        <p style="margin-bottom: 15px; color: #666;">Interactive educational mapping system with lesson-specific skills and activities.</p>
                         
                         <div id="map-lesson-info" style="background: #e7f3ff; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #007bff;">
                             <strong>Current Lesson:</strong> <span id="map-current-lesson">Select a lesson to view relevant geographic content</span>
+                            <div id="lesson-objectives" style="margin-top: 8px; font-size: 13px; color: #555;"></div>
+                        </div>
+                        
+                        <!-- Map Skills Panel -->
+                        <div id="map-skills-panel" style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 15px; margin-bottom: 15px; display: none;">
+                            <h4 style="margin: 0 0 10px 0; color: #495057; font-size: 16px;">📚 Map Reading Skills for This Lesson</h4>
+                            <div id="lesson-skills-list" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;"></div>
+                        </div>
+                        
+                        <!-- Geographic Focus Panel -->
+                        <div id="geographic-focus-panel" style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 8px; padding: 15px; margin-bottom: 15px; display: none;">
+                            <h4 style="margin: 0 0 10px 0; color: #856404; font-size: 16px;">🎯 Geographic Focus Areas</h4>
+                            <div id="focus-areas-list" style="display: flex; flex-wrap: wrap; gap: 8px;"></div>
+                        </div>
+                        
+                        <!-- Interactive Map Activities -->
+                        <div id="map-activities-panel" style="background: #d1ecf1; border: 1px solid #bee5eb; border-radius: 8px; padding: 15px; margin-bottom: 15px; display: none;">
+                            <h4 style="margin: 0 0 10px 0; color: #0c5460; font-size: 16px;">🎮 Interactive Map Activities</h4>
+                            <div id="lesson-activities-list" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 10px;"></div>
                         </div>
                         
                         <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
                             <button id="focusLessonRegion" style="background: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">📍 Focus on Lesson Region</button>
                             <button id="showLessonData" style="background: #17a2b8; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">📊 Show Lesson Data</button>
+                            <button id="loadLessonActivities" style="background: #fd7e14; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">🎯 Load Activities</button>
                             <button id="resetMapView" style="background: #6c757d; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">🌍 Global View</button>
                         </div>
                     </div>
@@ -3457,6 +3585,7 @@
         function syncMapWithCurrentLesson() {
             if (!currentLesson) {
                 updateMapLessonInfo('Select a lesson to view relevant geographic content');
+                hideLessonMapPanels();
                 return;
             }
             
@@ -3466,6 +3595,11 @@
             
             updateMapLessonInfo(`${moduleTitle} - ${lessonTitle}`);
             
+            // Load lesson-specific content
+            loadLessonMapSkills();
+            loadLessonGeographicFocus();
+            loadLessonMapActivities();
+            
             // Check if we're using fallback mode
             if (!enhancedMap && document.getElementById('fallback-lesson-info')) {
                 updateFallbackLessonInfo();
@@ -3473,10 +3607,288 @@
                 return;
             }
             
-            updateMapStatus(`Synced with: ${lessonTitle}`);
+            updateMapStatus(`Synced with: ${lessonTitle} - Enhanced content loaded`);
             
             // Auto-focus on relevant region based on lesson content
             focusOnLessonRegion();
+        }
+
+        function hideLessonMapPanels() {
+            document.getElementById('map-skills-panel').style.display = 'none';
+            document.getElementById('geographic-focus-panel').style.display = 'none';
+            document.getElementById('map-activities-panel').style.display = 'none';
+            document.getElementById('lesson-objectives').innerHTML = '';
+        }
+
+        function loadLessonMapSkills() {
+            if (!currentMapLesson) return;
+            
+            const skillsPanel = document.getElementById('map-skills-panel');
+            const skillsList = document.getElementById('lesson-skills-list');
+            const objectivesDiv = document.getElementById('lesson-objectives');
+            
+            // Extract lesson content for analysis
+            const content = (currentMapLesson.content || '').toLowerCase();
+            const title = (currentMapLesson.title || '').toLowerCase();
+            const searchText = content + ' ' + title;
+            
+            // Define map skills based on lesson content
+            const mapSkills = [];
+            const objectives = [];
+            
+            // Basic geographic skills
+            if (searchText.includes('location') || searchText.includes('place') || searchText.includes('coordinate')) {
+                mapSkills.push({
+                    icon: '📍',
+                    title: 'Location Skills',
+                    description: 'Identify absolute and relative locations using coordinates, landmarks, and geographic references'
+                });
+                objectives.push('Practice identifying locations using various geographic references');
+            }
+            
+            if (searchText.includes('region') || searchText.includes('boundary') || searchText.includes('border')) {
+                mapSkills.push({
+                    icon: '🗺️',
+                    title: 'Regional Analysis',
+                    description: 'Analyze regional boundaries, characteristics, and relationships between areas'
+                });
+                objectives.push('Compare and contrast different regional characteristics');
+            }
+            
+            if (searchText.includes('climate') || searchText.includes('weather') || searchText.includes('temperature')) {
+                mapSkills.push({
+                    icon: '🌡️',
+                    title: 'Climate Mapping',
+                    description: 'Interpret climate data, weather patterns, and temperature distributions'
+                });
+                objectives.push('Analyze climate patterns and their geographic influences');
+            }
+            
+            if (searchText.includes('population') || searchText.includes('city') || searchText.includes('urban')) {
+                mapSkills.push({
+                    icon: '🏙️',
+                    title: 'Population Analysis',
+                    description: 'Study population density, urban patterns, and demographic distributions'
+                });
+                objectives.push('Examine population patterns and urban development');
+            }
+            
+            if (searchText.includes('culture') || searchText.includes('language') || searchText.includes('religion')) {
+                mapSkills.push({
+                    icon: '🌐',
+                    title: 'Cultural Geography',
+                    description: 'Map cultural distributions, language families, and religious patterns'
+                });
+                objectives.push('Explore cultural landscapes and their geographic expressions');
+            }
+            
+            if (searchText.includes('trade') || searchText.includes('economic') || searchText.includes('resource')) {
+                mapSkills.push({
+                    icon: '💰',
+                    title: 'Economic Geography',
+                    description: 'Analyze trade routes, resource distributions, and economic patterns'
+                });
+                objectives.push('Investigate economic activities and resource management');
+            }
+            
+            if (searchText.includes('mountain') || searchText.includes('river') || searchText.includes('physical') || searchText.includes('landform')) {
+                mapSkills.push({
+                    icon: '⛰️',
+                    title: 'Physical Features',
+                    description: 'Identify and analyze mountains, rivers, and other physical geographic features'
+                });
+                objectives.push('Study physical geography and landform relationships');
+            }
+            
+            if (searchText.includes('scale') || searchText.includes('distance') || searchText.includes('measurement')) {
+                mapSkills.push({
+                    icon: '📏',
+                    title: 'Scale & Distance',
+                    description: 'Use map scales to calculate distances and understand spatial relationships'
+                });
+                objectives.push('Practice measuring distances and understanding map scales');
+            }
+            
+            // Default skills if none detected
+            if (mapSkills.length === 0) {
+                mapSkills.push(
+                    {
+                        icon: '🧭',
+                        title: 'Map Navigation',
+                        description: 'Practice basic map reading and navigation skills'
+                    },
+                    {
+                        icon: '🌍',
+                        title: 'Global Awareness',
+                        description: 'Develop understanding of global geographic relationships'
+                    }
+                );
+                objectives.push('Develop fundamental geographic awareness and map literacy');
+            }
+            
+            // Render skills
+            skillsList.innerHTML = mapSkills.map(skill => `
+                <div style="background: white; border: 1px solid #dee2e6; border-radius: 6px; padding: 12px; text-align: center;">
+                    <div style="font-size: 20px; margin-bottom: 5px;">${skill.icon}</div>
+                    <div style="font-weight: bold; font-size: 13px; margin-bottom: 5px; color: #495057;">${skill.title}</div>
+                    <div style="font-size: 11px; color: #6c757d; line-height: 1.3;">${skill.description}</div>
+                </div>
+            `).join('');
+            
+            // Show objectives
+            objectivesDiv.innerHTML = `<strong>Learning Objectives:</strong> ${objectives.join('; ')}`;
+            
+            skillsPanel.style.display = 'block';
+        }
+
+        function loadLessonGeographicFocus() {
+            if (!currentMapLesson) return;
+            
+            const focusPanel = document.getElementById('geographic-focus-panel');
+            const focusList = document.getElementById('focus-areas-list');
+            
+            const content = (currentMapLesson.content || '').toLowerCase();
+            const title = (currentMapLesson.title || '').toLowerCase();
+            const searchText = content + ' ' + title;
+            
+            const focusAreas = [];
+            
+            // Geographic regions
+            const regions = {
+                'north america': { name: 'North America', color: '#28a745' },
+                'south america': { name: 'South America', color: '#17a2b8' },
+                'europe': { name: 'Europe', color: '#6f42c1' },
+                'africa': { name: 'Africa', color: '#fd7e14' },
+                'asia': { name: 'Asia', color: '#e83e8c' },
+                'oceania': { name: 'Oceania', color: '#20c997' },
+                'arctic': { name: 'Arctic', color: '#6c757d' },
+                'antarctica': { name: 'Antarctica', color: '#495057' },
+                'middle east': { name: 'Middle East', color: '#dc3545' },
+                'mediterranean': { name: 'Mediterranean', color: '#007bff' }
+            };
+            
+            Object.keys(regions).forEach(keyword => {
+                if (searchText.includes(keyword)) {
+                    focusAreas.push(regions[keyword]);
+                }
+            });
+            
+            // Geographic concepts
+            const concepts = {
+                'climate': { name: 'Climate Patterns', color: '#28a745' },
+                'population': { name: 'Population Density', color: '#17a2b8' },
+                'culture': { name: 'Cultural Landscapes', color: '#6f42c1' },
+                'economic': { name: 'Economic Systems', color: '#fd7e14' },
+                'physical': { name: 'Physical Geography', color: '#e83e8c' },
+                'political': { name: 'Political Geography', color: '#dc3545' },
+                'urban': { name: 'Urban Geography', color: '#007bff' },
+                'rural': { name: 'Rural Landscapes', color: '#20c997' }
+            };
+            
+            Object.keys(concepts).forEach(keyword => {
+                if (searchText.includes(keyword)) {
+                    focusAreas.push(concepts[keyword]);
+                }
+            });
+            
+            if (focusAreas.length > 0) {
+                focusList.innerHTML = focusAreas.map(area => `
+                    <span style="background: ${area.color}; color: white; padding: 6px 12px; border-radius: 15px; font-size: 12px; font-weight: bold;">
+                        ${area.name}
+                    </span>
+                `).join('');
+                focusPanel.style.display = 'block';
+            } else {
+                focusPanel.style.display = 'none';
+            }
+        }
+
+        function loadLessonMapActivities() {
+            if (!currentMapLesson) return;
+            
+            const activitiesPanel = document.getElementById('map-activities-panel');
+            const activitiesList = document.getElementById('lesson-activities-list');
+            
+            const content = (currentMapLesson.content || '').toLowerCase();
+            const title = (currentMapLesson.title || '').toLowerCase();
+            const searchText = content + ' ' + title;
+            
+            const activities = [];
+            
+            // Location-based activities
+            if (searchText.includes('location') || searchText.includes('coordinate')) {
+                activities.push({
+                    icon: '📍',
+                    title: 'Location Hunt',
+                    description: 'Find and mark specific coordinates or landmarks on the map',
+                    action: 'startLocationActivity'
+                });
+            }
+            
+            // Regional comparison activities
+            if (searchText.includes('region') || searchText.includes('compare')) {
+                activities.push({
+                    icon: '⚖️',
+                    title: 'Regional Comparison',
+                    description: 'Compare characteristics between different geographic regions',
+                    action: 'startComparisonActivity'
+                });
+            }
+            
+            // Climate analysis
+            if (searchText.includes('climate') || searchText.includes('weather')) {
+                activities.push({
+                    icon: '🌡️',
+                    title: 'Climate Analysis',
+                    description: 'Analyze climate data and patterns across different regions',
+                    action: 'startClimateActivity'
+                });
+            }
+            
+            // Population studies
+            if (searchText.includes('population') || searchText.includes('city')) {
+                activities.push({
+                    icon: '👥',
+                    title: 'Population Mapping',
+                    description: 'Study population density and urban development patterns',
+                    action: 'startPopulationActivity'
+                });
+            }
+            
+            // Distance and scale
+            if (searchText.includes('distance') || searchText.includes('scale') || searchText.includes('measurement')) {
+                activities.push({
+                    icon: '📏',
+                    title: 'Distance Calculator',
+                    description: 'Practice measuring distances and using map scales',
+                    action: 'startDistanceActivity'
+                });
+            }
+            
+            // Default activity
+            if (activities.length === 0) {
+                activities.push({
+                    icon: '🎯',
+                    title: 'Geographic Exploration',
+                    description: 'Explore the region related to this lesson with guided questions',
+                    action: 'startExplorationActivity'
+                });
+            }
+            
+            activitiesList.innerHTML = activities.map(activity => `
+                <div style="background: white; border: 1px solid #bee5eb; border-radius: 6px; padding: 12px;">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                        <span style="font-size: 18px;">${activity.icon}</span>
+                        <strong style="font-size: 14px; color: #0c5460;">${activity.title}</strong>
+                    </div>
+                    <p style="font-size: 12px; color: #6c757d; margin: 0 0 10px 0; line-height: 1.3;">${activity.description}</p>
+                    <button onclick="${activity.action}()" style="background: #17a2b8; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 11px; cursor: pointer;">
+                        Start Activity
+                    </button>
+                </div>
+            `).join('');
+            
+            activitiesPanel.style.display = 'block';
         }
 
         function focusOnLessonRegion() {
@@ -3539,18 +3951,44 @@
                 return;
             }
             
-            // For now, just enable some relevant data layers
-            // In the future, this could be more sophisticated based on lesson content
+            // Analyze lesson content to determine relevant data layers
+            const content = (currentMapLesson.content || '').toLowerCase();
+            const title = (currentMapLesson.title || '').toLowerCase();
+            const searchText = content + ' ' + title;
+            
             const earthquakeToggle = document.getElementById('mapEarthquakeToggle');
             const citiesToggle = document.getElementById('mapCitiesToggle');
+            const climateToggle = document.getElementById('mapClimateToggle');
             
-            earthquakeToggle.checked = true;
-            citiesToggle.checked = true;
+            let layersLoaded = [];
             
-            loadEarthquakeData();
-            loadCitiesData();
+            // Smart layer selection based on lesson content
+            if (searchText.includes('earthquake') || searchText.includes('tectonic') || searchText.includes('volcano') || searchText.includes('natural disaster')) {
+                earthquakeToggle.checked = true;
+                loadEarthquakeData();
+                layersLoaded.push('earthquake data');
+            }
             
-            updateMapStatus('Loaded relevant data layers for current lesson');
+            if (searchText.includes('city') || searchText.includes('urban') || searchText.includes('population') || searchText.includes('settlement')) {
+                citiesToggle.checked = true;
+                loadCitiesData();
+                layersLoaded.push('major cities');
+            }
+            
+            if (searchText.includes('climate') || searchText.includes('weather') || searchText.includes('temperature') || searchText.includes('precipitation')) {
+                climateToggle.checked = true;
+                loadClimateData();
+                layersLoaded.push('climate zones');
+            }
+            
+            // Default to cities if no specific content detected
+            if (layersLoaded.length === 0) {
+                citiesToggle.checked = true;
+                loadCitiesData();
+                layersLoaded.push('major cities');
+            }
+            
+            updateMapStatus(`Loaded relevant data layers: ${layersLoaded.join(', ')}`);
         }
 
         function resetEnhancedMapView() {
@@ -4117,6 +4555,560 @@
                 infoElement.textContent = message;
             }
         }
+
+        // Interactive Map Activity Functions
+        function startLocationActivity() {
+            if (!enhancedMap || !currentMapLesson) {
+                alert('Please select a lesson first to start location activities.');
+                return;
+            }
+            
+            updateMapStatus('🎯 Location Activity: Click on the map to identify coordinates');
+            
+            // Create activity instructions overlay
+            const activityModal = createActivityModal(
+                '📍 Location Hunt Activity',
+                `
+                <div style="margin-bottom: 15px;">
+                    <h4>Your Mission:</h4>
+                    <p>Practice identifying locations on the map related to your current lesson.</p>
+                    
+                    <div id="location-challenge" style="background: #e7f3ff; padding: 10px; border-radius: 6px; margin: 10px 0;">
+                        <strong>Challenge:</strong> <span id="location-task">Click anywhere on the map to begin!</span>
+                    </div>
+                    
+                    <div id="coordinate-display" style="background: #f8f9fa; padding: 10px; border-radius: 6px; margin: 10px 0; display: none;">
+                        <strong>Coordinates:</strong> <span id="clicked-coordinates"></span><br>
+                        <strong>Region:</strong> <span id="clicked-region"></span>
+                    </div>
+                </div>
+                `,
+                [
+                    { text: 'New Challenge', action: 'generateLocationChallenge()' },
+                    { text: 'Close Activity', action: 'closeActivityModal()' }
+                ]
+            );
+            
+            // Add click handler to map
+            enhancedMap.currentActivity = 'location';
+            enhancedMap.on('click', handleLocationClick);
+            
+            generateLocationChallenge();
+        }
+
+        function startComparisonActivity() {
+            if (!enhancedMap || !currentMapLesson) {
+                alert('Please select a lesson first to start comparison activities.');
+                return;
+            }
+            
+            updateMapStatus('⚖️ Regional Comparison: Compare different areas on the map');
+            
+            const activityModal = createActivityModal(
+                '⚖️ Regional Comparison Activity',
+                `
+                <div style="margin-bottom: 15px;">
+                    <h4>Compare Geographic Regions:</h4>
+                    <p>Select two different regions on the map to compare their characteristics.</p>
+                    
+                    <div id="comparison-selected" style="background: #e7f3ff; padding: 10px; border-radius: 6px; margin: 10px 0;">
+                        <strong>Selected Regions:</strong>
+                        <div id="region-list">Click on two different areas to begin comparison</div>
+                    </div>
+                    
+                    <div id="comparison-results" style="background: #f8f9fa; padding: 10px; border-radius: 6px; margin: 10px 0; display: none;">
+                        <h5>Comparison Results:</h5>
+                        <div id="comparison-data"></div>
+                    </div>
+                </div>
+                `,
+                [
+                    { text: 'Reset Selection', action: 'resetComparison()' },
+                    { text: 'Close Activity', action: 'closeActivityModal()' }
+                ]
+            );
+            
+            enhancedMap.currentActivity = 'comparison';
+            enhancedMap.selectedRegions = [];
+            enhancedMap.on('click', handleComparisonClick);
+        }
+
+        function startClimateActivity() {
+            if (!enhancedMap || !currentMapLesson) {
+                alert('Please select a lesson first to start climate activities.');
+                return;
+            }
+            
+            updateMapStatus('🌡️ Climate Analysis: Explore climate patterns');
+            
+            // Enable climate layer if not already on
+            document.getElementById('mapClimateToggle').checked = true;
+            loadClimateData();
+            
+            createActivityModal(
+                '🌡️ Climate Analysis Activity',
+                `
+                <div style="margin-bottom: 15px;">
+                    <h4>Explore Climate Patterns:</h4>
+                    <p>Study how climate varies across different regions and understand the factors that influence weather patterns.</p>
+                    
+                    <div style="background: #fff3cd; padding: 10px; border-radius: 6px; margin: 10px 0;">
+                        <strong>Activity Instructions:</strong>
+                        <ol style="margin: 5px 0; padding-left: 20px;">
+                            <li>Observe the climate zones displayed on the map</li>
+                            <li>Click on different climate zones to learn about their characteristics</li>
+                            <li>Consider factors like latitude, elevation, and proximity to water</li>
+                            <li>Compare climate patterns between different continents</li>
+                        </ol>
+                    </div>
+                    
+                    <div id="climate-facts" style="background: #d1ecf1; padding: 10px; border-radius: 6px; margin: 10px 0;">
+                        <strong>Climate Fun Facts:</strong>
+                        <ul style="margin: 5px 0; padding-left: 20px; font-size: 13px;">
+                            <li>The Köppen climate classification system has 5 main climate groups</li>
+                            <li>Latitude is the most important factor determining climate</li>
+                            <li>Ocean currents can warm or cool coastal regions</li>
+                            <li>Mountains create rain shadows that affect local climate</li>
+                        </ul>
+                    </div>
+                </div>
+                `,
+                [
+                    { text: 'Close Activity', action: 'closeActivityModal()' }
+                ]
+            );
+        }
+
+        function startPopulationActivity() {
+            if (!enhancedMap || !currentMapLesson) {
+                alert('Please select a lesson first to start population activities.');
+                return;
+            }
+            
+            updateMapStatus('👥 Population Study: Analyze population patterns');
+            
+            // Enable cities layer if not already on
+            document.getElementById('mapCitiesToggle').checked = true;
+            loadCitiesData();
+            
+            createActivityModal(
+                '👥 Population Mapping Activity',
+                `
+                <div style="margin-bottom: 15px;">
+                    <h4>Study Population Patterns:</h4>
+                    <p>Examine how human populations are distributed around the world and understand the factors that influence settlement patterns.</p>
+                    
+                    <div style="background: #d4edda; padding: 10px; border-radius: 6px; margin: 10px 0;">
+                        <strong>Exploration Questions:</strong>
+                        <ul style="margin: 5px 0; padding-left: 20px;">
+                            <li>Which continents have the highest concentration of major cities?</li>
+                            <li>How do physical features like mountains and rivers affect where people live?</li>
+                            <li>What patterns do you notice in coastal vs. inland populations?</li>
+                            <li>How does climate influence population distribution?</li>
+                        </ul>
+                    </div>
+                    
+                    <div id="population-insights" style="background: #f8d7da; padding: 10px; border-radius: 6px; margin: 10px 0;">
+                        <strong>Population Geography Facts:</strong>
+                        <ul style="margin: 5px 0; padding-left: 20px; font-size: 13px;">
+                            <li>Over half the world's population lives within 60 km of the ocean</li>
+                            <li>Asia contains about 60% of the world's population</li>
+                            <li>Population density varies greatly between urban and rural areas</li>
+                            <li>Geographic factors like water access strongly influence settlement</li>
+                        </ul>
+                    </div>
+                </div>
+                `,
+                [
+                    { text: 'Close Activity', action: 'closeActivityModal()' }
+                ]
+            );
+        }
+
+        function startDistanceActivity() {
+            if (!enhancedMap || !currentMapLesson) {
+                alert('Please select a lesson first to start distance activities.');
+                return;
+            }
+            
+            updateMapStatus('📏 Distance Measurement: Practice calculating distances');
+            
+            createActivityModal(
+                '📏 Distance Calculator Activity',
+                `
+                <div style="margin-bottom: 15px;">
+                    <h4>Measure Distances on the Map:</h4>
+                    <p>Learn to use map scales and calculate real-world distances between locations.</p>
+                    
+                    <div style="background: #e2e3e5; padding: 10px; border-radius: 6px; margin: 10px 0;">
+                        <strong>Instructions:</strong>
+                        <ol style="margin: 5px 0; padding-left: 20px;">
+                            <li>Right-click and drag on the map to measure distances</li>
+                            <li>The distance will be displayed in both kilometers and miles</li>
+                            <li>Try measuring distances between major cities</li>
+                            <li>Compare your measurements with real-world travel distances</li>
+                        </ol>
+                    </div>
+                    
+                    <div id="distance-challenges" style="background: #fff3cd; padding: 10px; border-radius: 6px; margin: 10px 0;">
+                        <strong>Distance Challenges:</strong>
+                        <div id="distance-challenge-list">
+                            <p>• Measure the distance from New York to London</p>
+                            <p>• Find the distance across the Pacific Ocean</p>
+                            <p>• Calculate the length of the Amazon River</p>
+                            <p>• Measure the width of the African continent</p>
+                        </div>
+                    </div>
+                </div>
+                `,
+                [
+                    { text: 'New Challenge', action: 'generateDistanceChallenge()' },
+                    { text: 'Close Activity', action: 'closeActivityModal()' }
+                ]
+            );
+            
+            // Add distance measurement tool to map
+            enableDistanceMeasurement();
+        }
+
+        function startExplorationActivity() {
+            if (!enhancedMap || !currentMapLesson) {
+                alert('Please select a lesson first to start exploration activities.');
+                return;
+            }
+            
+            updateMapStatus('🎯 Geographic Exploration: Discover your lesson region');
+            
+            // Focus on lesson region
+            focusOnLessonRegion();
+            
+            createActivityModal(
+                '🎯 Geographic Exploration Activity',
+                `
+                <div style="margin-bottom: 15px;">
+                    <h4>Explore Your Lesson Region:</h4>
+                    <p>Take a guided exploration of the geographic area related to your current lesson.</p>
+                    
+                    <div style="background: #d1ecf1; padding: 10px; border-radius: 6px; margin: 10px 0;">
+                        <strong>Exploration Checklist:</strong>
+                        <div id="exploration-checklist">
+                            <label><input type="checkbox"> Identify major physical features</label><br>
+                            <label><input type="checkbox"> Locate important cities and capitals</label><br>
+                            <label><input type="checkbox"> Observe climate patterns</label><br>
+                            <label><input type="checkbox"> Note political boundaries</label><br>
+                            <label><input type="checkbox"> Consider human-environment interactions</label>
+                        </div>
+                    </div>
+                    
+                    <div id="exploration-questions" style="background: #e7f3ff; padding: 10px; border-radius: 6px; margin: 10px 0;">
+                        <strong>Guiding Questions:</strong>
+                        <div id="question-rotation">
+                            <p id="current-question">What physical features do you notice in this region?</p>
+                            <button onclick="rotateExplorationQuestion()" style="background: #007bff; color: white; border: none; padding: 4px 8px; border-radius: 3px; font-size: 11px;">
+                                Next Question
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                `,
+                [
+                    { text: 'Load Data Layers', action: 'showLessonData()' },
+                    { text: 'Close Activity', action: 'closeActivityModal()' }
+                ]
+            );
+        }
+
+        // Activity Helper Functions
+        function createActivityModal(title, content, buttons) {
+            // Remove existing modal if present
+            const existingModal = document.getElementById('activity-modal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+            
+            const modal = document.createElement('div');
+            modal.id = 'activity-modal';
+            modal.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: white;
+                border: 2px solid #007bff;
+                border-radius: 10px;
+                padding: 20px;
+                z-index: 10000;
+                max-width: 500px;
+                max-height: 70vh;
+                overflow-y: auto;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            `;
+            
+            const buttonHTML = buttons.map(btn => 
+                `<button onclick="${btn.action}" style="background: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 4px; margin: 0 5px; cursor: pointer;">
+                    ${btn.text}
+                </button>`
+            ).join('');
+            
+            modal.innerHTML = `
+                <h3 style="margin: 0 0 15px 0; color: #007bff;">${title}</h3>
+                ${content}
+                <div style="text-align: center; margin-top: 15px; border-top: 1px solid #dee2e6; padding-top: 15px;">
+                    ${buttonHTML}
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Add backdrop
+            const backdrop = document.createElement('div');
+            backdrop.id = 'activity-backdrop';
+            backdrop.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0,0,0,0.5);
+                z-index: 9999;
+            `;
+            backdrop.onclick = closeActivityModal;
+            document.body.appendChild(backdrop);
+            
+            return modal;
+        }
+
+        function closeActivityModal() {
+            const modal = document.getElementById('activity-modal');
+            const backdrop = document.getElementById('activity-backdrop');
+            
+            if (modal) modal.remove();
+            if (backdrop) backdrop.remove();
+            
+            // Clean up map event handlers
+            if (enhancedMap && enhancedMap.currentActivity) {
+                enhancedMap.off('click', handleLocationClick);
+                enhancedMap.off('click', handleComparisonClick);
+                delete enhancedMap.currentActivity;
+                updateMapStatus('Activity completed - Map ready for exploration');
+            }
+        }
+
+        function handleLocationClick(e) {
+            const lat = e.latlng.lat.toFixed(4);
+            const lng = e.latlng.lng.toFixed(4);
+            
+            document.getElementById('clicked-coordinates').textContent = `${lat}°, ${lng}°`;
+            document.getElementById('clicked-region').textContent = getRegionName(lat, lng);
+            document.getElementById('coordinate-display').style.display = 'block';
+            
+            // Add a temporary marker
+            if (enhancedMap.activityMarker) {
+                enhancedMap.removeLayer(enhancedMap.activityMarker);
+            }
+            
+            enhancedMap.activityMarker = L.marker([lat, lng])
+                .addTo(enhancedMap)
+                .bindPopup(`📍 Location: ${lat}°, ${lng}°<br>Region: ${getRegionName(lat, lng)}`)
+                .openPopup();
+        }
+
+        function generateLocationChallenge() {
+            const challenges = [
+                "Find the coordinates of your current lesson's main geographic region",
+                "Locate a major city mentioned in your lesson",
+                "Identify the coordinates of an important physical feature from your lesson",
+                "Find the approximate center of the continent you're studying",
+                "Locate the capital city of a country from your lesson"
+            ];
+            
+            const randomChallenge = challenges[Math.floor(Math.random() * challenges.length)];
+            document.getElementById('location-task').textContent = randomChallenge;
+        }
+
+        function getRegionName(lat, lng) {
+            // Simple region identification based on coordinates
+            if (lat > 66.5) return "Arctic";
+            if (lat < -66.5) return "Antarctic";
+            
+            if (lng >= -180 && lng < -30) {
+                if (lat > 15) return "North America";
+                if (lat < -15) return "South America";
+                return "Central America/Caribbean";
+            }
+            if (lng >= -30 && lng < 60) {
+                if (lat > 35) return "Europe";
+                if (lat > -35) return "Africa";
+                return "Southern Africa";
+            }
+            if (lng >= 60 && lng < 180) {
+                if (lat > 10) return "Asia";
+                if (lat > -10) return "Southeast Asia";
+                return "Oceania";
+            }
+            
+            return "Ocean";
+        }
+
+        // Additional Activity Helper Functions
+        function handleComparisonClick(e) {
+            const lat = e.latlng.lat;
+            const lng = e.latlng.lng;
+            const regionName = getRegionName(lat, lng);
+            
+            if (!enhancedMap.selectedRegions) {
+                enhancedMap.selectedRegions = [];
+            }
+            
+            if (enhancedMap.selectedRegions.length < 2) {
+                enhancedMap.selectedRegions.push({
+                    name: regionName,
+                    coordinates: [lat, lng],
+                    marker: L.marker([lat, lng]).addTo(enhancedMap)
+                });
+                
+                updateRegionList();
+                
+                if (enhancedMap.selectedRegions.length === 2) {
+                    showComparisonResults();
+                }
+            }
+        }
+
+        function updateRegionList() {
+            const regionList = document.getElementById('region-list');
+            if (enhancedMap.selectedRegions.length === 0) {
+                regionList.innerHTML = 'Click on two different areas to begin comparison';
+            } else {
+                regionList.innerHTML = enhancedMap.selectedRegions.map((region, index) => 
+                    `${index + 1}. ${region.name} (${region.coordinates[0].toFixed(2)}°, ${region.coordinates[1].toFixed(2)}°)`
+                ).join('<br>');
+            }
+        }
+
+        function showComparisonResults() {
+            const region1 = enhancedMap.selectedRegions[0];
+            const region2 = enhancedMap.selectedRegions[1];
+            
+            const comparisonData = document.getElementById('comparison-data');
+            comparisonData.innerHTML = `
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div>
+                        <h6>${region1.name}</h6>
+                        <p>Coordinates: ${region1.coordinates[0].toFixed(2)}°, ${region1.coordinates[1].toFixed(2)}°</p>
+                        <p>Hemisphere: ${getHemisphere(region1.coordinates[0], region1.coordinates[1])}</p>
+                        <p>Climate Zone: ${getClimateZone(region1.coordinates[0])}</p>
+                    </div>
+                    <div>
+                        <h6>${region2.name}</h6>
+                        <p>Coordinates: ${region2.coordinates[0].toFixed(2)}°, ${region2.coordinates[1].toFixed(2)}°</p>
+                        <p>Hemisphere: ${getHemisphere(region2.coordinates[0], region2.coordinates[1])}</p>
+                        <p>Climate Zone: ${getClimateZone(region2.coordinates[0])}</p>
+                    </div>
+                </div>
+                <div style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 4px;">
+                    <strong>Distance between regions:</strong> ${calculateDistance(region1.coordinates, region2.coordinates).toFixed(0)} km
+                </div>
+            `;
+            
+            document.getElementById('comparison-results').style.display = 'block';
+        }
+
+        function resetComparison() {
+            if (enhancedMap.selectedRegions) {
+                enhancedMap.selectedRegions.forEach(region => {
+                    enhancedMap.removeLayer(region.marker);
+                });
+                enhancedMap.selectedRegions = [];
+            }
+            updateRegionList();
+            document.getElementById('comparison-results').style.display = 'none';
+        }
+
+        function getHemisphere(lat, lng) {
+            const ns = lat >= 0 ? 'Northern' : 'Southern';
+            const ew = lng >= 0 ? 'Eastern' : 'Western';
+            return `${ns} & ${ew}`;
+        }
+
+        function getClimateZone(lat) {
+            const absLat = Math.abs(lat);
+            if (absLat >= 66.5) return 'Polar';
+            if (absLat >= 40) return 'Temperate';
+            if (absLat >= 23.5) return 'Subtropical';
+            return 'Tropical';
+        }
+
+        function calculateDistance(coord1, coord2) {
+            const R = 6371; // Earth's radius in km
+            const dLat = (coord2[0] - coord1[0]) * Math.PI / 180;
+            const dLng = (coord2[1] - coord1[1]) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(coord1[0] * Math.PI / 180) * Math.cos(coord2[0] * Math.PI / 180) *
+                      Math.sin(dLng/2) * Math.sin(dLng/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+
+        function enableDistanceMeasurement() {
+            // Simple distance measurement - in a real implementation, you'd use a Leaflet plugin
+            updateMapStatus('Distance measurement enabled - Right-click and drag to measure');
+        }
+
+        function generateDistanceChallenge() {
+            const challenges = [
+                "Measure the distance from Tokyo to Sydney",
+                "Calculate the width of the Atlantic Ocean",
+                "Find the distance along the equator",
+                "Measure from the North Pole to the South Pole",
+                "Calculate the distance across your lesson's region"
+            ];
+            
+            const randomChallenge = challenges[Math.floor(Math.random() * challenges.length)];
+            const challengeList = document.getElementById('distance-challenge-list');
+            challengeList.innerHTML = `<p style="color: #007bff; font-weight: bold;">• ${randomChallenge}</p>`;
+        }
+
+        function rotateExplorationQuestion() {
+            const questions = [
+                "What physical features do you notice in this region?",
+                "How might the climate affect people living here?",
+                "What natural resources might be available in this area?",
+                "How do you think people travel and trade in this region?",
+                "What challenges might people face living here?",
+                "How has human activity changed this landscape?",
+                "What makes this region unique compared to others?"
+            ];
+            
+            const currentQuestion = document.getElementById('current-question');
+            const randomQuestion = questions[Math.floor(Math.random() * questions.length)];
+            currentQuestion.textContent = randomQuestion;
+        }
+
+        // Enhanced button event handlers
+        document.addEventListener('DOMContentLoaded', function() {
+            // Enhanced map button handlers
+            const loadActivitiesBtn = document.getElementById('loadLessonActivities');
+            if (loadActivitiesBtn) {
+                loadActivitiesBtn.onclick = function() {
+                    if (!currentMapLesson) {
+                        alert('Please select a lesson first to load activities.');
+                        return;
+                    }
+                    
+                    // Show activities panel if hidden
+                    const activitiesPanel = document.getElementById('map-activities-panel');
+                    if (activitiesPanel.style.display === 'none') {
+                        loadLessonMapActivities();
+                    } else {
+                        // Toggle between showing/hiding activities
+                        activitiesPanel.style.display = activitiesPanel.style.display === 'none' ? 'block' : 'none';
+                    }
+                    
+                    updateMapStatus('Lesson activities loaded - Choose an activity to begin');
+                };
+            }
+        });
 
         // Navigation functions
         function previousLesson() {
