@@ -4346,11 +4346,35 @@
             
             const lessonContent = (currentMapLesson.content || '').toLowerCase();
             const lessonTitle = (currentMapLesson.title || '').toLowerCase();
-            const searchText = lessonContent + ' ' + lessonTitle;
+            const moduleTitle = (currentMapLesson.module?.title || '').toLowerCase();
+            const searchText = lessonContent + ' ' + lessonTitle + ' ' + moduleTitle;
             
-            // Define region mappings based on lesson content
+            // Define enhanced region mappings based on lesson content
             const regionMappings = {
-                'north america': { center: [45, -100], zoom: 3, name: 'North America' },
+                // North America - More specific
+                'canada': { center: [60, -106], zoom: 4, name: 'Canada' },
+                'canadian': { center: [60, -106], zoom: 4, name: 'Canada' },
+                'manitoba': { center: [56, -98], zoom: 6, name: 'Manitoba, Canada' },
+                'winnipeg': { center: [49.8951, -97.1384], zoom: 8, name: 'Winnipeg, Manitoba' },
+                'ontario': { center: [50, -86], zoom: 5, name: 'Ontario, Canada' },
+                'quebec': { center: [52, -72], zoom: 5, name: 'Quebec, Canada' },
+                'british columbia': { center: [54, -126], zoom: 5, name: 'British Columbia, Canada' },
+                'alberta': { center: [54, -116], zoom: 5, name: 'Alberta, Canada' },
+                'saskatchewan': { center: [54, -106], zoom: 6, name: 'Saskatchewan, Canada' },
+                'nova scotia': { center: [45, -63], zoom: 7, name: 'Nova Scotia, Canada' },
+                'newfoundland': { center: [49, -56], zoom: 6, name: 'Newfoundland, Canada' },
+                'yukon': { center: [64, -135], zoom: 5, name: 'Yukon Territory, Canada' },
+                'northwest territories': { center: [64, -116], zoom: 4, name: 'Northwest Territories, Canada' },
+                'nunavut': { center: [68, -90], zoom: 4, name: 'Nunavut, Canada' },
+                
+                // United States
+                'united states': { center: [40, -100], zoom: 4, name: 'United States' },
+                'usa': { center: [40, -100], zoom: 4, name: 'United States' },
+                'america': { center: [40, -100], zoom: 4, name: 'United States' },
+                'mexico': { center: [23, -102], zoom: 5, name: 'Mexico' },
+                
+                // Broader regions
+                'north america': { center: [50, -100], zoom: 3, name: 'North America' },
                 'south america': { center: [-15, -60], zoom: 3, name: 'South America' },
                 'europe': { center: [50, 10], zoom: 4, name: 'Europe' },
                 'africa': { center: [0, 20], zoom: 3, name: 'Africa' },
@@ -4358,9 +4382,8 @@
                 'oceania': { center: [-25, 140], zoom: 4, name: 'Oceania' },
                 'australia': { center: [-25, 133], zoom: 4, name: 'Australia' },
                 'antarctica': { center: [-85, 0], zoom: 3, name: 'Antarctica' },
-                'united states': { center: [40, -100], zoom: 4, name: 'United States' },
-                'canada': { center: [56, -106], zoom: 3, name: 'Canada' },
-                'mexico': { center: [23, -102], zoom: 5, name: 'Mexico' },
+                
+                // Specific countries
                 'brazil': { center: [-10, -55], zoom: 4, name: 'Brazil' },
                 'china': { center: [35, 104], zoom: 4, name: 'China' },
                 'india': { center: [20, 78], zoom: 4, name: 'India' },
@@ -4368,27 +4391,50 @@
                 'middle east': { center: [29, 47], zoom: 4, name: 'Middle East' },
                 'byzantine': { center: [39, 35], zoom: 6, name: 'Byzantine Empire' },
                 'mediterranean': { center: [35, 20], zoom: 5, name: 'Mediterranean' },
-                'arctic': { center: [80, 0], zoom: 3, name: 'Arctic' },
+                'arctic': { center: [75, -100], zoom: 3, name: 'Arctic' },
                 'pacific': { center: [0, -155], zoom: 3, name: 'Pacific Ocean' },
                 'atlantic': { center: [0, -30], zoom: 3, name: 'Atlantic Ocean' }
             };
             
-            // Find matching region
+            // Find matching region (prioritize more specific matches)
             let targetRegion = null;
+            let bestMatch = '';
+            
             for (const [keyword, region] of Object.entries(regionMappings)) {
                 if (searchText.includes(keyword)) {
-                    targetRegion = region;
-                    break;
+                    // Prefer longer, more specific matches
+                    if (keyword.length > bestMatch.length) {
+                        targetRegion = region;
+                        bestMatch = keyword;
+                    }
                 }
             }
             
             if (targetRegion) {
                 enhancedMap.setView(targetRegion.center, targetRegion.zoom);
-                updateMapStatus(`Focused on ${targetRegion.name} for current lesson`);
+                updateMapStatus(`🎯 Focused on ${targetRegion.name} for current lesson`);
+                
+                // Set terrain view for better geographic visualization
+                setTimeout(() => {
+                    const terrainToggle = document.getElementById('mapTerrainToggle');
+                    if (terrainToggle && !terrainToggle.checked) {
+                        terrainToggle.checked = true;
+                        enable3DTerrain();
+                    }
+                }, 500);
+                
+                // Store the lesson region for activities
+                window.currentLessonRegion = {
+                    keyword: bestMatch,
+                    region: targetRegion,
+                    searchText: searchText
+                };
+                
             } else {
                 // Default to global view
                 resetEnhancedMapView();
                 updateMapStatus('No specific region detected - showing global view');
+                window.currentLessonRegion = null;
             }
         }
 
@@ -5176,6 +5222,10 @@
             const climateInfo = document.getElementById('climate-info');
             const climateDetails = document.getElementById('climate-details');
             
+            // Get lesson region context if available
+            const lessonRegion = window.currentLessonRegion;
+            const isCanadaLesson = lessonRegion && (lessonRegion.keyword.includes('canada') || lessonRegion.keyword.includes('canadian'));
+            
             let climateType = '';
             let climateName = '';
             let temperature = '';
@@ -5184,55 +5234,132 @@
             let educationalInfo = '';
             let checkboxToCheck = '';
             
-            // Determine climate zones based on latitude and other factors
-            if (Math.abs(lat) <= 23.5) {
-                // Tropical zone
-                climateType = 'Tropical Climate';
-                climateName = 'Tropical Zone';
-                temperature = 'Hot year-round (80-90°F / 26-32°C)';
-                precipitation = 'High rainfall, often with wet/dry seasons';
-                seasonality = 'Little temperature variation, distinct wet/dry seasons';
-                educationalInfo = 'Tropical climates occur near the equator where the sun\'s rays are most direct. High temperatures and humidity support rainforests and diverse ecosystems.';
-                checkboxToCheck = 'found-tropical';
-            } else if (Math.abs(lat) >= 66.5) {
-                // Polar zone
-                climateType = 'Polar Climate';
-                climateName = 'Polar/Arctic Zone';
-                temperature = 'Very cold (below 50°F / 10°C in warmest month)';
-                precipitation = 'Low precipitation, mostly snow';
-                seasonality = 'Extreme seasonal variation in daylight';
-                educationalInfo = 'Polar climates have extremely cold temperatures and limited vegetation. Permafrost and ice sheets dominate these regions near the poles.';
-                checkboxToCheck = 'found-polar';
-            } else if ((lat >= 20 && lat <= 35) || (lat <= -20 && lat >= -35)) {
-                // Check for arid regions
-                if ((lng >= -120 && lng <= -100) || (lng >= -15 && lng <= 50) || (lng >= 110 && lng <= 140)) {
-                    climateType = 'Arid Climate';
-                    climateName = 'Desert/Semi-Arid Zone';
-                    temperature = 'Hot days, cool nights (varies by season)';
-                    precipitation = 'Very low rainfall (less than 10-20 inches/year)';
-                    seasonality = 'Extreme daily temperature variation';
-                    educationalInfo = 'Arid climates form in areas with high pressure systems or rain shadows. Low humidity and sparse vegetation characterize these regions.';
+            // CANADA-SPECIFIC CLIMATE ANALYSIS
+            if (isCanadaLesson && lat >= 41 && lat <= 83 && lng >= -141 && lng <= -52) {
+                // Arctic Climate (Northern Canada)
+                if (lat >= 70) {
+                    climateType = 'Arctic Climate';
+                    climateName = 'Canadian Arctic Zone';
+                    temperature = 'Extremely cold (-40°F to 40°F / -40°C to 4°C)';
+                    precipitation = 'Very low, mostly snow (less than 10 inches/year)';
+                    seasonality = 'Continuous daylight in summer, darkness in winter';
+                    educationalInfo = 'Canada\'s Arctic experiences the most extreme climate conditions. Permafrost underlies most of the region, and indigenous communities have adapted traditional lifestyles to these harsh conditions. Climate change is rapidly affecting this region.';
+                    checkboxToCheck = 'found-polar';
+                }
+                // Subarctic/Boreal Climate
+                else if (lat >= 50 && lat <= 70) {
+                    climateType = 'Subarctic Climate';
+                    climateName = 'Canadian Boreal/Taiga Zone';
+                    temperature = 'Cold winters (-40°F), warm summers (70°F / -40°C to 21°C)';
+                    precipitation = 'Moderate (15-20 inches/year), mostly snow in winter';
+                    seasonality = 'Very cold, long winters; short, warm summers';
+                    educationalInfo = 'The Canadian subarctic supports the vast boreal forest. This climate enables Canada\'s forestry industry and provides habitat for wildlife like moose, caribou, and bears. Indigenous communities practice traditional hunting and trapping.';
+                    checkboxToCheck = 'found-temperate';
+                }
+                // Prairie Continental Climate
+                else if (lat >= 49 && lat <= 60 && lng >= -115 && lng <= -95) {
+                    climateType = 'Continental Prairie Climate';
+                    climateName = 'Canadian Prairie Zone';
+                    temperature = 'Cold winters (-15°F), hot summers (80°F / -26°C to 27°C)';
+                    precipitation = 'Low to moderate (12-20 inches/year), summer peaks';
+                    seasonality = 'Extreme temperature range, chinook winds in winter';
+                    educationalInfo = 'Canada\'s prairie climate creates ideal conditions for wheat farming. The region experiences dramatic temperature swings and is known for chinook winds that can rapidly warm winter temperatures. This climate zone makes Canada a major grain exporter.';
                     checkboxToCheck = 'found-arid';
                 }
-            } else if (Math.abs(lat) >= 1000) { // This will never trigger - placeholder for mountain detection
-                climateType = 'Mountain Climate';
-                climateName = 'Highland Zone';
-                temperature = 'Varies with elevation';
-                precipitation = 'Varies with elevation and aspect';
-                seasonality = 'Temperature decreases with altitude';
-                educationalInfo = 'Mountain climates change with elevation. Temperature drops about 3.5°F per 1000 feet of elevation gain.';
-                checkboxToCheck = 'found-mountain';
+                // Great Lakes Continental Climate
+                else if (lat >= 42 && lat <= 49 && lng >= -95 && lng <= -74) {
+                    climateType = 'Continental Climate';
+                    climateName = 'Great Lakes Moderated Zone';
+                    temperature = 'Cold winters (20°F), warm summers (75°F / -7°C to 24°C)';
+                    precipitation = 'Moderate to high (30-40 inches/year), lake-effect snow';
+                    seasonality = 'Four distinct seasons, moderated by Great Lakes';
+                    educationalInfo = 'Southern Ontario\'s climate is moderated by the Great Lakes, creating Canada\'s most densely populated region. Lake-effect snow is common in winter, while the lakes moderate temperature extremes, supporting agriculture and major cities like Toronto.';
+                    checkboxToCheck = 'found-temperate';
+                }
+                // Pacific Maritime Climate (British Columbia Coast)
+                else if (lng >= -130 && lng <= -120 && lat >= 48 && lat <= 60) {
+                    climateType = 'Maritime Climate';
+                    climateName = 'Pacific Coastal Zone';
+                    temperature = 'Mild winters (40°F), cool summers (70°F / 4°C to 21°C)';
+                    precipitation = 'Very high (60-120 inches/year), wet winters';
+                    seasonality = 'Wet, mild winters; dry, pleasant summers';
+                    educationalInfo = 'British Columbia\'s coast has Canada\'s mildest climate due to Pacific Ocean influence. High precipitation supports temperate rainforests. This climate attracts population to Vancouver and Victoria and enables year-round outdoor activities.';
+                    checkboxToCheck = 'found-tropical'; // Using tropical for high precipitation maritime
+                }
+                // Atlantic Maritime Climate
+                else if (lng >= -70 && lng <= -52) {
+                    climateType = 'Atlantic Maritime Climate';
+                    climateName = 'Atlantic Canada Zone';
+                    temperature = 'Cool winters (25°F), moderate summers (70°F / -4°C to 21°C)';
+                    precipitation = 'High (40-60 inches/year), fog common';
+                    seasonality = 'Maritime influence moderates temperatures';
+                    educationalInfo = 'Atlantic Canada\'s climate is influenced by ocean currents, including the warm Gulf Stream and cold Labrador Current. This creates frequent fog, moderate temperatures, and supports the traditional fishing industry that shaped Maritime culture.';
+                    checkboxToCheck = 'found-temperate';
+                }
+                // Mountain Climate (Canadian Rockies)
+                else if (lng >= -140 && lng <= -110 && lat >= 49) {
+                    climateType = 'Mountain Climate';
+                    climateName = 'Canadian Rocky Mountain Zone';
+                    temperature = 'Varies dramatically with elevation and aspect';
+                    precipitation = 'High in mountains (40-80 inches/year), rain shadow effects';
+                    seasonality = 'Alpine conditions, heavy snow at elevation';
+                    educationalInfo = 'The Canadian Rockies create diverse microclimates with elevation changes. Chinook winds bring rapid warming, while orographic precipitation creates lush mountain valleys. This climate supports both agriculture in valleys and alpine ecosystems at elevation.';
+                    checkboxToCheck = 'found-mountain';
+                }
+                // Default Canadian climate
+                else {
+                    climateType = 'Canadian Continental Climate';
+                    climateName = 'Canadian Interior Zone';
+                    temperature = 'Cold winters, warm summers (typical Canadian range)';
+                    precipitation = 'Moderate, seasonal variation';
+                    seasonality = 'Distinct four seasons with long winters';
+                    educationalInfo = 'This represents Canada\'s typical continental climate with cold winters, warm summers, and seasonal precipitation patterns that define the Canadian experience.';
+                    checkboxToCheck = 'found-temperate';
+                }
             }
-            
-            // Default to temperate if not caught above
-            if (!climateType) {
-                climateType = 'Temperate Climate';
-                climateName = 'Temperate Zone';
-                temperature = 'Moderate (50-80°F / 10-26°C in summer)';
-                precipitation = 'Moderate, distributed throughout year';
-                seasonality = 'Four distinct seasons';
-                educationalInfo = 'Temperate climates have moderate temperatures and distinct seasons. Most major agricultural regions and cities are located in temperate zones.';
-                checkboxToCheck = 'found-temperate';
+            // GENERAL GLOBAL CLIMATE ANALYSIS
+            else {
+                // Tropical zone
+                if (Math.abs(lat) <= 23.5) {
+                    climateType = 'Tropical Climate';
+                    climateName = 'Tropical Zone';
+                    temperature = 'Hot year-round (80-90°F / 26-32°C)';
+                    precipitation = 'High rainfall, often with wet/dry seasons';
+                    seasonality = 'Little temperature variation, distinct wet/dry seasons';
+                    educationalInfo = 'Tropical climates occur near the equator where the sun\'s rays are most direct. High temperatures and humidity support rainforests and diverse ecosystems.';
+                    checkboxToCheck = 'found-tropical';
+                } else if (Math.abs(lat) >= 66.5) {
+                    // Polar zone
+                    climateType = 'Polar Climate';
+                    climateName = 'Polar/Arctic Zone';
+                    temperature = 'Very cold (below 50°F / 10°C in warmest month)';
+                    precipitation = 'Low precipitation, mostly snow';
+                    seasonality = 'Extreme seasonal variation in daylight';
+                    educationalInfo = 'Polar climates have extremely cold temperatures and limited vegetation. Permafrost and ice sheets dominate these regions near the poles.';
+                    checkboxToCheck = 'found-polar';
+                } else if ((lat >= 20 && lat <= 35) || (lat <= -20 && lat >= -35)) {
+                    // Check for arid regions
+                    if ((lng >= -120 && lng <= -100) || (lng >= -15 && lng <= 50) || (lng >= 110 && lng <= 140)) {
+                        climateType = 'Arid Climate';
+                        climateName = 'Desert/Semi-Arid Zone';
+                        temperature = 'Hot days, cool nights (varies by season)';
+                        precipitation = 'Very low rainfall (less than 10-20 inches/year)';
+                        seasonality = 'Extreme daily temperature variation';
+                        educationalInfo = 'Arid climates form in areas with high pressure systems or rain shadows. Low humidity and sparse vegetation characterize these regions.';
+                        checkboxToCheck = 'found-arid';
+                    }
+                }
+                
+                // Default to temperate if not caught above
+                if (!climateType) {
+                    climateType = 'Temperate Climate';
+                    climateName = 'Temperate Zone';
+                    temperature = 'Moderate (50-80°F / 10-26°C in summer)';
+                    precipitation = 'Moderate, distributed throughout year';
+                    seasonality = 'Four distinct seasons';
+                    educationalInfo = 'Temperate climates have moderate temperatures and distinct seasons. Most major agricultural regions and cities are located in temperate zones.';
+                    checkboxToCheck = 'found-temperate';
+                }
             }
             
             // Update the UI
@@ -5240,6 +5367,7 @@
                 <strong>📍 Location:</strong> ${lat.toFixed(2)}°N, ${Math.abs(lng).toFixed(2)}°${lng >= 0 ? 'E' : 'W'}<br>
                 <strong>🌡️ Climate Type:</strong> ${climateType}<br>
                 <strong>🌍 Zone Name:</strong> ${climateName}
+                ${isCanadaLesson ? '<br><strong>🍁 Canada Lesson Context:</strong> Canadian climate analysis' : ''}
             `;
             
             climateDetails.style.display = 'block';
@@ -5249,6 +5377,7 @@
                 <strong>📅 Seasonality:</strong> ${seasonality}<br><br>
                 <strong>📚 Climate Education:</strong><br>
                 ${educationalInfo}
+                ${isCanadaLesson ? '<br><br><strong>🍁 Canadian Impact:</strong> This climate zone significantly influences Canadian society, economy, and daily life patterns.' : ''}
             `;
             
             // Check off the appropriate discovery checkbox
@@ -5265,6 +5394,7 @@
                 <strong>${climateType}</strong><br>
                 ${climateName}<br>
                 <em>Lat: ${lat.toFixed(2)}, Lng: ${lng.toFixed(2)}</em>
+                ${isCanadaLesson ? '<br>🍁 <em>Canada Climate Focus</em>' : ''}
             `).openPopup();
         }
 
@@ -6141,59 +6271,124 @@
             const featureInfo = document.getElementById('feature-info');
             const featureDetails = document.getElementById('feature-details');
             
-            // Determine physical features based on coordinates
+            // Get lesson region context if available
+            const lessonRegion = window.currentLessonRegion;
+            const isCanadaLesson = lessonRegion && (lessonRegion.keyword.includes('canada') || lessonRegion.keyword.includes('canadian'));
+            
+            // Determine physical features based on coordinates and lesson context
             let featureType = '';
             let featureName = '';
             let educationalInfo = '';
             let checkboxToCheck = '';
             
-            // Mountain ranges detection
-            if ((lat >= 25 && lat <= 50 && lng >= -125 && lng <= -100) || // Rocky Mountains
-                (lat >= 35 && lat <= 65 && lng >= -15 && lng <= 50) ||    // Alps/Himalayas region
-                (lat >= -30 && lat <= 10 && lng >= -80 && lng <= -30)) {   // Andes
-                featureType = 'Mountain Range';
-                featureName = 'Highland/Mountain Region';
-                educationalInfo = 'Mountains form through tectonic plate collision and create barriers to weather patterns, influence precipitation, and affect human settlement patterns.';
-                checkboxToCheck = 'found-mountain';
+            // CANADA-SPECIFIC ANALYSIS
+            if (isCanadaLesson && lat >= 41 && lat <= 83 && lng >= -141 && lng <= -52) {
+                // Canadian Shield
+                if (lat >= 45 && lat <= 70 && lng >= -95 && lng <= -60) {
+                    featureType = 'Canadian Shield';
+                    featureName = 'Precambrian Shield Rock Formation';
+                    educationalInfo = 'The Canadian Shield is ancient rock formation covering much of central and eastern Canada. Rich in minerals, it contains some of Earth\'s oldest rocks (over 2.5 billion years old) and provides valuable mining resources like gold, copper, and nickel.';
+                    checkboxToCheck = 'found-mountain';
+                }
+                // Rocky Mountains (Western Canada)
+                else if (lat >= 49 && lat <= 70 && lng >= -140 && lng <= -110) {
+                    featureType = 'Canadian Rocky Mountains';
+                    featureName = 'Western Mountain Range';
+                    educationalInfo = 'The Canadian Rockies extend through British Columbia and Alberta, creating a dramatic landscape of peaks, glaciers, and alpine lakes. They influence weather patterns, creating rain shadows and affecting precipitation distribution across western Canada.';
+                    checkboxToCheck = 'found-mountain';
+                }
+                // Great Lakes Region
+                else if (lat >= 42 && lat <= 49 && lng >= -95 && lng <= -74) {
+                    featureType = 'Great Lakes Basin';
+                    featureName = 'Freshwater Lake System';
+                    educationalInfo = 'The Great Lakes contain 20% of the world\'s fresh surface water and form a natural border between Canada and the United States. They provide transportation routes, fresh water, and moderate the climate in southern Ontario.';
+                    checkboxToCheck = 'found-water';
+                }
+                // Prairie Provinces
+                else if (lat >= 49 && lat <= 60 && lng >= -115 && lng <= -95) {
+                    featureType = 'Canadian Prairies';
+                    featureName = 'Interior Plains/Grasslands';
+                    educationalInfo = 'The Canadian Prairies (Manitoba, Saskatchewan, Alberta) contain some of the world\'s most fertile agricultural land. These flat grasslands are ideal for wheat farming and cattle ranching, making Canada a major food exporter.';
+                    checkboxToCheck = 'found-plain';
+                }
+                // Boreal Forest
+                else if (lat >= 50 && lat <= 70) {
+                    featureType = 'Boreal Forest (Taiga)';
+                    featureName = 'Northern Coniferous Forest';
+                    educationalInfo = 'Canada\'s boreal forest is the world\'s largest intact forest ecosystem, covering 75% of Canada\'s forests. It stores massive amounts of carbon, provides timber resources, and supports wildlife like caribou, moose, and bears.';
+                    checkboxToCheck = 'found-forest';
+                }
+                // Arctic Archipelago
+                else if (lat >= 70) {
+                    featureType = 'Arctic Archipelago';
+                    featureName = 'Northern Islands/Tundra';
+                    educationalInfo = 'Canada\'s Arctic islands experience extreme cold, permafrost, and unique wildlife. Climate change is dramatically affecting this region, opening new shipping routes and affecting indigenous communities\' traditional ways of life.';
+                    checkboxToCheck = 'found-desert'; // Using this for tundra/extreme climate
+                }
+                // Atlantic Coast
+                else if (lng >= -70) {
+                    featureType = 'Atlantic Maritime Region';
+                    featureName = 'Coastal Maritime Geography';
+                    educationalInfo = 'Canada\'s Atlantic coast features dramatic cliffs, fishing banks, and maritime climate. The Grand Banks offshore were historically rich fishing grounds, and the region\'s geography has shaped its maritime economy and culture.';
+                    checkboxToCheck = 'found-water';
+                }
+                // Default for other Canadian regions
+                else {
+                    featureType = 'Canadian Geographic Region';
+                    featureName = 'Diverse Canadian Landscape';
+                    educationalInfo = 'Canada\'s vast territory encompasses incredible geographic diversity, from arctic tundra to temperate rainforests. This location represents the transition between different Canadian geographic regions.';
+                }
             }
-            // Water bodies detection
-            else if (Math.abs(lat) < 10 || lng < -140 || lng > 140 || 
-                     (lat >= 40 && lat <= 50 && lng >= -100 && lng <= -70)) { // Great Lakes region
-                featureType = 'Water Feature';
-                featureName = 'River/Lake/Coastal Region';
-                educationalInfo = 'Water features provide fresh water resources, transportation routes, fertile soil for agriculture, and often serve as natural boundaries between regions.';
-                checkboxToCheck = 'found-water';
-            }
-            // Desert regions
-            else if ((lat >= 15 && lat <= 35 && lng >= -120 && lng <= -100) || // SW US Desert
-                     (lat >= 15 && lat <= 35 && lng >= -15 && lng <= 40) ||     // Sahara
-                     (lat >= -35 && lat <= -15 && lng >= 110 && lng <= 140)) {  // Australian Desert
-                featureType = 'Desert Region';
-                featureName = 'Arid/Semi-Arid Zone';
-                educationalInfo = 'Deserts are characterized by low precipitation, extreme temperatures, and specialized ecosystems. They often form due to rain shadows or high-pressure systems.';
-                checkboxToCheck = 'found-desert';
-            }
-            // Plains and agricultural regions
-            else if ((lat >= 30 && lat <= 50 && lng >= -110 && lng <= -90) || // Great Plains
-                     (lat >= 45 && lat <= 60 && lng >= 20 && lng <= 60)) {     // European Plains
-                featureType = 'Plains/Agricultural Region';
-                featureName = 'Lowland/Prairie';
-                educationalInfo = 'Plains provide ideal conditions for agriculture with flat terrain, fertile soil, and moderate precipitation. They often support high population densities.';
-                checkboxToCheck = 'found-plain';
-            }
-            // Forest regions
-            else if ((lat >= 45 && lat <= 70) || // Northern forests
-                     (lat >= -10 && lat <= 10)) { // Tropical forests
-                featureType = 'Forest Region';
-                featureName = 'Forested/Vegetation Zone';
-                educationalInfo = 'Forests provide timber resources, regulate climate, prevent erosion, and support biodiversity. Different types form based on climate conditions.';
-                checkboxToCheck = 'found-forest';
-            }
-            // Default for other regions
+            // GENERAL GLOBAL ANALYSIS (when not in Canada lesson or outside Canada)
             else {
-                featureType = 'Mixed Terrain';
-                featureName = 'Geographic Region';
-                educationalInfo = 'This area represents a transition zone between different physical features, demonstrating how geography creates diverse landscapes.';
+                // Mountain ranges detection
+                if ((lat >= 25 && lat <= 50 && lng >= -125 && lng <= -100) || // Rocky Mountains
+                    (lat >= 35 && lat <= 65 && lng >= -15 && lng <= 50) ||    // Alps/Himalayas region
+                    (lat >= -30 && lat <= 10 && lng >= -80 && lng <= -30)) {   // Andes
+                    featureType = 'Mountain Range';
+                    featureName = 'Highland/Mountain Region';
+                    educationalInfo = 'Mountains form through tectonic plate collision and create barriers to weather patterns, influence precipitation, and affect human settlement patterns.';
+                    checkboxToCheck = 'found-mountain';
+                }
+                // Water bodies detection
+                else if (Math.abs(lat) < 10 || lng < -140 || lng > 140 || 
+                         (lat >= 40 && lat <= 50 && lng >= -100 && lng <= -70)) { // Great Lakes region
+                    featureType = 'Water Feature';
+                    featureName = 'River/Lake/Coastal Region';
+                    educationalInfo = 'Water features provide fresh water resources, transportation routes, fertile soil for agriculture, and often serve as natural boundaries between regions.';
+                    checkboxToCheck = 'found-water';
+                }
+                // Desert regions
+                else if ((lat >= 15 && lat <= 35 && lng >= -120 && lng <= -100) || // SW US Desert
+                         (lat >= 15 && lat <= 35 && lng >= -15 && lng <= 40) ||     // Sahara
+                         (lat >= -35 && lat <= -15 && lng >= 110 && lng <= 140)) {  // Australian Desert
+                    featureType = 'Desert Region';
+                    featureName = 'Arid/Semi-Arid Zone';
+                    educationalInfo = 'Deserts are characterized by low precipitation, extreme temperatures, and specialized ecosystems. They often form due to rain shadows or high-pressure systems.';
+                    checkboxToCheck = 'found-desert';
+                }
+                // Plains and agricultural regions
+                else if ((lat >= 30 && lat <= 50 && lng >= -110 && lng <= -90) || // Great Plains
+                         (lat >= 45 && lat <= 60 && lng >= 20 && lng <= 60)) {     // European Plains
+                    featureType = 'Plains/Agricultural Region';
+                    featureName = 'Lowland/Prairie';
+                    educationalInfo = 'Plains provide ideal conditions for agriculture with flat terrain, fertile soil, and moderate precipitation. They often support high population densities.';
+                    checkboxToCheck = 'found-plain';
+                }
+                // Forest regions
+                else if ((lat >= 45 && lat <= 70) || // Northern forests
+                         (lat >= -10 && lat <= 10)) { // Tropical forests
+                    featureType = 'Forest Region';
+                    featureName = 'Forested/Vegetation Zone';
+                    educationalInfo = 'Forests provide timber resources, regulate climate, prevent erosion, and support biodiversity. Different types form based on climate conditions.';
+                    checkboxToCheck = 'found-forest';
+                }
+                // Default for other regions
+                else {
+                    featureType = 'Mixed Terrain';
+                    featureName = 'Geographic Region';
+                    educationalInfo = 'This area represents a transition zone between different physical features, demonstrating how geography creates diverse landscapes.';
+                }
             }
             
             // Update the UI
@@ -6201,6 +6396,7 @@
                 <strong>📍 Location:</strong> ${lat.toFixed(2)}°N, ${Math.abs(lng).toFixed(2)}°${lng >= 0 ? 'E' : 'W'}<br>
                 <strong>🌍 Feature Type:</strong> ${featureType}<br>
                 <strong>🏔️ Feature Name:</strong> ${featureName}
+                ${isCanadaLesson ? '<br><strong>🍁 Canada Lesson Context:</strong> Analyzed specifically for Canadian geography' : ''}
             `;
             
             featureDetails.style.display = 'block';
@@ -6210,6 +6406,7 @@
                 <br><br>
                 <strong>🎯 Geographic Significance:</strong><br>
                 This type of physical feature influences local climate, human settlement patterns, economic activities, and cultural development in the region.
+                ${isCanadaLesson ? '<br><br><strong>🍁 Canadian Connection:</strong> This feature is particularly important in understanding Canada\'s geography and its impact on Canadian society and economy.' : ''}
             `;
             
             // Check off the appropriate discovery checkbox
@@ -6226,6 +6423,7 @@
                 <strong>${featureType}</strong><br>
                 ${featureName}<br>
                 <em>Lat: ${lat.toFixed(2)}, Lng: ${lng.toFixed(2)}</em>
+                ${isCanadaLesson ? '<br>🍁 <em>Canada Lesson Focus</em>' : ''}
             `).openPopup();
         }
 
