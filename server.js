@@ -18,28 +18,6 @@ let slidesBucket;
 // Middleware
 app.use(cors());
 app.use(express.json());
-
-// Content Security Policy for Leaflet with OpenStreetMap and educational tile sources
-app.use((req, res, next) => {
-  res.setHeader('Content-Security-Policy', 
-    "default-src 'self'; " +
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://cdn.jsdelivr.net; " +
-    "style-src 'self' 'unsafe-inline' https://unpkg.com https://fonts.googleapis.com https://cdn.jsdelivr.net; " +
-    "font-src 'self' data: https://fonts.gstatic.com https://fonts.googleapis.com; " +
-    "img-src 'self' data: blob: " +
-      "https://*.tile.openstreetmap.org " +
-      "https://server.arcgisonline.com " +
-      "https://*.tile.opentopomap.org " +
-      "https://*.tile.openstreetmap.fr " +
-      "https://earthquake.usgs.gov " +
-      "https://*.esri.com; " +
-    "connect-src 'self' https://earthquake.usgs.gov https://*.openstreetmap.org; " +
-    "worker-src 'self' blob:; " +
-    "child-src 'self' blob:;"
-  );
-  next();
-});
-
 app.use(express.static('public'));
 
 // Serve PDF files statically
@@ -70,35 +48,6 @@ const connectDB = async () => {
   }
 };
 
-// Debug endpoint for Railway
-app.get('/debug', async (req, res) => {
-  const debugInfo = {
-    timestamp: new Date().toISOString(),
-    environment: {
-      NODE_ENV: process.env.NODE_ENV,
-      PORT: process.env.PORT,
-      MONGODB_URI: process.env.MONGODB_URI ? 'Set ✅' : 'Missing ❌'
-    },
-    mongoose: {
-      connection: mongoose.connection.readyState,
-      database: mongoose.connection.name || 'Not connected'
-    },
-    server: 'Running ✅'
-  };
-  
-  try {
-    const modules = await Module.find().limit(1);
-    debugInfo.data = {
-      moduleCount: modules.length > 0 ? 'Found modules ✅' : 'No modules ❌',
-      sampleModule: modules[0] ? modules[0].title : 'None'
-    };
-  } catch (error) {
-    debugInfo.error = error.message;
-  }
-  
-  res.json(debugInfo);
-});
-
 // Routes
 
 // Health check
@@ -106,8 +55,46 @@ app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'ok', 
     message: 'World Geography Curriculum API is running',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    port: PORT,
+    environment: process.env.NODE_ENV || 'development',
+    uptime: Math.floor(process.uptime()),
+    memory: process.memoryUsage()
   });
+});
+
+// Simple ping endpoint for Railway monitoring
+app.get('/ping', (req, res) => {
+  res.status(200).send('pong');
+});
+
+// Railway health check - simple text response
+app.get('/healthz', (req, res) => {
+  res.status(200).send('OK');
+});
+
+// Simple root endpoint for Railway health checks
+app.get('/', (req, res) => {
+  res.status(200).json({
+    message: '🌍 World Geography Curriculum - AI Geography Hub',
+    status: 'healthy',
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString(),
+    port: PORT,
+    environment: process.env.NODE_ENV || 'development',
+    services: ['AI Geography Hub', 'Daily Dashboard', 'Lesson Companion'],
+    endpoints: {
+      health: '/health',
+      aiHub: '/ai-geography-hub',
+      dashboard: '/dashboard',
+      lessons: '/browse'
+    }
+  });
+});
+
+// SUPER SIMPLE health check for Railway
+app.get('/health', (req, res) => {
+  res.status(200).send('OK');
 });
 
 // Serve slides from MongoDB GridFS
@@ -740,43 +727,21 @@ app.get('/api/dashboard/calendar', (req, res) => {
   }
 });
 
-// AI API Integration
-const OpenAI = require('openai');
-const Replicate = require('replicate');
-
+// AI API Integration - Basic OpenAI only (optional for local dev)
 let openai = null;
-let azureAI = null;
-let replicate = null;
 
-// Initialize OpenAI only if API key is available
-if (process.env.OPENAI_API_KEY) {
-  openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-  });
-  console.log('🤖 OpenAI API initialized');
-} else {
-  console.log('⚠️ OpenAI API key not found - AI features will return fallback responses');
-}
-
-// Initialize Replicate only if API key is available
-if (process.env.REPLICATE_API_TOKEN) {
-  replicate = new Replicate({
-    auth: process.env.REPLICATE_API_TOKEN,
-  });
-  console.log('🔄 Replicate API initialized');
-} else {
-  console.log('⚠️ Replicate API key not found - Replicate features will be unavailable');
-}
-
-// Initialize Azure AI Foundry only if API key is available
-if (process.env.AZURE_AI_FOUNDRY_KEY && process.env.AZURE_AI_FOUNDRY_ENDPOINT) {
-  azureAI = new OpenAI({
-    apiKey: process.env.AZURE_AI_FOUNDRY_KEY,
-    baseURL: process.env.AZURE_AI_FOUNDRY_ENDPOINT,
-  });
-  console.log('🚀 Azure AI Foundry initialized (GPT-4, Claude, Gemini, Llama)');
-} else {
-  console.log('⚠️ Azure AI Foundry keys not found - Multi-model features will return fallback responses');
+try {
+  if (process.env.OPENAI_API_KEY) {
+    const OpenAI = require('openai');
+    openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+    console.log('✅ OpenAI client initialized');
+  } else {
+    console.log('⚠️ OpenAI API key not found - AI features disabled for local development');
+  }
+} catch (error) {
+  console.warn('⚠️ OpenAI initialization failed:', error.message);
 }
 
 // AI Definition Lookup
@@ -789,11 +754,9 @@ app.post('/api/ai/define', async (req, res) => {
     }
 
     if (!openai) {
-      return res.status(200).json({ 
-        term: term,
-        definition: `${term} - OpenAI service not available. This would normally provide a detailed geographic definition.`,
-        source: 'Fallback Response',
-        note: 'AI service unavailable - this is normal for local development'
+      return res.status(503).json({ 
+        error: 'AI services not available', 
+        fallback: `Geographic term: ${term}. Please refer to your textbook or ask your teacher for the definition.`
       });
     }
 
@@ -839,13 +802,8 @@ app.post('/api/ai/explain', async (req, res) => {
       return res.status(400).json({ error: 'Concept is required' });
     }
 
-    if (!openai) {
-      return res.status(200).json({ 
-        concept: concept,
-        explanation: `${concept} - OpenAI service not available. This would normally provide a detailed explanation suitable for middle school students.`,
-        source: 'Fallback Response',
-        note: 'AI service unavailable - this is normal for local development'
-      });
+    if (!process.env.OPENAI_API_KEY) {
+      return res.status(500).json({ error: 'OpenAI API key not configured' });
     }
 
     const completion = await openai.chat.completions.create({
@@ -890,13 +848,8 @@ app.post('/api/ai/connections', async (req, res) => {
       return res.status(400).json({ error: 'Topic is required' });
     }
 
-    if (!openai) {
-      return res.status(200).json({ 
-        topic: topic,
-        connections: `${topic} - OpenAI service not available. This would normally provide cross-curricular connections to science, math, history, language arts, and other subjects.`,
-        source: 'Fallback Response',
-        note: 'AI service unavailable - this is normal for local development'
-      });
+    if (!process.env.OPENAI_API_KEY) {
+      return res.status(500).json({ error: 'OpenAI API key not configured' });
     }
 
     const completion = await openai.chat.completions.create({
@@ -932,450 +885,513 @@ app.post('/api/ai/connections', async (req, res) => {
   }
 });
 
-// AI Multi-Model Comparison Tool
-app.post('/api/ai/compare-models', async (req, res) => {
-  try {
-    const { question } = req.body;
-    
-    if (!question) {
-      return res.status(400).json({ error: 'Question is required' });
-    }
-
-    const results = {};
-    const systemPrompt = "You are a geography education expert. Provide clear, accurate, and engaging answers suitable for middle school students. Be specific and include real-world examples.";
-
-    // Try GPT-4 via OpenAI
-    if (openai) {
-      try {
-        const gptResponse = await openai.chat.completions.create({
-          model: "gpt-4",
-          messages: [
-            { role: "system", content: systemPrompt },
-            { role: "user", content: question }
-          ],
-          max_tokens: 300,
-          temperature: 0.7,
-        });
-        results.gpt4 = {
-          response: gptResponse.choices[0].message.content.trim(),
-          source: "GPT-4 (OpenAI)",
-          status: "success"
-        };
-      } catch (error) {
-        results.gpt4 = {
-          response: "GPT-4 temporarily unavailable",
-          source: "GPT-4 (OpenAI)", 
-          status: "error"
-        };
-      }
-    } else {
-      results.gpt4 = {
-        response: "GPT-4 not configured - would provide detailed geography explanation",
-        source: "GPT-4 (OpenAI)",
-        status: "fallback"
-      };
-    }
-
-    // Try Claude via Azure AI Foundry
-    if (azureAI) {
-      try {
-        const claudeResponse = await azureAI.chat.completions.create({
-          model: "claude-3-5-sonnet",
-          messages: [
-            { role: "system", content: systemPrompt },
-            { role: "user", content: question }
-          ],
-          max_tokens: 300,
-          temperature: 0.7,
-        });
-        results.claude = {
-          response: claudeResponse.choices[0].message.content.trim(),
-          source: "Claude 3.5 Sonnet (Azure AI)",
-          status: "success"
-        };
-      } catch (error) {
-        console.error('Claude API Error:', error.message);
-        results.claude = {
-          response: `Claude temporarily unavailable: ${error.message}`,
-          source: "Claude 3.5 Sonnet (Azure AI)",
-          status: "error"
-        };
-      }
-    } else {
-      results.claude = {
-        response: "Claude not configured - would provide analytical geography perspective",
-        source: "Claude 3.5 Sonnet (Azure AI)",
-        status: "fallback"
-      };
-    }
-
-    // Try Gemini via Azure AI Foundry
-    if (azureAI) {
-      try {
-        const geminiResponse = await azureAI.chat.completions.create({
-          model: "gemini-pro",
-          messages: [
-            { role: "system", content: systemPrompt },
-            { role: "user", content: question }
-          ],
-          max_tokens: 300,
-          temperature: 0.7,
-        });
-        results.gemini = {
-          response: geminiResponse.choices[0].message.content.trim(),
-          source: "Gemini 1.5 Pro (Azure AI)",
-          status: "success"
-        };
-      } catch (error) {
-        console.error('Gemini API Error:', error.message);
-        results.gemini = {
-          response: `Gemini temporarily unavailable: ${error.message}`,
-          source: "Gemini Pro (Azure AI)",
-          status: "error"
-        };
-      }
-    } else {
-      results.gemini = {
-        response: "Gemini not configured - would provide comprehensive geography insights",
-        source: "Gemini Pro (Azure AI)",
-        status: "fallback"
-      };
-    }
-
-    res.json({
-      question: question,
-      results: results,
-      timestamp: new Date().toISOString(),
-      note: "Compare different AI perspectives on the same geography topic"
-    });
-
-  } catch (error) {
-    console.error('AI Model Comparison Error:', error);
-    res.status(500).json({ 
-      error: 'Failed to compare AI models',
-      fallback: `Unable to compare models for "${req.body.question}" at this time. Please try again later.`
-    });
-  }
+// Start the server
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+  console.log(`Health check: http://localhost:${PORT}/health`);
+  
+  // Connect to database after server starts
+  connectDB();
 });
 
-// Azure AI Model Testing Endpoint
-app.get('/api/ai/test-azure-models', async (req, res) => {
-  if (!azureAI) {
-    return res.json({
-      error: "Azure AI Foundry not configured",
-      available: false,
-      models: []
-    });
-  }
-
-  const testModels = [
-    "gpt-4",
-    "gpt-4o", 
-    "claude-3-5-sonnet",
-    "claude-3-sonnet",
-    "gemini-pro",
-    "gemini-1.5-pro",
-    "llama-3-70b"
-  ];
-
-  const results = {};
-
-  for (const model of testModels) {
-    try {
-      const testResponse = await azureAI.chat.completions.create({
-        model: model,
-        messages: [{ role: "user", content: "Hello" }],
-        max_tokens: 10,
-      });
-      results[model] = "✅ Available";
-    } catch (error) {
-      results[model] = `❌ Error: ${error.message}`;
-    }
-  }
-
-  res.json({
-    azureEndpoint: process.env.AZURE_AI_FOUNDRY_ENDPOINT,
-    testResults: results,
-    timestamp: new Date().toISOString()
-  });
+// Graceful shutdown handling
+process.on('SIGTERM', () => {
+  console.log('Received SIGTERM, shutting down gracefully');
+  process.exit(0);
 });
 
-// AI Map Illustration Generator - DISABLED: Professional Maps Only
+process.on('SIGINT', () => {
+  console.log('Received SIGINT, shutting down gracefully');
+  process.exit(0);
+});
+
+// =================================
+// TOOL 1: ADVANCED MAP GENERATOR
+// =================================
+
+// Generate custom maps using multiple AI models
 app.post('/api/ai/generate-map', async (req, res) => {
   try {
-    const { description } = req.body;
+    const { prompt, difficulty = 'basic', features = [] } = req.body;
     
-    if (!description) {
-      return res.status(400).json({ error: 'Map description is required' });
+    if (!prompt) {
+      return res.status(400).json({ error: 'Map prompt is required' });
     }
 
-    // AI-generated maps are disabled - using professional mapping alternatives instead
-    // Educational institutions require high-quality, accurate cartographic resources
-    res.json({
-      description: description,
-      imageUrl: null,
-      status: 'ai_maps_disabled',
-      message: 'AI-generated maps disabled - using professional mapping alternatives for educational quality',
-      alternatives: {
-        leaflet: {
-          available: true,
-          description: 'Open-source interactive maps with educational tile layers',
-          implementation: 'Leaflet with OpenStreetMap, USGS, and educational data sources'
-        },
-        staticMaps: {
-          available: true,
-          description: 'High-quality static map images from professional sources',
-          suggestions: [
-            'Use OpenStreetMap tile layers for regional maps',
-            'Integrate with Natural Earth data for educational accuracy',
-            'Use USGS educational map resources',
-            'Link to National Geographic education maps'
-          ]
-        },
-        educationalResources: {
-          available: true,
-          suggestions: [
-            'National Geographic Education maps',
-            'USGS educational materials',
-            'World Bank data visualization',
-            'UN geographic information systems'
-          ]
+    // Create enhanced prompt based on difficulty level
+    let enhancedPrompt = '';
+    switch (difficulty) {
+      case 'basic':
+        enhancedPrompt = `Simple, clear educational map: ${prompt}. Clean lines, basic labels, suitable for middle school students.`;
+        break;
+      case 'intermediate':
+        enhancedPrompt = `Educational map with moderate detail: ${prompt}. Include coordinate grid, scale bar, and clear geographic features.`;
+        break;
+      case 'advanced':
+        enhancedPrompt = `Detailed cartographic map: ${prompt}. Include topographical lines, isopleth patterns, latitude/longitude grid, multiple scales, and advanced geographic features.`;
+        break;
+      default:
+        enhancedPrompt = prompt;
+    }
+
+    // Add requested features
+    if (features.includes('coordinates')) {
+      enhancedPrompt += ' Include latitude and longitude coordinates.';
+    }
+    if (features.includes('scale')) {
+      enhancedPrompt += ' Include multiple distance scales.';
+    }
+    if (features.includes('topographic')) {
+      enhancedPrompt += ' Include topographical elevation lines.';
+    }
+    if (features.includes('isopleth')) {
+      enhancedPrompt += ' Include isopleth lines showing data patterns.';
+    }
+
+    // Try Replicate SDXL first for high-quality maps
+    let mapResult;
+    try {
+      console.log('🗺️ Generating map with Replicate SDXL...');
+      const output = await replicate.run(
+        "stability-ai/sdxl:39ed52f2a78e934b3ba6e2a89f5b1c712de7dfea535525255b1aa35c5565e08b",
+        {
+          input: {
+            prompt: enhancedPrompt,
+            negative_prompt: "blurry, low quality, distorted, illegible text, cartoon",
+            width: 1024,
+            height: 768,
+            guidance_scale: 7.5,
+            num_inference_steps: 25,
+            scheduler: "K_EULER"
+          }
         }
-      },
-      recommendation: 'Use professional mapping tools instead of AI generation for educational quality',
-      tips: [
-        "🏆 Professional maps ensure geographic accuracy",
-        "📏 Proper scale and projection for educational use", 
-        "🗺️ Consistent cartographic standards",
-        "⚡ Interactive features enhance learning"
-      ]
+      );
+
+      mapResult = {
+        imageUrl: Array.isArray(output) ? output[0] : output,
+        generator: 'Replicate SDXL',
+        difficulty: difficulty,
+        features: features,
+        prompt: enhancedPrompt
+      };
+
+    } catch (replicateError) {
+      console.log('⚠️ Replicate failed, trying OpenAI DALL-E...');
+      
+      // Fallback to OpenAI DALL-E 3
+      if (process.env.OPENAI_API_KEY) {
+        try {
+          const dalleResponse = await openai.images.generate({
+            model: "dall-e-3",
+            prompt: enhancedPrompt,
+            n: 1,
+            size: "1024x1024",
+            quality: "standard",
+            style: "natural"
+          });
+
+          mapResult = {
+            imageUrl: dalleResponse.data[0].url,
+            generator: 'OpenAI DALL-E 3',
+            difficulty: difficulty,
+            features: features,
+            prompt: enhancedPrompt
+          };
+
+        } catch (dalleError) {
+          throw new Error('All map generation services failed');
+        }
+      } else {
+        throw replicateError;
+      }
+    }
+
+    res.json({
+      success: true,
+      map: mapResult,
+      metadata: {
+        originalPrompt: prompt,
+        enhancedPrompt: enhancedPrompt,
+        difficulty: difficulty,
+        features: features,
+        timestamp: new Date().toISOString()
+      }
     });
 
   } catch (error) {
-    console.error('Map Service Error:', error);
+    console.error('Map Generation Error:', error);
     res.status(500).json({ 
-      error: 'Map service unavailable',
-      fallback: `Professional mapping tools recommended for "${req.body.description}".`
+      error: 'Failed to generate map',
+      details: error.message
     });
   }
 });
 
-// Professional Educational Map Resources using Leaflet and OpenStreetMap
-app.get('/api/maps/educational/:region', async (req, res) => {
+// =================================
+// TOOL 2: MULTI-SOURCE PHOTO LIBRARY
+// =================================
+
+// Search photos from multiple sources
+app.post('/api/ai/search-photos', async (req, res) => {
   try {
-    const { region } = req.params;
-    const { type = 'overview' } = req.query;
+    const { query, source = 'all', limit = 12 } = req.body;
     
-    // Professional map resources for education using Leaflet
-    const educationalMaps = {
-      alaska: {
-        overview: {
-          title: "Alaska Regional Overview",
-          description: "Professional educational map of Alaska showing major geographic features",
-          tileLayer: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-          center: [-153.0, 64.0],
-          zoom: 4,
-          features: ["rivers", "mountains", "cities", "borders"],
-          educationalFocus: "Physical geography and regional overview",
-          resources: {
-            nationalGeographic: "https://education.nationalgeographic.org/resource/alaska/",
-            usgs: "https://www.usgs.gov/centers/alaska-science-center",
-            data: "Natural Earth, USGS, Alaska Department of Natural Resources"
+    if (!query) {
+      return res.status(400).json({ error: 'Search query is required' });
+    }
+
+    const results = {
+      query: query,
+      photos: [],
+      sources: []
+    };
+
+    // Unsplash API
+    if (source === 'all' || source === 'unsplash') {
+      try {
+        const unsplashResponse = await axios.get(`https://api.unsplash.com/search/photos`, {
+          params: {
+            query: query,
+            per_page: Math.ceil(limit / 3),
+            orientation: 'landscape'
+          },
+          headers: {
+            'Authorization': `Client-ID ${process.env.UNSPLASH_ACCESS_KEY}`
           }
-        },
-        physical: {
-          title: "Alaska Physical Features",
-          description: "Detailed physical geography of Alaska",
-          tileLayer: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-          center: [-153.0, 64.0],
-          zoom: 5,
-          features: ["topography", "rivers", "glaciers", "mountain ranges"],
-          educationalFocus: "Physical geography and landforms"
-        },
-        rivers: {
-          title: "Alaska River Systems",
-          description: "Major rivers and watersheds of Alaska including the Cooper River",
-          tileLayer: "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
-          center: [-145.0, 61.5],
-          zoom: 6,
-          features: ["cooper_river", "yukon_river", "watersheds", "drainage_basins"],
-          educationalFocus: "Hydrology and river systems",
-          highlights: {
-            cooper_river: {
-              description: "Major river system in south-central Alaska",
-              length: "300 miles",
-              source: "Copper Glacier",
-              mouth: "Gulf of Alaska"
+        });
+
+        const unsplashPhotos = unsplashResponse.data.results.map(photo => ({
+          id: photo.id,
+          url: photo.urls.regular,
+          thumbnail: photo.urls.thumb,
+          description: photo.description || photo.alt_description,
+          photographer: photo.user.name,
+          source: 'Unsplash',
+          downloadUrl: photo.links.download,
+          width: photo.width,
+          height: photo.height
+        }));
+
+        results.photos.push(...unsplashPhotos);
+        results.sources.push('Unsplash');
+      } catch (error) {
+        console.error('Unsplash API Error:', error.message);
+      }
+    }
+
+    // Pexels API
+    if (source === 'all' || source === 'pexels') {
+      try {
+        const pexelsResponse = await axios.get(`https://api.pexels.com/v1/search`, {
+          params: {
+            query: query,
+            per_page: Math.ceil(limit / 3),
+            orientation: 'landscape'
+          },
+          headers: {
+            'Authorization': process.env.PEXELS_API_KEY
+          }
+        });
+
+        const pexelsPhotos = pexelsResponse.data.photos.map(photo => ({
+          id: photo.id,
+          url: photo.src.large,
+          thumbnail: photo.src.medium,
+          description: photo.alt,
+          photographer: photo.photographer,
+          source: 'Pexels',
+          downloadUrl: photo.src.original,
+          width: photo.width,
+          height: photo.height
+        }));
+
+        results.photos.push(...pexelsPhotos);
+        results.sources.push('Pexels');
+      } catch (error) {
+        console.error('Pexels API Error:', error.message);
+      }
+    }
+
+    // Pixabay API
+    if (source === 'all' || source === 'pixabay') {
+      try {
+        const pixabayResponse = await axios.get(`https://pixabay.com/api/`, {
+          params: {
+            key: process.env.PIXABAY_API_KEY,
+            q: query,
+            per_page: Math.ceil(limit / 3),
+            image_type: 'photo',
+            orientation: 'horizontal',
+            safesearch: 'true'
+          }
+        });
+
+        const pixabayPhotos = pixabayResponse.data.hits.map(photo => ({
+          id: photo.id,
+          url: photo.webformatURL,
+          thumbnail: photo.previewURL,
+          description: photo.tags,
+          photographer: photo.user,
+          source: 'Pixabay',
+          downloadUrl: photo.largeImageURL,
+          width: photo.imageWidth,
+          height: photo.imageHeight
+        }));
+
+        results.photos.push(...pixabayPhotos);
+        results.sources.push('Pixabay');
+      } catch (error) {
+        console.error('Pixabay API Error:', error.message);
+      }
+    }
+
+    // Shuffle and limit results
+    results.photos = results.photos
+      .sort(() => Math.random() - 0.5)
+      .slice(0, limit);
+
+    res.json({
+      success: true,
+      ...results,
+      total: results.photos.length,
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error) {
+    console.error('Photo Search Error:', error);
+    res.status(500).json({ 
+      error: 'Failed to search photos',
+      details: error.message
+    });
+  }
+});
+
+// =================================
+// TOOL 3: INTELLIGENT CURRENT EVENTS TRACKER
+// =================================
+
+// Get geography-related news and current events
+app.post('/api/ai/current-events', async (req, res) => {
+  try {
+    const { topic, sources = 'all', timeframe = 'week' } = req.body;
+    
+    const results = {
+      topic: topic || 'geography news',
+      events: [],
+      sources: []
+    };
+
+    // News API
+    if (sources === 'all' || sources === 'news') {
+      try {
+        let newsQuery = topic || 'geography OR climate OR environment OR natural disaster';
+        
+        const newsResponse = await axios.get(`https://newsapi.org/v2/everything`, {
+          params: {
+            q: newsQuery,
+            sortBy: 'publishedAt',
+            pageSize: 20,
+            language: 'en',
+            from: new Date(Date.now() - (timeframe === 'week' ? 7 : 30) * 24 * 60 * 60 * 1000).toISOString()
+          },
+          headers: {
+            'X-API-Key': process.env.NEWS_API_KEY
+          }
+        });
+
+        const newsEvents = newsResponse.data.articles.map(article => ({
+          id: `news-${article.publishedAt}-${article.title.slice(0, 20)}`,
+          title: article.title,
+          description: article.description,
+          url: article.url,
+          imageUrl: article.urlToImage,
+          publishedAt: article.publishedAt,
+          source: article.source.name,
+          type: 'news',
+          relevance: 'high'
+        }));
+
+        results.events.push(...newsEvents);
+        results.sources.push('News API');
+      } catch (error) {
+        console.error('News API Error:', error.message);
+      }
+    }
+
+    // Reddit API for geographic content
+    if (sources === 'all' || sources === 'reddit') {
+      try {
+        // Get Reddit OAuth token
+        const authResponse = await axios.post('https://www.reddit.com/api/v1/access_token', 
+          'grant_type=client_credentials',
+          {
+            headers: {
+              'Authorization': `Basic ${Buffer.from(`${process.env.REDDIT_CLIENT_ID}:${process.env.REDDIT_CLIENT_SECRET}`).toString('base64')}`,
+              'Content-Type': 'application/x-www-form-urlencoded',
+              'User-Agent': 'GeographyEducationApp/1.0'
             }
           }
+        );
+
+        const accessToken = authResponse.data.access_token;
+
+        // Search relevant geographic subreddits
+        const subreddits = ['geography', 'earthporn', 'MapPorn', 'environment', 'climate'];
+        
+        for (const subreddit of subreddits.slice(0, 2)) { // Limit to 2 subreddits to avoid rate limits
+          try {
+            const redditResponse = await axios.get(`https://oauth.reddit.com/r/${subreddit}/hot`, {
+              headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'User-Agent': 'GeographyEducationApp/1.0'
+              },
+              params: {
+                limit: 5
+              }
+            });
+
+            const redditPosts = redditResponse.data.data.children
+              .filter(post => post.data.score > 50) // Only high-quality posts
+              .map(post => ({
+                id: `reddit-${post.data.id}`,
+                title: post.data.title,
+                description: post.data.selftext ? post.data.selftext.slice(0, 200) + '...' : '',
+                url: `https://reddit.com${post.data.permalink}`,
+                imageUrl: post.data.thumbnail !== 'self' ? post.data.thumbnail : null,
+                publishedAt: new Date(post.data.created_utc * 1000).toISOString(),
+                source: `r/${subreddit}`,
+                type: 'social',
+                score: post.data.score,
+                relevance: 'medium'
+              }));
+
+            results.events.push(...redditPosts);
+          } catch (subredditError) {
+            console.error(`Reddit ${subreddit} Error:`, subredditError.message);
+          }
         }
-      },
-      world: {
-        overview: {
-          title: "World Political Map",
-          description: "Professional world map for educational use",
-          tileLayer: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-          center: [0, 20],
-          zoom: 2,
-          features: ["countries", "capitals", "major_cities", "borders"],
-          educationalFocus: "Political geography and world overview"
-        }
+
+        results.sources.push('Reddit');
+      } catch (error) {
+        console.error('Reddit API Error:', error.message);
       }
-    };
-
-    const mapData = educationalMaps[region.toLowerCase()];
-    if (!mapData) {
-      return res.status(404).json({ 
-        error: 'Region not found',
-        availableRegions: Object.keys(educationalMaps),
-        suggestion: 'Try: alaska, world'
-      });
     }
 
-    const mapType = mapData[type];
-    if (!mapType) {
-      return res.status(404).json({
-        error: 'Map type not found',
-        availableTypes: Object.keys(mapData),
-        suggestion: 'Try: overview, physical, rivers'
-      });
-    }
+    // Sort by relevance and recency
+    results.events.sort((a, b) => {
+      const relevanceScore = { 'high': 3, 'medium': 2, 'low': 1 };
+      const aScore = relevanceScore[a.relevance] || 1;
+      const bScore = relevanceScore[b.relevance] || 1;
+      
+      if (aScore !== bScore) return bScore - aScore;
+      return new Date(b.publishedAt) - new Date(a.publishedAt);
+    });
+
+    // Limit results
+    results.events = results.events.slice(0, 20);
 
     res.json({
-      region: region,
-      type: type,
-      map: mapType,
-      implementation: {
-        leaflet: {
-          required: "Leaflet library (no API key required)",
-          tileLayer: mapType.tileLayer,
-          example: `
-// Initialize Leaflet map
-const map = L.map('map').setView([${mapType.center[0]}, ${mapType.center[1]}], ${mapType.zoom});
-
-// Add tile layer
-L.tileLayer('${mapType.tileLayer}', {
-    attribution: '&copy; OpenStreetMap contributors'
-}).addTo(map);`
-        },
-        advantages: {
-          noApiKey: "No authentication required",
-          openSource: "Free and open-source mapping solution",
-          educational: "Perfect for educational institutions",
-          reliable: "No rate limits or usage restrictions"
-        }
-      },
-      educationalValue: {
-        gradeLevel: "6-12",
-        subjects: ["Geography", "Earth Science", "Social Studies"],
-        standards: ["National Geography Standards", "Next Generation Science Standards"],
-        activities: [
-          "Location identification exercises",
-          "Scale and distance calculations", 
-          "Feature classification and analysis",
-          "Cross-curricular connections"
-        ]
-      },
-      tips: [
-        "🎯 Professional cartographic accuracy guaranteed",
-        "📏 Proper scale and projection for educational use",
-        "🗺️ Interactive features enhance student engagement",
-        "📚 Aligns with educational standards and curricula",
-        "🆓 No API keys or usage limits required"
-      ]
+      success: true,
+      ...results,
+      total: results.events.length,
+      timestamp: new Date().toISOString()
     });
 
   } catch (error) {
-    console.error('Educational Map Service Error:', error);
+    console.error('Current Events Error:', error);
     res.status(500).json({ 
-      error: 'Educational map service unavailable',
-      fallback: 'Please try again or use alternative mapping resources'
+      error: 'Failed to fetch current events',
+      details: error.message
     });
   }
 });
 
-// Stability AI integration
-async function generateWithStabilityAI(prompt) {
-  console.log('🎨 Attempting Stability AI generation...');
-  console.log('🔑 API Key available:', !!process.env.STABILITY_AI_API_KEY);
-  
-  const requestBody = {
-    prompt: prompt,
-    output_format: 'png'
-  };
-  
-  console.log('📤 Stability AI request body:', requestBody);
-  
-  const response = await fetch('https://api.stability.ai/v2beta/stable-image/generate/core', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${process.env.STABILITY_AI_API_KEY}`,
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-    },
-    body: JSON.stringify(requestBody)
-  });
+// =================================
+// REPLICATE MODELS SHOWCASE
+// =================================
 
-  console.log('📡 Stability AI response status:', response.status);
-  console.log('📡 Stability AI response headers:', Object.fromEntries(response.headers.entries()));
-  
-  if (!response.ok) {
-    const errorText = await response.text();
-    console.error('❌ Stability AI full error response:', errorText);
-    throw new Error(`Stability AI API error: ${response.status} ${response.statusText}. Response: ${errorText}`);
-  }
-
-  const data = await response.json();
-  console.log('✅ Stability AI response received. Keys:', Object.keys(data));
-  console.log('📄 Full response data:', data);
-  
-  // Stability AI v2beta returns base64 image data in 'image' field
-  if (data.image) {
-    console.log('✅ Stability AI image data found, length:', data.image.length);
-    return `data:image/png;base64,${data.image}`;
-  } else {
-    console.error('❌ Stability AI response structure unexpected:', data);
-    throw new Error('Stability AI: No image data in response');
-  }
-}
-
-// Replicate integration using proper SDK
-async function generateWithReplicate(prompt) {
-  console.log('🔄 Attempting Replicate generation...');
-  
-  if (!replicate) {
-    throw new Error('Replicate not initialized - API key missing');
-  }
-  
+// Get available Replicate models for geographic content
+app.get('/api/ai/replicate-models', async (req, res) => {
   try {
-    const input = {
-      prompt: prompt,
-      output_format: "png",
-      aspect_ratio: "1:1"
-    };
+    const models = [
+      {
+        name: 'SDXL',
+        id: 'stability-ai/sdxl:39ed52f2a78e934b3ba6e2a89f5b1c712de7dfea535525255b1aa35c5565e08b',
+        description: 'High-quality map and diagram generation',
+        category: 'image-generation',
+        features: ['custom maps', 'educational diagrams', 'geographic illustrations']
+      },
+      {
+        name: 'LLaMA 2 70B Chat',
+        id: 'meta/llama-2-70b-chat:02e509c789964a7ea8736978a43525956ef40397be9033abf9fd2badfe68c9e3',
+        description: 'Advanced geographic analysis and explanations',
+        category: 'text-generation',
+        features: ['detailed explanations', 'comparative analysis', 'educational content']
+      },
+      {
+        name: 'Real-ESRGAN',
+        id: 'nightmareai/real-esrgan:42fed1c4974146d4d2414e2be2c5277c7fcf05fcc3a73abf41610695738c1d7b',
+        description: 'Enhance and upscale geographic images',
+        category: 'image-enhancement',
+        features: ['photo enhancement', 'historical map restoration', 'image upscaling']
+      },
+      {
+        name: 'ControlNet',
+        id: 'jagilley/controlnet-hough:854e8727697a057c525cdb45ab037f64ecca770a1769cc52287c2e56472a247b',
+        description: 'Precise control over map generation',
+        category: 'controlled-generation',
+        features: ['precise geographic features', 'coordinate-based generation', 'technical maps']
+      }
+    ];
 
-    console.log('📤 Replicate input:', input);
-    
-    const output = await replicate.run(
-      "black-forest-labs/flux-schnell",
-      { input }
-    );
+    res.json({
+      success: true,
+      models: models,
+      total: models.length,
+      categories: [...new Set(models.map(m => m.category))]
+    });
 
-    console.log('📥 Replicate output type:', typeof output);
-    console.log('📥 Replicate output:', output);
-    
-    if (Array.isArray(output) && output.length > 0) {
-      return output[0];
-    } else if (typeof output === 'string') {
-      return output;
-    } else {
-      throw new Error('Replicate: Unexpected output format');
-    }
   } catch (error) {
-    console.error('❌ Replicate error:', error.message);
-    throw error;
+    console.error('Replicate Models Error:', error);
+    res.status(500).json({ 
+      error: 'Failed to fetch Replicate models',
+      details: error.message
+    });
   }
-}// Daily Dashboard Route
+});
+
+// Advanced Replicate model execution
+app.post('/api/ai/replicate-run', async (req, res) => {
+  try {
+    const { modelId, input, category } = req.body;
+    
+    if (!modelId || !input) {
+      return res.status(400).json({ error: 'Model ID and input are required' });
+    }
+
+    console.log(`🚀 Running Replicate model: ${modelId}`);
+    
+    const output = await replicate.run(modelId, { input });
+
+    res.json({
+      success: true,
+      modelId: modelId,
+      category: category,
+      input: input,
+      output: output,
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error) {
+    console.error('Replicate Run Error:', error);
+    res.status(500).json({ 
+      error: 'Failed to run Replicate model',
+      details: error.message
+    });
+  }
+});
+
+// Daily Dashboard Route
 app.get('/dashboard', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'dashboard.html'));
 });
@@ -1919,21 +1935,22 @@ app.get('/admin', (req, res) => {
 });
 
 // Start server
-const startServer = async () => {
-  const dbConnected = await connectDB();
+// Start the server
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+  console.log(`Health check: http://localhost:${PORT}/health`);
   
-  if (!dbConnected) {
-    console.log('⚠️  Starting server without database connection');
-  }
-  
-  app.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`);
-    console.log(`📱 Visit: http://localhost:${PORT}`);
-    console.log(`🔗 API Health: http://localhost:${PORT}/api/health`);
-    if (dbConnected) {
-      console.log(`📚 Browse lessons: http://localhost:${PORT}/browse`);
-    }
-  });
-};
+  // Connect to database after server starts
+  connectDB();
+});
 
-startServer();
+// Graceful shutdown handling
+process.on('SIGTERM', () => {
+  console.log('Received SIGTERM, shutting down gracefully');
+  process.exit(0);
+});
+
+process.on('SIGINT', () => {
+  console.log('Received SIGINT, shutting down gracefully');
+  process.exit(0);
+});

@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curriculum Maps - World Geography</title>
+    <script src='https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css' rel='stylesheet' />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c5aa0 0%, #1e3c72 100%);
+            color: white;
+            padding: 1.5rem 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .nav-breadcrumb {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem 2rem;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .nav-breadcrumb a {
+            color: white;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+
+        .nav-breadcrumb a:hover {
+            opacity: 1;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+            display: flex;
+            gap: 2rem;
+            height: calc(100vh - 200px);
+        }
+
+        .sidebar {
+            width: 400px;
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow-y: auto;
+        }
+
+        .map-container {
+            flex: 1;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .map-header {
+            background: #f8f9fa;
+            padding: 1rem 1.5rem;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .map-header h2 {
+            color: #2c5aa0;
+            margin-bottom: 0.5rem;
+        }
+
+        .map-header p {
+            color: #666;
+            margin: 0;
+        }
+
+        #map {
+            flex: 1;
+            min-height: 400px;
+        }
+
+        .module-selector {
+            margin-bottom: 1.5rem;
+        }
+
+        .module-selector label {
+            display: block;
+            font-weight: 600;
+            color: #2c5aa0;
+            margin-bottom: 0.5rem;
+        }
+
+        .module-selector select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: white;
+        }
+
+        .lesson-list {
+            margin-top: 1rem;
+        }
+
+        .lesson-item {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .lesson-item:hover {
+            background: #e3f2fd;
+            border-color: #2196f3;
+            transform: translateY(-1px);
+        }
+
+        .lesson-item.active {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            border-color: #4CAF50;
+        }
+
+        .lesson-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .lesson-description {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .map-info {
+            background: #e8f5e8;
+            border: 1px solid #4CAF50;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            display: none;
+        }
+
+        .map-info h3 {
+            color: #2e7d32;
+            margin-bottom: 0.5rem;
+        }
+
+        .map-info p {
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        .educational-content {
+            background: #fff3e0;
+            border: 1px solid #ff9800;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .educational-content h4 {
+            color: #f57c00;
+            margin-bottom: 0.5rem;
+        }
+
+        .educational-points {
+            list-style: none;
+            padding: 0;
+        }
+
+        .educational-points li {
+            padding: 0.25rem 0;
+            border-bottom: 1px solid rgba(255, 152, 0, 0.2);
+        }
+
+        .educational-points li:last-child {
+            border-bottom: none;
+        }
+
+        .loading-message {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+            font-style: italic;
+        }
+
+        .error-message {
+            background: #ffebee;
+            color: #c62828;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #e57373;
+            margin: 1rem 0;
+        }
+
+        .success-message {
+            background: #e8f5e8;
+            color: #2e7d32;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #4CAF50;
+            margin: 1rem 0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .container {
+                flex-direction: column;
+                height: auto;
+            }
+            
+            .sidebar {
+                width: 100%;
+                order: 2;
+            }
+            
+            .map-container {
+                height: 500px;
+                order: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+            
+            .header {
+                padding: 1rem;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📍 Curriculum Maps</h1>
+        <p>Interactive geographic maps connected to your World Geography curriculum</p>
+    </div>
+
+    <div class="nav-breadcrumb">
+        <a href="/">🏠 Home</a>
+        <span>›</span>
+        <span>📍 Curriculum Maps</span>
+    </div>
+
+    <div class="container">
+        <div class="sidebar">
+            <div class="module-selector">
+                <label for="moduleSelect">Select Module:</label>
+                <select id="moduleSelect">
+                    <option value="">Loading modules...</option>
+                </select>
+            </div>
+
+            <div class="map-info" id="mapInfo">
+                <h3 id="mapTitle">Map Title</h3>
+                <p id="mapDescription">Map description will appear here.</p>
+            </div>
+
+            <div class="lesson-list" id="lessonList">
+                <div class="loading-message">Select a module to view lessons</div>
+            </div>
+        </div>
+
+        <div class="map-container">
+            <div class="map-header">
+                <h2 id="currentMapTitle">Welcome to Curriculum Maps</h2>
+                <p id="currentMapDescription">Select a module and lesson to display relevant geographic maps for your curriculum.</p>
+            </div>
+            <div id="map"></div>
+        </div>
+    </div>
+
+    <script>
+        let map = null;
+        let mapboxToken = null;
+        let modules = [];
+        let currentModule = null;
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeMapbox();
+            loadModules();
+        });
+
+        // Initialize Mapbox
+        async function initializeMapbox() {
+            try {
+                const response = await fetch('/api/maps/mapbox/token');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    mapboxToken = data.token;
+                    mapboxgl.accessToken = mapboxToken;
+                    initializeMap();
+                } else {
+                    showError('Mapbox configuration needed. Maps will not be interactive.');
+                }
+            } catch (error) {
+                console.error('Mapbox initialization error:', error);
+                showError('Failed to initialize mapping system.');
+            }
+        }
+
+        // Initialize the map
+        function initializeMap() {
+            if (!mapboxToken) return;
+
+            map = new mapboxgl.Map({
+                container: 'map',
+                style: 'mapbox://styles/mapbox/outdoors-v12',
+                center: [0, 20],
+                zoom: 2,
+                projection: 'mercator'
+            });
+
+            map.addControl(new mapboxgl.NavigationControl());
+            map.addControl(new mapboxgl.ScaleControl());
+
+            map.on('load', function() {
+                console.log('Curriculum map initialized successfully');
+            });
+        }
+
+        // Load curriculum modules
+        async function loadModules() {
+            try {
+                const response = await fetch('/api/modules');
+                modules = await response.json();
+                
+                const moduleSelect = document.getElementById('moduleSelect');
+                moduleSelect.innerHTML = '<option value="">Select a module...</option>';
+                
+                modules.forEach(module => {
+                    const option = document.createElement('option');
+                    option.value = module.moduleNumber;
+                    option.textContent = `Module ${module.moduleNumber}: ${module.title}`;
+                    moduleSelect.appendChild(option);
+                });
+
+                moduleSelect.addEventListener('change', handleModuleSelection);
+                
+            } catch (error) {
+                console.error('Error loading modules:', error);
+                showError('Failed to load curriculum modules.');
+            }
+        }
+
+        // Handle module selection
+        async function handleModuleSelection() {
+            const moduleSelect = document.getElementById('moduleSelect');
+            const moduleNumber = parseInt(moduleSelect.value);
+            
+            if (!moduleNumber) {
+                clearLessonList();
+                return;
+            }
+
+            currentModule = modules.find(m => m.moduleNumber === moduleNumber);
+            if (!currentModule) return;
+
+            await loadLessonsForModule(moduleNumber);
+            await loadMapForModule(moduleNumber);
+        }
+
+        // Load lessons for selected module
+        async function loadLessonsForModule(moduleNumber) {
+            try {
+                const response = await fetch(`/api/modules/${currentModule._id}`);
+                const data = await response.json();
+                
+                displayLessons(data.lessons || []);
+                
+            } catch (error) {
+                console.error('Error loading lessons:', error);
+                showError('Failed to load lessons for this module.');
+            }
+        }
+
+        // Display lessons in sidebar
+        function displayLessons(lessons) {
+            const lessonList = document.getElementById('lessonList');
+            
+            if (lessons.length === 0) {
+                lessonList.innerHTML = '<div class="loading-message">No lessons found for this module</div>';
+                return;
+            }
+
+            lessonList.innerHTML = '';
+            
+            lessons.forEach(lesson => {
+                const lessonItem = document.createElement('div');
+                lessonItem.className = 'lesson-item';
+                lessonItem.onclick = () => loadMapForLesson(lesson);
+                
+                lessonItem.innerHTML = `
+                    <div class="lesson-title">Lesson ${lesson.lessonNumber}: ${lesson.title}</div>
+                    <div class="lesson-description">${getGeographicFocus(lesson)}</div>
+                `;
+                
+                lessonList.appendChild(lessonItem);
+            });
+        }
+
+        // Load map for module
+        async function loadMapForModule(moduleNumber) {
+            try {
+                const mapConfig = getCurriculumMapConfig(moduleNumber);
+                
+                if (mapConfig && map) {
+                    // Update map view
+                    map.flyTo({
+                        center: mapConfig.center,
+                        zoom: mapConfig.zoom,
+                        duration: 2000
+                    });
+
+                    // Update map header
+                    document.getElementById('currentMapTitle').textContent = mapConfig.title;
+                    document.getElementById('currentMapDescription').textContent = mapConfig.description;
+
+                    // Show map info
+                    const mapInfo = document.getElementById('mapInfo');
+                    const mapTitle = document.getElementById('mapTitle');
+                    const mapDescription = document.getElementById('mapDescription');
+                    
+                    mapTitle.textContent = mapConfig.title;
+                    mapDescription.textContent = mapConfig.educationalFocus;
+                    mapInfo.style.display = 'block';
+
+                    showSuccess(`Loaded ${mapConfig.title} - perfect for Module ${moduleNumber}!`);
+                }
+                
+            } catch (error) {
+                console.error('Error loading module map:', error);
+                showError('Failed to load map for this module.');
+            }
+        }
+
+        // Load map for specific lesson
+        function loadMapForLesson(lesson) {
+            // Remove active class from all lessons
+            document.querySelectorAll('.lesson-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // Add active class to clicked lesson
+            event.currentTarget.classList.add('active');
+
+            const mapConfig = getLessonMapConfig(currentModule.moduleNumber, lesson);
+            
+            if (mapConfig && map) {
+                map.flyTo({
+                    center: mapConfig.center,
+                    zoom: mapConfig.zoom,
+                    duration: 1500
+                });
+
+                // Update header
+                document.getElementById('currentMapTitle').textContent = 
+                    `${lesson.title} - ${mapConfig.title}`;
+                document.getElementById('currentMapDescription').textContent = 
+                    mapConfig.description;
+
+                // Show educational content
+                showEducationalContent(mapConfig.educationalPoints);
+
+                showSuccess(`Focused on ${lesson.title} geographic content!`);
+            }
+        }
+
+        // Get curriculum map configuration for module
+        function getCurriculumMapConfig(moduleNumber) {
+            const configs = {
+                1: { // A Geographer's World
+                    title: "Global Geographic Overview",
+                    description: "World map showing the fundamentals of geography",
+                    center: [0, 20],
+                    zoom: 2,
+                    educationalFocus: "Five themes of geography, map reading skills, and global awareness"
+                },
+                2: { // Physical Geography
+                    title: "World Physical Features",
+                    description: "Global physical geography including landforms, climate, and natural features",
+                    center: [0, 30],
+                    zoom: 2.5,
+                    educationalFocus: "Plate tectonics, climate zones, landforms, and natural processes"
+                },
+                3: { // People and Places
+                    title: "Global Population Centers",
+                    description: "World population distribution and cultural regions",
+                    center: [20, 30],
+                    zoom: 2,
+                    educationalFocus: "Population patterns, cultural geography, and human-environment interaction"
+                },
+                4: { // Government and Citizenship
+                    title: "World Political Geography",
+                    description: "Global political boundaries and government systems",
+                    center: [0, 20],
+                    zoom: 2,
+                    educationalFocus: "Political systems, boundaries, and citizenship concepts"
+                },
+                5: { // Economics
+                    title: "Global Economic Systems",
+                    description: "World economic regions and trade patterns",
+                    center: [0, 20],
+                    zoom: 2,
+                    educationalFocus: "Economic systems, trade, and resource distribution"
+                },
+                6: { // United States
+                    title: "United States Geography",
+                    description: "Comprehensive view of US physical and human geography",
+                    center: [-95, 40],
+                    zoom: 3.5,
+                    educationalFocus: "US regions, physical features, and human geography"
+                },
+                7: { // Canada
+                    title: "Canadian Geography",
+                    description: "Canada's vast landscapes and regional characteristics",
+                    center: [-106, 60],
+                    zoom: 3,
+                    educationalFocus: "Canadian provinces, physical geography, and cultural regions"
+                },
+                8: { // Early Civilizations of Latin America
+                    title: "Ancient Latin American Civilizations",
+                    description: "Geographic contexts of Maya, Aztec, and Inca civilizations",
+                    center: [-75, -10],
+                    zoom: 3.5,
+                    educationalFocus: "Ancient civilizations and their geographic environments"
+                },
+                9: { // Mexico
+                    title: "Mexico Geography",
+                    description: "Mexico's diverse physical and cultural landscapes",
+                    center: [-102, 24],
+                    zoom: 4.5,
+                    educationalFocus: "Mexican geography, culture, and economic regions"
+                },
+                10: { // Central America and the Caribbean
+                    title: "Central America & Caribbean",
+                    description: "Island nations and Central American countries",
+                    center: [-80, 15],
+                    zoom: 5,
+                    educationalFocus: "Island geography, climate, and cultural diversity"
+                },
+                11: { // South America
+                    title: "South American Geography",
+                    description: "Diverse landscapes from Amazon to Andes",
+                    center: [-60, -15],
+                    zoom: 3.5,
+                    educationalFocus: "Physical features, climate zones, and cultural regions"
+                },
+                12: { // Europe before the 1700s
+                    title: "Historical European Geography",
+                    description: "Europe's geographic foundation for historical development",
+                    center: [10, 54],
+                    zoom: 4,
+                    educationalFocus: "Historical geography and cultural development"
+                },
+                13: { // History of Modern Europe
+                    title: "Modern European Geography",
+                    description: "Geographic factors in European history",
+                    center: [10, 54],
+                    zoom: 4,
+                    educationalFocus: "European geography and historical development"
+                },
+                14: { // Southern Europe
+                    title: "Mediterranean Europe",
+                    description: "Southern European countries and Mediterranean geography",
+                    center: [15, 42],
+                    zoom: 5,
+                    educationalFocus: "Mediterranean climate, culture, and geography"
+                },
+                15: { // Western Europe
+                    title: "Western European Geography",
+                    description: "Atlantic European countries and their geography",
+                    center: [2, 50],
+                    zoom: 5,
+                    educationalFocus: "Western European physical and human geography"
+                },
+                16: { // Eastern Europe
+                    title: "Eastern European Geography",
+                    description: "Eastern European countries and regional characteristics",
+                    center: [20, 50],
+                    zoom: 4.5,
+                    educationalFocus: "Eastern European geography and cultural regions"
+                },
+                17: { // Russia and the Caucasus
+                    title: "Russian Geography",
+                    description: "World's largest country and Caucasus region",
+                    center: [100, 60],
+                    zoom: 3,
+                    educationalFocus: "Russian geography, climate, and regional diversity"
+                },
+                18: { // Early Civilizations of the Fertile Crescent and the Nile Valley
+                    title: "Ancient Middle East & Egypt",
+                    description: "Cradle of civilization geographic regions",
+                    center: [35, 32],
+                    zoom: 5,
+                    educationalFocus: "River valley civilizations and geographic advantages"
+                },
+                19: { // World Religions
+                    title: "Global Religious Geography",
+                    description: "Geographic distribution of world religions",
+                    center: [30, 30],
+                    zoom: 3,
+                    educationalFocus: "Religious geography and cultural landscapes"
+                },
+                20: { // North Africa and Southwest Asia
+                    title: "MENA Region Geography",
+                    description: "Middle East and North Africa geographic overview",
+                    center: [25, 25],
+                    zoom: 4,
+                    educationalFocus: "Desert geography, oil resources, and cultural regions"
+                },
+                21: { // Turkey and the Eastern Mediterranean
+                    title: "Eastern Mediterranean",
+                    description: "Turkey and surrounding eastern Mediterranean regions",
+                    center: [35, 36],
+                    zoom: 5.5,
+                    educationalFocus: "Crossroads geography and cultural significance"
+                },
+                22: { // North Africa
+                    title: "North African Geography",
+                    description: "Sahara Desert and North African countries",
+                    center: [15, 25],
+                    zoom: 4.5,
+                    educationalFocus: "Desert geography and North African cultures"
+                },
+                23: { // History of Sub-Saharan Africa
+                    title: "Sub-Saharan African History",
+                    description: "Geographic contexts of African civilizations",
+                    center: [20, -5],
+                    zoom: 3.5,
+                    educationalFocus: "African geography and historical development"
+                },
+                24: { // West and Central Africa
+                    title: "West & Central Africa",
+                    description: "Diverse landscapes from savanna to rainforest",
+                    center: [10, 5],
+                    zoom: 4.5,
+                    educationalFocus: "African geography, climate zones, and cultures"
+                },
+                25: { // East and Southern Africa
+                    title: "East & Southern Africa",
+                    description: "Great Rift Valley and southern African geography",
+                    center: [25, -15],
+                    zoom: 4,
+                    educationalFocus: "Rift Valley, wildlife geography, and regional characteristics"
+                },
+                26: { // Indian Early Civilizations, Empires, and World Religions
+                    title: "Indian Subcontinent History",
+                    description: "Geographic foundations of Indian civilization",
+                    center: [78, 22],
+                    zoom: 4.5,
+                    educationalFocus: "Monsoon geography and cultural development"
+                },
+                27: { // South Asia
+                    title: "South Asian Geography",
+                    description: "Indian subcontinent and regional geography",
+                    center: [78, 22],
+                    zoom: 4.5,
+                    educationalFocus: "Monsoon systems, population, and cultural geography"
+                },
+                28: { // Early Civilizations of China
+                    title: "Ancient Chinese Geography",
+                    description: "Geographic foundations of Chinese civilization",
+                    center: [104, 35],
+                    zoom: 4,
+                    educationalFocus: "River valley civilizations and geographic barriers"
+                },
+                29: { // China, Mongolia, and Taiwan
+                    title: "East Asian Geography",
+                    description: "China, Mongolia, and Taiwan regional geography",
+                    center: [104, 35],
+                    zoom: 4,
+                    educationalFocus: "East Asian physical and human geography"
+                },
+                30: { // Japan and the Koreas
+                    title: "Japan & Korean Peninsula",
+                    description: "Island and peninsula geography of East Asia",
+                    center: [135, 36],
+                    zoom: 5,
+                    educationalFocus: "Island geography, mountains, and cultural adaptation"
+                },
+                31: { // Southeast Asia
+                    title: "Southeast Asian Geography",
+                    description: "Tropical Southeast Asian countries and islands",
+                    center: [110, 5],
+                    zoom: 4.5,
+                    educationalFocus: "Tropical geography, islands, and cultural diversity"
+                },
+                32: { // Oceania and Antarctica
+                    title: "Oceania & Antarctica",
+                    description: "Pacific islands and polar geography",
+                    center: [140, -25],
+                    zoom: 3,
+                    educationalFocus: "Island geography and polar environments"
+                }
+            };
+
+            return configs[moduleNumber] || null;
+        }
+
+        // Get lesson-specific map configuration
+        function getLessonMapConfig(moduleNumber, lesson) {
+            // This would be expanded based on specific lesson content
+            const baseConfig = getCurriculumMapConfig(moduleNumber);
+            
+            return {
+                ...baseConfig,
+                title: `${lesson.title} Geographic Focus`,
+                description: `Interactive map focusing on geographic concepts in ${lesson.title}`,
+                educationalPoints: getEducationalPointsForLesson(moduleNumber, lesson)
+            };
+        }
+
+        // Get educational points for lesson
+        function getEducationalPointsForLesson(moduleNumber, lesson) {
+            // Return relevant geographic education points
+            return [
+                "Click and explore regions relevant to this lesson",
+                "Observe how geography influences the topics covered",
+                "Use zoom controls to examine details",
+                "Consider scale and spatial relationships",
+                "Connect map features to lesson vocabulary"
+            ];
+        }
+
+        // Get geographic focus description for lesson
+        function getGeographicFocus(lesson) {
+            // Extract geographic keywords from lesson content
+            const title = lesson.title.toLowerCase();
+            
+            if (title.includes('climate') || title.includes('weather')) {
+                return "Climate and weather patterns";
+            } else if (title.includes('population') || title.includes('people')) {
+                return "Population and human geography";
+            } else if (title.includes('resource') || title.includes('economic')) {
+                return "Natural resources and economics";
+            } else if (title.includes('culture') || title.includes('religion')) {
+                return "Cultural geography";
+            } else if (title.includes('physical') || title.includes('landform')) {
+                return "Physical geography and landforms";
+            } else {
+                return "Regional geographic characteristics";
+            }
+        }
+
+        // Show educational content
+        function showEducationalContent(points) {
+            let existingContent = document.querySelector('.educational-content');
+            if (existingContent) {
+                existingContent.remove();
+            }
+
+            const content = document.createElement('div');
+            content.className = 'educational-content';
+            content.innerHTML = `
+                <h4>🎯 Educational Focus</h4>
+                <ul class="educational-points">
+                    ${points.map(point => `<li>${point}</li>`).join('')}
+                </ul>
+            `;
+
+            document.getElementById('mapInfo').appendChild(content);
+        }
+
+        // Clear lesson list
+        function clearLessonList() {
+            document.getElementById('lessonList').innerHTML = 
+                '<div class="loading-message">Select a module to view lessons</div>';
+            
+            document.getElementById('mapInfo').style.display = 'none';
+            
+            // Reset map to world view
+            if (map) {
+                map.flyTo({
+                    center: [0, 20],
+                    zoom: 2,
+                    duration: 1000
+                });
+            }
+
+            document.getElementById('currentMapTitle').textContent = 'Welcome to Curriculum Maps';
+            document.getElementById('currentMapDescription').textContent = 
+                'Select a module and lesson to display relevant geographic maps for your curriculum.';
+        }
+
+        // Utility functions
+        function showError(message) {
+            removeMessages();
+            const error = document.createElement('div');
+            error.className = 'error-message';
+            error.textContent = `❌ ${message}`;
+            document.querySelector('.sidebar').insertBefore(error, document.querySelector('.module-selector').nextSibling);
+            
+            setTimeout(() => error.remove(), 5000);
+        }
+
+        function showSuccess(message) {
+            removeMessages();
+            const success = document.createElement('div');
+            success.className = 'success-message';
+            success.textContent = `✅ ${message}`;
+            document.querySelector('.sidebar').insertBefore(success, document.querySelector('.module-selector').nextSibling);
+            
+            setTimeout(() => success.remove(), 4000);
+        }
+
+        function removeMessages() {
+            document.querySelectorAll('.error-message, .success-message').forEach(msg => msg.remove());
+        }
+    </script>
+</body>
+</html>

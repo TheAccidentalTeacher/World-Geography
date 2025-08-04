@@ -3030,6 +3030,106 @@
                 padding: 2rem;
             }
         }
+        
+        /* ===== PRESENTATION LOADING STYLES ===== */
+        
+        .slide-loading {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            z-index: 10;
+        }
+        
+        .loading-content {
+            text-align: center;
+            color: #495057;
+        }
+        
+        .loading-spinner {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            animation: rotate 2s linear infinite;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .loading-content h3 {
+            margin: 0 0 0.5rem 0;
+            color: #1a237e;
+            font-size: 1.5rem;
+        }
+        
+        .loading-content p {
+            margin: 0;
+            color: #6c757d;
+            font-size: 1rem;
+        }
+        
+        /* Enhanced slide display styles */
+        .slide-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .slide-placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            border: 2px dashed #2196f3;
+        }
+        
+        .placeholder-content {
+            text-align: center;
+            color: #1976d2;
+            padding: 2rem;
+        }
+        
+        .placeholder-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        
+        .placeholder-content h3 {
+            margin: 0 0 1rem 0;
+            color: #1565c0;
+            font-size: 1.5rem;
+        }
+        
+        .placeholder-content p {
+            margin: 0.5rem 0;
+            color: #1976d2;
+            font-size: 1.1rem;
+        }
+        
+        .placeholder-note {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: #424242;
+            line-height: 1.4;
+        }
     </style>
 </head>
 <body>
@@ -4043,13 +4143,55 @@
         class SimulationPresentation {
             constructor() {
                 this.currentSlide = 1;
-                this.totalSlides = 60;
+                this.totalSlides = 0; // Will be loaded dynamically from API
                 this.slidesPath = '/slides/';
                 this.fullscreenMode = false;
                 this.autoPlay = false;
                 this.slideNotes = {};
+                this.slideFilenames = {}; // Will be populated from API
+                this.slidesLoaded = false;
                 
-                // Map slide numbers to actual filenames
+                this.initializePresentation();
+            }
+
+            async loadSlidesFromAPI() {
+                try {
+                    console.log('🔄 Loading slides from MongoDB...');
+                    const response = await fetch('/api/slides');
+                    const slides = await response.json();
+                    
+                    if (slides && slides.length > 0) {
+                        this.totalSlides = slides.length;
+                        this.slideFilenames = {};
+                        
+                        // Create filename mapping based on API response
+                        slides.forEach((slide, index) => {
+                            this.slideFilenames[index + 1] = slide.filename;
+                        });
+                        
+                        this.slidesLoaded = true;
+                        console.log(`✅ Successfully loaded ${this.totalSlides} slides from database`);
+                        
+                        // Update UI elements after loading
+                        this.updateSlideCounters();
+                        
+                        return true;
+                    } else {
+                        console.warn('⚠️ No slides found in database, using fallback');
+                        this.useFallbackSlides();
+                        return false;
+                    }
+                } catch (error) {
+                    console.error('❌ Failed to load slides from API:', error);
+                    this.useFallbackSlides();
+                    return false;
+                }
+            }
+
+            useFallbackSlides() {
+                console.log('🔄 Using fallback slide system...');
+                this.totalSlides = 60; // Fallback to original 60 slides
+                // Fallback slide mapping for original 60 slides
                 this.slideFilenames = {
                     1: "1_Geographic-Detective-Academy.png",
                     2: "2_URGENT-Global-Geographic-Crisis.png",
@@ -4112,16 +4254,52 @@
                     59: "59_GEOGRAPHIC-PATTERNS-MASTERED.png",
                     60: "60_DAY-9-11.png"
                 };
-                
-                this.initializePresentation();
+                this.slidesLoaded = true;
             }
 
-            initializePresentation() {
+            async initializePresentation() {
+                // Try to load slides from API first
+                const apiSuccess = await this.loadSlidesFromAPI();
+                
+                if (!apiSuccess) {
+                    console.log('📦 Using fallback slides, API unavailable');
+                }
+                
                 this.createPresentationInterface();
                 this.setupKeyboardNavigation();
                 this.loadSlideNotes();
                 // Initialize the first slide
                 this.updateSlide();
+            }
+
+            updateSlideCounters() {
+                // Update total slide count displays
+                const totalSlideElements = document.querySelectorAll('#total-slides, .total-slides-display');
+                totalSlideElements.forEach(element => {
+                    element.textContent = this.totalSlides;
+                });
+                
+                // Update current slide displays
+                const currentSlideElements = document.querySelectorAll('#current-slide, #current-slide-number');
+                currentSlideElements.forEach(element => {
+                    element.textContent = this.currentSlide;
+                });
+                
+                // Update slide counter with full text
+                const slideCounterElements = document.querySelectorAll('.slide-counter');
+                slideCounterElements.forEach(element => {
+                    if (element.textContent.includes('of')) {
+                        element.innerHTML = `Slide <span id="current-slide">${this.currentSlide}</span> of <span id="total-slides">${this.totalSlides}</span>`;
+                    }
+                });
+                
+                // Update progress bar
+                const progressFill = document.querySelector('.progress-fill');
+                if (progressFill && this.totalSlides > 0) {
+                    progressFill.style.width = `${(this.currentSlide / this.totalSlides) * 100}%`;
+                }
+                
+                console.log(`📊 Updated slide counters: ${this.currentSlide}/${this.totalSlides}`);
             }
 
             createPresentationInterface() {
@@ -4130,7 +4308,7 @@
                         <div class="presentation-header">
                             <div class="presentation-title">
                                 <h2>🕵️ Geographic Detective Academy Presentation</h2>
-                                <div class="slide-counter">Slide <span id="current-slide">1</span> of ${this.totalSlides}</div>
+                                <div class="slide-counter">Slide <span id="current-slide">1</span> of <span id="total-slides">${this.totalSlides || 'Loading...'}</span></div>
                             </div>
                             <div class="presentation-controls">
                                 <button class="btn-control" onclick="presentation.toggleFullscreen()">
@@ -4149,16 +4327,25 @@
                         <div class="slide-container">
                             <!-- Actual slide image for GridFS slides -->
                             <img id="current-slide-image" 
-                                 src="/slides/1_Geographic-Detective-Academy.png" 
-                                 alt="Geographic Detective Academy - Slide 1"
+                                 src="/slides/loading-placeholder.png" 
+                                 alt="Geographic Detective Academy - Loading Slide"
                                  class="slide-image">
+                            
+                            <!-- Loading indicator -->
+                            <div id="slide-loading-indicator" class="slide-loading" style="display: block;">
+                                <div class="loading-content">
+                                    <div class="loading-spinner">🔄</div>
+                                    <h3>Loading Presentation...</h3>
+                                    <p>Preparing your Geographic Detective Academy slides...</p>
+                                </div>
+                            </div>
                             
                             <!-- Fallback placeholder if slides don't load -->
                             <div id="current-slide-placeholder" class="slide-placeholder" style="display: none;">
                                 <div class="placeholder-content">
                                     <div class="placeholder-icon">🕵️</div>
                                     <h3>Geographic Detective Academy</h3>
-                                    <p>Slide <span id="current-slide-number">1</span> of ${this.totalSlides}</p>
+                                    <p>Slide <span id="current-slide-number">1</span> of <span class="total-slides-display">${this.totalSlides || 'Loading...'}</span></p>
                                     <div class="placeholder-note">
                                         <strong>Note:</strong> Slide images are served locally only.<br>
                                         Full presentation available in development environment.
@@ -4193,7 +4380,7 @@
                             
                             <div class="presentation-progress">
                                 <div class="progress-bar">
-                                    <div class="progress-fill" style="width: ${(1/this.totalSlides) * 100}%"></div>
+                                    <div class="progress-fill" style="width: ${this.totalSlides > 0 ? (1/this.totalSlides) * 100 : 0}%"></div>
                                 </div>
                                 <div class="slide-timer" id="slide-timer">00:00</div>
                             </div>
@@ -4221,12 +4408,22 @@
                 }
             }
 
-            initializeSlideDisplay() {
+            async initializeSlideDisplay() {
                 const slideImage = document.getElementById('current-slide-image');
                 const placeholder = document.getElementById('current-slide-placeholder');
+                const loadingIndicator = document.getElementById('slide-loading-indicator');
                 
-                if (slideImage && placeholder) {
-                    console.log('🎬 Initializing presentation with 60 slides from MongoDB GridFS');
+                if (slideImage && placeholder && loadingIndicator) {
+                    console.log(`🎬 Initializing presentation with ${this.totalSlides} slides from MongoDB GridFS`);
+                    
+                    // Wait for slides to load if they haven't already
+                    if (!this.slidesLoaded) {
+                        console.log('⏳ Waiting for slides to load...');
+                        await this.loadSlidesFromAPI();
+                    }
+                    
+                    // Hide loading indicator
+                    loadingIndicator.style.display = 'none';
                     
                     // Set up error handling first
                     slideImage.onerror = () => {
@@ -4241,6 +4438,9 @@
                         slideImage.style.display = 'block';
                         placeholder.style.display = 'none';
                     };
+                    
+                    // Update slide counters with actual total
+                    this.updateSlideCounters();
                     
                     // Start with first slide
                     this.updateSlide();
@@ -4271,24 +4471,11 @@
             }
 
             updateSlide() {
-                const slideNumber = document.getElementById('current-slide-number');
-                const slideCounter = document.getElementById('current-slide');
-                const progressFill = document.querySelector('.progress-fill');
-                const slideImage = document.getElementById('current-slide-image');
-
-                if (slideNumber) {
-                    slideNumber.textContent = this.currentSlide;
-                }
-
-                if (slideCounter) {
-                    slideCounter.textContent = this.currentSlide;
-                }
-
-                if (progressFill) {
-                    progressFill.style.width = `${(this.currentSlide / this.totalSlides) * 100}%`;
-                }
+                // Update slide counters first
+                this.updateSlideCounters();
 
                 // Update the slide image source
+                const slideImage = document.getElementById('current-slide-image');
                 if (slideImage) {
                     const slideFilename = this.slideFilenames[this.currentSlide];
                     if (slideFilename) {
@@ -4297,6 +4484,12 @@
                         slideImage.alt = `Geographic Detective Academy - Slide ${this.currentSlide}`;
                     } else {
                         console.error(`❌ No filename mapping for slide ${this.currentSlide}`);
+                        // Show placeholder if no filename found
+                        const placeholder = document.getElementById('current-slide-placeholder');
+                        if (placeholder) {
+                            slideImage.style.display = 'none';
+                            placeholder.style.display = 'flex';
+                        }
                     }
                 }
 
@@ -5310,6 +5503,123 @@
                 // This would typically load from a JSON file or API
                 // For now, we'll use the default note generation
                 console.log('📝 Slide notes loaded');
+            }
+
+            // Additional presentation control methods
+            toggleFullscreen() {
+                const container = document.getElementById('presentation-container');
+                if (!this.fullscreenMode) {
+                    if (container.requestFullscreen) {
+                        container.requestFullscreen();
+                    } else if (container.webkitRequestFullscreen) {
+                        container.webkitRequestFullscreen();
+                    } else if (container.msRequestFullscreen) {
+                        container.msRequestFullscreen();
+                    }
+                    this.fullscreenMode = true;
+                    console.log('🖥️ Entered fullscreen mode');
+                } else {
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    } else if (document.webkitExitFullscreen) {
+                        document.webkitExitFullscreen();
+                    } else if (document.msExitFullscreen) {
+                        document.msExitFullscreen();
+                    }
+                    this.fullscreenMode = false;
+                    console.log('🖥️ Exited fullscreen mode');
+                }
+            }
+
+            toggleAutoPlay() {
+                if (!this.autoPlay) {
+                    this.autoPlay = true;
+                    this.playInterval = setInterval(() => {
+                        if (this.currentSlide < this.totalSlides) {
+                            this.nextSlide();
+                        } else {
+                            this.toggleAutoPlay(); // Stop when reaching the end
+                        }
+                    }, 5000); // 5 seconds per slide
+                    console.log('▶️ Auto-play started');
+                } else {
+                    this.autoPlay = false;
+                    if (this.playInterval) {
+                        clearInterval(this.playInterval);
+                        this.playInterval = null;
+                    }
+                    console.log('⏸️ Auto-play stopped');
+                }
+
+                // Update button text
+                const autoPlayBtn = document.querySelector('.btn-control [onclick="presentation.toggleAutoPlay()"]').parentElement;
+                if (autoPlayBtn) {
+                    const icon = autoPlayBtn.querySelector('.icon');
+                    icon.textContent = this.autoPlay ? '⏸️' : '▶️';
+                    autoPlayBtn.innerHTML = `<span class="icon">${icon.textContent}</span> ${this.autoPlay ? 'Pause' : 'Auto Play'}`;
+                }
+            }
+
+            downloadSlide() {
+                const slideImage = document.getElementById('current-slide-image');
+                if (slideImage && slideImage.src) {
+                    const link = document.createElement('a');
+                    link.href = slideImage.src;
+                    link.download = `slide-${this.currentSlide}-${this.slideFilenames[this.currentSlide] || 'geographic-detective-academy'}.png`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    console.log(`📥 Downloaded slide ${this.currentSlide}`);
+                } else {
+                    console.warn('⚠️ No slide image available for download');
+                }
+            }
+
+            // Keyboard navigation
+            setupKeyboardNavigation() {
+                document.addEventListener('keydown', (event) => {
+                    // Only handle keys when presentation panel is active
+                    const presentationPanel = document.getElementById('gamma-prompts');
+                    if (!presentationPanel || presentationPanel.classList.contains('hidden')) {
+                        return;
+                    }
+
+                    switch(event.key) {
+                        case 'ArrowRight':
+                        case ' ': // Spacebar
+                            event.preventDefault();
+                            this.nextSlide();
+                            break;
+                        case 'ArrowLeft':
+                            event.preventDefault();
+                            this.previousSlide();
+                            break;
+                        case 'Home':
+                            event.preventDefault();
+                            this.goToSlide(1);
+                            break;
+                        case 'End':
+                            event.preventDefault();
+                            this.goToSlide(this.totalSlides);
+                            break;
+                        case 'f':
+                        case 'F':
+                            if (event.ctrlKey || event.metaKey) {
+                                event.preventDefault();
+                                this.toggleFullscreen();
+                            }
+                            break;
+                        case 'p':
+                        case 'P':
+                            if (event.ctrlKey || event.metaKey) {
+                                event.preventDefault();
+                                this.toggleAutoPlay();
+                            }
+                            break;
+                    }
+                });
+
+                console.log('⌨️ Keyboard navigation enabled');
             }
         }
 

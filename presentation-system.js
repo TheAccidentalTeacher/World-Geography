@@ -1,24 +1,88 @@
 /**
  * Geographic Detective Academy Presentation System
- * Integrates the 60-slide presentation directly into the simulation interface
+ * Now supports dynamic slide loading - 133 slides with database integration
  */
 
 class SimulationPresentation {
     constructor() {
         this.currentSlide = 1;
-        this.totalSlides = 60;
+        this.totalSlides = 133; // Updated to 133 slides
         this.slidesPath = '/slides/';
-        this.cacheBuster = Date.now(); // Force cache refresh
         this.fullscreenMode = false;
         this.autoPlay = false;
         this.slideNotes = {};
+        this.slidesLoaded = false;
+        this.slidesList = [];
         this.initializePresentation();
     }
 
-    initializePresentation() {
+    async initializePresentation() {
         this.createPresentationInterface();
         this.setupKeyboardNavigation();
+        await this.loadSlidesFromDatabase();
         this.loadSlideNotes();
+    }
+
+    // Load slides dynamically from database
+    async loadSlidesFromDatabase() {
+        try {
+            console.log('📡 Loading slides from database...');
+            
+            const response = await fetch('/api/slides');
+            if (!response.ok) {
+                throw new Error(`Failed to load slides: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            
+            // Sort slides by filename (01_, 02_, etc.)
+            this.slidesList = data.slides.sort((a, b) => {
+                const aNum = parseInt(a.filename.match(/^(\d+)/)?.[1] || '0');
+                const bNum = parseInt(b.filename.match(/^(\d+)/)?.[1] || '0');
+                return aNum - bNum;
+            });
+            
+            this.totalSlides = this.slidesList.length;
+            this.slidesLoaded = true;
+            
+            console.log(`✅ Loaded ${this.totalSlides} slides dynamically`);
+            
+            // Update UI with correct slide count
+            this.updateSlideCounters();
+            
+            // Generate thumbnails now that slides are loaded
+            this.generateThumbnails();
+            
+        } catch (error) {
+            console.error('❌ Failed to load slides from database:', error);
+            
+            // Fallback to legacy behavior
+            console.log('🔄 Using fallback slide loading...');
+            this.slidesLoaded = false;
+            this.generateFallbackSlidesList();
+        }
+    }
+
+    // Generate fallback slides list if database fails
+    generateFallbackSlidesList() {
+        this.slidesList = [];
+        for (let i = 1; i <= this.totalSlides; i++) {
+            this.slidesList.push({
+                filename: `${i.toString().padStart(2, '0')}_Geographic-Detective-Academy.png`,
+                uploadDate: new Date(),
+                length: 0
+            });
+        }
+    }
+
+    // Get slide filename by index (1-based)
+    getSlideFilename(slideNumber) {
+        if (!this.slidesLoaded || slideNumber < 1 || slideNumber > this.totalSlides) {
+            return `${slideNumber.toString().padStart(2, '0')}_Geographic-Detective-Academy.png`;
+        }
+        
+        const slide = this.slidesList[slideNumber - 1];
+        return slide ? slide.filename : `slide-${slideNumber}.png`;
     }
 
     createPresentationInterface() {
@@ -27,7 +91,7 @@ class SimulationPresentation {
                 <div class="presentation-header">
                     <div class="presentation-title">
                         <h2>🕵️ Geographic Detective Academy Presentation</h2>
-                        <div class="slide-counter">Slide <span id="current-slide">1</span> of ${this.totalSlides}</div>
+                        <div class="slide-counter">Slide <span id="current-slide">1</span> of <span id="total-slides">${this.totalSlides}</span></div>
                     </div>
                     <div class="presentation-controls">
                         <button class="btn-control" onclick="presentation.toggleFullscreen()">
@@ -44,10 +108,15 @@ class SimulationPresentation {
 
                 <div class="presentation-viewer">
                     <div class="slide-container">
+                        <div id="slide-loading" class="slide-loading">
+                            <div class="loading-spinner"></div>
+                            <p>Loading slides...</p>
+                        </div>
                         <img id="current-slide-image" 
-                             src="${this.slidesPath}1_Geographic-Detective-Academy.png" 
+                             src="${this.slidesPath}${this.getSlideFilename(1)}" 
                              alt="Slide 1"
-                             class="slide-image">
+                             class="slide-image"
+                             style="display: none;">
                         
                         <div class="slide-overlay">
                             <button class="nav-btn prev-btn" onclick="presentation.previousSlide()">
@@ -57,12 +126,10 @@ class SimulationPresentation {
                                 <span class="icon">▶️</span>
                             </button>
                         </div>
-
                         <div class="slide-annotations" id="slide-annotations">
                             <!-- Dynamic annotations will be loaded here -->
                         </div>
                     </div>
-
                     <div class="slide-notes-panel" id="slide-notes-panel">
                         <h4>📝 Slide Notes & Key Points</h4>
                         <div id="slide-notes-content">
@@ -75,7 +142,7 @@ class SimulationPresentation {
                     <div class="slide-thumbnails" id="slide-thumbnails">
                         <!-- Thumbnail navigation will be generated here -->
                     </div>
-                    
+
                     <div class="presentation-progress">
                         <div class="progress-bar">
                             <div class="progress-fill" style="width: ${(1/this.totalSlides) * 100}%"></div>
@@ -85,8 +152,20 @@ class SimulationPresentation {
                 </div>
             </div>
         `;
-
         return presentationHTML;
+    }
+
+    // Update slide counters throughout the UI
+    updateSlideCounters() {
+        const totalSlidesElements = document.querySelectorAll('#total-slides');
+        totalSlidesElements.forEach(element => {
+            element.textContent = this.totalSlides;
+        });
+
+        const progressFill = document.querySelector('.progress-fill');
+        if (progressFill) {
+            progressFill.style.width = `${(this.currentSlide / this.totalSlides) * 100}%`;
+        }
     }
 
     // Add presentation panel to existing simulation
@@ -95,9 +174,18 @@ class SimulationPresentation {
         if (presentationPanel) {
             presentationPanel.innerHTML = `
                 <h2>🎮 Interactive Presentation</h2>
-                <p class="subtitle">Navigate through the complete Geographic Detective Academy presentation</p>
+                <p class="subtitle">Navigate through the complete Geographic Detective Academy presentation (${this.totalSlides} slides)</p>
                 ${this.createPresentationInterface()}
             `;
+            
+            // Hide loading indicator and show slide once slides are loaded
+            setTimeout(() => {
+                const loadingElement = document.getElementById('slide-loading');
+                const slideImage = document.getElementById('current-slide-image');
+                
+                if (loadingElement) loadingElement.style.display = 'none';
+                if (slideImage) slideImage.style.display = 'block';
+            }, 1000);
         }
     }
 
@@ -128,72 +216,8 @@ class SimulationPresentation {
         const progressFill = document.querySelector('.progress-fill');
 
         if (slideImage) {
-            // Use the actual file names from the new gamma.app uploaded slides
-            const slideFiles = [
-                '1_Geographic-Detective-Academy.png',
-                '2_URGENT-Global-Geographic-Crisis.png',
-                '3_You-Are-Our-Last-Hope.png',
-                '4_Your-Detective-Academy-Training-Program.png',
-                '5_Form-Your-Detective-Unit.png',
-                '6_DAY-1.png',
-                '7_Initial-Crime-Scene-Investigation.png',
-                '8_Critical-Evidence-Coordinate-Fragment.png',
-                '9_Apply-Your-Geographic-Detective-Skills.png',
-                '10_Witness-Interview-Maintenance-Staff.png',
-                '11_Solve-the-Geographic-Mystery.png',
-                '12_CASE-SOLVED.png',
-                '13_DAY-2.png',
-                '14_Crime-Scene-5200m-Elevation.png',
-                '15_Evidence-Systematic-Elevation-Fraud.png',
-                '16_Expert-Witness-International-Cartographer.png',
-                '17_Reading-the-Landscape-for-Clues.png',
-                '18_Elevation-Analysis-Truth-vs-Deception.png',
-                '19_CASE-SOLVED-Mountain-Justice-Served.png',
-                '20_Geographic-Detective-Skills-Level-Up.png',
-                '21_DAY-3.png',
-                '22_Cultural-Regions-Investigation.png',
-                '23_Language-Family-Clues.png',
-                '24_Religious-Geography-Evidence.png',
-                '25_Economic-Geography-Clues.png',
-                '26_Cultural-Diffusion-Investigation.png',
-                '27_CASE-CLOSED.png',
-                '28_DAY-4.png',
-                '29_Climate-Zone-Evidence-Collection.png',
-                '30_Weather-Pattern-Investigation.png',
-                '31_Ocean-Current-Detective-Work.png',
-                '32_Climate-Change-Evidence-Analysis.png',
-                '33_Extreme-Weather-Investigation.png',
-                '34_CLIMATE-MYSTERY-SOLVED.png',
-                '35_DAY-5.png',
-                '36_Global-Trade-Route-Investigation.png',
-                '37_Resource-Distribution-Mystery.png',
-                '38_Manufacturing-Geography-Evidence.png',
-                '39_Economic-Development-Investigation.png',
-                '40_ECONOMIC-NETWORK-EXPOSED.png',
-                '41_DAY-6.png',
-                '42_Political-Geography-Investigation-Setup.png',
-                '43_Types-of-Political-Territories.png',
-                '44_Boundary-Dispute-Investigation.png',
-                '45_Maritime-Boundary-Investigation.png',
-                '46_Capital-City-Investigation.png',
-                '47_POLITICAL-BOUNDARIES-SECURED.png',
-                '48_DAY-7.png',
-                '49_Mesopotamian-Geography-Investigation.png',
-                '50_Egyptian-Civilization-Geography-Clues.png',
-                '51_Indus-Valley-Geographic-Mystery.png',
-                '52_Chinese-Civilization-Geographic-Advantages.png',
-                '53_Greek-Geographic-Influence-Investigation.png',
-                '54_ANCIENT-GEOGRAPHIC-WISDOM-RECOVERED.png',
-                '55_DAY-8.png',
-                '56_Climate-Culture-Connection-Patterns.png',
-                '57_Economic-Resource-Distribution-Patterns.png',
-                '58_Political-Physical-Geography-Correlations.png',
-                '59_GEOGRAPHIC-PATTERNS-MASTERED.png',
-                '60_DAY-9-11.png'
-            ];
-            
-            const currentFile = slideFiles[this.currentSlide - 1];
-            slideImage.src = `${this.slidesPath}${currentFile}?v=${this.cacheBuster}`;
+            const filename = this.getSlideFilename(this.currentSlide);
+            slideImage.src = `${this.slidesPath}${filename}`;
             slideImage.alt = `Slide ${this.currentSlide}`;
         }
 
@@ -235,30 +259,72 @@ class SimulationPresentation {
     }
 
     getDefaultSlideNotes() {
-        // Provide default notes structure based on slide ranges
-        if (this.currentSlide <= 10) {
+        // Enhanced notes for the expanded 133-slide structure
+        if (this.currentSlide <= 11) {
             return {
-                objectives: ["Introduction to Geographic Detective Academy", "Understanding the simulation framework", "Setting up investigation mindset"],
-                discussion: ["What makes a good detective?", "How do geographic skills help solve mysteries?", "What tools do geographers use?"],
-                geographicConnection: "Foundation geographic concepts and spatial thinking skills."
+                objectives: ["Academy orientation and setup", "Understanding detective methodology", "Team formation and roles"],
+                discussion: ["What makes an effective geographic detective?", "How do we approach geographic mysteries?", "What tools and skills do we need?"],
+                geographicConnection: "Foundation spatial thinking and geographic inquiry methods."
             };
-        } else if (this.currentSlide <= 30) {
+        } else if (this.currentSlide <= 23) {
             return {
-                objectives: ["Team role assignments", "Investigation procedures", "Geographic tool usage"],
-                discussion: ["How do different roles contribute to investigation?", "What evidence is most important?", "How do we analyze geographic clues?"],
-                geographicConnection: "Practical application of geographic themes and spatial analysis."
+                objectives: ["Amazon rainforest investigation", "Physical geography analysis", "Climate and ecosystem understanding"],
+                discussion: ["How does geography affect exploration?", "What environmental challenges exist?", "How do we track movement through terrain?"],
+                geographicConnection: "Tropical rainforest ecosystems and South American geography."
             };
-        } else if (this.currentSlide <= 50) {
+        } else if (this.currentSlide <= 35) {
             return {
-                objectives: ["Case study analysis", "Advanced geographic concepts", "Problem-solving strategies"],
-                discussion: ["What patterns do you notice?", "How does this connect to real-world geography?", "What would you do differently?"],
-                geographicConnection: "Complex geographic relationships and systems thinking."
+                objectives: ["Desert environment investigation", "Saharan geography mastery", "Navigation and survival skills"],
+                discussion: ["How do people adapt to extreme environments?", "What makes desert navigation challenging?", "How do trade routes work in deserts?"],
+                geographicConnection: "Arid climate zones and North African cultural geography."
+            };
+        } else if (this.currentSlide <= 47) {
+            return {
+                objectives: ["Mountain geography investigation", "Himalayan systems understanding", "Cultural and sacred geography"],
+                discussion: ["How do mountains affect human settlement?", "What role do mountains play in culture?", "How does elevation create climate zones?"],
+                geographicConnection: "Mountain formation, vertical climate zones, and South Asian geography."
+            };
+        } else if (this.currentSlide <= 60) {
+            return {
+                objectives: ["River system investigation", "Water quality analysis", "Human-environment interaction"],
+                discussion: ["How do rivers shape landscapes?", "What threatens water systems?", "How do communities depend on rivers?"],
+                geographicConnection: "Hydrological cycles and watershed management."
+            };
+        } else if (this.currentSlide <= 72) {
+            return {
+                objectives: ["Urban geography investigation", "City planning analysis", "Environmental justice issues"],
+                discussion: ["How do cities grow and change?", "What makes green spaces important?", "Who benefits from urban development?"],
+                geographicConnection: "Urbanization patterns and sustainable city planning."
+            };
+        } else if (this.currentSlide <= 82) {
+            return {
+                objectives: ["Political geography mastery", "Boundary analysis", "Sovereignty understanding"],
+                discussion: ["How are political boundaries created?", "What causes territorial disputes?", "How do governments organize space?"],
+                geographicConnection: "Geopolitics and territorial organization systems."
+            };
+        } else if (this.currentSlide <= 92) {
+            return {
+                objectives: ["Ancient civilizations geography", "Historical spatial analysis", "Cultural landscape evolution"],
+                discussion: ["How did geography shape ancient societies?", "What advantages did location provide?", "How do we see ancient geography today?"],
+                geographicConnection: "Historical geography and civilization development patterns."
+            };
+        } else if (this.currentSlide <= 102) {
+            return {
+                objectives: ["Geographic pattern recognition", "Spatial relationship analysis", "Systems thinking development"],
+                discussion: ["What patterns emerge across different scales?", "How are geographic phenomena connected?", "What predicts spatial distribution?"],
+                geographicConnection: "Geographic principles and spatial analysis methods."
+            };
+        } else if (this.currentSlide <= 112) {
+            return {
+                objectives: ["Regional geography mastery", "Comparative analysis skills", "Global perspective development"],
+                discussion: ["How do regions compare and contrast?", "What makes each region unique?", "How are regions interconnected globally?"],
+                geographicConnection: "Regional geography and global systems integration."
             };
         } else {
             return {
-                objectives: ["Assessment and reflection", "Real-world applications", "Next steps and extensions"],
-                discussion: ["What did you learn?", "How will you use these skills?", "What questions do you still have?"],
-                geographicConnection: "Integration and application of all geographic concepts learned."
+                objectives: ["Capstone investigation skills", "Advanced geographic tools", "Career connections and next steps"],
+                discussion: ["How will you use these skills?", "What geographic careers interest you?", "How does geography connect to your future?"],
+                geographicConnection: "Applied geography and professional geographic practice."
             };
         }
     }
@@ -267,81 +333,18 @@ class SimulationPresentation {
         const thumbnailContainer = document.getElementById('slide-thumbnails');
         if (!thumbnailContainer) return;
 
-        const slideFiles = [
-            '1_Geographic-Detective-Academy.png',
-            '2_URGENT-Global-Geographic-Crisis.png',
-            '3_You-Are-Our-Last-Hope.png',
-            '4_Your-Detective-Academy-Training-Program.png',
-            '5_Form-Your-Detective-Unit.png',
-            '6_DAY-1.png',
-            '7_Initial-Crime-Scene-Investigation.png',
-            '8_Critical-Evidence-Coordinate-Fragment.png',
-            '9_Apply-Your-Geographic-Detective-Skills.png',
-            '10_Witness-Interview-Maintenance-Staff.png',
-            '11_Solve-the-Geographic-Mystery.png',
-            '12_CASE-SOLVED.png',
-            '13_DAY-2.png',
-            '14_Crime-Scene-5200m-Elevation.png',
-            '15_Evidence-Systematic-Elevation-Fraud.png',
-            '16_Expert-Witness-International-Cartographer.png',
-            '17_Reading-the-Landscape-for-Clues.png',
-            '18_Elevation-Analysis-Truth-vs-Deception.png',
-            '19_CASE-SOLVED-Mountain-Justice-Served.png',
-            '20_Geographic-Detective-Skills-Level-Up.png',
-            '21_DAY-3.png',
-            '22_Cultural-Regions-Investigation.png',
-            '23_Language-Family-Clues.png',
-            '24_Religious-Geography-Evidence.png',
-            '25_Economic-Geography-Clues.png',
-            '26_Cultural-Diffusion-Investigation.png',
-            '27_CASE-CLOSED.png',
-            '28_DAY-4.png',
-            '29_Climate-Zone-Evidence-Collection.png',
-            '30_Weather-Pattern-Investigation.png',
-            '31_Ocean-Current-Detective-Work.png',
-            '32_Climate-Change-Evidence-Analysis.png',
-            '33_Extreme-Weather-Investigation.png',
-            '34_CLIMATE-MYSTERY-SOLVED.png',
-            '35_DAY-5.png',
-            '36_Global-Trade-Route-Investigation.png',
-            '37_Resource-Distribution-Mystery.png',
-            '38_Manufacturing-Geography-Evidence.png',
-            '39_Economic-Development-Investigation.png',
-            '40_ECONOMIC-NETWORK-EXPOSED.png',
-            '41_DAY-6.png',
-            '42_Political-Geography-Investigation-Setup.png',
-            '43_Types-of-Political-Territories.png',
-            '44_Boundary-Dispute-Investigation.png',
-            '45_Maritime-Boundary-Investigation.png',
-            '46_Capital-City-Investigation.png',
-            '47_POLITICAL-BOUNDARIES-SECURED.png',
-            '48_DAY-7.png',
-            '49_Mesopotamian-Geography-Investigation.png',
-            '50_Egyptian-Civilization-Geography-Clues.png',
-            '51_Indus-Valley-Geographic-Mystery.png',
-            '52_Chinese-Civilization-Geographic-Advantages.png',
-            '53_Greek-Geographic-Influence-Investigation.png',
-            '54_ANCIENT-GEOGRAPHIC-WISDOM-RECOVERED.png',
-            '55_DAY-8.png',
-            '56_Climate-Culture-Connection-Patterns.png',
-            '57_Economic-Resource-Distribution-Patterns.png',
-            '58_Political-Physical-Geography-Correlations.png',
-            '59_GEOGRAPHIC-PATTERNS-MASTERED.png',
-            '60_DAY-9-11.png'
-        ];
-
         let thumbnailHTML = '';
         for (let i = 1; i <= this.totalSlides; i++) {
-            const currentFile = slideFiles[i - 1];
+            const filename = this.getSlideFilename(i);
             thumbnailHTML += `
-                <div class="thumbnail-item ${i === this.currentSlide ? 'active' : ''}" 
-                     onclick="presentation.goToSlide(${i})" 
+                <div class="thumbnail-item ${i === this.currentSlide ? 'active' : ''}"
+                     onclick="presentation.goToSlide(${i})"
                      title="Slide ${i}">
-                    <img src="${this.slidesPath}${currentFile}?v=${this.cacheBuster}" 
+                    <img src="${this.slidesPath}${filename}"
                          alt="Slide ${i} thumbnail"
                          class="thumbnail-image"
-                         onerror="console.error('Failed to load thumbnail ${i}: ${currentFile}'); this.style.backgroundColor='#ff0000';"
-                         onload="console.log('Successfully loaded thumbnail ${i}: ${currentFile}');">
+                         onerror="this.style.backgroundColor='#ff6b6b'; this.style.color='white'; this.innerHTML='${i}';"
+                         loading="lazy">
                     <div class="thumbnail-number">${i}</div>
                 </div>
             `;
@@ -523,6 +526,29 @@ const presentationStyles = `
     justify-content: center;
 }
 
+.slide-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #bdc3c7;
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #34495e;
+    border-top: 4px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
 .slide-image {
     max-width: 100%;
     max-height: 100%;
@@ -611,6 +637,7 @@ const presentationStyles = `
     overflow-x: auto;
     padding: 0.5rem 0;
     margin-bottom: 1rem;
+    max-height: 80px;
 }
 
 .thumbnail-item {
@@ -693,16 +720,16 @@ const presentationStyles = `
     .presentation-viewer {
         grid-template-columns: 1fr;
     }
-    
+
     .slide-notes-panel {
         max-height: 200px;
     }
-    
+
     .presentation-header {
         flex-direction: column;
         gap: 1rem;
     }
-    
+
     .presentation-controls {
         flex-wrap: wrap;
         justify-content: center;
@@ -718,19 +745,14 @@ let presentation = null;
 function initializePresentationSystem() {
     // Inject styles
     document.head.insertAdjacentHTML('beforeend', presentationStyles);
-    
+
     // Create presentation instance
     presentation = new SimulationPresentation();
-    
+
     // Add to Gamma Prompts panel
     presentation.addToPresentationPanel();
-    
-    // Generate thumbnails
-    setTimeout(() => {
-        presentation.generateThumbnails();
-    }, 500);
-    
-    console.log('🎮 Presentation system initialized');
+
+    console.log('🎮 Presentation system initialized with 133 slides');
 }
 
 module.exports = { SimulationPresentation, initializePresentationSystem };

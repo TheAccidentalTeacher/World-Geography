@@ -225,69 +225,6 @@
                 padding: 1.5rem;
             }
         }
-
-        /* Image Modal Styles */
-        .image-modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
-            backdrop-filter: blur(5px);
-        }
-
-        .modal-content {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            max-width: 95vw;
-            max-height: 95vh;
-            text-align: center;
-        }
-
-        .modal-image {
-            max-width: 100%;
-            max-height: 90vh;
-            border-radius: 10px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-        }
-
-        .modal-caption {
-            color: white;
-            font-size: 1.2rem;
-            margin-top: 1rem;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 20px;
-            right: 30px;
-            color: white;
-            font-size: 40px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: color 0.3s;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-        }
-
-        .modal-close:hover {
-            color: #ffd700;
-        }
-
-        .modal-instructions {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 14px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-        }
     </style>
 </head>
 <body>
@@ -318,37 +255,6 @@
             </div>
 
             <div class="tools-grid">
-                <!-- Professional Educational Maps - TOP PRIORITY -->
-                <div class="tool-card" style="border: 3px solid #4CAF50; background: linear-gradient(135deg, rgba(76, 175, 80, 0.1), rgba(255, 255, 255, 0.1));">
-                    <div class="tool-header">
-                        <span class="tool-icon">🗺️</span>
-                        <h3 class="tool-title">Professional Educational Maps <span style="color: #4CAF50; font-size: 0.8rem;">⭐ RECOMMENDED</span></h3>
-                    </div>
-                    <p class="tool-description">High-quality, classroom-ready maps powered by Leaflet, OpenStreetMap, USGS, and ArcGIS - professional cartographic accuracy guaranteed!</p>
-                    <div style="margin: 1rem 0; padding: 1rem; background: rgba(76, 175, 80, 0.1); border-radius: 8px; border-left: 4px solid #4CAF50;">
-                        <strong>🎯 Educational Quality:</strong> Unlike AI-generated maps, these use professional cartographic standards
-                    </div>
-                    <button class="tool-button" onclick="window.open('professional-maps.html', '_blank')" style="background: linear-gradient(135deg, #4CAF50, #45a049); font-size: 1.1rem; padding: 1rem;">📍 Open Professional Maps</button>
-                    <div style="margin-top: 1rem; font-size: 0.9rem; color: #666;">
-                        ✅ Leaflet interactive maps<br>
-                        ✅ USGS topographic accuracy<br>
-                        ✅ National Geographic resources<br>
-                        ✅ Classroom-tested quality
-                    </div>
-                </div>
-
-                <!-- AI Multi-Model Comparison - NEW TOP FEATURE -->
-                <div class="tool-card" style="border: 2px solid #ffd700; background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 255, 255, 0.1));">
-                    <div class="tool-header">
-                        <span class="tool-icon">🚀</span>
-                        <h3 class="tool-title">AI Model Comparison <span style="color: #ffd700; font-size: 0.8rem;">✨ NEW</span></h3>
-                    </div>
-                    <p class="tool-description">Ask the same question to GPT-4, Claude 3.5, and Gemini Pro - compare AI perspectives!</p>
-                    <input type="text" class="tool-input" id="compare-input" placeholder="Ask any geography question (e.g., Why do deserts form near mountains?)">
-                    <button class="tool-button" onclick="compareAIModels()" style="background: linear-gradient(135deg, #ffd700, #ff6b35);">🤖 Compare AI Models</button>
-                    <div class="tool-result" id="compare-result"></div>
-                </div>
-
                 <!-- AI Definition & Explanation -->
                 <div class="tool-card">
                     <div class="tool-header">
@@ -600,66 +506,6 @@
         // AI CONTENT GENERATION FUNCTIONS
         // =================================
 
-        async function compareAIModels() {
-            const input = document.getElementById('compare-input');
-            const result = document.getElementById('compare-result');
-            const question = input.value.trim();
-
-            if (!question) {
-                showError(result, 'Please enter a geography question to compare AI responses');
-                return;
-            }
-
-            showLoading(result, 'Comparing AI models (GPT-4, Claude, Gemini)...');
-            
-            try {
-                const response = await fetch('/api/ai/compare-models', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ question })
-                });
-
-                const data = await response.json();
-                
-                if (response.ok) {
-                    result.innerHTML = `
-                        <div class="result-content">
-                            <h4 style="color: #2c5aa0; margin-bottom: 15px;">🤖 AI Model Comparison: "${data.question}"</h4>
-                            
-                            <!-- GPT-4 Response -->
-                            <div style="margin-bottom: 20px; padding: 15px; background: rgba(76, 175, 80, 0.1); border-left: 4px solid #4CAF50; border-radius: 5px;">
-                                <h5 style="color: #4CAF50; margin-bottom: 8px;">🧠 ${data.results.gpt4.source}</h5>
-                                <div style="line-height: 1.6; white-space: pre-line;">${data.results.gpt4.response}</div>
-                                <small style="color: #6c757d;">Status: ${data.results.gpt4.status}</small>
-                            </div>
-                            
-                            <!-- Claude Response -->
-                            <div style="margin-bottom: 20px; padding: 15px; background: rgba(255, 152, 0, 0.1); border-left: 4px solid #FF9800; border-radius: 5px;">
-                                <h5 style="color: #FF9800; margin-bottom: 8px;">🎯 ${data.results.claude.source}</h5>
-                                <div style="line-height: 1.6; white-space: pre-line;">${data.results.claude.response}</div>
-                                <small style="color: #6c757d;">Status: ${data.results.claude.status}</small>
-                            </div>
-                            
-                            <!-- Gemini Response -->
-                            <div style="margin-bottom: 20px; padding: 15px; background: rgba(33, 150, 243, 0.1); border-left: 4px solid #2196F3; border-radius: 5px;">
-                                <h5 style="color: #2196F3; margin-bottom: 8px;">✨ ${data.results.gemini.source}</h5>
-                                <div style="line-height: 1.6; white-space: pre-line;">${data.results.gemini.response}</div>
-                                <small style="color: #6c757d;">Status: ${data.results.gemini.status}</small>
-                            </div>
-                            
-                            <div style="margin-top: 15px; padding: 10px; background: rgba(255, 215, 0, 0.1); border-radius: 5px;">
-                                <small style="color: #8B7D00;">💡 Compare different AI perspectives to get a well-rounded understanding of geography topics!</small>
-                            </div>
-                        </div>
-                    `;
-                } else {
-                    showError(result, data.error || 'Failed to compare AI models');
-                }
-            } catch (error) {
-                showError(result, 'Network error. Please try again.');
-            }
-        }
-
         async function getAIDefinition() {
             const input = document.getElementById('definition-input');
             const result = document.getElementById('definition-result');
@@ -750,7 +596,7 @@
 
             showLoading(result, 'Generating lesson plan...');
             
-            // Implement lesson plan generation with AI assistance
+            // TODO: Implement lesson plan generation
             showPlaceholder(result, 'Lesson Plan Generator', 'Complete lesson plans with objectives, activities, and assessments');
         }
 
@@ -796,88 +642,42 @@
         async function generateMapIllustration() {
             const input = document.getElementById('map-prompt-input');
             const result = document.getElementById('map-result');
-            const description = input.value.trim();
-            
-            if (!description) {
-                showError(result, 'Please enter a description for the map you want to generate.');
+            const prompt = input.value.trim();
+
+            if (!prompt) {
+                showError(result, 'Please describe the map you want to generate');
                 return;
             }
-            
+
             showLoading(result, 'Generating map illustration...');
             
             try {
                 const response = await fetch('/api/ai/generate-map', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ description: description })
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        prompt,
+                        difficulty: 'intermediate',
+                        features: ['coordinates', 'scale']
+                    })
                 });
 
                 const data = await response.json();
                 
-                if (response.ok && (data.imageUrl || data.mapDescription)) {
+                if (response.ok && data.success) {
                     result.innerHTML = `
-                        <div class="result-content">
-                            <h4>📍 Educational Map: ${data.description}</h4>
-                            
-                            ${data.imageUrl ? `
-                                <div class="map-image" style="text-align: center; margin: 20px 0;">
-                                    <img src="${data.imageUrl}" alt="Educational map of ${data.description}" 
-                                         style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); cursor: pointer; transition: transform 0.2s ease;" 
-                                         onclick="openImageModal('${data.imageUrl}', '${data.description}')"
-                                         onmouseover="this.style.transform='scale(1.02)'" 
-                                         onmouseout="this.style.transform='scale(1)'">
-                                    <p style="margin-top: 10px; font-size: 14px; color: #666; font-style: italic;">🔍 Click image to view full-screen for classroom display</p>
-                                </div>
-                            ` : ''}
-                            
-                            ${data.generator ? `
-                                <div class="generator-info" style="margin: 15px 0; padding: 10px; background: rgba(76, 175, 80, 0.1); border-left: 4px solid #4CAF50; border-radius: 5px;">
-                                    <strong>🎨 Generated by:</strong> ${data.generator}
-                                    ${data.promptAnalysis ? `<br><strong>📝 Prompt:</strong> ${data.promptAnalysis}` : ''}
-                                </div>
-                            ` : ''}
-                            
-                            ${data.tips && data.tips.length > 0 ? `
-                                <div class="enhancement-tips" style="margin: 15px 0;">
-                                    <h5 style="color: #2c5aa0; margin-bottom: 8px;">✨ Educational Enhancements:</h5>
-                                    <ul style="margin: 0; padding-left: 20px;">
-                                        ${data.tips.map(tip => `<li style="margin: 5px 0; color: #555;">${tip}</li>`).join('')}
-                                    </ul>
-                                </div>
-                            ` : ''}
-                            
-                            ${data.optimizedPrompt ? `
-                                <div class="optimized-prompt" style="margin: 15px 0;">
-                                    <h5 style="color: #2c5aa0; margin-bottom: 8px;">🎯 AI-Optimized Educational Prompt:</h5>
-                                    <div style="background: rgba(44, 90, 160, 0.1); padding: 12px; border-radius: 8px; font-size: 14px; line-height: 1.4; max-height: 100px; overflow-y: auto;">
-                                        ${data.optimizedPrompt}
-                                    </div>
-                                    <small style="color: #666; font-style: italic;">💡 This prompt was optimized for classroom readability and educational accuracy</small>
-                                </div>
-                            ` : ''}
-                            
-                            ${data.mapDescription ? `
-                                <div class="map-description">
-                                    <h5>📋 Map Description:</h5>
-                                    <pre style="white-space: pre-wrap; font-family: inherit; background: rgba(0,0,0,0.1); padding: 1rem; border-radius: 8px; line-height: 1.6;">${data.mapDescription}</pre>
-                                </div>
-                            ` : ''}
-                            
-                            <div class="map-actions" style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
-                                <button onclick="regenerateMap('${data.description}')" style="padding: 8px 16px; background: #2c5aa0; color: white; border: none; border-radius: 5px; cursor: pointer;">🔄 Generate Another Version</button>
-                                ${data.imageUrl ? `<button onclick="downloadMap('${data.imageUrl}', '${data.description}')" style="padding: 8px 16px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">💾 Download for Classroom</button>` : ''}
-                            </div>
-                            
-                            <p class="result-source" style="margin-top: 15px; font-size: 12px; color: #888;">
-                                🚀 Multi-API Educational Map Generation System
-                                ${data.message ? `<br><em>${data.message}</em>` : ''}
-                            </p>
+                        <h5 style="color: #2c5aa0;">Generated Map: ${prompt}</h5>
+                        <div style="text-align: center; margin: 15px 0;">
+                            <img src="${data.map.imageUrl}" alt="Generated Map" style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                        </div>
+                        <div style="font-size: 0.9rem; color: #666; margin-top: 10px;">
+                            <p><strong>Difficulty:</strong> ${data.map.difficulty}</p>
+                            <p><strong>Features:</strong> ${data.map.features.join(', ')}</p>
+                            <p><strong>Generated by:</strong> ${data.map.generator}</p>
                         </div>
                     `;
                 } else {
-                    showError(result, data.error || 'Failed to generate map illustration');
+                    showError(result, data.error || 'Failed to generate map');
                 }
             } catch (error) {
                 showError(result, 'Network error. Please try again.');
@@ -887,9 +687,49 @@
         async function searchPhotos() {
             const input = document.getElementById('photo-search-input');
             const result = document.getElementById('photo-result');
-            
+            const query = input.value.trim();
+
+            if (!query) {
+                showError(result, 'Please enter a search term');
+                return;
+            }
+
             showLoading(result, 'Searching photos...');
-            showPlaceholder(result, 'Geographic Photo Library', 'High-quality photos from Unsplash, Pexels, and Pixabay');
+            
+            try {
+                const response = await fetch('/api/ai/search-photos', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query, limit: 12 })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    const photosHTML = data.photos.map(photo => `
+                        <div style="border: 1px solid #ddd; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            <img src="${photo.thumbnail}" alt="${photo.description}" style="width: 100%; height: 150px; object-fit: cover;">
+                            <div style="padding: 10px;">
+                                <p style="margin: 0 0 5px 0; font-size: 0.9rem; font-weight: bold;">${photo.description || 'Geographic Photo'}</p>
+                                <p style="margin: 0; font-size: 0.8rem; color: #666;">📸 ${photo.photographer} • ${photo.source}</p>
+                                <a href="${photo.url}" target="_blank" style="font-size: 0.8rem; color: #007bff;">View Full Size</a>
+                            </div>
+                        </div>
+                    `).join('');
+
+                    result.innerHTML = `
+                        <h5 style="color: #2c5aa0;">Photos: ${query}</h5>
+                        <p style="margin: 10px 0; color: #666;">Found ${data.total} photos from ${data.sources.join(', ')}</p>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
+                            ${photosHTML}
+                        </div>
+                    `;
+                } else {
+                    showError(result, data.error || 'Failed to search photos');
+                }
+            } catch (error) {
+                showError(result, 'Network error. Please try again.');
+            }
         }
 
         async function createInfographic() {
@@ -897,7 +737,7 @@
             const result = document.getElementById('infographic-result');
             
             showLoading(result, 'Creating infographic...');
-            showPlaceholder(result, 'Infographic Creator', 'Data visualizations and infographics');
+            showPlaceholder(result, 'Infographic Creator', 'Data visualizations and infographics for geographic data');
         }
 
         async function generateComparison() {
@@ -915,17 +755,97 @@
         async function findGeographyNews() {
             const input = document.getElementById('news-topic-input');
             const result = document.getElementById('news-result');
-            
+            const topic = input.value.trim();
+
             showLoading(result, 'Finding related news...');
-            showPlaceholder(result, 'Geography News Finder', 'Current events related to geographic topics using News API');
+            
+            try {
+                const response = await fetch('/api/ai/current-events', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ topic, sources: 'news', timeframe: 'week' })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    const newsHTML = data.events.slice(0, 10).map(event => `
+                        <div style="border: 1px solid #ddd; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
+                            <h6 style="margin: 0 0 8px 0; color: #2c5aa0;">
+                                <a href="${event.url}" target="_blank" style="text-decoration: none; color: inherit;">${event.title}</a>
+                            </h6>
+                            <p style="margin: 0 0 8px 0; font-size: 0.9rem; color: #666; line-height: 1.4;">${event.description}</p>
+                            <div style="font-size: 0.8rem; color: #888;">
+                                📰 ${event.source} • ${new Date(event.publishedAt).toLocaleDateString()}
+                            </div>
+                        </div>
+                    `).join('');
+
+                    result.innerHTML = `
+                        <h5 style="color: #2c5aa0;">Geography News: ${topic || 'Latest'}</h5>
+                        <p style="margin: 10px 0; color: #666;">Found ${data.total} recent articles</p>
+                        <div style="max-height: 400px; overflow-y: auto;">
+                            ${newsHTML}
+                        </div>
+                    `;
+                } else {
+                    showError(result, data.error || 'Failed to find news');
+                }
+            } catch (error) {
+                showError(result, 'Network error. Please try again.');
+            }
         }
 
         async function trackCrisis() {
             const select = document.getElementById('crisis-type-select');
             const result = document.getElementById('crisis-result');
-            
+            const crisisType = select.value;
+
+            if (!crisisType) {
+                showError(result, 'Please select a crisis type');
+                return;
+            }
+
             showLoading(result, 'Tracking current events...');
-            showPlaceholder(result, 'Crisis Tracker', 'Real-time natural disaster and crisis information');
+            
+            try {
+                const response = await fetch('/api/ai/current-events', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        topic: crisisType + ' natural disaster emergency', 
+                        sources: 'all', 
+                        timeframe: 'week' 
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    const eventsHTML = data.events.slice(0, 8).map(event => `
+                        <div style="border-left: 4px solid #dc3545; padding: 10px 15px; margin-bottom: 10px; background: #f8f9fa;">
+                            <h6 style="margin: 0 0 5px 0; color: #dc3545;">${event.title}</h6>
+                            <p style="margin: 0 0 5px 0; font-size: 0.9rem; line-height: 1.3;">${event.description}</p>
+                            <div style="font-size: 0.8rem; color: #666;">
+                                🌐 ${event.source} • ${new Date(event.publishedAt).toLocaleDateString()}
+                                <a href="${event.url}" target="_blank" style="margin-left: 10px;">Read More →</a>
+                            </div>
+                        </div>
+                    `).join('');
+
+                    result.innerHTML = `
+                        <h5 style="color: #2c5aa0;">🚨 Current ${crisisType.charAt(0).toUpperCase() + crisisType.slice(1)} Events</h5>
+                        <p style="margin: 10px 0; color: #666;">Latest updates from ${data.sources.join(', ')}</p>
+                        <div style="max-height: 350px; overflow-y: auto;">
+                            ${eventsHTML}
+                        </div>
+                    `;
+                } else {
+                    showError(result, data.error || 'Failed to track crisis events');
+                }
+            } catch (error) {
+                showError(result, 'Network error. Please try again.');
+            }
         }
 
         async function findEducationalVideos() {
@@ -939,9 +859,50 @@
         async function getSocialInsights() {
             const input = document.getElementById('social-topic-input');
             const result = document.getElementById('social-result');
-            
+            const topic = input.value.trim();
+
+            if (!topic) {
+                showError(result, 'Please enter a topic');
+                return;
+            }
+
             showLoading(result, 'Getting social insights...');
-            showPlaceholder(result, 'Social Geography Insights', 'Social media insights using Reddit API');
+            
+            try {
+                const response = await fetch('/api/ai/current-events', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ topic, sources: 'reddit', timeframe: 'week' })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    const postsHTML = data.events.slice(0, 8).map(event => `
+                        <div style="border: 1px solid #ff4500; border-radius: 8px; padding: 12px; margin-bottom: 12px; background: #fff8f5;">
+                            <h6 style="margin: 0 0 8px 0; color: #ff4500;">
+                                <a href="${event.url}" target="_blank" style="text-decoration: none; color: inherit;">${event.title}</a>
+                            </h6>
+                            ${event.description ? `<p style="margin: 0 0 8px 0; font-size: 0.9rem; color: #666; line-height: 1.3;">${event.description}</p>` : ''}
+                            <div style="font-size: 0.8rem; color: #888;">
+                                📍 ${event.source} • ⬆️ ${event.score || 0} • ${new Date(event.publishedAt).toLocaleDateString()}
+                            </div>
+                        </div>
+                    `).join('');
+
+                    result.innerHTML = `
+                        <h5 style="color: #2c5aa0;">Social Insights: ${topic}</h5>
+                        <p style="margin: 10px 0; color: #666;">Popular discussions from geographic communities</p>
+                        <div style="max-height: 350px; overflow-y: auto;">
+                            ${postsHTML}
+                        </div>
+                    `;
+                } else {
+                    showError(result, data.error || 'Failed to get social insights');
+                }
+            } catch (error) {
+                showError(result, 'Network error. Please try again.');
+            }
         }
 
         // =================================
@@ -1014,62 +975,6 @@
                 `;
             }, 1500);
         }
-
-        // Map-specific utility functions
-        function regenerateMap(description) {
-            document.getElementById('map-prompt-input').value = description;
-            generateMapIllustration();
-        }
-
-        function downloadMap(imageUrl, description) {
-            const link = document.createElement('a');
-            link.href = imageUrl;
-            link.download = `Educational_Map_${description.replace(/\s+/g, '_')}.jpg`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-    </script>
-
-    <!-- Image Modal -->
-    <div id="imageModal" class="image-modal" onclick="closeImageModal()">
-        <span class="modal-close" onclick="closeImageModal()">&times;</span>
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <img id="modalImage" class="modal-image" src="" alt="">
-            <div id="modalCaption" class="modal-caption"></div>
-        </div>
-        <div class="modal-instructions">
-            Click outside image or press ESC to close • Perfect for classroom display
-        </div>
-    </div>
-
-    <script>
-        // Modal functionality
-        function openImageModal(imageUrl, description) {
-            const modal = document.getElementById('imageModal');
-            const modalImage = document.getElementById('modalImage');
-            const modalCaption = document.getElementById('modalCaption');
-            
-            modalImage.src = imageUrl;
-            modalImage.alt = `Map of ${description}`;
-            modalCaption.textContent = `Map Illustration: ${description}`;
-            
-            modal.style.display = 'block';
-            document.body.style.overflow = 'hidden'; // Prevent background scrolling
-        }
-
-        function closeImageModal() {
-            const modal = document.getElementById('imageModal');
-            modal.style.display = 'none';
-            document.body.style.overflow = 'auto'; // Restore scrolling
-        }
-
-        // Close modal with ESC key
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape') {
-                closeImageModal();
-            }
-        });
     </script>
 </body>
 </html>
