@@ -2797,7 +2797,9 @@
             const contentDiv = document.getElementById('lesson-content');
             if (!contentDiv) return [];
             
-            const content = contentDiv.innerHTML;
+            // Look specifically in the lesson-content-wrapper to avoid supplementary content
+            const lessonWrapper = contentDiv.querySelector('.lesson-content-wrapper');
+            const content = lessonWrapper ? lessonWrapper.innerHTML : contentDiv.innerHTML;
             const extractedTerms = [];
             
             if (!content) return extractedTerms;
@@ -2806,81 +2808,62 @@
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = content;
             
-            // Method 1: Look for sections with "Key Terms" in heading
-            const keyTermsSections = tempDiv.querySelectorAll('h1, h2, h3, h4, h5, h6');
-            
-            for (const heading of keyTermsSections) {
-                const headingText = heading.textContent.toLowerCase();
-                if (headingText.includes('key terms') || headingText.includes('vocabulary') || headingText.includes('important terms')) {
-                    let nextElement = heading.nextElementSibling;
-                    
-                    while (nextElement && !nextElement.matches('h1, h2, h3, h4, h5, h6')) {
-                        if (nextElement.classList.contains('key-terms') || 
-                            nextElement.tagName === 'UL' || 
-                            nextElement.tagName === 'OL' ||
-                            nextElement.tagName === 'DIV') {
-                            
-                            // Extract from lists
-                            const listItems = nextElement.querySelectorAll('li, p');
+            // METHOD 1: Look for assessment sections with "Key Terms and Places" (most common format)
+            const strongElements = tempDiv.querySelectorAll('strong, b');
+            for (const strong of strongElements) {
+                const strongText = strong.textContent.trim().toLowerCase();
+                if (strongText === 'key terms and places') {
+                    // Look for the list that follows this element
+                    let current = strong.parentElement;
+                    while (current && current.nextElementSibling) {
+                        current = current.nextElementSibling;
+                        if (current.tagName === 'UL' || current.tagName === 'OL') {
+                            const listItems = current.querySelectorAll('li');
                             for (const item of listItems) {
                                 const itemText = item.textContent.trim();
-                                if (itemText.startsWith('-')) {
-                                    const cleanText = itemText.substring(1).trim();
-                                    parseVocabularyTerm(cleanText, extractedTerms);
-                                } else {
+                                if (itemText && 
+                                    itemText !== 'Write a short definition for each term.' &&
+                                    !itemText.toLowerCase().includes('write a') &&
+                                    !itemText.toLowerCase().includes('definition')) {
                                     parseVocabularyTerm(itemText, extractedTerms);
                                 }
                             }
-                        } else if (nextElement.tagName === 'P') {
-                            const paragraphText = nextElement.textContent.trim();
-                            if (paragraphText.includes(':') || paragraphText.includes('**')) {
-                                parseVocabularyTerm(paragraphText, extractedTerms);
-                            }
+                            return extractedTerms; // Return immediately after finding the first valid list
                         }
-                        
+                    }
+                }
+            }
+            
+            // METHOD 2: Look for direct "Key Terms and Places" headings (less common but still valid)
+            const headings = tempDiv.querySelectorAll('h1, h2, h3, h4, h5, h6');
+            for (const heading of headings) {
+                const headingText = heading.textContent.toLowerCase().trim();
+                if (headingText === 'key terms and places' || headingText === 'key terms') {
+                    let nextElement = heading.nextElementSibling;
+                    
+                    while (nextElement && !nextElement.matches('h1, h2, h3, h4, h5, h6')) {
+                        if (nextElement.tagName === 'UL' || nextElement.tagName === 'OL') {
+                            const listItems = nextElement.querySelectorAll('li');
+                            for (const item of listItems) {
+                                const itemText = item.textContent.trim();
+                                if (itemText && 
+                                    itemText !== 'Write a short definition for each term.' &&
+                                    !itemText.toLowerCase().includes('write a') &&
+                                    !itemText.toLowerCase().includes('definition')) {
+                                    const cleanText = itemText.replace(/^[-•*]\s*/, '').trim();
+                                    if (cleanText) {
+                                        parseVocabularyTerm(cleanText, extractedTerms);
+                                    }
+                                }
+                            }
+                            return extractedTerms; // Return immediately after finding the first valid list
+                        }
                         nextElement = nextElement.nextElementSibling;
                     }
                 }
             }
             
-            // Method 2: Look for bold terms followed by colons or definitions
-            const strongElements = tempDiv.querySelectorAll('strong, b');
-            for (const strong of strongElements) {
-                const strongText = strong.textContent.trim();
-                const parentText = strong.parentElement.textContent.trim();
-                
-                if (parentText.includes(':')) {
-                    parseVocabularyTerm(parentText, extractedTerms);
-                } else if (strongText && strongText.length > 2) {
-                    // If it's just a bold term, generate a definition
-                    const existingTerm = extractedTerms.find(t => t.term.toLowerCase() === strongText.toLowerCase());
-                    if (!existingTerm) {
-                        extractedTerms.push({
-                            term: strongText,
-                            definition: generateDefinitionForTerm(strongText)
-                        });
-                    }
-                }
-            }
-            
-            // Method 3: Look for definition list patterns
-            const definitionLists = tempDiv.querySelectorAll('dl');
-            for (const dl of definitionLists) {
-                const terms = dl.querySelectorAll('dt');
-                const definitions = dl.querySelectorAll('dd');
-                
-                for (let i = 0; i < Math.min(terms.length, definitions.length); i++) {
-                    const term = terms[i].textContent.trim();
-                    const definition = definitions[i].textContent.trim();
-                    
-                    if (term && definition) {
-                        extractedTerms.push({
-                            term: term,
-                            definition: definition
-                        });
-                    }
-                }
-            }
+            return extractedTerms;
             
             return extractedTerms;
         }
@@ -2981,6 +2964,14 @@
                 'province': 'A principal administrative division of a country',
                 'territory': 'An area of land under the jurisdiction of a government',
                 'sovereignty': 'Supreme power or authority of a state to govern itself',
+                'landlocked': 'Having no access to the sea; completely surrounded by land',
+                
+                // South American Geography
+                'gauchos': 'Traditional cowboys of the South American pampas, known for their horsemanship and ranching skills',
+                'buenos aires': 'The capital and largest city of Argentina, located on the western shore of the Río de la Plata',
+                'mercosur': 'A South American trade bloc that promotes free trade and economic integration among member countries',
+                'informal economy': 'Economic activity that is not regulated by government and not included in official statistics',
+                'pampas': 'Fertile grasslands covering parts of Argentina, Uruguay, and southern Brazil',
                 
                 // Economic Geography
                 'natural resources': 'Materials or substances found in nature that can be used for economic gain',
@@ -2995,6 +2986,16 @@
                 'migration': 'The movement of people from one place to another to live permanently',
                 'urbanization': 'The process by which rural areas become urban through population growth',
                 'ethnic group': 'A group of people who share a common cultural background or heritage',
+                
+                // South America Specific Terms
+                'gauchos': 'Traditional cowboys of the South American grasslands, especially in Argentina and Uruguay',
+                'buenos aires': 'The capital and largest city of Argentina, located on the eastern shore of the Rio de la Plata',
+                'mercosur': 'A South American trade bloc established by Argentina, Brazil, Paraguay, and Uruguay',
+                'informal economy': 'Economic activity that is not regulated by government and often not recorded in official statistics',
+                'landlocked': 'A country or territory that is entirely surrounded by land with no access to the ocean',
+                'pampas': 'Fertile grassland plains covering parts of Argentina, Uruguay, and southern Brazil',
+                'rio de la plata': 'A major estuary on the Atlantic coast of South America, between Argentina and Uruguay',
+                'patagonia': 'A region at the southern end of South America, shared by Argentina and Chile',
                 
                 // General Geographic Terms
                 'region': 'An area with common characteristics that distinguish it from other areas',

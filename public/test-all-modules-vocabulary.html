@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Modules Vocabulary Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f5f5f5; }
+        .test-container { background-color: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .lesson-content { background-color: #f8f9fa; padding: 15px; border: 1px solid #dee2e6; border-radius: 4px; margin: 10px 0; }
+        .vocabulary-item { margin: 5px 0; padding: 8px; background-color: #e9ecef; border: 1px solid #dee2e6; border-radius: 4px; }
+        .term { font-weight: bold; color: #0056b3; }
+        .definition { margin-top: 5px; color: #333; }
+        .test-result { margin: 10px 0; padding: 10px; border-radius: 4px; }
+        .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .failure { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    </style>
+</head>
+<body>
+    <h1>All Modules Vocabulary Extraction Test</h1>
+    
+    <!-- Module 11 Lesson 3 Format -->
+    <div class="test-container">
+        <h2>Test: Module 11 Lesson 3 (Argentina, Uruguay, Paraguay)</h2>
+        <div id="lesson-content-11" class="lesson-content">
+            <div class="lesson-content-wrapper">
+                <h1>Lesson 3: Argentina, Uruguay, and Paraguay</h1>
+                <h2>Assessment</h2>
+                <ol>
+                    <li><strong>Key Terms and Places</strong> Write a short definition for each term.
+                        <ul>
+                            <li>gauchos</li>
+                            <li>Buenos Aires</li>
+                            <li>Mercosur</li>
+                            <li>informal economy</li>
+                            <li>landlocked</li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
+            <div class="supplementary-content">
+                <h3>Geographic Theme</h3>
+                <p>Location, Place, Movement, Region, Human-Environment Interaction</p>
+                <h3>Spatial Thinking</h3>
+                <p>Understanding patterns and relationships across space</p>
+                <h3>Cultural Landscape</h3>
+                <p>The visible human imprint on the environment</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Module 24 Lesson 1 Format -->
+    <div class="test-container">
+        <h2>Test: Module 24 Lesson 1 (West/Central Africa)</h2>
+        <div id="lesson-content-24" class="lesson-content">
+            <div class="lesson-content-wrapper">
+                <h1>Lesson 1: Physical Geography</h1>
+                <h2>Assessment</h2>
+                <ol>
+                    <li><strong>Key Terms and Places</strong> Write a short definition for each term.
+                        <ul>
+                            <li>Niger River</li>
+                            <li>inland delta</li>
+                            <li>savanna</li>
+                            <li>tropical rainforest</li>
+                            <li>Congo River Basin</li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
+            <div class="supplementary-content">
+                <h3>Geographic Theme</h3>
+                <p>Location, Place, Movement, Region, Human-Environment Interaction</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Module 30 Lesson 1 Format -->
+    <div class="test-container">
+        <h2>Test: Module 30 Lesson 1 (Japan/Korea)</h2>
+        <div id="lesson-content-30" class="lesson-content">
+            <div class="lesson-content-wrapper">
+                <h1>Lesson 1: Japan and Korea Physical Geography</h1>
+                <h2>Assessment</h2>
+                <ol>
+                    <li><strong>Key Terms and Places</strong> Write a short definition for each term.
+                        <ul>
+                            <li>Fuji</li>
+                            <li>Korean Peninsula</li>
+                            <li>tsunamis</li>
+                            <li>fishery</li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alternative Format with Direct Heading -->
+    <div class="test-container">
+        <h2>Test: Alternative Format (Direct Heading)</h2>
+        <div id="lesson-content-alt" class="lesson-content">
+            <div class="lesson-content-wrapper">
+                <h1>Physical Geography Lesson</h1>
+                <h2>Key Terms and Places</h2>
+                <ul>
+                    <li>landforms</li>
+                    <li>continents</li>
+                    <li>plate tectonics</li>
+                    <li>earthquakes</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-container">
+        <h2>Test Results</h2>
+        <div id="testResults"></div>
+    </div>
+    
+    <div class="test-container">
+        <h2>Extracted Vocabulary (Should ONLY be from Key Terms sections)</h2>
+        <div id="vocabularyResults"></div>
+    </div>
+
+    <script>
+        // Copy exact functions from main app
+        const vocabDB = {
+            'niger river': 'The principal river of West Africa, flowing from Guinea through Mali, Niger, and Nigeria to the Gulf of Guinea',
+            'inland delta': 'A triangular area where the Niger River spreads out into many channels, creating wetlands in Mali',
+            'savanna': 'A grassland ecosystem with scattered trees, typical of tropical regions with wet and dry seasons',
+            'tropical rainforest': 'A dense forest found in tropical areas with high rainfall and constant warm temperatures',
+            'congo river basin': 'The drainage basin of the Congo River in Central Africa, containing vast tropical rainforests',
+            'fuji': 'Mount Fuji, Japans highest mountain and an active volcano, considered sacred in Japanese culture',
+            'korean peninsula': 'A peninsula in East Asia that extends south from China, divided into North and South Korea',
+            'tsunamis': 'Large ocean waves caused by underwater earthquakes, volcanic eruptions, or landslides',
+            'fishery': 'An area of water where fish are caught commercially, or a business enterprise involved in fishing',
+            'gauchos': 'Traditional cowboys of the South American grasslands, especially in Argentina and Uruguay',
+            'buenos aires': 'The capital and largest city of Argentina, located on the eastern shore of the Rio de la Plata',
+            'mercosur': 'A South American trade bloc established by Argentina, Brazil, Paraguay, and Uruguay',
+            'informal economy': 'Economic activity that is not regulated by government and often not recorded in official statistics',
+            'landlocked': 'A country or territory that is entirely surrounded by land with no access to the ocean',
+            'landforms': 'Natural features of the Earths surface such as mountains, valleys, plains, and plateaus',
+            'continents': 'Large landmasses on Earth - Africa, Antarctica, Asia, Australia, Europe, North America, South America',
+            'plate tectonics': 'Theory explaining the movement of Earths lithospheric plates and geological activity',
+            'earthquakes': 'Sudden movements in Earths crust caused by the release of tectonic stress'
+        };
+
+        function parseVocabularyTerm(termText, extractedTerms) {
+            if (!termText || termText === '') return;
+            
+            const term = termText.trim();
+            if (term && !extractedTerms.some(t => t.term.toLowerCase() === term.toLowerCase())) {
+                extractedTerms.push({ 
+                    term, 
+                    definition: generateDefinitionForTerm(term)
+                });
+            }
+        }
+
+        function generateDefinitionForTerm(term) {
+            const termLower = term.toLowerCase();
+            
+            if (vocabDB[termLower]) {
+                return vocabDB[termLower];
+            }
+            
+            for (const [key, definition] of Object.entries(vocabDB)) {
+                if (termLower.includes(key) || key.includes(termLower)) {
+                    return definition;
+                }
+            }
+            
+            return 'Geographic term: ' + term;
+        }
+
+        function extractVocabularyFromContent(contentElement) {
+            if (!contentElement) return [];
+            
+            // Look specifically in the lesson-content-wrapper to avoid supplementary content
+            const lessonWrapper = contentElement.querySelector('.lesson-content-wrapper');
+            const content = lessonWrapper ? lessonWrapper.innerHTML : contentElement.innerHTML;
+            const extractedTerms = [];
+            
+            if (!content) return extractedTerms;
+            
+            // Create a temporary div to parse HTML content
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = content;
+            
+            // METHOD 1: Look for assessment sections with "Key Terms and Places" (most common format)
+            const strongElements = tempDiv.querySelectorAll('strong, b');
+            for (const strong of strongElements) {
+                const strongText = strong.textContent.trim().toLowerCase();
+                if (strongText === 'key terms and places') {
+                    // Look for the list that follows this element
+                    let current = strong.parentElement;
+                    while (current && current.nextElementSibling) {
+                        current = current.nextElementSibling;
+                        if (current.tagName === 'UL' || current.tagName === 'OL') {
+                            const listItems = current.querySelectorAll('li');
+                            for (const item of listItems) {
+                                const itemText = item.textContent.trim();
+                                if (itemText && 
+                                    itemText !== 'Write a short definition for each term.' &&
+                                    !itemText.toLowerCase().includes('write a') &&
+                                    !itemText.toLowerCase().includes('definition')) {
+                                    parseVocabularyTerm(itemText, extractedTerms);
+                                }
+                            }
+                            return extractedTerms; // Return immediately after finding the first valid list
+                        }
+                    }
+                }
+            }
+            
+            // METHOD 2: Look for direct "Key Terms and Places" headings (less common but still valid)
+            const headings = tempDiv.querySelectorAll('h1, h2, h3, h4, h5, h6');
+            for (const heading of headings) {
+                const headingText = heading.textContent.toLowerCase().trim();
+                if (headingText === 'key terms and places' || headingText === 'key terms') {
+                    let nextElement = heading.nextElementSibling;
+                    
+                    while (nextElement && !nextElement.matches('h1, h2, h3, h4, h5, h6')) {
+                        if (nextElement.tagName === 'UL' || nextElement.tagName === 'OL') {
+                            const listItems = nextElement.querySelectorAll('li');
+                            for (const item of listItems) {
+                                const itemText = item.textContent.trim();
+                                if (itemText && 
+                                    itemText !== 'Write a short definition for each term.' &&
+                                    !itemText.toLowerCase().includes('write a') &&
+                                    !itemText.toLowerCase().includes('definition')) {
+                                    const cleanText = itemText.replace(/^[-•*]\s*/, '').trim();
+                                    if (cleanText) {
+                                        parseVocabularyTerm(cleanText, extractedTerms);
+                                    }
+                                }
+                            }
+                            return extractedTerms; // Return immediately after finding the first valid list
+                        }
+                        nextElement = nextElement.nextElementSibling;
+                    }
+                }
+            }
+            
+            return extractedTerms;
+        }
+
+        // Run tests
+        function runTests() {
+            const testResults = document.getElementById('testResults');
+            const vocabularyResults = document.getElementById('vocabularyResults');
+            
+            let totalTests = 0;
+            let passedTests = 0;
+            let allVocabulary = [];
+            
+            const testContents = [
+                { element: document.getElementById('lesson-content-11'), name: 'Module 11 Format', expected: ['gauchos', 'Buenos Aires', 'Mercosur', 'informal economy', 'landlocked'] },
+                { element: document.getElementById('lesson-content-24'), name: 'Module 24 Format', expected: ['Niger River', 'inland delta', 'savanna', 'tropical rainforest', 'Congo River Basin'] },
+                { element: document.getElementById('lesson-content-30'), name: 'Module 30 Format', expected: ['Fuji', 'Korean Peninsula', 'tsunamis', 'fishery'] },
+                { element: document.getElementById('lesson-content-alt'), name: 'Alternative Format', expected: ['landforms', 'continents', 'plate tectonics', 'earthquakes'] }
+            ];
+            
+            testContents.forEach((test, index) => {
+                totalTests++;
+                
+                console.log('Testing: ' + test.name);
+                const vocabulary = extractVocabularyFromContent(test.element);
+                
+                // Check if we got the expected terms and ONLY the expected terms
+                const extractedTerms = vocabulary.map(v => v.term);
+                const hasExpectedTerms = test.expected.every(term => 
+                    extractedTerms.some(extracted => extracted.toLowerCase() === term.toLowerCase())
+                );
+                const hasOnlyExpectedTerms = extractedTerms.length === test.expected.length;
+                
+                if (vocabulary.length > 0 && hasExpectedTerms && hasOnlyExpectedTerms) {
+                    passedTests++;
+                    testResults.innerHTML += '<div class="test-result success">✓ Test ' + (index + 1) + ': ' + test.name + ' - Extracted ' + vocabulary.length + ' terms (EXACT MATCH)</div>';
+                } else if (vocabulary.length > 0 && hasExpectedTerms) {
+                    testResults.innerHTML += '<div class="test-result" style="background-color: #fff3cd; color: #856404; border: 1px solid #ffeaa7;">⚠ Test ' + (index + 1) + ': ' + test.name + ' - Extracted ' + vocabulary.length + ' terms (includes extra terms)</div>';
+                } else if (vocabulary.length > 0) {
+                    testResults.innerHTML += '<div class="test-result failure">⚠ Test ' + (index + 1) + ': ' + test.name + ' - Extracted ' + vocabulary.length + ' terms (wrong terms)</div>';
+                } else {
+                    testResults.innerHTML += '<div class="test-result failure">✗ Test ' + (index + 1) + ': ' + test.name + ' - No vocabulary extracted</div>';
+                }
+                
+                allVocabulary = allVocabulary.concat(vocabulary.map(v => ({...v, source: test.name})));
+            });
+            
+            testResults.innerHTML += '<div style="background-color: #e1f5fe; padding: 10px; border-radius: 4px; margin: 10px 0;"><strong>Test Summary:</strong> ' + passedTests + '/' + totalTests + ' tests passed perfectly</div>';
+            
+            allVocabulary.forEach(vocab => {
+                vocabularyResults.innerHTML += '<div class="vocabulary-item"><div class="term">' + vocab.term + '</div><div class="definition">' + vocab.definition + '</div><small style="color: #666;">Source: ' + vocab.source + '</small></div>';
+            });
+            
+            console.log('All extracted vocabulary:', allVocabulary);
+        }
+        
+        window.addEventListener('DOMContentLoaded', runTests);
+    </script>
+</body>
+</html>
