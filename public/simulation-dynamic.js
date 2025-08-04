@@ -1896,40 +1896,51 @@ class SimulationInterface {
     }
 
     async loadTeacherGuide() {
-        try {
-            console.log('📚 Loading Teacher Guide from markdown file...');
-            const response = await fetch('/simulation-files/TEACHER-GUIDE-EXPANDED.md');
-            if (!response.ok) {
-                throw new Error(`Failed to load: ${response.status} ${response.statusText}`);
+        // Skip external loading since we have embedded content
+        console.log('📚 Teacher Guide content is already embedded in HTML');
+        
+        // The teacher guide content is already in the HTML, so we don't need to load anything
+        // Just ensure it's visible and properly formatted
+        const teacherGuidePanel = document.getElementById('teacher-guide');
+        if (teacherGuidePanel && teacherGuidePanel.innerHTML.includes('placeholder')) {
+            // Only load external if content is still placeholder
+            try {
+                console.log('📚 Loading Teacher Guide from markdown file...');
+                const response = await fetch('/simulation-files/TEACHER-GUIDE-EXPANDED.md');
+                if (!response.ok) {
+                    throw new Error(`Failed to load: ${response.status} ${response.statusText}`);
+                }
+                
+                const text = await response.text();
+                const htmlContent = this.convertComprehensiveMarkdownToHTML(text);
+                
+                document.getElementById('teacher-guide').innerHTML = `
+                    <div class="comprehensive-teacher-guide">
+                        <div class="guide-header" style="background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%); color: white; padding: 2rem; border-radius: 12px; margin-bottom: 2rem; text-align: center;">
+                            <h1 style="margin: 0; font-size: 2.5rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">📚 Geographic Detective Academy - Teacher's Guide</h1>
+                            <p style="margin: 0.5rem 0 0 0; font-size: 1.2rem; opacity: 0.9;">Complete Implementation Guide</p>
+                        </div>
+                        
+                        <div class="guide-content" style="display: grid; gap: 2rem;">
+                            ${htmlContent}
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('❌ Error loading teacher guide:', error);
+                document.getElementById('teacher-guide').innerHTML = `
+                    <div class="error-message" style="text-align: center; padding: 2rem; color: #dc3545; background: #f8d7da; border-radius: 8px; margin: 2rem;">
+                        <h3>⚠️ Unable to Load Teacher Guide</h3>
+                        <p>There was an error loading the teacher implementation guide. Please try refreshing the page.</p>
+                        <details style="margin-top: 1rem;">
+                            <summary style="cursor: pointer; font-weight: bold;">Technical Details</summary>
+                            <code style="display: block; margin-top: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 4px;">${error.message}</code>
+                        </details>
+                    </div>
+                `;
             }
-            
-            const text = await response.text();
-            const htmlContent = this.convertComprehensiveMarkdownToHTML(text);
-            
-            document.getElementById('teacher-guide').innerHTML = `
-                <div class="comprehensive-teacher-guide">
-                    <div class="guide-header" style="background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%); color: white; padding: 2rem; border-radius: 12px; margin-bottom: 2rem; text-align: center;">
-                        <h1 style="margin: 0; font-size: 2.5rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">📚 Geographic Detective Academy - Teacher's Guide</h1>
-                        <p style="margin: 0.5rem 0 0 0; font-size: 1.2rem; opacity: 0.9;">Complete Implementation Guide</p>
-                    </div>
-                    
-                    <div class="guide-content" style="display: grid; gap: 2rem;">
-                        ${htmlContent}
-                    </div>
-                </div>
-            `;
-        } catch (error) {
-            console.error('❌ Error loading teacher guide:', error);
-            document.getElementById('teacher-guide').innerHTML = `
-                <div class="error-message" style="text-align: center; padding: 2rem; color: #dc3545; background: #f8d7da; border-radius: 8px; margin: 2rem;">
-                    <h3>⚠️ Unable to Load Teacher Guide</h3>
-                    <p>There was an error loading the teacher implementation guide. Please try refreshing the page.</p>
-                    <details style="margin-top: 1rem;">
-                        <summary style="cursor: pointer; font-weight: bold;">Technical Details</summary>
-                        <code style="display: block; margin-top: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 4px;">${error.message}</code>
-                    </details>
-                </div>
-            `;
+        } else {
+            console.log('✅ Teacher Guide content already embedded and ready');
         }
     }
 

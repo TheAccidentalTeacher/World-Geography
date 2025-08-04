@@ -1099,6 +1099,497 @@
 
         .rubric-category li {
             margin: 0.3rem 0;
+            color: #bf360c;
+            line-height: 1.4;
+        }
+
+        /* ===== PRINT STYLES FOR TEACHER GUIDE ===== */
+        
+        .teacher-guide-header {
+            text-align: center;
+            background: linear-gradient(135deg, #1a237e 0%, #3949ab 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+
+        .teacher-guide-header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+            color: #ffd700;
+        }
+
+        .guide-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 1.5rem;
+        }
+
+        .print-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .print-btn {
+            background: #ffd700;
+            color: #1a237e;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+        }
+
+        .print-btn:hover {
+            background: #ffed4e;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+        }
+
+        .teacher-section {
+            margin-bottom: 3rem;
+            page-break-inside: avoid;
+        }
+
+        .teacher-section h2 {
+            color: #1a237e;
+            border-bottom: 3px solid #ffd700;
+            padding-bottom: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .reference-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .reference-card {
+            background: #f8f9fa;
+            border: 2px solid #3949ab;
+            border-radius: 10px;
+            padding: 1.5rem;
+            page-break-inside: avoid;
+        }
+
+        .reference-card h4 {
+            color: #1a237e;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .reference-card ul {
+            margin: 0;
+            padding-left: 1.2rem;
+        }
+
+        .reference-card li {
+            margin: 0.5rem 0;
+            line-height: 1.4;
+        }
+
+        .setup-timeline {
+            margin: 2rem 0;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            page-break-inside: avoid;
+        }
+
+        .timeline-marker {
+            background: #3949ab;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .timeline-content {
+            flex: 1;
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 4px solid #3949ab;
+        }
+
+        .daily-script-card {
+            background: white;
+            border: 2px solid #3949ab;
+            border-radius: 12px;
+            margin-bottom: 3rem;
+            overflow: hidden;
+            page-break-inside: avoid;
+        }
+
+        .script-header {
+            background: linear-gradient(135deg, #3949ab 0%, #1a237e 100%);
+            color: white;
+            padding: 1.5rem;
+        }
+
+        .script-header h3 {
+            margin: 0 0 1rem 0;
+            font-size: 1.4rem;
+        }
+
+        .script-meta {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .script-meta span {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .case-progression {
+            display: grid;
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .progression-item {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-left: 4px solid #3949ab;
+            padding: 1.5rem;
+            border-radius: 8px;
+            page-break-inside: avoid;
+        }
+
+        .progression-item h4 {
+            color: #1a237e;
+            margin-bottom: 0.8rem;
+        }
+
+        .progression-item p {
+            margin: 0.4rem 0;
+            line-height: 1.4;
+        }
+
+        .management-grid, .troubleshooting-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .management-card, .issue-card {
+            background: white;
+            border: 2px solid #28a745;
+            border-radius: 10px;
+            padding: 1.5rem;
+            page-break-inside: avoid;
+        }
+
+        .issue-card {
+            border-color: #dc3545;
+        }
+
+        .management-card h4, .issue-card h4 {
+            color: #1a237e;
+            margin-bottom: 1rem;
+        }
+
+        .assessment-overview {
+            background: #e3f2fd;
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 4px solid #2196f3;
+            margin-bottom: 2rem;
+        }
+
+        .assessment-overview h3 {
+            color: #0d47a1;
+            margin-bottom: 1rem;
+        }
+
+        .assessment-types {
+            display: grid;
+            gap: 2rem;
+        }
+
+        .assessment-type-card {
+            background: white;
+            border: 2px solid #2196f3;
+            border-radius: 10px;
+            padding: 1.5rem;
+            page-break-inside: avoid;
+        }
+
+        .assessment-type-card h4 {
+            color: #0d47a1;
+            margin-bottom: 1.5rem;
+        }
+
+        .script-summary-section {
+            background: #f3e5f5;
+            padding: 2rem;
+            border-radius: 10px;
+            border: 2px solid #9c27b0;
+            margin: 2rem 0;
+        }
+
+        .script-summary-section h3 {
+            color: #4a148c;
+            margin-bottom: 1.5rem;
+        }
+
+        /* ===== PRINT-SPECIFIC STYLES ===== */
+        
+        @media print {
+            body {
+                background: white !important;
+                color: black !important;
+                font-size: 12pt;
+                line-height: 1.4;
+            }
+
+            .header, .navigation, .print-controls {
+                display: none !important;
+            }
+
+            .main-content {
+                padding: 0 !important;
+                max-width: none !important;
+                margin: 0 !important;
+            }
+
+            .content-panel {
+                background: white !important;
+                box-shadow: none !important;
+                border-radius: 0 !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+
+            .teacher-guide-header {
+                background: white !important;
+                color: black !important;
+                border: 2px solid black;
+                text-align: center;
+                page-break-after: always;
+            }
+
+            .teacher-guide-header h1 {
+                color: black !important;
+                font-size: 24pt;
+            }
+
+            .guide-subtitle {
+                color: black !important;
+                font-size: 14pt;
+            }
+
+            .teacher-section {
+                page-break-before: always;
+                margin-bottom: 0;
+            }
+
+            .teacher-section h2 {
+                color: black !important;
+                border-bottom: 2px solid black !important;
+                font-size: 18pt;
+                margin-bottom: 15pt;
+            }
+
+            .daily-script-card {
+                page-break-before: always;
+                page-break-inside: avoid;
+                border: 2px solid black !important;
+                background: white !important;
+                margin-bottom: 20pt;
+            }
+
+            .script-header {
+                background: #f0f0f0 !important;
+                color: black !important;
+                border-bottom: 2px solid black;
+            }
+
+            .script-header h3 {
+                color: black !important;
+                font-size: 16pt;
+            }
+
+            .teacher-implementation, .teacher-facilitation, .assessment-rubric {
+                page-break-inside: avoid;
+                margin-bottom: 15pt;
+                border: 1px solid black !important;
+                background: white !important;
+            }
+
+            .teacher-implementation h4, .teacher-facilitation h4, .assessment-rubric h4 {
+                color: black !important;
+                font-size: 14pt;
+                border-bottom: 1px solid black;
+                padding-bottom: 5pt;
+            }
+
+            .script-box {
+                background: #f9f9f9 !important;
+                border: 1px solid black !important;
+                color: black !important;
+                font-style: italic;
+                padding: 10pt;
+                margin: 10pt 0;
+            }
+
+            .facilitation-section {
+                background: white !important;
+                border: 1px solid #666 !important;
+                margin: 8pt 0;
+                padding: 8pt;
+            }
+
+            .facilitation-section h5 {
+                color: black !important;
+                font-size: 12pt;
+                margin-bottom: 5pt;
+            }
+
+            .reference-grid, .management-grid, .troubleshooting-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 15pt;
+                page-break-inside: avoid;
+            }
+
+            .reference-card, .management-card, .issue-card {
+                background: white !important;
+                border: 1px solid black !important;
+                page-break-inside: avoid;
+                margin-bottom: 10pt;
+            }
+
+            .reference-card h4, .management-card h4, .issue-card h4 {
+                color: black !important;
+                font-size: 12pt;
+                margin-bottom: 8pt;
+            }
+
+            .timeline-item {
+                page-break-inside: avoid;
+                margin-bottom: 15pt;
+            }
+
+            .timeline-marker {
+                background: black !important;
+                color: white !important;
+            }
+
+            .timeline-content {
+                background: white !important;
+                border: 1px solid black !important;
+            }
+
+            .progression-item {
+                background: white !important;
+                border: 1px solid black !important;
+                page-break-inside: avoid;
+                margin-bottom: 10pt;
+            }
+
+            .progression-item h4 {
+                color: black !important;
+                font-size: 12pt;
+            }
+
+            .rubric-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 10pt;
+            }
+
+            .rubric-category {
+                background: white !important;
+                border: 1px solid black !important;
+                padding: 8pt;
+            }
+
+            .rubric-category h5 {
+                color: black !important;
+                font-size: 11pt;
+                margin-bottom: 5pt;
+            }
+
+            .assessment-overview {
+                background: white !important;
+                border: 2px solid black !important;
+                color: black !important;
+                page-break-inside: avoid;
+            }
+
+            .assessment-overview h3 {
+                color: black !important;
+                font-size: 14pt;
+            }
+
+            .assessment-type-card {
+                background: white !important;
+                border: 2px solid black !important;
+                page-break-before: auto;
+                page-break-inside: avoid;
+            }
+
+            .assessment-type-card h4 {
+                color: black !important;
+                font-size: 14pt;
+            }
+
+            .script-summary-section {
+                background: white !important;
+                border: 2px solid black !important;
+                color: black !important;
+                page-break-inside: avoid;
+            }
+
+            .script-summary-section h3 {
+                color: black !important;
+                font-size: 14pt;
+            }
+
+            /* Hide screen-only elements */
+            .hidden, .loading-indicator {
+                display: none !important;
+            }
+
+            /* Ensure section visibility for printing */
+            .content-panel#teacher-guide {
+                display: block !important;
+            }
+        }
+
+        /* Print section-specific styles */
+        @media print {
+            .print-daily-scripts-only .teacher-section:not(.daily-scripts) {
+                display: none !important;
+            }
+
+            .print-setup-guide-only .teacher-section:not(.setup-guide) {
+                display: none !important;
+            }
+        }
+            margin: 0.3rem 0;
             color: #f57c00;
             line-height: 1.4;
         }
@@ -2751,8 +3242,661 @@
 
         <!-- TEACHER GUIDE PANEL -->
         <div id="teacher-guide" class="content-panel hidden">
-            <h2>📖 Teacher Guide</h2>
-            <p>Instructor resources and guidance will be loaded here...</p>
+            <div class="teacher-guide-header">
+                <h1>📖 Geographic Detective Academy: Complete Teacher Implementation Guide</h1>
+                <p class="guide-subtitle">Comprehensive daily scripts, step-by-step instructions, and classroom management strategies</p>
+                <div class="print-controls">
+                    <button onclick="window.print()" class="print-btn">🖨️ Print Complete Guide</button>
+                    <button onclick="printSection('daily-scripts')" class="print-btn">📅 Print Daily Scripts Only</button>
+                    <button onclick="printSection('setup-guide')" class="print-btn">⚙️ Print Setup Guide</button>
+                </div>
+            </div>
+
+            <!-- QUICK REFERENCE SECTION -->
+            <div class="teacher-section quick-reference" id="quick-reference">
+                <h2>🚀 Quick Reference</h2>
+                <div class="reference-grid">
+                    <div class="reference-card">
+                        <h4>⏱️ Time Requirements</h4>
+                        <ul>
+                            <li><strong>Setup Day:</strong> 45 minutes</li>
+                            <li><strong>Daily Cases:</strong> 40-50 minutes each</li>
+                            <li><strong>Final Presentation:</strong> 60 minutes</li>
+                            <li><strong>Total:</strong> 12 class periods</li>
+                        </ul>
+                    </div>
+                    <div class="reference-card">
+                        <h4>📚 Required Materials</h4>
+                        <ul>
+                            <li>Student detective notebooks</li>
+                            <li>World maps and atlases</li>
+                            <li>Geographic tools (compass, ruler)</li>
+                            <li>Evidence packets (printed)</li>
+                            <li>Team role badges</li>
+                        </ul>
+                    </div>
+                    <div class="reference-card">
+                        <h4>👥 Classroom Setup</h4>
+                        <ul>
+                            <li>Teams of 4-5 students</li>
+                            <li>Detective roles per team</li>
+                            <li>Investigation stations</li>
+                            <li>Evidence display area</li>
+                            <li>Case progress board</li>
+                        </ul>
+                    </div>
+                    <div class="reference-card">
+                        <h4>🎯 Learning Objectives</h4>
+                        <ul>
+                            <li>Geographic reasoning skills</li>
+                            <li>Collaborative problem-solving</li>
+                            <li>Map and data interpretation</li>
+                            <li>Cultural geography awareness</li>
+                            <li>Critical thinking development</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SETUP GUIDE SECTION -->
+            <div class="teacher-section setup-guide" id="setup-guide">
+                <h2>⚙️ Pre-Simulation Setup Guide</h2>
+                
+                <div class="setup-timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-marker">1</div>
+                        <div class="timeline-content">
+                            <h4>📅 One Week Before (Preparation Phase)</h4>
+                            <div class="teacher-implementation">
+                                <h5>🖨️ Print Materials Checklist</h5>
+                                <div class="script-box">
+                                    <p><strong>Print and prepare the following:</strong></p>
+                                    <ul>
+                                        <li>Student detective badges (color-coded by role)</li>
+                                        <li>Daily case files and evidence packets</li>
+                                        <li>Team investigation logs</li>
+                                        <li>Assessment rubrics</li>
+                                        <li>Parent information letter</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="teacher-facilitation">
+                                <h5>🏫 Classroom Environment Setup</h5>
+                                <div class="facilitation-section">
+                                    <ul>
+                                        <li>Arrange desks for teams of 4-5</li>
+                                        <li>Create "Evidence Board" display area</li>
+                                        <li>Set up "Detective Academy" signage</li>
+                                        <li>Prepare investigation materials station</li>
+                                        <li>Test technology for presentations</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-marker">2</div>
+                        <div class="timeline-content">
+                            <h4>📋 Day Before Setup Day</h4>
+                            <div class="teacher-implementation">
+                                <h5>✅ Final Preparation Checklist</h5>
+                                <div class="script-box">
+                                    <p><strong>Complete these final steps:</strong></p>
+                                    <ul>
+                                        <li>Review Day 0 script thoroughly</li>
+                                        <li>Prepare "mystery" atmosphere (dim lights, detective music)</li>
+                                        <li>Set up character creation station</li>
+                                        <li>Hide "evidence" around room for discovery</li>
+                                        <li>Prepare opening presentation slides</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DAILY SCRIPTS SECTION -->
+            <div class="teacher-section daily-scripts" id="daily-scripts">
+                <h2>📅 Complete Daily Implementation Scripts</h2>
+                
+                <!-- DAY 0: SETUP DAY -->
+                <div class="daily-script-card">
+                    <div class="script-header">
+                        <h3>🎬 Day 0: Academy Orientation & Character Creation</h3>
+                        <div class="script-meta">
+                            <span class="duration">⏱️ 45 minutes</span>
+                            <span class="preparation">📋 15 min prep</span>
+                            <span class="difficulty">🟢 Easy Setup</span>
+                        </div>
+                    </div>
+
+                    <div class="teacher-implementation">
+                        <h4>🎭 Opening Script (5 minutes)</h4>
+                        <div class="script-box">
+                            <p><strong>Teacher:</strong> "Good morning, future detectives! Welcome to the International Geographic Bureau Academy. I'm Agent [Your Name], your training supervisor. We have a crisis situation that requires your immediate attention."</p>
+                            <p><em>[Turn lights low, play mysterious background music]</em></p>
+                            <p><strong>Teacher:</strong> "The world's most precious geographic artifacts have been stolen by a criminal organization known as 'The Cartographers.' Ancient maps, GPS systems, and geographic data worldwide are disappearing. You are our last hope."</p>
+                            <p><strong>Teacher:</strong> "Over the next 11 days, you'll undergo intensive training to become Geographic Crime Specialists. Your mission: track down The Cartographers and recover the stolen geographic heritage before it's too late."</p>
+                        </div>
+                    </div>
+
+                    <div class="teacher-facilitation">
+                        <h4>📝 Character Creation Activity (20 minutes)</h4>
+                        <div class="facilitation-section">
+                            <h5>Step 1: Detective Identity (10 minutes)</h5>
+                            <ul>
+                                <li>Students create detective names and backstories</li>
+                                <li>Choose geographic specialization (mountains, rivers, cities, etc.)</li>
+                                <li>Design personal detective badge</li>
+                                <li>Write one-sentence mission statement</li>
+                            </ul>
+                        </div>
+                        <div class="facilitation-section">
+                            <h5>Step 2: Team Formation (10 minutes)</h5>
+                            <ul>
+                                <li>Form detective units of 4-5 students</li>
+                                <li>Assign team roles: Evidence Manager, Map Specialist, Cultural Analyst, Data Recorder</li>
+                                <li>Create team name and motto</li>
+                                <li>Distribute role-specific badges and materials</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="teacher-implementation">
+                        <h4>🏛️ Academy Tour & Rules (15 minutes)</h4>
+                        <div class="script-box">
+                            <p><strong>Teacher:</strong> "Now let me show you around your training facility. This is your Evidence Board where we'll track our investigations. Here's your Investigation Materials Station with maps, atlases, and detective tools."</p>
+                            <p><strong>Academy Rules:</strong></p>
+                            <ul>
+                                <li>Always work as a team - no detective works alone</li>
+                                <li>Document everything in your investigation logs</li>
+                                <li>Use geographic evidence to support conclusions</li>
+                                <li>Respect classified information</li>
+                                <li>Share discoveries with other detective units</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="teacher-facilitation">
+                        <h4>🎯 First Mini-Challenge (5 minutes)</h4>
+                        <div class="facilitation-section">
+                            <h5>Practice Investigation: "Find Agent Smith"</h5>
+                            <ul>
+                                <li>Give teams coordinates of hidden "evidence" in classroom</li>
+                                <li>Teams use geographic thinking to locate items</li>
+                                <li>Debrief on observation and documentation skills</li>
+                                <li>Award first "Rookie Detective" badges</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="assessment-rubric">
+                        <h4>📊 Day 0 Assessment Criteria</h4>
+                        <div class="rubric-grid">
+                            <div class="rubric-category">
+                                <h5>Character Development</h5>
+                                <ul>
+                                    <li>4: Detailed, creative detective persona</li>
+                                    <li>3: Complete character with backstory</li>
+                                    <li>2: Basic character information</li>
+                                    <li>1: Minimal effort in creation</li>
+                                </ul>
+                            </div>
+                            <div class="rubric-category">
+                                <h5>Team Collaboration</h5>
+                                <ul>
+                                    <li>4: Exceptional teamwork and communication</li>
+                                    <li>3: Good cooperation and role understanding</li>
+                                    <li>2: Basic teamwork with some guidance</li>
+                                    <li>1: Limited collaboration</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DAY 1: THE GREAT GLOBE HEIST -->
+                <div class="daily-script-card">
+                    <div class="script-header">
+                        <h3>🎬 Day 1: The Great Globe Heist</h3>
+                        <div class="script-meta">
+                            <span class="duration">⏱️ 50 minutes</span>
+                            <span class="preparation">📋 10 min prep</span>
+                            <span class="difficulty">🟡 Moderate</span>
+                        </div>
+                    </div>
+
+                    <div class="teacher-implementation">
+                        <h4>🚨 Case Opening Script (10 minutes)</h4>
+                        <div class="script-box">
+                            <p><strong>Teacher (as Agent Commander):</strong> "Detectives, we have our first case. At 3:15 PM yesterday, a classroom globe was stolen from Roosevelt Middle School. While this might seem minor, our intelligence suggests this is connected to The Cartographers' larger operation."</p>
+                            <p><em>[Show crime scene photo on screen]</em></p>
+                            <p><strong>Teacher:</strong> "This is your chance to prove yourselves. The evidence team has secured the scene and gathered initial clues. Your job is to analyze the evidence and determine what happened."</p>
+                            <p><strong>Evidence Available:</strong></p>
+                            <ul>
+                                <li>Empty globe stand with dust outline</li>
+                                <li>Fingerprints on metal base</li>
+                                <li>Torn paper with coordinates: 40°N, 74°W</li>
+                                <li>Compass left behind pointing northeast</li>
+                                <li>Pin missing from world map</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="teacher-facilitation">
+                        <h4>🔍 Investigation Process (25 minutes)</h4>
+                        <div class="facilitation-section">
+                            <h5>Step 1: Evidence Analysis (10 minutes)</h5>
+                            <ul>
+                                <li>Teams examine each piece of evidence</li>
+                                <li>Record observations in investigation logs</li>
+                                <li>Discuss what each clue might mean</li>
+                                <li><strong>Teacher Role:</strong> Circulate and ask probing questions</li>
+                            </ul>
+                        </div>
+                        <div class="facilitation-section">
+                            <h5>Step 2: Coordinate Investigation (10 minutes)</h5>
+                            <ul>
+                                <li>Teams use atlases to identify 40°N, 74°W (New York City)</li>
+                                <li>Discuss why this location might be significant</li>
+                                <li>Connect to missing map pin evidence</li>
+                                <li><strong>Teacher Role:</strong> Guide teams to discovery without giving answers</li>
+                            </ul>
+                        </div>
+                        <div class="facilitation-section">
+                            <h5>Step 3: Hypothesis Development (5 minutes)</h5>
+                            <ul>
+                                <li>Teams formulate theories about the theft</li>
+                                <li>Connect evidence to support conclusions</li>
+                                <li>Prepare to present findings</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="teacher-implementation">
+                        <h4>👨‍💼 Witness Interview Script (10 minutes)</h4>
+                        <div class="script-box">
+                            <p><strong>Teacher (as Janitor Bob):</strong> "Well, I was cleaning the hallway around 3:00 when I heard some noise from the classroom. Looked like a young person, maybe a student, but they were acting suspicious. Had some kind of map in their hands."</p>
+                            <p><em>[Allow teams to ask questions. Janitor Bob provides these additional clues when asked:]</em></p>
+                            <ul>
+                                <li>"They seemed really interested in the eastern United States on the wall map"</li>
+                                <li>"I saw them write something down before they left"</li>
+                                <li>"They dropped a compass when they heard me coming"</li>
+                                <li>"Seemed to know exactly what they were looking for"</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="teacher-facilitation">
+                        <h4>📊 Case Resolution & Skill Building (5 minutes)</h4>
+                        <div class="facilitation-section">
+                            <h5>Geographic Skills Focus</h5>
+                            <ul>
+                                <li><strong>Coordinate Systems:</strong> Latitude and longitude basics</li>
+                                <li><strong>Map Reading:</strong> Using symbols and legends</li>
+                                <li><strong>Spatial Thinking:</strong> Why locations matter</li>
+                                <li><strong>Evidence Analysis:</strong> Drawing conclusions from data</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="assessment-rubric">
+                        <h4>📊 Day 1 Assessment Criteria</h4>
+                        <div class="rubric-grid">
+                            <div class="rubric-category">
+                                <h5>Geographic Skills</h5>
+                                <ul>
+                                    <li>4: Expertly reads coordinates and maps</li>
+                                    <li>3: Good understanding of basic geography</li>
+                                    <li>2: Developing map reading skills</li>
+                                    <li>1: Needs support with geographic concepts</li>
+                                </ul>
+                            </div>
+                            <div class="rubric-category">
+                                <h5>Investigation Process</h5>
+                                <ul>
+                                    <li>4: Systematic, thorough evidence analysis</li>
+                                    <li>3: Good investigative approach</li>
+                                    <li>2: Basic investigation with guidance</li>
+                                    <li>1: Limited investigative thinking</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DAY 2-3: PROGRESSIVE CASES -->
+                <div class="daily-script-card">
+                    <div class="script-header">
+                        <h3>🎬 Day 2: Mountains of Mystery</h3>
+                        <div class="script-meta">
+                            <span class="duration">⏱️ 50 minutes</span>
+                            <span class="preparation">📋 15 min prep</span>
+                            <span class="difficulty">🟡 Moderate</span>
+                        </div>
+                    </div>
+
+                    <div class="teacher-implementation">
+                        <h4>🏔️ Case Opening Script (8 minutes)</h4>
+                        <div class="script-box">
+                            <p><strong>Teacher (as Chief Agent):</strong> "Excellent work on the Globe Heist, detectives. But The Cartographers have struck again. This time, they've infiltrated the National Survey Office and stolen detailed topographic maps of major mountain ranges worldwide."</p>
+                            <p><strong>Teacher:</strong> "Dr. Sarah Chen, our Chief Cartographer, was working late when the break-in occurred. The thieves knew exactly what they wanted - elevation data, mountain formation maps, and climate zone charts."</p>
+                            <p><em>[Display mountain range images on screen]</em></p>
+                            <p><strong>Evidence Found:</strong></p>
+                            <ul>
+                                <li>Computer files deleted: Himalayas, Andes, Rockies</li>
+                                <li>Muddy footprints (mountain hiking boots)</li>
+                                <li>Altitude chart with specific peaks circled</li>
+                                <li>Note: "Elevation 8,848m - Base Camp ready"</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="teacher-facilitation">
+                        <h4>🗻 Physical Geography Investigation (20 minutes)</h4>
+                        <div class="facilitation-section">
+                            <h5>Step 1: Mountain Range Analysis (8 minutes)</h5>
+                            <ul>
+                                <li>Teams identify stolen mountain range data</li>
+                                <li>Use topographic maps to understand elevation</li>
+                                <li>Locate major peaks on world maps</li>
+                                <li><strong>Key Question:</strong> "What connects these mountain ranges?"</li>
+                            </ul>
+                        </div>
+                        <div class="facilitation-section">
+                            <h5>Step 2: Elevation Detective Work (8 minutes)</h5>
+                            <ul>
+                                <li>Research the 8,848m clue (Mount Everest)</li>
+                                <li>Understand why thieves want mountain data</li>
+                                <li>Connect physical geography to criminal motives</li>
+                                <li><strong>Teacher Guidance:</strong> "Mountains are natural barriers and hideouts"</li>
+                            </ul>
+                        </div>
+                        <div class="facilitation-section">
+                            <h5>Step 3: Climate Zone Connection (4 minutes)</h5>
+                            <ul>
+                                <li>Examine why climate data was stolen</li>
+                                <li>Understand mountain weather patterns</li>
+                                <li>Consider hiding spots at various elevations</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="teacher-implementation">
+                        <h4>👩‍🔬 Witness Interview: Dr. Sarah Chen (12 minutes)</h4>
+                        <div class="script-box">
+                            <p><strong>Teacher (as Dr. Chen):</strong> "The break-in was sophisticated. They bypassed security and went straight for our most sensitive mountain data. They weren't random thieves - they knew exactly what geographic information they needed."</p>
+                            <p><em>[Teams ask questions, Dr. Chen reveals:]</em></p>
+                            <ul>
+                                <li>"They were particularly interested in remote, high-altitude locations"</li>
+                                <li>"One thief mentioned something about 'base camps' and 'supply routes'"</li>
+                                <li>"They took maps showing how to navigate mountain terrain"</li>
+                                <li>"I heard them say 'The Boss needs mountain hideouts'"</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="teacher-facilitation">
+                        <h4>🎯 Geographic Skills Focus (10 minutes)</h4>
+                        <div class="facilitation-section">
+                            <h5>Physical Geography Mastery</h5>
+                            <ul>
+                                <li><strong>Topographic Maps:</strong> Reading elevation lines</li>
+                                <li><strong>Mountain Formation:</strong> Why mountains exist</li>
+                                <li><strong>Climate Zones:</strong> How elevation affects weather</li>
+                                <li><strong>Human-Environment Interaction:</strong> Mountains as barriers and resources</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DAYS 4-11 OUTLINE -->
+                <div class="script-summary-section">
+                    <h3>📋 Days 3-11: Progressive Case Structure</h3>
+                    <div class="case-progression">
+                        <div class="progression-item">
+                            <h4>🏛️ Day 3: International Heritage Heist</h4>
+                            <p><strong>Focus:</strong> Cultural geography and UNESCO World Heritage sites</p>
+                            <p><strong>Skills:</strong> Cultural regions, heritage protection, international geography</p>
+                            <p><strong>Evidence:</strong> Stolen artifacts from Machu Picchu, Petra, Angkor Wat</p>
+                        </div>
+
+                        <div class="progression-item">
+                            <h4>💰 Days 4-5: Economic Espionage</h4>
+                            <p><strong>Focus:</strong> Economic geography and global trade</p>
+                            <p><strong>Skills:</strong> Trade routes, natural resources, economic systems</p>
+                            <p><strong>Evidence:</strong> Shipping manifests, port security footage, trade data</p>
+                        </div>
+
+                        <div class="progression-item">
+                            <h4>🏺 Days 6-8: Archaeological Adventure</h4>
+                            <p><strong>Focus:</strong> Historical geography and ancient civilizations</p>
+                            <p><strong>Skills:</strong> River valley civilizations, geographic influence on history</p>
+                            <p><strong>Evidence:</strong> Ancient maps, archaeological dig sites, historical documents</p>
+                        </div>
+
+                        <div class="progression-item">
+                            <h4>🌍 Days 9-11: The Final Confrontation</h4>
+                            <p><strong>Focus:</strong> Integrated geographic analysis and presentation</p>
+                            <p><strong>Skills:</strong> All previous skills combined, communication, critical thinking</p>
+                            <p><strong>Challenge:</strong> Track down The Cartographers' secret headquarters using all clues</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CLASSROOM MANAGEMENT SECTION -->
+            <div class="teacher-section classroom-management" id="classroom-management">
+                <h2>🏫 Classroom Management Strategies</h2>
+                
+                <div class="management-grid">
+                    <div class="management-card">
+                        <h4>👥 Team Dynamics</h4>
+                        <div class="teacher-facilitation">
+                            <div class="facilitation-section">
+                                <h5>Role Rotation Strategy</h5>
+                                <ul>
+                                    <li>Rotate team roles every 2-3 days</li>
+                                    <li>Ensure all students experience different responsibilities</li>
+                                    <li>Use role badges for visual identification</li>
+                                    <li>Address team conflicts through "detective mediation"</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="management-card">
+                        <h4>📊 Progress Tracking</h4>
+                        <div class="teacher-facilitation">
+                            <div class="facilitation-section">
+                                <h5>Visual Progress System</h5>
+                                <ul>
+                                    <li>Case Progress Board showing team advancement</li>
+                                    <li>Individual skill badges for achievements</li>
+                                    <li>Daily reflection logs</li>
+                                    <li>Peer evaluation checkpoints</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="management-card">
+                        <h4>🎯 Differentiation</h4>
+                        <div class="teacher-facilitation">
+                            <div class="facilitation-section">
+                                <h5>Supporting All Learners</h5>
+                                <ul>
+                                    <li>Provide geographic skill reference sheets</li>
+                                    <li>Offer simplified evidence for struggling students</li>
+                                    <li>Create advanced challenges for gifted learners</li>
+                                    <li>Use visual, auditory, and kinesthetic approaches</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="management-card">
+                        <h4>⏰ Time Management</h4>
+                        <div class="teacher-facilitation">
+                            <div class="facilitation-section">
+                                <h5>Pacing Strategies</h5>
+                                <ul>
+                                    <li>Use timer for investigation segments</li>
+                                    <li>Build in flexible time for discoveries</li>
+                                    <li>Prepare "case files" for early finishers</li>
+                                    <li>Have backup activities ready</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ASSESSMENT GUIDE SECTION -->
+            <div class="teacher-section assessment-guide" id="assessment-guide">
+                <h2>📊 Complete Assessment Framework</h2>
+                
+                <div class="assessment-overview">
+                    <h3>🎯 Assessment Philosophy</h3>
+                    <p>The Geographic Detective Academy uses a <strong>skills-based, portfolio approach</strong> that emphasizes growth, collaboration, and real-world application of geographic knowledge.</p>
+                </div>
+
+                <div class="assessment-types">
+                    <div class="assessment-type-card">
+                        <h4>📅 Daily Formative Assessments</h4>
+                        <div class="assessment-rubric">
+                            <div class="rubric-grid">
+                                <div class="rubric-category">
+                                    <h5>Geographic Skills (40%)</h5>
+                                    <ul>
+                                        <li>Map reading accuracy</li>
+                                        <li>Coordinate system understanding</li>
+                                        <li>Geographic reasoning</li>
+                                        <li>Spatial thinking development</li>
+                                    </ul>
+                                </div>
+                                <div class="rubric-category">
+                                    <h5>Investigation Process (30%)</h5>
+                                    <ul>
+                                        <li>Evidence analysis quality</li>
+                                        <li>Logical reasoning</li>
+                                        <li>Documentation completeness</li>
+                                        <li>Hypothesis formation</li>
+                                    </ul>
+                                </div>
+                                <div class="rubric-category">
+                                    <h5>Collaboration (20%)</h5>
+                                    <ul>
+                                        <li>Team contribution</li>
+                                        <li>Communication skills</li>
+                                        <li>Role responsibility</li>
+                                        <li>Peer support</li>
+                                    </ul>
+                                </div>
+                                <div class="rubric-category">
+                                    <h5>Reflection (10%)</h5>
+                                    <ul>
+                                        <li>Learning self-assessment</li>
+                                        <li>Strategy improvement</li>
+                                        <li>Goal setting</li>
+                                        <li>Growth mindset</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="assessment-type-card">
+                        <h4>📋 Portfolio Development</h4>
+                        <div class="teacher-facilitation">
+                            <div class="facilitation-section">
+                                <h5>Portfolio Components</h5>
+                                <ul>
+                                    <li><strong>Detective Character Profile:</strong> Initial and final versions</li>
+                                    <li><strong>Case Investigation Logs:</strong> All daily investigations</li>
+                                    <li><strong>Geographic Skills Evidence:</strong> Maps, charts, analyses</li>
+                                    <li><strong>Team Collaboration Artifacts:</strong> Group products and reflections</li>
+                                    <li><strong>Learning Reflection Journal:</strong> Daily learning insights</li>
+                                    <li><strong>Final Case Presentation:</strong> Culminating detective report</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TROUBLESHOOTING SECTION -->
+            <div class="teacher-section troubleshooting" id="troubleshooting">
+                <h2>🔧 Common Issues & Solutions</h2>
+                
+                <div class="troubleshooting-grid">
+                    <div class="issue-card">
+                        <h4>❓ "Students aren't engaging with the roleplay"</h4>
+                        <div class="teacher-facilitation">
+                            <div class="facilitation-section">
+                                <h5>Solutions:</h5>
+                                <ul>
+                                    <li>Model detective enthusiasm yourself</li>
+                                    <li>Use props (badges, magnifying glasses, detective hats)</li>
+                                    <li>Create "classified" atmosphere with dim lighting and music</li>
+                                    <li>Allow students to develop character voices</li>
+                                    <li>Celebrate detective "achievements" publicly</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="issue-card">
+                        <h4>🗺️ "Teams are struggling with map reading"</h4>
+                        <div class="teacher-facilitation">
+                            <div class="facilitation-section">
+                                <h5>Solutions:</h5>
+                                <ul>
+                                    <li>Provide map reading reference sheets</li>
+                                    <li>Start with larger-scale, simpler maps</li>
+                                    <li>Use online mapping tools for support</li>
+                                    <li>Pair struggling students with map-confident peers</li>
+                                    <li>Practice with classroom "treasure hunts"</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="issue-card">
+                        <h4>⏰ "Cases are taking too long to complete"</h4>
+                        <div class="teacher-facilitation">
+                            <div class="facilitation-section">
+                                <h5>Solutions:</h5>
+                                <ul>
+                                    <li>Set clear time limits with visible timers</li>
+                                    <li>Provide investigation process checklists</li>
+                                    <li>Offer strategic hints to stuck teams</li>
+                                    <li>Simplify evidence for struggling groups</li>
+                                    <li>Use "quick case" versions when needed</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="issue-card">
+                        <h4>👥 "Team conflicts are disrupting investigations"</h4>
+                        <div class="teacher-facilitation">
+                            <div class="facilitation-section">
+                                <h5>Solutions:</h5>
+                                <ul>
+                                    <li>Implement "detective mediation" protocols</li>
+                                    <li>Rotate team roles to redistribute power</li>
+                                    <li>Create individual accountability within teams</li>
+                                    <li>Use peer evaluation forms</li>
+                                    <li>Address conflicts through character dialogue</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- STUDENT MATERIALS PANEL -->
@@ -2780,6 +3924,91 @@
 
     <!-- Load dynamic content system -->
     <script src="/simulation-dynamic.js"></script>
+    
+    <!-- Print functionality for teacher guide -->
+    <script>
+        // Print functions for teacher guide
+        function printSection(sectionId) {
+            // Add body class for section-specific printing
+            const bodyClasses = document.body.className;
+            
+            if (sectionId === 'daily-scripts') {
+                document.body.className = bodyClasses + ' print-daily-scripts-only';
+            } else if (sectionId === 'setup-guide') {
+                document.body.className = bodyClasses + ' print-setup-guide-only';
+            }
+            
+            // Show the teacher guide panel
+            const teacherGuide = document.getElementById('teacher-guide');
+            if (teacherGuide) {
+                teacherGuide.classList.remove('hidden');
+            }
+            
+            // Hide other panels
+            const allPanels = document.querySelectorAll('.content-panel');
+            allPanels.forEach(panel => {
+                if (panel.id !== 'teacher-guide') {
+                    panel.style.display = 'none';
+                }
+            });
+            
+            // Trigger print
+            setTimeout(() => {
+                window.print();
+                
+                // Restore original state after print dialog
+                setTimeout(() => {
+                    document.body.className = bodyClasses;
+                    allPanels.forEach(panel => {
+                        panel.style.display = '';
+                    });
+                    
+                    // Restore navigation state
+                    const currentActive = document.querySelector('.nav-item.active');
+                    if (currentActive && currentActive.getAttribute('data-panel') !== 'teacher-guide') {
+                        teacherGuide.classList.add('hidden');
+                    }
+                }, 100);
+            }, 250);
+        }
+
+        // Enhanced print function for complete guide
+        window.printCompleteGuide = function() {
+            // Show the teacher guide panel
+            const teacherGuide = document.getElementById('teacher-guide');
+            if (teacherGuide) {
+                teacherGuide.classList.remove('hidden');
+            }
+            
+            // Hide other panels
+            const allPanels = document.querySelectorAll('.content-panel');
+            const originalDisplay = [];
+            allPanels.forEach((panel, index) => {
+                originalDisplay[index] = panel.style.display;
+                if (panel.id !== 'teacher-guide') {
+                    panel.style.display = 'none';
+                }
+            });
+            
+            // Trigger print
+            setTimeout(() => {
+                window.print();
+                
+                // Restore original state after print dialog
+                setTimeout(() => {
+                    allPanels.forEach((panel, index) => {
+                        panel.style.display = originalDisplay[index];
+                    });
+                    
+                    // Restore navigation state
+                    const currentActive = document.querySelector('.nav-item.active');
+                    if (currentActive && currentActive.getAttribute('data-panel') !== 'teacher-guide') {
+                        teacherGuide.classList.add('hidden');
+                    }
+                }, 100);
+            }, 250);
+        };
+    </script>
     
     <!-- Initialize dynamic interface system -->
     <script>
