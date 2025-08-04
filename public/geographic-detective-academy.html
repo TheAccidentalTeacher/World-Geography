@@ -4202,7 +4202,6 @@
                 this.slidesLoaded = true;
                 console.log(`📦 Fallback: Generated mapping for ${this.totalSlides} slides`);
             }
-            }
 
             async initializePresentation() {
                 // Try to load slides from API first
@@ -6257,7 +6256,7 @@
                 if (gammaPanel) {
                     presentation.addToPresentationPanel();
                     presentation.generateThumbnails();
-                    console.log('🎮 Presentation system initialized with 60 slides');
+                    console.log('🎮 Presentation system initialized with', presentation.totalSlides, 'slides');
                 } else {
                     // Try again in 500ms if panel not ready
                     setTimeout(initializePresentationWhenReady, 500);
