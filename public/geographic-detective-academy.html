@@ -3219,12 +3219,12 @@
                         Character creation, team formation, introduction to the Bureau
                     </div>
                     <div class="schedule-item">
-                        <div class="day-label">Investigation Days (Days 1-10):</div>
-                        Progressive cases building geographic skills
+                        <div class="day-label">Investigation Days (Days 1-11):</div>
+                        Progressive cases building geographic skills through comprehensive investigations
                     </div>
                     <div class="schedule-item">
-                        <div class="day-label">Wrap-up Day (Day 11):</div>
-                        Final case presentation and summative assessment
+                        <div class="day-label">Graduation Day (Day 12):</div>
+                        Final case presentation, mastery showcase, and academy graduation ceremony
                     </div>
                 </div>
             </div>
@@ -4137,7 +4137,7 @@
         // Include presentation system inline for immediate availability
         /**
          * Geographic Detective Academy Presentation System
-         * Integrates the 60-slide presentation directly into the simulation interface
+         * Integrates the 133-slide presentation directly into the simulation interface
          */
 
         class SimulationPresentation {
@@ -4190,71 +4190,18 @@
 
             useFallbackSlides() {
                 console.log('🔄 Using fallback slide system...');
-                this.totalSlides = 60; // Fallback to original 60 slides
-                // Fallback slide mapping for original 60 slides
-                this.slideFilenames = {
-                    1: "1_Geographic-Detective-Academy.png",
-                    2: "2_URGENT-Global-Geographic-Crisis.png",
-                    3: "3_You-Are-Our-Last-Hope.png",
-                    4: "4_Your-Detective-Academy-Training-Program.png",
-                    5: "5_Form-Your-Detective-Unit.png",
-                    6: "6_DAY-1.png",
-                    7: "7_Initial-Crime-Scene-Investigation.png",
-                    8: "8_Critical-Evidence-Coordinate-Fragment.png",
-                    9: "9_Apply-Your-Geographic-Detective-Skills.png",
-                    10: "10_Witness-Interview-Maintenance-Staff.png",
-                    11: "11_Solve-the-Geographic-Mystery.png",
-                    12: "12_CASE-SOLVED.png",
-                    13: "13_DAY-2.png",
-                    14: "14_Crime-Scene-5200m-Elevation.png",
-                    15: "15_Evidence-Systematic-Elevation-Fraud.png",
-                    16: "16_Expert-Witness-International-Cartographer.png",
-                    17: "17_Reading-the-Landscape-for-Clues.png",
-                    18: "18_Elevation-Analysis-Truth-vs-Deception.png",
-                    19: "19_CASE-SOLVED-Mountain-Justice-Served.png",
-                    20: "20_Geographic-Detective-Skills-Level-Up.png",
-                    21: "21_DAY-3.png",
-                    22: "22_Cultural-Regions-Investigation.png",
-                    23: "23_Language-Family-Clues.png",
-                    24: "24_Religious-Geography-Evidence.png",
-                    25: "25_Economic-Geography-Clues.png",
-                    26: "26_Cultural-Diffusion-Investigation.png",
-                    27: "27_CASE-CLOSED.png",
-                    28: "28_DAY-4.png",
-                    29: "29_Climate-Zone-Evidence-Collection.png",
-                    30: "30_Weather-Pattern-Investigation.png",
-                    31: "31_Ocean-Current-Detective-Work.png",
-                    32: "32_Climate-Change-Evidence-Analysis.png",
-                    33: "33_Extreme-Weather-Investigation.png",
-                    34: "34_CLIMATE-MYSTERY-SOLVED.png",
-                    35: "35_DAY-5.png",
-                    36: "36_Global-Trade-Route-Investigation.png",
-                    37: "37_Resource-Distribution-Mystery.png",
-                    38: "38_Manufacturing-Geography-Evidence.png",
-                    39: "39_Economic-Development-Investigation.png",
-                    40: "40_ECONOMIC-NETWORK-EXPOSED.png",
-                    41: "41_DAY-6.png",
-                    42: "42_Political-Geography-Investigation-Setup.png",
-                    43: "43_Types-of-Political-Territories.png",
-                    44: "44_Boundary-Dispute-Investigation.png",
-                    45: "45_Maritime-Boundary-Investigation.png",
-                    46: "46_Capital-City-Investigation.png",
-                    47: "47_POLITICAL-BOUNDARIES-SECURED.png",
-                    48: "48_DAY-7.png",
-                    49: "49_Mesopotamian-Geography-Investigation.png",
-                    50: "50_Egyptian-Civilization-Geography-Clues.png",
-                    51: "51_Indus-Valley-Geographic-Mystery.png",
-                    52: "52_Chinese-Civilization-Geographic-Advantages.png",
-                    53: "53_Greek-Geographic-Influence-Investigation.png",
-                    54: "54_ANCIENT-GEOGRAPHIC-WISDOM-RECOVERED.png",
-                    55: "55_DAY-8.png",
-                    56: "56_Climate-Culture-Connection-Patterns.png",
-                    57: "57_Economic-Resource-Distribution-Patterns.png",
-                    58: "58_Political-Physical-Geography-Correlations.png",
-                    59: "59_GEOGRAPHIC-PATTERNS-MASTERED.png",
-                    60: "60_DAY-9-11.png"
-                };
+                this.totalSlides = 133; // Updated fallback to match uploaded slides
+                
+                // Generate fallback slide mapping dynamically for 133 slides
+                this.slideFilenames = {};
+                for (let i = 1; i <= this.totalSlides; i++) {
+                    const paddedNumber = i.toString().padStart(2, '0');
+                    this.slideFilenames[i] = `${paddedNumber}_slide.png`; // Generic fallback pattern
+                }
+                
                 this.slidesLoaded = true;
+                console.log(`📦 Fallback: Generated mapping for ${this.totalSlides} slides`);
+            }
             }
 
             async initializePresentation() {
