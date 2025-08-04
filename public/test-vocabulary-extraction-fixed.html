@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vocabulary Extraction Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .test-result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .failure {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .vocabulary-item {
+            margin: 5px 0;
+            padding: 8px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+        }
+        .term {
+            font-weight: bold;
+            color: #0056b3;
+        }
+        .definition {
+            margin-top: 5px;
+            color: #333;
+        }
+        .test-lesson {
+            background-color: #e9ecef;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        h2 {
+            color: #495057;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 5px;
+        }
+        .stats {
+            background-color: #e1f5fe;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Vocabulary Extraction System Test</h1>
+    
+    <div class="test-container">
+        <h2>Test Results</h2>
+        <div id="testResults"></div>
+    </div>
+    
+    <div class="test-container">
+        <h2>Extracted Vocabulary</h2>
+        <div id="vocabularyResults"></div>
+    </div>
+
+    <script>
+        // Test lesson content samples
+        const testLessons = [
+            {
+                title: "Introduction to Physical Geography",
+                content: `
+                    <h2>Key Terms and Places</h2>
+                    <div class="key-terms">
+                        <p>- <strong>landforms</strong>: shapes on the planet's surface, such as hills or mountains</p>
+                        <p>- <strong>continents</strong>: large landmasses that are part of Earth's crust</p>
+                        <p>- <strong>plate tectonics</strong>: theory that Earth's surface is divided into a dozen or so slow-moving plates</p>
+                        <p>- <strong>lava</strong>: magma that reaches Earth's surface</p>
+                        <p>- <strong>earthquakes</strong>: sudden, violent movements of Earth's crust</p>
+                    </div>
+                `
+            },
+            {
+                title: "Climate and Weather",
+                content: `
+                    <h3>Key Terms and Places</h3>
+                    <ul>
+                        <li><strong>Climate:</strong> The long-term average weather conditions in a particular area</li>
+                        <li><strong>Weather:</strong> The condition of the atmosphere at a particular time and place</li>
+                        <li><strong>Precipitation:</strong> Water that falls from clouds as rain, snow, sleet, or hail</li>
+                        <li><strong>Humidity:</strong> The amount of water vapor in the air</li>
+                        <li><strong>Temperature:</strong> A measure of how hot or cold something is</li>
+                    </ul>
+                `
+            },
+            {
+                title: "United States Geography",
+                content: `
+                    <h2>Key Terms and Places</h2>
+                    <p><strong>Great Lakes</strong>: Five large freshwater lakes in North America</p>
+                    <p><strong>Mississippi River</strong>: The second-longest river in North America</p>
+                    <p><strong>Rocky Mountains</strong>: A major mountain range in western North America</p>
+                    <p><strong>Great Plains</strong>: A broad expanse of flat land in central North America</p>
+                `
+            }
+        ];
+
+        // Copy the vocabulary extraction functions from the main application
+        function parseVocabularyTerm(termText, extractedTerms) {
+            if (!termText || termText === '') return;
+            
+            if (termText.includes(':')) {
+                const colonIndex = termText.indexOf(':');
+                const term = termText.substring(0, colonIndex).trim();
+                const definition = termText.substring(colonIndex + 1).trim();
+                
+                if (term && definition) {
+                    extractedTerms.push({
+                        term: term,
+                        definition: definition
+                    });
+                }
+            }
+        }
+
+        function generateDefinitionForTerm(term) {
+            const termLower = term.toLowerCase();
+            
+            // Enhanced geography definitions database
+            const definitionsDB = {
+                'landforms': 'Natural features of the Earth\'s surface such as mountains, valleys, plains, and plateaus',
+                'continents': 'Large landmasses on Earth - Africa, Antarctica, Asia, Australia, Europe, North America, South America',
+                'plate tectonics': 'Theory explaining the movement of Earth\'s lithospheric plates and geological activity',
+                'lava': 'Molten rock that erupts from volcanoes onto Earth\'s surface',
+                'earthquakes': 'Sudden movements in Earth\'s crust caused by the release of tectonic stress',
+                'climate': 'Long-term weather patterns and conditions in a particular region',
+                'weather': 'Short-term atmospheric conditions including temperature, precipitation, and wind',
+                'precipitation': 'Any form of water that falls from the atmosphere to Earth\'s surface',
+                'humidity': 'The amount of water vapor present in the atmosphere',
+                'temperature': 'A measure of the average kinetic energy of particles in a substance',
+                'great lakes': 'Five large freshwater lakes in North America: Superior, Michigan, Huron, Erie, and Ontario',
+                'mississippi river': 'The second-longest river in North America, flowing from Minnesota to the Gulf of Mexico',
+                'rocky mountains': 'A major mountain range extending from Canada to New Mexico in western North America',
+                'great plains': 'A broad expanse of flat grassland covering much of central North America',
+                'tributary': 'A smaller river or stream that flows into a larger river',
+                'continental divide': 'The ridge that separates river systems flowing to opposite sides of a continent',
+                'region': 'An area with common characteristics that distinguish it from other areas',
+                'location': 'Where something is positioned on Earth\'s surface',
+                'environment': 'The natural world and the surroundings in which people, animals, and plants live'
+            };
+            
+            if (definitionsDB[termLower]) {
+                return definitionsDB[termLower];
+            }
+            
+            for (const [key, definition] of Object.entries(definitionsDB)) {
+                if (termLower.includes(key) || key.includes(termLower)) {
+                    return definition;
+                }
+            }
+            
+            if (termLower.includes('mountain') || termLower.includes('mount')) {
+                return 'A large natural elevation of Earth\'s surface rising abruptly from the surrounding level';
+            }
+            if (termLower.includes('river')) {
+                return 'A large natural stream of water flowing in a channel to the sea, a lake, or another river';
+            }
+            if (termLower.includes('lake')) {
+                return 'A large body of fresh or salt water surrounded by land';
+            }
+            if (termLower.includes('ocean')) {
+                return 'A very large expanse of sea, particularly each of the main areas into which the sea is divided';
+            }
+            if (termLower.includes('desert')) {
+                return 'A large area of land that receives very little rainfall and has sparse vegetation';
+            }
+            if (termLower.includes('forest')) {
+                return 'A large area covered chiefly with trees and undergrowth';
+            }
+            if (termLower.includes('plain') || termLower.includes('plains')) {
+                return 'A large area of flat land with few trees';
+            }
+            if (termLower.includes('valley')) {
+                return 'A low area of land between hills or mountains, typically with a river running through it';
+            }
+            if (termLower.includes('plateau')) {
+                return 'An area of relatively level high ground';
+            }
+            if (termLower.includes('peninsula')) {
+                return 'A piece of land almost surrounded by water or projecting out into a body of water';
+            }
+            if (termLower.includes('island')) {
+                return 'A piece of land completely surrounded by water';
+            }
+            if (termLower.includes('bay')) {
+                return 'A broad inlet of the sea where the land curves inward';
+            }
+            if (termLower.includes('gulf')) {
+                return 'A large bay that is an arm of an ocean or sea';
+            }
+            if (termLower.includes('strait')) {
+                return 'A narrow passage of water connecting two seas or other large areas of water';
+            }
+            if (termLower.includes('cape')) {
+                return 'A pointed piece of land that sticks out into a sea, ocean, lake, or river';
+            }
+            
+            return `Geographic term: ${term}`;
+        }
+
+        function extractVocabularyFromContent(content) {
+            const extractedTerms = [];
+            
+            if (!content) return extractedTerms;
+            
+            // Create a temporary div to parse HTML content
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = content;
+            
+            // Method 1: Look for sections with "Key Terms" in heading
+            const keyTermsSections = tempDiv.querySelectorAll('h1, h2, h3, h4, h5, h6');
+            
+            for (const heading of keyTermsSections) {
+                const headingText = heading.textContent.toLowerCase();
+                if (headingText.includes('key terms') || headingText.includes('vocabulary') || headingText.includes('important terms')) {
+                    let nextElement = heading.nextElementSibling;
+                    
+                    while (nextElement && !nextElement.matches('h1, h2, h3, h4, h5, h6')) {
+                        if (nextElement.classList.contains('key-terms') || 
+                            nextElement.tagName === 'UL' || 
+                            nextElement.tagName === 'OL' ||
+                            nextElement.tagName === 'DIV') {
+                            
+                            // Extract from lists
+                            const listItems = nextElement.querySelectorAll('li, p');
+                            for (const item of listItems) {
+                                const itemText = item.textContent.trim();
+                                if (itemText.startsWith('-')) {
+                                    const cleanText = itemText.substring(1).trim();
+                                    parseVocabularyTerm(cleanText, extractedTerms);
+                                } else {
+                                    parseVocabularyTerm(itemText, extractedTerms);
+                                }
+                            }
+                        } else if (nextElement.tagName === 'P') {
+                            const paragraphText = nextElement.textContent.trim();
+                            if (paragraphText.includes(':') || paragraphText.includes('**')) {
+                                parseVocabularyTerm(paragraphText, extractedTerms);
+                            }
+                        }
+                        
+                        nextElement = nextElement.nextElementSibling;
+                    }
+                }
+            }
+            
+            // Method 2: Look for bold terms followed by colons or definitions
+            const strongElements = tempDiv.querySelectorAll('strong, b');
+            for (const strong of strongElements) {
+                const strongText = strong.textContent.trim();
+                const parentText = strong.parentElement.textContent.trim();
+                
+                if (parentText.includes(':')) {
+                    parseVocabularyTerm(parentText, extractedTerms);
+                } else if (strongText && strongText.length > 2) {
+                    // If it's just a bold term, generate a definition
+                    const existingTerm = extractedTerms.find(t => t.term.toLowerCase() === strongText.toLowerCase());
+                    if (!existingTerm) {
+                        extractedTerms.push({
+                            term: strongText,
+                            definition: generateDefinitionForTerm(strongText)
+                        });
+                    }
+                }
+            }
+            
+            // Method 3: Look for definition list patterns
+            const definitionLists = tempDiv.querySelectorAll('dl');
+            for (const dl of definitionLists) {
+                const terms = dl.querySelectorAll('dt');
+                const definitions = dl.querySelectorAll('dd');
+                
+                for (let i = 0; i < Math.min(terms.length, definitions.length); i++) {
+                    const term = terms[i].textContent.trim();
+                    const definition = definitions[i].textContent.trim();
+                    
+                    if (term && definition) {
+                        extractedTerms.push({
+                            term: term,
+                            definition: definition
+                        });
+                    }
+                }
+            }
+            
+            return extractedTerms;
+        }
+
+        // Run tests
+        function runTests() {
+            const testResults = document.getElementById('testResults');
+            const vocabularyResults = document.getElementById('vocabularyResults');
+            
+            let totalTests = 0;
+            let passedTests = 0;
+            let allVocabulary = [];
+            
+            testLessons.forEach((lesson, index) => {
+                totalTests++;
+                
+                console.log(`Testing lesson: ${lesson.title}`);
+                const vocabulary = extractVocabularyFromContent(lesson.content);
+                
+                // Test: Should extract at least some vocabulary
+                if (vocabulary.length > 0) {
+                    passedTests++;
+                    testResults.innerHTML += `
+                        <div class="test-result success">
+                            ✓ Test ${index + 1}: ${lesson.title} - Extracted ${vocabulary.length} terms
+                        </div>
+                    `;
+                } else {
+                    testResults.innerHTML += `
+                        <div class="test-result failure">
+                            ✗ Test ${index + 1}: ${lesson.title} - No vocabulary extracted
+                        </div>
+                    `;
+                }
+                
+                // Add to overall vocabulary collection
+                allVocabulary = allVocabulary.concat(vocabulary.map(v => ({...v, source: lesson.title})));
+            });
+            
+            // Display statistics
+            testResults.innerHTML += `
+                <div class="stats">
+                    <strong>Test Summary:</strong> ${passedTests}/${totalTests} tests passed
+                </div>
+            `;
+            
+            // Display all extracted vocabulary
+            allVocabulary.forEach(vocab => {
+                vocabularyResults.innerHTML += `
+                    <div class="vocabulary-item">
+                        <div class="term">${vocab.term}</div>
+                        <div class="definition">${vocab.definition}</div>
+                        <small style="color: #666;">Source: ${vocab.source}</small>
+                    </div>
+                `;
+            });
+            
+            console.log('All extracted vocabulary:', allVocabulary);
+        }
+        
+        // Run tests when page loads
+        window.addEventListener('DOMContentLoaded', runTests);
+    </script>
+</body>
+</html>

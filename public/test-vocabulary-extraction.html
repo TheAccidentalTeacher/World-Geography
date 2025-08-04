@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vocabulary Extraction Validator</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background-color: #e8f5e8; border-color: #4caf50; }
+        .warning { background-color: #fff3e0; border-color: #ff9800; }
+        .error { background-color: #ffebee; border-color: #f44336; }
+        .term-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 10px; margin: 10px 0; }
+        .term-card { background: #f9f9f9; padding: 10px; border-radius: 5px; border-left: 3px solid #2196f3; }
+        .term-name { font-weight: bold; color: #1976d2; }
+        .term-definition { font-size: 0.9em; color: #666; margin-top: 5px; }
+        button { background: #2196f3; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin: 5px; }
+        button:hover { background: #1976d2; }
+        #results { margin-top: 20px; }
+        .test-content { margin: 10px 0; padding: 10px; background: #f5f5f5; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Vocabulary Extraction System Validator</h1>
+    <p>This tool tests the vocabulary extraction system with sample lesson content.</p>
+
+    <div class="test-section">
+        <h3>Test Controls</h3>
+        <button onclick="runAllTests()">Run All Tests</button>
+        <button onclick="testGeographicDefinitions()">Test Geographic Definitions</button>
+        <button onclick="testContentParsing()">Test Content Parsing</button>
+        <button onclick="clearResults()">Clear Results</button>
+    </div>
+
+    <div id="results"></div>
+
+    <script>
+        // Sample lesson content for testing
+        const sampleLessons = [
+            {
+                title: "Module 6, Lesson 1: Physical Geography",
+                content: `
+                    <h2>Key Terms and Places</h2>
+                    <div class="key-terms">
+                        <ul>
+                            <li>Appalachian Mountains</li>
+                            <li>Great Lakes</li>
+                            <li>Mississippi River</li>
+                            <li>tributary: a smaller river that flows into a larger river</li>
+                            <li>Rocky Mountains</li>
+                            <li>continental divide: the ridge that separates river systems flowing to opposite sides of a continent</li>
+                        </ul>
+                    </div>
+                `
+            },
+            {
+                title: "Module 1, Lesson 3: Themes of Geography",
+                content: `
+                    <h2>Key Terms and Places</h2>
+                    <div class="key-terms">
+                        <p><strong>absolute location</strong>: a specific description of where a place is, such as an address</p>
+                        <p><strong>relative location</strong>: a general description of where a place lies in relation to other places</p>
+                        <p><strong>environment</strong>: the land, water, climate, plants, and animals of an area</p>
+                    </div>
+                `
+            },
+            {
+                title: "Module 2, Lesson 3: The Land",
+                content: `
+                    <h2>Key Terms and Places</h2>
+                    <div class="key-terms">
+                        <p>- <strong>landforms</strong>: shapes on the planet's surface, such as hills or mountains</p>
+                        <p>- <strong>continents</strong>: large landmasses that are part of Earth's crust</p>
+                        <p>- <strong>plate tectonics</strong>: theory that Earth's surface is divided into a dozen or so slow-moving plates</p>
+                        <p>- <strong>lava</strong>: magma that reaches Earth's surface</p>
+                        <p>- <strong>earthquakes</strong>: sudden, violent movements of Earth's crust</p>
+                    </div>
+                `
+            }
+        ];
+
+        // Copy the vocabulary extraction functions from the main application
+        function parseVocabularyTerm(termText, extractedTerms) {
+            if (!termText || termText === '') return;
+            
+            if (termText.includes(':')) {
+                const colonIndex = termText.indexOf(':');
+                const term = termText.substring(0, colonIndex).trim();
+                const definition = termText.substring(colonIndex + 1).trim();
+                
+                if (term && definition) {
+                    extractedTerms.push({ term, definition });
+                }
+            } else if (termText.includes('—') || termText.includes('–')) {
+                const dashMatch = termText.match(/^(.*?)[—–]\\s*(.*)$/);
+                if (dashMatch) {
+                    const term = dashMatch[1].trim();
+                    const definition = dashMatch[2].trim();
+                    if (term && definition) {
+                        extractedTerms.push({ term, definition });
+                    }
+                }
+            } else {
+                const term = termText.trim();
+                if (term && !extractedTerms.some(t => t.term.toLowerCase() === term.toLowerCase())) {
+                    extractedTerms.push({ 
+                        term, 
+                        definition: generateDefinitionForTerm(term)
+                    });
+                }
+            }
+        }
+
+        function generateDefinitionForTerm(term) {
+            const termLower = term.toLowerCase();
+            
+            const definitionsDB = {
+                'appalachian mountains': 'A mountain range in eastern North America extending from Canada to Alabama',
+                'rocky mountains': 'A major mountain range in western North America extending from Canada to New Mexico',
+                'great lakes': 'Five large freshwater lakes in North America: Superior, Michigan, Huron, Erie, and Ontario',
+                'mississippi river': 'The second-longest river in North America, flowing from Minnesota to the Gulf of Mexico',
+                'tributary': 'A smaller river or stream that flows into a larger river',
+                'continental divide': 'The ridge that separates river systems flowing to opposite sides of a continent',
+                'climate': 'The long-term average weather conditions in a particular area',
+                'region': 'An area with common characteristics that distinguish it from other areas',
+                'location': 'Where something is positioned on Earth\\'s surface',
+                'environment': 'The natural world and the surroundings in which people, animals, and plants live'
+            };
+            
+            if (definitionsDB[termLower]) {
+                return definitionsDB[termLower];
+            }
+            
+            for (const [key, definition] of Object.entries(definitionsDB)) {
+                if (termLower.includes(key) || key.includes(termLower)) {
+                    return definition;
+                }
+            }
+            
+            if (termLower.includes('mountain') || termLower.includes('mount')) {
+                return 'A prominent mountain or mountain range in the region being studied';
+            } else if (termLower.includes('river')) {
+                return 'An important river in the geographic region covered by this lesson';
+            } else if (termLower.includes('lake')) {
+                return 'A significant lake in the area being studied';
+            } else {
+                return 'A key geographic term or place name important to understanding this region';
+            }
+        }
+
+        function extractVocabularyFromHTML(content) {
+            const extractedTerms = [];
+            
+            const keyTermsMatch = content.match(/<h2>Key Terms and Places<\\/h2><div class="key-terms">(.*?)<\\/div>/s);
+            if (!keyTermsMatch) return [];
+            
+            const keyTermsContent = keyTermsMatch[1];
+            
+            // Method 1: Parse list items
+            const listItems = keyTermsContent.match(/<li>(.*?)<\\/li>/g);
+            if (listItems) {
+                listItems.forEach(item => {
+                    const cleanItem = item.replace(/<\\/?[^>]+(>|$)/g, "").trim();
+                    parseVocabularyTerm(cleanItem, extractedTerms);
+                });
+            } else {
+                // Method 2: Parse paragraphs
+                const lines = keyTermsContent
+                    .replace(/<\\/p>/g, '\\n')
+                    .replace(/<p>/g, '')
+                    .replace(/<br\\s*\\/?>/g, '\\n')
+                    .split('\\n')
+                    .map(line => line.replace(/<\\/?[^>]+(>|$)/g, "").trim())
+                    .filter(line => line && line !== '');
+                
+                lines.forEach(line => {
+                    const cleanLine = line.replace(/^[-•*]\\s*/, '').trim();
+                    if (cleanLine) {
+                        parseVocabularyTerm(cleanLine, extractedTerms);
+                    }
+                });
+            }
+            
+            // Method 3: Parse bold terms
+            const boldTerms = keyTermsContent.match(/<strong>(.*?)<\\/strong>/g);
+            if (boldTerms) {
+                boldTerms.forEach(boldTerm => {
+                    const term = boldTerm.replace(/<\\/?strong>/g, '').trim();
+                    if (term && !extractedTerms.some(t => t.term.toLowerCase() === term.toLowerCase())) {
+                        const termPattern = new RegExp(`<strong>${term.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&')}</strong>:?\\\\s*([^<]*?)(?=<|$)`, 'i');
+                        const match = keyTermsContent.match(termPattern);
+                        const definition = match && match[1] ? match[1].trim() : generateDefinitionForTerm(term);
+                        extractedTerms.push({ term, definition });
+                    }
+                });
+            }
+            
+            return extractedTerms;
+        }
+
+        function runAllTests() {
+            clearResults();
+            let allPassed = true;
+            
+            sampleLessons.forEach((lesson, index) => {
+                const testDiv = document.createElement('div');
+                testDiv.className = 'test-section';
+                
+                try {
+                    const extracted = extractVocabularyFromHTML(lesson.content);
+                    
+                    let status = 'success';
+                    let message = `✅ Successfully extracted ${extracted.length} terms`;
+                    
+                    if (extracted.length === 0) {
+                        status = 'error';
+                        message = '❌ No terms extracted';
+                        allPassed = false;
+                    } else if (extracted.length < 3) {
+                        status = 'warning';
+                        message = `⚠️ Only ${extracted.length} terms extracted - may be incomplete`;
+                    }
+                    
+                    testDiv.className += ` ${status}`;
+                    testDiv.innerHTML = `
+                        <h3>Test ${index + 1}: ${lesson.title}</h3>
+                        <p>${message}</p>
+                        <div class="term-list">
+                            ${extracted.map(term => `
+                                <div class="term-card">
+                                    <div class="term-name">${term.term}</div>
+                                    <div class="term-definition">${term.definition}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                    
+                } catch (error) {
+                    testDiv.className += ' error';
+                    testDiv.innerHTML = `
+                        <h3>Test ${index + 1}: ${lesson.title}</h3>
+                        <p>❌ Error during extraction: ${error.message}</p>
+                    `;
+                    allPassed = false;
+                }
+                
+                document.getElementById('results').appendChild(testDiv);
+            });
+            
+            // Summary
+            const summaryDiv = document.createElement('div');
+            summaryDiv.className = `test-section ${allPassed ? 'success' : 'error'}`;
+            summaryDiv.innerHTML = `
+                <h3>Test Summary</h3>
+                <p>${allPassed ? '✅ All tests passed!' : '❌ Some tests failed - check individual results above'}</p>
+                <p>Tested ${sampleLessons.length} lesson formats</p>
+            `;
+            document.getElementById('results').appendChild(summaryDiv);
+        }
+
+        function testGeographicDefinitions() {
+            clearResults();
+            
+            const testTerms = [
+                'Appalachian Mountains', 'tributary', 'climate', 'Mount Everest', 
+                'Pacific Ocean', 'New York City', 'Sahara Desert', 'Amazon River'
+            ];
+            
+            const testDiv = document.createElement('div');
+            testDiv.className = 'test-section success';
+            testDiv.innerHTML = `
+                <h3>Geographic Definitions Test</h3>
+                <p>✅ Testing definition generation for various geographic terms</p>
+                <div class="term-list">
+                    ${testTerms.map(term => `
+                        <div class="term-card">
+                            <div class="term-name">${term}</div>
+                            <div class="term-definition">${generateDefinitionForTerm(term)}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+            document.getElementById('results').appendChild(testDiv);
+        }
+
+        function testContentParsing() {
+            clearResults();
+            
+            const testContent = `
+                <h2>Key Terms and Places</h2>
+                <div class="key-terms">
+                    <p>Test Format 1: <strong>bold term</strong>: definition after colon</p>
+                    <p>- <strong>dash term</strong>: definition with dash prefix</p>
+                    <ul>
+                        <li>List term: definition in list format</li>
+                        <li>Plain term without definition</li>
+                    </ul>
+                    <p><strong>Bold only term</strong></p>
+                </div>
+            `;
+            
+            const extracted = extractVocabularyFromHTML(testContent);
+            
+            const testDiv = document.createElement('div');
+            testDiv.className = `test-section ${extracted.length > 0 ? 'success' : 'error'}`;
+            testDiv.innerHTML = `
+                <h3>Content Parsing Test</h3>
+                <p>${extracted.length > 0 ? '✅' : '❌'} Extracted ${extracted.length} terms from mixed format content</p>
+                <div class="test-content">
+                    <strong>Test Content:</strong>
+                    <pre>${testContent.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>
+                </div>
+                <div class="term-list">
+                    ${extracted.map(term => `
+                        <div class="term-card">
+                            <div class="term-name">${term.term}</div>
+                            <div class="term-definition">${term.definition}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+            document.getElementById('results').appendChild(testDiv);
+        }
+
+        function clearResults() {
+            document.getElementById('results').innerHTML = '';
+        }
+
+        // Auto-run tests on page load
+        window.onload = function() {
+            setTimeout(runAllTests, 500);
+        };
+    </script>
+</body>
+</html>
