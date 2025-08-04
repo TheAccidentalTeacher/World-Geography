@@ -73,23 +73,9 @@ app.get('/healthz', (req, res) => {
   res.status(200).send('OK');
 });
 
-// Simple root endpoint for Railway health checks
+// Serve the main lesson companion as the homepage
 app.get('/', (req, res) => {
-  res.status(200).json({
-    message: '🌍 World Geography Curriculum - AI Geography Hub',
-    status: 'healthy',
-    uptime: process.uptime(),
-    timestamp: new Date().toISOString(),
-    port: PORT,
-    environment: process.env.NODE_ENV || 'development',
-    services: ['AI Geography Hub', 'Daily Dashboard', 'Lesson Companion'],
-    endpoints: {
-      health: '/health',
-      aiHub: '/ai-geography-hub',
-      dashboard: '/dashboard',
-      lessons: '/browse'
-    }
-  });
+  res.sendFile(path.join(__dirname, 'public', 'new-lesson-companion.html'));
 });
 
 // SUPER SIMPLE health check for Railway
@@ -1791,11 +1777,6 @@ app.post('/api/extract-docx', async (req, res) => {
     console.error('❌ DOCX extraction error:', error);
     res.status(500).json({ error: error.message });
   }
-});
-
-// Serve the main lesson companion interface
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'new-lesson-companion.html'));
 });
 
 // Admin route for system management (keep the old interface for admin tasks)
