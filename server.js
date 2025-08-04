@@ -1934,16 +1934,6 @@ app.get('/admin', (req, res) => {
   `);
 });
 
-// Start server
-// Start the server
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-  console.log(`Health check: http://localhost:${PORT}/health`);
-  
-  // Connect to database after server starts
-  connectDB();
-});
-
 // Graceful shutdown handling
 process.on('SIGTERM', () => {
   console.log('Received SIGTERM, shutting down gracefully');
