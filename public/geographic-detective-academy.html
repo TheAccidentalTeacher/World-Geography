@@ -5187,12 +5187,17 @@
         
         // Panel switching functionality
         function showPanel(panelName) {
+            console.log(`🔍 DEBUG: showPanel called with: ${panelName}`);
+            
             // Hide all panels
             const panels = ['overview', 'teacher-guide', 'daily-structure', 'team-roles', 'investigation-events', 'assessments', 'student-materials', 'presentation', 'complete-package'];
             panels.forEach(panel => {
                 const element = document.getElementById(panel);
                 if (element) {
                     element.classList.add('hidden');
+                    console.log(`🔍 DEBUG: Hidden panel ${panel}`);
+                } else {
+                    console.log(`❌ DEBUG: Panel ${panel} not found!`);
                 }
             });
             
@@ -5205,17 +5210,23 @@
             const selectedPanel = document.getElementById(panelName);
             if (selectedPanel) {
                 selectedPanel.classList.remove('hidden');
+                console.log(`✅ DEBUG: Showing panel ${panelName}`);
                 
                 // Initialize presentation system if showing presentation panel
                 if (panelName === 'presentation') {
                     initializePresentationSystem();
                 }
+            } else {
+                console.log(`❌ DEBUG: Selected panel ${panelName} not found!`);
             }
             
             // Add active class to corresponding nav item
             const navItem = document.querySelector(`[data-panel="${panelName}"]`);
             if (navItem) {
                 navItem.classList.add('active');
+                console.log(`✅ DEBUG: Activated nav item for ${panelName}`);
+            } else {
+                console.log(`❌ DEBUG: Nav item for ${panelName} not found!`);
             }
             
             console.log(`📄 Switched to ${panelName} panel`);
