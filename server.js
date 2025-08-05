@@ -26,6 +26,22 @@ let slidesBucket;
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Add Content Security Policy headers
+app.use((req, res, next) => {
+  res.setHeader('Content-Security-Policy', 
+    "default-src 'self'; " +
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
+    "font-src 'self' https://fonts.gstatic.com data:; " +
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
+    "img-src 'self' data: https: blob:; " +
+    "connect-src 'self' https: wss:; " +
+    "frame-src 'self'; " +
+    "object-src 'none';"
+  );
+  next();
+});
+
 app.use(express.static('public'));
 
 // Serve PDF files statically
@@ -262,6 +278,11 @@ app.get('/simulation/settings', (req, res) => {
 // Legacy redirect for old broken panel system
 app.get('/simulation/geographic-detective-academy', (req, res) => {
   res.redirect('/simulation');
+});
+
+// Block access to the old broken file
+app.get('/geographic-detective-academy.html', (req, res) => {
+  res.redirect(301, '/simulation');
 });
 
 // Serve lessons directory
