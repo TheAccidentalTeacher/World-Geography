@@ -62,11 +62,11 @@ async function uploadSlide(filePath, fileName) {
 
 // Upload all slides from the slides directory
 async function uploadAllSlides() {
-    const slidesDir = path.join(__dirname, 'public', 'slides');
+    const slidesDir = path.join(__dirname, 'public', 'Presentation', 'all');
     
     try {
         const files = fs.readdirSync(slidesDir);
-        const slideFiles = files.filter(file => file.endsWith('.png'));
+        const slideFiles = files.filter(file => file.endsWith('.png')).sort();
         
         console.log(`📁 Found ${slideFiles.length} slide files to upload`);
         
