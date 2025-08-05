@@ -62,8 +62,7 @@ const connectDB = async () => {
       serverSelectionTimeoutMS: 10000, // 10 second timeout
       socketTimeoutMS: 45000, // 45 second socket timeout
       maxPoolSize: 10, // Maintain up to 10 socket connections
-      bufferCommands: false, // Disable mongoose buffering
-      bufferMaxEntries: 0 // Disable mongoose buffering
+      bufferCommands: false // Disable mongoose buffering
     });
     
     console.log('✅ Connected to MongoDB');
