@@ -56,7 +56,16 @@ const connectDB = async () => {
     const mongoUri = process.env.MONGODB_URI || 'mongodb+srv://scosom:nonPhubic4@brainstorm-cluster.bg60my0.mongodb.net/geography-curriculum';
     
     console.log('🔗 Connecting to MongoDB...');
-    await mongoose.connect(mongoUri);
+    
+    // Add timeout and retry options for Railway
+    await mongoose.connect(mongoUri, {
+      serverSelectionTimeoutMS: 10000, // 10 second timeout
+      socketTimeoutMS: 45000, // 45 second socket timeout
+      maxPoolSize: 10, // Maintain up to 10 socket connections
+      bufferCommands: false, // Disable mongoose buffering
+      bufferMaxEntries: 0 // Disable mongoose buffering
+    });
+    
     console.log('✅ Connected to MongoDB');
     console.log('📊 Database:', mongoose.connection.name);
     
@@ -69,6 +78,7 @@ const connectDB = async () => {
     return true;
   } catch (error) {
     console.error('❌ MongoDB connection error:', error.message);
+    console.error('🔄 Server will continue without database features');
     return false;
   }
 };
@@ -99,6 +109,15 @@ app.get('/healthz', (req, res) => {
   res.status(200).send('OK');
 });
 
+// Railway-specific health check
+app.get('/railway-health', (req, res) => {
+  res.status(200).json({
+    service: 'world-geography-curriculum',
+    status: 'healthy',
+    timestamp: Date.now()
+  });
+});
+
 // Serve the main lesson companion as the homepage
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'new-lesson-companion.html'));
@@ -106,7 +125,13 @@ app.get('/', (req, res) => {
 
 // SUPER SIMPLE health check for Railway
 app.get('/health', (req, res) => {
-  res.status(200).send('OK');
+  const dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
+  res.status(200).json({
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    uptime: Math.floor(process.uptime()),
+    database: dbStatus
+  });
 });
 
 // Serve slides from MongoDB GridFS
@@ -1025,23 +1050,35 @@ app.post('/api/ai/connections', async (req, res) => {
 });
 
 // Start the server
-app.listen(PORT, '0.0.0.0', () => {
+const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`);
   console.log(`Health check: http://0.0.0.0:${PORT}/health`);
   
-  // Connect to database after server starts
-  connectDB();
+  // Connect to database after server starts - don't block server startup
+  connectDB().catch(error => {
+    console.error('🔄 Database connection failed, continuing without database features');
+  });
 });
 
 // Graceful shutdown handling
 process.on('SIGTERM', () => {
   console.log('Received SIGTERM, shutting down gracefully');
-  process.exit(0);
+  server.close(() => {
+    console.log('HTTP server closed');
+    mongoose.connection.close().finally(() => {
+      process.exit(0);
+    });
+  });
 });
 
 process.on('SIGINT', () => {
   console.log('Received SIGINT, shutting down gracefully');
-  process.exit(0);
+  server.close(() => {
+    console.log('HTTP server closed');
+    mongoose.connection.close().finally(() => {
+      process.exit(0);
+    });
+  });
 });
 
 // Add comprehensive error handling to catch what's causing the crash
