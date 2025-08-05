@@ -127,10 +127,13 @@ Your **4-Quarter Master Plan** is now perfectly positioned:
 ## 🎮 **Live System Access**
 
 **Local Development**: `http://localhost:3000/geographic-detective-academy.html`
-**Railway Production**: Your deployed URL (with OpenAI integration)
+**Railway Production**: `https://world-geography-production.up.railway.app`
 
 ### **Key URLs**:
-- **Main Simulation**: `/geographic-detective-academy.html`
+- **🎯 Main Simulation**: `https://world-geography-production.up.railway.app/geographic-detective-academy.html`
+- **📊 AI Geography Hub**: `https://world-geography-production.up.railway.app/ai-geography-hub.html`
+- **🗺️ Curriculum Maps**: `https://world-geography-production.up.railway.app/curriculum-maps.html`
+- **📚 Lesson Companion**: `https://world-geography-production.up.railway.app/lesson-companion.html`
 - **Slides API**: `/api/slides` (JSON list of all 133 slides)
 - **Individual Slides**: `/slides/{filename}` (serves PNG images)
 - **Health Check**: `/api/health` (system status)
