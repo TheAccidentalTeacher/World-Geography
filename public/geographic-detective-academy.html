@@ -5684,7 +5684,7 @@
                 
                 <div class="slide-display">
                     <div id="slide-viewer" class="slide-viewer">
-                        <img id="slide-image" src="/Presentation/all/01_Geographic-Detective-Academy-Curriculum.png" alt="Slide 1" class="slide-image">
+                        <img id="slide-image" src="/api/slides/1" alt="Slide 1" class="slide-image">
                         <div class="slide-loading hidden">
                             <div class="loading-content">
                                 <div class="loading-spinner">🔄</div>
@@ -5864,7 +5864,102 @@
                 
                 // Initialize the presentation system
                 window.presentationSystem = new SimulationPresentation();
+                window.presentationSystem.initializePresentation();
                 console.log('🎬 Presentation system initialized successfully');
+                
+                // Add simple navigation functions for presentation
+                window.currentPresentationSlide = 1;
+                window.totalPresentationSlides = 133;
+                
+                window.previousSlide = function() {
+                    if (window.currentPresentationSlide > 1) {
+                        window.currentPresentationSlide--;
+                        updatePresentationSlide();
+                    }
+                };
+                
+                window.nextSlide = function() {
+                    if (window.currentPresentationSlide < window.totalPresentationSlides) {
+                        window.currentPresentationSlide++;
+                        updatePresentationSlide();
+                    }
+                };
+                
+                window.jumpToSlide = function(slideNumber) {
+                    const num = parseInt(slideNumber);
+                    if (num >= 1 && num <= window.totalPresentationSlides) {
+                        window.currentPresentationSlide = num;
+                        updatePresentationSlide();
+                    }
+                };
+                
+                window.toggleFullscreen = function() {
+                    const container = document.querySelector('.presentation-container');
+                    if (container) {
+                        container.classList.toggle('fullscreen');
+                    }
+                };
+                
+                window.updatePresentationSlide = function() {
+                    const slideImage = document.getElementById('slide-image');
+                    const slideCounter = document.querySelector('.slide-counter span');
+                    const currentSlideNum = document.getElementById('current-slide-num');
+                    const prevBtn = document.getElementById('prev-slide');
+                    const nextBtn = document.getElementById('next-slide');
+                    const jumpSelect = document.getElementById('slide-jump');
+                    
+                    if (slideImage) {
+                        console.log(`📥 Loading slide ${window.currentPresentationSlide} from API`);
+                        slideImage.src = `/api/slides/${window.currentPresentationSlide}`;
+                        slideImage.alt = `Geographic Detective Academy - Slide ${window.currentPresentationSlide}`;
+                        
+                        slideImage.onload = function() {
+                            console.log(`✅ Slide ${window.currentPresentationSlide} loaded successfully`);
+                        };
+                        
+                        slideImage.onerror = function() {
+                            console.error(`❌ Failed to load slide ${window.currentPresentationSlide}`);
+                        };
+                    }
+                    
+                    // Update counters
+                    if (currentSlideNum) currentSlideNum.textContent = window.currentPresentationSlide;
+                    
+                    // Update button states
+                    if (prevBtn) prevBtn.disabled = window.currentPresentationSlide <= 1;
+                    if (nextBtn) nextBtn.disabled = window.currentPresentationSlide >= window.totalPresentationSlides;
+                    
+                    // Update jump menu selection
+                    if (jumpSelect) jumpSelect.value = window.currentPresentationSlide;
+                };
+                
+                // Populate the jump menu
+                window.populateSlideJumpMenu = function() {
+                    const jumpSelect = document.getElementById('slide-jump');
+                    if (jumpSelect) {
+                        jumpSelect.innerHTML = '<option value="">Jump to Slide...</option>';
+                        for (let i = 1; i <= window.totalPresentationSlides; i++) {
+                            const option = document.createElement('option');
+                            option.value = i;
+                            option.textContent = `Slide ${i}`;
+                            jumpSelect.appendChild(option);
+                        }
+                        
+                        jumpSelect.addEventListener('change', function() {
+                            if (this.value) {
+                                window.jumpToSlide(this.value);
+                            }
+                        });
+                    }
+                };
+                
+                // Initialize the jump menu
+                setTimeout(() => {
+                    window.populateSlideJumpMenu();
+                    console.log('📋 Slide jump menu populated');
+                }, 500);
+                
+                console.log('🎬 Simple presentation navigation functions added');
                 
                 // Verify status buttons are working
                 const classifiedBtn = document.querySelector('.badge.classified');
