@@ -1,0 +1,604 @@
+/* ===== GEOGRAPHIC DETECTIVE ACADEMY - PRINT STYLES ===== */
+
+@media print {
+    /* ===== BASIC PRINT SETUP ===== */
+    * {
+        -webkit-print-color-adjust: exact !important;
+        color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    @page {
+        size: A4;
+        margin: 1in 0.75in;
+    }
+
+    body {
+        font-family: 'Times New Roman', serif;
+        font-size: 12pt;
+        line-height: 1.4;
+        color: #000;
+        background: white;
+    }
+
+    /* ===== HIDE SCREEN-ONLY ELEMENTS ===== */
+    .header,
+    .navigation,
+    .loading-screen,
+    .btn,
+    button,
+    .print-controls,
+    .modal,
+    .tooltip,
+    [data-print="hide"] {
+        display: none !important;
+    }
+
+    /* ===== MAIN LAYOUT ===== */
+    .main-content {
+        padding: 0;
+        margin: 0;
+        max-width: none;
+        width: 100%;
+    }
+
+    .content-container {
+        background: none;
+        box-shadow: none;
+        border-radius: 0;
+        margin: 0;
+        padding: 0;
+    }
+
+    .content-panel {
+        display: block !important;
+        padding: 0;
+        page-break-after: avoid;
+    }
+
+    /* ===== TYPOGRAPHY ===== */
+    h1 {
+        font-size: 18pt;
+        font-weight: bold;
+        margin: 0 0 12pt 0;
+        page-break-after: avoid;
+        color: #000;
+    }
+
+    h2 {
+        font-size: 16pt;
+        font-weight: bold;
+        margin: 12pt 0 8pt 0;
+        page-break-after: avoid;
+        color: #000;
+    }
+
+    h3 {
+        font-size: 14pt;
+        font-weight: bold;
+        margin: 10pt 0 6pt 0;
+        page-break-after: avoid;
+        color: #000;
+    }
+
+    h4 {
+        font-size: 12pt;
+        font-weight: bold;
+        margin: 8pt 0 4pt 0;
+        page-break-after: avoid;
+        color: #000;
+    }
+
+    h5, h6 {
+        font-size: 11pt;
+        font-weight: bold;
+        margin: 6pt 0 3pt 0;
+        page-break-after: avoid;
+        color: #000;
+    }
+
+    p {
+        margin: 0 0 6pt 0;
+        text-align: justify;
+        orphans: 2;
+        widows: 2;
+    }
+
+    /* ===== LISTS ===== */
+    ul, ol {
+        margin: 6pt 0 6pt 20pt;
+        padding: 0;
+    }
+
+    li {
+        margin: 3pt 0;
+        page-break-inside: avoid;
+    }
+
+    /* ===== TABLES ===== */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 12pt 0;
+        page-break-inside: avoid;
+    }
+
+    th, td {
+        border: 1pt solid #000;
+        padding: 6pt 8pt;
+        text-align: left;
+        vertical-align: top;
+    }
+
+    th {
+        background: #f0f0f0 !important;
+        font-weight: bold;
+    }
+
+    thead {
+        display: table-header-group;
+    }
+
+    tfoot {
+        display: table-footer-group;
+    }
+
+    /* ===== CARDS AND SECTIONS ===== */
+    .card {
+        background: none;
+        border: 1pt solid #000;
+        border-radius: 0;
+        box-shadow: none;
+        margin: 12pt 0;
+        page-break-inside: avoid;
+    }
+
+    .card-header {
+        background: #f0f0f0 !important;
+        color: #000;
+        padding: 8pt 12pt;
+        border-bottom: 1pt solid #000;
+        margin: 0;
+    }
+
+    .card-body {
+        padding: 12pt;
+        background: none;
+    }
+
+    .card-footer {
+        background: #f0f0f0 !important;
+        border-top: 1pt solid #000;
+        padding: 8pt 12pt;
+    }
+
+    .section-header {
+        background: none;
+        border: 2pt solid #000;
+        border-radius: 0;
+        padding: 12pt;
+        margin: 0 0 24pt 0;
+        text-align: center;
+        page-break-after: avoid;
+    }
+
+    .section-header h1 {
+        margin: 0 0 6pt 0;
+        font-size: 20pt;
+    }
+
+    .mission-statement {
+        margin: 0;
+        font-style: italic;
+        font-size: 11pt;
+    }
+
+    /* ===== GRID LAYOUTS ===== */
+    .grid-2,
+    .grid-3,
+    .grid-4,
+    .grid-auto {
+        display: block;
+    }
+
+    .grid-2 > *,
+    .grid-3 > *,
+    .grid-4 > *,
+    .grid-auto > * {
+        margin-bottom: 12pt;
+        page-break-inside: avoid;
+    }
+
+    /* ===== SPECIFIC COMPONENTS ===== */
+    .academy-stats {
+        display: block;
+        margin: 12pt 0;
+        page-break-inside: avoid;
+    }
+
+    .stat {
+        display: inline-block;
+        width: 23%;
+        margin: 0 1% 6pt 0;
+        padding: 8pt;
+        border: 1pt solid #000;
+        text-align: center;
+        background: none;
+        vertical-align: top;
+    }
+
+    .stat-number {
+        font-size: 16pt;
+        font-weight: bold;
+        display: block;
+        margin-bottom: 3pt;
+    }
+
+    .stat-label {
+        font-size: 9pt;
+        text-transform: uppercase;
+        font-weight: bold;
+    }
+
+    .timeline-section {
+        border-left: 3pt solid #000;
+        padding-left: 12pt;
+        margin: 12pt 0;
+        background: none;
+        page-break-inside: avoid;
+    }
+
+    .timeline-section h4 {
+        margin-top: 0;
+    }
+
+    /* ===== TEACHER GUIDE SPECIFIC ===== */
+    .teacher-section {
+        page-break-before: always;
+        margin-bottom: 24pt;
+    }
+
+    .teacher-section:first-child {
+        page-break-before: avoid;
+    }
+
+    .daily-script-card {
+        border: 1pt solid #000;
+        margin: 12pt 0;
+        page-break-inside: avoid;
+    }
+
+    .script-header {
+        background: #f0f0f0 !important;
+        padding: 8pt 12pt;
+        border-bottom: 1pt solid #000;
+    }
+
+    .script-header h3 {
+        margin: 0;
+        font-size: 14pt;
+    }
+
+    .script-meta {
+        margin: 3pt 0 0 0;
+        font-size: 10pt;
+        font-style: italic;
+    }
+
+    .script-box {
+        background: #f8f8f8 !important;
+        border: 1pt solid #ccc;
+        padding: 8pt;
+        margin: 6pt 0;
+        font-family: 'Courier New', monospace;
+        font-size: 10pt;
+    }
+
+    .facilitation-section {
+        margin: 12pt 0;
+        page-break-inside: avoid;
+    }
+
+    .facilitation-section h5 {
+        margin: 6pt 0 3pt 0;
+        font-size: 11pt;
+    }
+
+    /* ===== ASSESSMENT RUBRICS ===== */
+    .rubric-table {
+        display: table;
+        width: 100%;
+        border-collapse: collapse;
+        margin: 12pt 0;
+    }
+
+    .rubric-row {
+        display: table-row;
+    }
+
+    .rubric-cell {
+        display: table-cell;
+        border: 1pt solid #000;
+        padding: 6pt 8pt;
+        vertical-align: top;
+    }
+
+    .header-row .rubric-cell {
+        background: #f0f0f0 !important;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .skill-category {
+        border-right: 2pt solid #000;
+        background: #f8f8f8 !important;
+    }
+
+    .skill-category h4 {
+        margin: 0 0 3pt 0;
+        font-size: 11pt;
+    }
+
+    .skill-category p {
+        margin: 0;
+        font-size: 9pt;
+        font-style: italic;
+    }
+
+    /* ===== INVESTIGATION CARDS ===== */
+    .investigation-card {
+        border: 1pt solid #000;
+        margin: 12pt 0;
+        page-break-inside: avoid;
+        background: none;
+    }
+
+    .case-header {
+        background: #f0f0f0 !important;
+        padding: 8pt 12pt;
+        border-bottom: 1pt solid #000;
+    }
+
+    .case-number {
+        font-weight: bold;
+        font-size: 11pt;
+    }
+
+    .case-title {
+        font-weight: bold;
+        font-size: 13pt;
+        margin: 3pt 0;
+    }
+
+    .case-badges {
+        margin: 6pt 0 0 0;
+    }
+
+    .badge {
+        border: 1pt solid #000;
+        padding: 2pt 6pt;
+        margin: 0 3pt 0 0;
+        font-size: 8pt;
+        font-weight: bold;
+        background: #f0f0f0 !important;
+        color: #000 !important;
+    }
+
+    .case-summary,
+    .case-details {
+        padding: 12pt;
+        background: none;
+    }
+
+    .scenario-box {
+        border: 1pt solid #000;
+        background: #f8f8f8 !important;
+        padding: 8pt;
+        margin: 6pt 0;
+    }
+
+    .scenario-box h4 {
+        margin: 0 0 3pt 0;
+        font-size: 11pt;
+    }
+
+    .objectives-grid {
+        display: block;
+    }
+
+    .learning-objectives,
+    .geographic-skills {
+        border: 1pt solid #000;
+        background: #f8f8f8 !important;
+        padding: 8pt;
+        margin: 6pt 0;
+        page-break-inside: avoid;
+    }
+
+    .learning-objectives h4,
+    .geographic-skills h4 {
+        margin: 0 0 6pt 0;
+        font-size: 11pt;
+    }
+
+    /* ===== PAGE BREAKS ===== */
+    .page-break {
+        page-break-before: always;
+    }
+
+    .page-break-avoid {
+        page-break-inside: avoid;
+    }
+
+    .page-break-after {
+        page-break-after: always;
+    }
+
+    /* ===== HEADERS AND FOOTERS ===== */
+    .print-header {
+        position: running(header);
+        text-align: center;
+        font-size: 10pt;
+        font-weight: bold;
+        padding: 6pt 0;
+        border-bottom: 1pt solid #000;
+    }
+
+    .print-footer {
+        position: running(footer);
+        text-align: center;
+        font-size: 9pt;
+        padding: 6pt 0;
+        border-top: 1pt solid #000;
+    }
+
+    @page {
+        @top-center {
+            content: "Geographic Detective Academy - Teacher Implementation Guide";
+            font-size: 10pt;
+            font-weight: bold;
+        }
+        
+        @bottom-center {
+            content: "Page " counter(page) " of " counter(pages);
+            font-size: 9pt;
+        }
+    }
+
+    /* ===== SPECIAL PRINT SECTIONS ===== */
+    .print-only {
+        display: block !important;
+    }
+
+    .screen-only {
+        display: none !important;
+    }
+
+    /* ===== ROLE CARDS ===== */
+    .role-card {
+        border: 1pt solid #000;
+        margin: 6pt 0;
+        padding: 8pt;
+        background: none;
+        page-break-inside: avoid;
+    }
+
+    .role-card h5 {
+        margin: 0 0 3pt 0;
+        font-size: 11pt;
+    }
+
+    .role-card p {
+        margin: 0;
+        font-size: 10pt;
+    }
+
+    /* ===== MATERIALS GRID ===== */
+    .materials-grid {
+        display: block;
+    }
+
+    .material-card {
+        border: 1pt solid #000;
+        margin: 6pt 0;
+        padding: 8pt;
+        background: none;
+        page-break-inside: avoid;
+    }
+
+    .material-header h4 {
+        margin: 0 0 3pt 0;
+        font-size: 11pt;
+    }
+
+    .material-meta {
+        font-size: 9pt;
+        font-style: italic;
+        margin: 3pt 0 6pt 0;
+    }
+
+    /* ===== EVIDENCE AND ASSESSMENT ===== */
+    .evidence-grid {
+        display: block;
+    }
+
+    .evidence-item {
+        border: 1pt solid #000;
+        margin: 6pt 0;
+        padding: 8pt;
+        background: none;
+        page-break-inside: avoid;
+    }
+
+    .evidence-item h5 {
+        margin: 0 0 3pt 0;
+        font-size: 11pt;
+    }
+
+    .assessment-card {
+        border: 1pt solid #000;
+        margin: 12pt 0;
+        background: none;
+        page-break-inside: avoid;
+    }
+
+    .assessment-card-header {
+        background: #f0f0f0 !important;
+        color: #000;
+        padding: 8pt 12pt;
+        border-bottom: 1pt solid #000;
+    }
+
+    .assessment-card-header h3 {
+        margin: 0;
+        font-size: 12pt;
+    }
+
+    .assessment-details {
+        display: block !important;
+        padding: 12pt;
+    }
+
+    /* ===== FINAL ADJUSTMENTS ===== */
+    .content-panel.active {
+        display: block !important;
+    }
+
+    /* Ensure proper spacing between major sections */
+    .content-panel > .card:first-child {
+        margin-top: 0;
+    }
+
+    .content-panel > .card:last-child {
+        margin-bottom: 0;
+    }
+
+    /* Print-specific utility classes */
+    .print-text-small {
+        font-size: 9pt !important;
+    }
+
+    .print-text-large {
+        font-size: 14pt !important;
+    }
+
+    .print-bold {
+        font-weight: bold !important;
+    }
+
+    .print-italic {
+        font-style: italic !important;
+    }
+
+    .print-center {
+        text-align: center !important;
+    }
+
+    .print-left {
+        text-align: left !important;
+    }
+
+    .print-right {
+        text-align: right !important;
+    }
+}

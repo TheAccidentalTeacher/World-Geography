@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geographic Detective Academy - Modular System</title>
+    <link rel="stylesheet" href="css/core-styles.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/print.css" media="print">
+    <link rel="icon" href="../favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <!-- Main Application Container -->
+    <div id="app">
+        <!-- Loading Screen -->
+        <div id="loading-screen" class="loading-screen">
+            <div class="loading-content">
+                <div class="loading-spinner">🕵️</div>
+                <h3>Geographic Detective Academy</h3>
+                <p>Initializing Investigation System...</p>
+            </div>
+        </div>
+
+        <!-- Header Component -->
+        <header class="header">
+            <div class="logo">
+                <h1>🗺️ Geographic Detective Academy</h1>
+                <div class="subtitle">Q1 Simulation - The Mystery of the Missing Maps</div>
+            </div>
+            <div class="status-badges">
+                <div class="badge classified">CLASSIFIED</div>
+                <div class="badge active-case">ACTIVE CASE</div>
+            </div>
+        </header>
+
+        <!-- Navigation Component -->
+        <nav class="navigation" id="main-navigation">
+            <!-- Navigation will be populated by JavaScript -->
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Dynamic content panels will be loaded here -->
+            <div id="content-container" class="content-container">
+                <!-- Content loaded dynamically -->
+            </div>
+        </main>
+    </div>
+
+    <!-- JavaScript Modules -->
+    <script src="js/core/config.js"></script>
+    <script src="js/core/navigation.js"></script>
+    <script src="js/core/content-loader.js"></script>
+    <script src="js/modules/overview.js"></script>
+    <script src="js/modules/teacher-guide.js"></script>
+    <script src="js/modules/daily-structure.js"></script>
+    <script src="js/modules/investigation-events.js"></script>
+    <script src="js/modules/team-roles.js"></script>
+    <script src="js/modules/student-materials.js"></script>
+    <script src="js/modules/assessment-system.js"></script>
+    <script src="js/modules/complete-package.js"></script>
+    <script src="js/core/app.js"></script>
+</body>
+</html>
