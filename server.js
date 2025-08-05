@@ -2,12 +2,21 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
+const axios = require('axios');
 const { GridFSBucket } = require('mongodb');
 const { Curriculum, Module, Lesson } = require('./models');
 const { extractAllPDFs } = require('./extract-pdfs');
 const { schoolCalendar, calendarUtils } = require('./calendar-config');
 const { extractCurriculumForDashboard } = require('./extract-curriculum-dashboard');
 const { createSimulationRoutes } = require('./simulation-system');
+
+// Try to load Replicate - it's optional
+let replicate = null;
+try {
+  replicate = require('replicate');
+} catch (error) {
+  console.log('⚠️ Replicate not installed - AI map generation disabled');
+}
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -954,6 +963,25 @@ process.on('SIGINT', () => {
   console.log('Received SIGINT, shutting down gracefully');
   process.exit(0);
 });
+
+// Add comprehensive error handling to catch what's causing the crash
+process.on('uncaughtException', (error) => {
+  console.error('🚨 UNCAUGHT EXCEPTION:', error);
+  console.error('Stack:', error.stack);
+  // Don't exit immediately, let's see what happens
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('🚨 UNHANDLED PROMISE REJECTION:', reason);
+  console.error('Promise:', promise);
+  // Don't exit immediately, let's see what happens
+});
+
+// Log memory usage periodically to check for memory leaks  
+setInterval(() => {
+  const memUsage = process.memoryUsage();
+  console.log(`📊 Memory: RSS=${Math.round(memUsage.rss/1024/1024)}MB, Heap=${Math.round(memUsage.heapUsed/1024/1024)}MB`);
+}, 30000); // Every 30 seconds
 
 // =================================
 // TOOL 1: ADVANCED MAP GENERATOR
