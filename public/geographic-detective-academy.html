@@ -2646,7 +2646,7 @@
             <span class="icon">📋</span>
             <span class="label">Student Materials</span>
         </div>
-        <div class="nav-item" data-panel="gamma-prompts">
+        <div class="nav-item" data-panel="presentation">
             <span class="icon">📽️</span>
             <span class="label">Presentation</span>
         </div>
@@ -3072,10 +3072,10 @@
                     <h3>🗓️ View Detailed Day Structure</h3>
                     <p>Click on any day above to see detailed activities, or use the Teacher Guide for complete lesson scripts.</p>
                     <div class="nav-buttons">
-                        <button class="nav-btn" onclick="window.simulationInterface.showPanel('teacher-guide')">
+                        <button class="nav-btn" onclick="showPanel('teacher-guide')">
                             📖 View Complete Teacher Guide
                         </button>
-                        <button class="nav-btn" onclick="window.simulationInterface.showPanel('presentation')">
+                        <button class="nav-btn" onclick="showPanel('presentation')">
                             🎬 Access Presentation Slides
                         </button>
                     </div>
@@ -5188,7 +5188,7 @@
         // Panel switching functionality
         function showPanel(panelName) {
             // Hide all panels
-            const panels = ['overview', 'teacher-guide', 'daily-structure', 'complete-package', 'presentation'];
+            const panels = ['overview', 'teacher-guide', 'daily-structure', 'team-roles', 'investigation-events', 'assessments', 'student-materials', 'presentation', 'complete-package'];
             panels.forEach(panel => {
                 const element = document.getElementById(panel);
                 if (element) {
@@ -5205,6 +5205,11 @@
             const selectedPanel = document.getElementById(panelName);
             if (selectedPanel) {
                 selectedPanel.classList.remove('hidden');
+                
+                // Initialize presentation system if showing presentation panel
+                if (panelName === 'presentation') {
+                    initializePresentationSystem();
+                }
             }
             
             // Add active class to corresponding nav item
@@ -5214,6 +5219,16 @@
             }
             
             console.log(`📄 Switched to ${panelName} panel`);
+        }
+
+        // Initialize presentation system when panel is shown
+        function initializePresentationSystem() {
+            if (!window.presentationSystem) {
+                console.log('🎬 Initializing presentation system...');
+                window.presentationSystem = new SimulationPresentation();
+                window.presentationSystem.initializePresentation();
+                console.log('✅ Presentation system ready');
+            }
         }
 
         // Initialize navigation when DOM loads
