@@ -278,7 +278,7 @@ app.get('/simulation/teacher-guide', (req, res) => {
 });
 
 app.get('/simulation/presentation', (req, res) => {
-  res.send('<h1>Presentation</h1><p>Under construction</p><a href="/simulation">Back to Hub</a>');
+  res.sendFile(path.join(__dirname, 'public', 'detective-academy', 'presentation.html'));
 });
 
 app.get('/simulation/student-dashboard', (req, res) => {

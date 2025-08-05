@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geographic Detective Academy - Presentation System</title>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Source+Sans+Pro:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --detective-gold: #D4AF37;
+            --detective-dark-gold: #B8941F;
+            --detective-deep-blue: #0F1419;
+            --detective-navy: #1a2332;
+            --detective-slate: #2c3e50;
+            --detective-light-gray: #ecf0f1;
+            --detective-cream: #f8f6f0;
+            --detective-accent: #c0392b;
+            --detective-success: #27ae60;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Source Sans Pro', sans-serif;
+            background: linear-gradient(135deg, var(--detective-deep-blue) 0%, var(--detective-navy) 100%);
+            color: var(--detective-light-gray);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .presentation-header {
+            background: linear-gradient(90deg, var(--detective-navy) 0%, var(--detective-slate) 100%);
+            padding: 1rem 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            border-bottom: 3px solid var(--detective-gold);
+            position: relative;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .detective-badge {
+            width: 50px;
+            height: 50px;
+            background: var(--detective-gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--detective-deep-blue);
+            font-weight: bold;
+            text-shadow: none;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+        }
+
+        .header-title h1 {
+            font-family: 'Crimson Text', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--detective-gold);
+            margin: 0;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .control-button {
+            background: linear-gradient(135deg, var(--detective-gold) 0%, var(--detective-dark-gold) 100%);
+            color: var(--detective-deep-blue);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
+        }
+
+        .control-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+            background: linear-gradient(135deg, #E6C547 0%, #D4AF37 100%);
+        }
+
+        .main-container {
+            display: flex;
+            height: calc(100vh - 80px);
+            max-width: 1400px;
+            margin: 0 auto;
+            gap: 1rem;
+            padding: 1rem;
+        }
+
+        .sidebar {
+            width: 300px;
+            background: rgba(28, 40, 56, 0.95);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            overflow-y: auto;
+            max-height: 100%;
+        }
+
+        .sidebar h2 {
+            font-family: 'Crimson Text', serif;
+            color: var(--detective-gold);
+            margin-bottom: 1.5rem;
+            font-size: 1.4rem;
+            text-align: center;
+            border-bottom: 2px solid var(--detective-gold);
+            padding-bottom: 0.5rem;
+        }
+
+        .slide-navigation {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .nav-button {
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            color: var(--detective-light-gray);
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .nav-button:hover, .nav-button.active {
+            background: linear-gradient(135deg, var(--detective-gold) 0%, var(--detective-dark-gold) 100%);
+            color: var(--detective-deep-blue);
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+        }
+
+        .slide-controls {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .control-btn {
+            flex: 1;
+            background: var(--detective-slate);
+            border: 1px solid var(--detective-gold);
+            color: var(--detective-gold);
+            padding: 0.6rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .control-btn:hover:not(:disabled) {
+            background: var(--detective-gold);
+            color: var(--detective-deep-blue);
+        }
+
+        .control-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .slide-counter {
+            text-align: center;
+            background: rgba(212, 175, 55, 0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            margin-bottom: 1rem;
+        }
+
+        .slide-counter .current-slide {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--detective-gold);
+            display: block;
+        }
+
+        .slide-counter .total-slides {
+            color: var(--detective-light-gray);
+            font-size: 0.9rem;
+        }
+
+        .presentation-area {
+            flex: 1;
+            background: rgba(28, 40, 56, 0.95);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .slide-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .slide-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .slide-image:hover {
+            transform: scale(1.02);
+        }
+
+        .slide-info {
+            background: rgba(212, 175, 55, 0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .slide-info h3 {
+            color: var(--detective-gold);
+            margin-bottom: 0.5rem;
+            font-family: 'Crimson Text', serif;
+            font-size: 1.2rem;
+        }
+
+        .slide-info p {
+            color: var(--detective-light-gray);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .fullscreen-controls {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            display: flex;
+            gap: 0.5rem;
+            z-index: 10;
+        }
+
+        .fullscreen-btn {
+            background: rgba(212, 175, 55, 0.9);
+            color: var(--detective-deep-blue);
+            border: none;
+            padding: 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .fullscreen-btn:hover {
+            background: var(--detective-gold);
+            transform: scale(1.1);
+        }
+
+        /* Fullscreen Modal */
+        .fullscreen-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            cursor: pointer;
+        }
+
+        .fullscreen-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .fullscreen-slide {
+            max-width: 95vw;
+            max-height: 95vh;
+            object-fit: contain;
+            box-shadow: 0 0 50px rgba(212, 175, 55, 0.3);
+        }
+
+        .fullscreen-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(212, 175, 55, 0.8);
+            color: var(--detective-deep-blue);
+            border: none;
+            padding: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .fullscreen-nav:hover {
+            background: var(--detective-gold);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .fullscreen-nav.prev {
+            left: 2rem;
+        }
+
+        .fullscreen-nav.next {
+            right: 2rem;
+        }
+
+        .fullscreen-close {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            background: rgba(192, 57, 43, 0.8);
+            color: white;
+            border: none;
+            padding: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .fullscreen-close:hover {
+            background: #e74c3c;
+            transform: scale(1.1);
+        }
+
+        .fullscreen-info {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(28, 40, 56, 0.9);
+            color: var(--detective-gold);
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid var(--detective-gold);
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: var(--detective-gold);
+        }
+
+        .error {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--detective-accent);
+            font-size: 1.1rem;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .main-container {
+                flex-direction: column;
+                height: auto;
+                min-height: calc(100vh - 80px);
+            }
+
+            .sidebar {
+                width: 100%;
+                order: 2;
+                max-height: 400px;
+            }
+
+            .presentation-area {
+                order: 1;
+                min-height: 60vh;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .main-container {
+                padding: 0.5rem;
+            }
+
+            .presentation-area, .sidebar {
+                padding: 1rem;
+            }
+
+            .fullscreen-nav, .fullscreen-close {
+                width: 50px;
+                height: 50px;
+                font-size: 1.2rem;
+            }
+        }
+
+        /* Animation for slide transitions */
+        .slide-container.transitioning .slide-image {
+            opacity: 0.7;
+            transform: scale(0.95);
+        }
+
+        .slide-image {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <header class="presentation-header">
+        <div class="header-content">
+            <div class="header-title">
+                <div class="detective-badge">🔍</div>
+                <h1>Geographic Detective Academy - Presentation System</h1>
+            </div>
+            <div class="header-controls">
+                <button class="control-button" onclick="toggleFullscreen()">
+                    📺 Full Screen
+                </button>
+                <a href="/simulation" class="control-button">
+                    🏠 Back to Hub
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <aside class="sidebar">
+            <h2>Slide Navigation</h2>
+            
+            <div class="slide-controls">
+                <button class="control-btn" id="prevBtn" onclick="previousSlide()">← Prev</button>
+                <button class="control-btn" id="nextBtn" onclick="nextSlide()">Next →</button>
+            </div>
+
+            <div class="slide-counter">
+                <span class="current-slide" id="currentSlideNum">1</span>
+                <span class="total-slides">of <span id="totalSlides">133</span></span>
+            </div>
+
+            <div class="slide-navigation" id="slideNavigation">
+                <div class="nav-button active" onclick="goToSlide(1)" data-slide="1">
+                    01 - Geographic Detective Academy Curriculum
+                </div>
+                <button class="control-btn" onclick="toggleNavigationExpanded()" id="expandNavBtn">
+                    Show All Slides
+                </button>
+            </div>
+        </aside>
+
+        <main class="presentation-area">
+            <div class="fullscreen-controls">
+                <button class="fullscreen-btn" onclick="toggleFullscreen()" title="Full Screen">
+                    ⛶
+                </button>
+            </div>
+
+            <div class="slide-container" id="slideContainer">
+                <div class="loading" id="loadingIndicator">Loading slide...</div>
+            </div>
+
+            <div class="slide-info" id="slideInfo">
+                <h3 id="slideTitle">Geographic Detective Academy Curriculum</h3>
+                <p id="slideDescription">Welcome to the Geographic Detective Academy! This presentation will guide you through our comprehensive curriculum designed to turn students into expert geographic investigators.</p>
+            </div>
+        </main>
+    </div>
+
+    <!-- Fullscreen Modal -->
+    <div class="fullscreen-modal" id="fullscreenModal" onclick="closeFullscreen(event)">
+        <img class="fullscreen-slide" id="fullscreenImage" alt="Presentation Slide">
+        <button class="fullscreen-nav prev" onclick="previousSlide(event)">‹</button>
+        <button class="fullscreen-nav next" onclick="nextSlide(event)">›</button>
+        <button class="fullscreen-close" onclick="closeFullscreen(event)">×</button>
+        <div class="fullscreen-info">
+            <strong id="fullscreenTitle">Slide Title</strong><br>
+            <span id="fullscreenCounter">1 of 133</span>
+        </div>
+    </div>
+
+    <script>
+        class PresentationSystem {
+            constructor() {
+                this.currentSlide = 1;
+                this.totalSlides = 133;
+                this.isFullscreen = false;
+                this.navigationExpanded = false;
+                this.slideData = this.generateSlideData();
+                this.init();
+            }
+
+            generateSlideData() {
+                const slides = [];
+                const slideNames = [
+                    "Geographic Detective Academy Curriculum",
+                    "What is Geographic Detective Academy",
+                    "Your 12-Day Journey as Geographic Detectives",
+                    "Essential Skills of a Geographic Detective",
+                    "Your Geographic Detective Toolkit",
+                    "Setting Up Your Detective Headquarters",
+                    "Student Detective Roles",
+                    "Anatomy of a Geographic Case File",
+                    "The Geographic Investigation Process",
+                    "Measuring Your Detective Success",
+                    "Your First Assignment Awaits",
+                    "CASE 1 - MYSTERY IN THE AMAZON",
+                    "Case Briefing - The Missing Explorer",
+                    "Geographic Profile - The Amazon Rainforest",
+                    "Physical Geography Clues",
+                    "Following the Rivers - Key to the Mystery",
+                    "Climate Factors - Racing Against Time",
+                    "Vegetation Clues - Reading the Rainforest",
+                    "Terrain Investigation - Following the High Ground",
+                    "Evidence Collection - Piecing Together the Puzzle",
+                    "Geographic Deduction - Narrowing the Search",
+                    "Case Solved - Dr Rivera Located",
+                    "Mission Complete - What We Learned",
+                    "CASE 2 - MYSTERY IN THE SAHARA",
+                    "Case Briefing - The Lost Caravan",
+                    "Geographic Profile - The Sahara Desert",
+                    "Desert Climate - Extreme Conditions",
+                    "Desert Landforms - Reading the Landscape",
+                    "Navigation Challenges - Finding Your Way",
+                    "Water Resources - Desert Lifelines",
+                    "Desert Peoples - Cultural Geography Insights",
+                    "Evidence Collection - Desert Clues",
+                    "Geographic Deduction - Tracking the Caravan",
+                    "Case Solved - Caravan Located",
+                    "Mission Complete - What We Learned",
+                    "CASE 3 - MYSTERY IN THE HIMALAYAS",
+                    "Case Briefing - The Sacred Artifact",
+                    "Geographic Profile - The Himalayan Mountains",
+                    "Mountain Formation - The Birth of Giants",
+                    "Vertical Climate Zones - Climbing Through Ecosystems",
+                    "Cultural Geography - Mountain Traditions",
+                    "Sacred Geography - Spiritual Landscapes",
+                    "Mountain Transportation - Navigating the Heights",
+                    "Evidence Collection - Mountain Clues",
+                    "Geographic Deduction - Tracking the Artifact",
+                    "Case Solved - Artifact Located",
+                    "Mission Complete - What We Learned",
+                    "Geographic Detective Academy Curriculum Part 2",
+                    "CASE 4 - MYSTERY OF THE AMAZON RIVER",
+                    "Case Briefing - The Mysterious River Change",
+                    "Geographic Profile - The Amazon River Basin",
+                    "River System Dynamics - From Mountains to Ocean",
+                    "Water Quality - Reading the Rivers Health",
+                    "Watersheds - Everything Flows Downstream",
+                    "Human Impacts - Changing River Systems",
+                    "River Communities - Lives Connected to Water",
+                    "Evidence Collection - Water Clues",
+                    "Geographic Deduction - Tracking Upstream",
+                    "Case Solved - Contamination Source Located",
+                    "Mission Complete - What We Learned",
+                    "CASE 5 - MYSTERY IN THE METROPOLIS",
+                    "Case Briefing - The Vanishing Green Spaces",
+                    "Geographic Profile - Urban Landscapes",
+                    "Urban Planning - Designing City Spaces",
+                    "Urban Patterns - How Cities Grow",
+                    "Green Spaces - Urban Oases",
+                    "Transportation Networks - City Connections",
+                    "Urban Economics - Following the Money",
+                    "Evidence Collection - Urban Clues",
+                    "Geographic Deduction - Connecting the Dots",
+                    "Case Solved - Development Scheme Exposed",
+                    "Mission Complete - What We Learned",
+                    "CASE 6 - JURISDICTIONAL CRISIS",
+                    "Political Geography Investigation",
+                    "International Boundaries - Types and Characteristics",
+                    "Maritime Boundaries - Ocean Territory Investigation",
+                    "Disputed Territories - Conflict Investigation",
+                    "Government Geography - Political Organization Investigation",
+                    "Electoral Geography - Voting Pattern Investigation",
+                    "Geopolitical Alliances - International Relations Investigation",
+                    "Geographic Conflict Resolution - Boundary Mediation Techniques",
+                    "Jurisdictional Justice - Political Geography Success",
+                    "CASE 7 - ANCIENT CIVILIZATIONS UNCOVERED",
+                    "Mesopotamian Geography Investigation",
+                    "Egyptian Civilization - Geographic Clues",
+                    "Indus Valley Civilization - Geographic Mystery",
+                    "Chinese Civilization - Geographic Advantages",
+                    "Greek Civilization - Geographic Influence Investigation",
+                    "Roman Roads - Ancient Transportation Investigation",
+                    "Pre-Columbian Civilizations - American Geographic Mastery",
+                    "Ancient Trade Networks - Historical Economic Geography",
+                    "Geographic Detective Academy Curriculum Part 3",
+                    "Geographic Patterns Decoded",
+                    "Climate Culture Connection Patterns",
+                    "Economic Resource Distribution Patterns",
+                    "Political Physical Geography Correlations",
+                    "Population Distribution Patterns",
+                    "Urban Development Patterns",
+                    "Agricultural Land Use Patterns",
+                    "Language Distribution Patterns",
+                    "Disease Diffusion Patterns",
+                    "Geographic Patterns Decoded Synthesis Achievement",
+                    "Regional Geography Mastery",
+                    "North American Regional Investigation",
+                    "South American Regional Investigation",
+                    "European Regional Investigation",
+                    "African Regional Investigation",
+                    "Asian Regional Investigation",
+                    "Oceania Regional Investigation",
+                    "Polar Regions Investigation",
+                    "Multi-Regional Comparison Analysis",
+                    "Regional Geography Mastery Certification",
+                    "Final Investigation Preparation",
+                    "Advanced Geographic Tools Distribution",
+                    "Geographic Information Systems - Digital Investigation Tools",
+                    "Remote Sensing - Earth Observation Investigation",
+                    "Geographic Fieldwork - On Site Investigation Methods",
+                    "Geographic Data Collection - Research Investigation Methods",
+                    "Geographic Communication - Investigation Presentation Methods",
+                    "Geographic Problem Solving - Analytical Investigation Strategies",
+                    "Team Investigation - Collaborative Geographic Methods",
+                    "Final Geographic Mission - Investigation Parameters",
+                    "Final Global Mystery",
+                    "Individual Geographic Excellence",
+                    "Team Geographic Investigation Excellence",
+                    "Geographic Mastery Showcase",
+                    "Geographic Knowledge in Action",
+                    "Geographic Career Exploration",
+                    "Geographic Learning Journey",
+                    "Geographic Community Impact",
+                    "Geographic Global Citizenship",
+                    "Geographic Learning Journey",
+                    "Geographic Detective Academy Graduation"
+                ];
+
+                for (let i = 1; i <= this.totalSlides; i++) {
+                    const slideNum = i.toString().padStart(2, '0');
+                    const title = slideNames[i - 1] || `Slide ${i}`;
+                    const filename = `${slideNum}_${title.replace(/[^a-zA-Z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '')}.png`;
+                    
+                    slides.push({
+                        number: i,
+                        title: title,
+                        filename: filename,
+                        imagePath: `/Presentation/all/${filename}`,
+                        description: this.generateDescription(title, i)
+                    });
+                }
+                return slides;
+            }
+
+            generateDescription(title, slideNum) {
+                if (title.includes('CASE')) {
+                    return `Dive into this exciting geographic mystery case that will challenge your detective skills and geographic knowledge.`;
+                } else if (title.includes('Investigation') || title.includes('Clues')) {
+                    return `Apply your geographic investigation techniques to uncover important clues and evidence.`;
+                } else if (title.includes('Mission Complete') || title.includes('Case Solved')) {
+                    return `Celebrate your successful investigation and reflect on the geographic concepts learned.`;
+                } else if (title.includes('Profile')) {
+                    return `Study the geographic characteristics and features of this important location.`;
+                } else {
+                    return `Explore geographic concepts and detective techniques in this comprehensive lesson.`;
+                }
+            }
+
+            init() {
+                this.loadSlide(1);
+                this.updateNavigation();
+                this.setupKeyboardControls();
+                document.getElementById('totalSlides').textContent = this.totalSlides;
+            }
+
+            setupKeyboardControls() {
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'ArrowLeft') {
+                        this.previousSlide();
+                    } else if (e.key === 'ArrowRight') {
+                        this.nextSlide();
+                    } else if (e.key === 'Escape' && this.isFullscreen) {
+                        this.closeFullscreen();
+                    } else if (e.key === 'f' || e.key === 'F') {
+                        this.toggleFullscreen();
+                    }
+                });
+            }
+
+            loadSlide(slideNumber) {
+                if (slideNumber < 1 || slideNumber > this.totalSlides) return;
+
+                this.currentSlide = slideNumber;
+                const slide = this.slideData[slideNumber - 1];
+                
+                const container = document.getElementById('slideContainer');
+                const loading = document.getElementById('loadingIndicator');
+                
+                // Show loading
+                loading.style.display = 'flex';
+                container.classList.add('transitioning');
+
+                // Create new image
+                const img = new Image();
+                img.onload = () => {
+                    // Hide loading and show image
+                    loading.style.display = 'none';
+                    container.innerHTML = '';
+                    
+                    img.className = 'slide-image';
+                    img.alt = slide.title;
+                    img.onclick = () => this.toggleFullscreen();
+                    
+                    container.appendChild(img);
+                    container.classList.remove('transitioning');
+                    
+                    // Update slide info
+                    this.updateSlideInfo(slide);
+                    this.updateControls();
+                    this.updateNavigationHighlight();
+                };
+                
+                img.onerror = () => {
+                    loading.style.display = 'none';
+                    container.innerHTML = `<div class="error">❌ Unable to load slide: ${slide.title}<br><small>File: ${slide.filename}</small></div>`;
+                    container.classList.remove('transitioning');
+                };
+                
+                img.src = slide.imagePath;
+            }
+
+            updateSlideInfo(slide) {
+                document.getElementById('slideTitle').textContent = slide.title;
+                document.getElementById('slideDescription').textContent = slide.description;
+                document.getElementById('currentSlideNum').textContent = slide.number;
+            }
+
+            updateControls() {
+                const prevBtn = document.getElementById('prevBtn');
+                const nextBtn = document.getElementById('nextBtn');
+                
+                prevBtn.disabled = this.currentSlide === 1;
+                nextBtn.disabled = this.currentSlide === this.totalSlides;
+            }
+
+            updateNavigationHighlight() {
+                const navButtons = document.querySelectorAll('.nav-button[data-slide]');
+                navButtons.forEach(btn => {
+                    const slideNum = parseInt(btn.dataset.slide);
+                    btn.classList.toggle('active', slideNum === this.currentSlide);
+                });
+            }
+
+            updateNavigation() {
+                if (!this.navigationExpanded) return;
+                
+                const nav = document.getElementById('slideNavigation');
+                const expandBtn = document.getElementById('expandNavBtn');
+                
+                nav.innerHTML = '';
+                
+                // Add all slides to navigation
+                this.slideData.forEach(slide => {
+                    const btn = document.createElement('div');
+                    btn.className = `nav-button ${slide.number === this.currentSlide ? 'active' : ''}`;
+                    btn.dataset.slide = slide.number;
+                    btn.textContent = `${slide.number.toString().padStart(2, '0')} - ${slide.title}`;
+                    btn.onclick = () => this.goToSlide(slide.number);
+                    nav.appendChild(btn);
+                });
+                
+                // Add collapse button
+                const collapseBtn = document.createElement('button');
+                collapseBtn.className = 'control-btn';
+                collapseBtn.textContent = 'Collapse Navigation';
+                collapseBtn.onclick = () => this.toggleNavigationExpanded();
+                nav.appendChild(collapseBtn);
+            }
+
+            toggleNavigationExpanded() {
+                this.navigationExpanded = !this.navigationExpanded;
+                const nav = document.getElementById('slideNavigation');
+                
+                if (this.navigationExpanded) {
+                    this.updateNavigation();
+                } else {
+                    nav.innerHTML = `
+                        <div class="nav-button active" onclick="goToSlide(1)" data-slide="1">
+                            01 - Geographic Detective Academy Curriculum
+                        </div>
+                        <button class="control-btn" onclick="toggleNavigationExpanded()" id="expandNavBtn">
+                            Show All Slides
+                        </button>
+                    `;
+                    this.updateNavigationHighlight();
+                }
+            }
+
+            nextSlide(event) {
+                if (event) event.stopPropagation();
+                if (this.currentSlide < this.totalSlides) {
+                    this.loadSlide(this.currentSlide + 1);
+                }
+            }
+
+            previousSlide(event) {
+                if (event) event.stopPropagation();
+                if (this.currentSlide > 1) {
+                    this.loadSlide(this.currentSlide - 1);
+                }
+            }
+
+            goToSlide(slideNumber) {
+                this.loadSlide(slideNumber);
+            }
+
+            toggleFullscreen() {
+                const modal = document.getElementById('fullscreenModal');
+                const fullscreenImg = document.getElementById('fullscreenImage');
+                const slide = this.slideData[this.currentSlide - 1];
+                
+                if (!this.isFullscreen) {
+                    fullscreenImg.src = slide.imagePath;
+                    fullscreenImg.alt = slide.title;
+                    
+                    document.getElementById('fullscreenTitle').textContent = slide.title;
+                    document.getElementById('fullscreenCounter').textContent = `${this.currentSlide} of ${this.totalSlides}`;
+                    
+                    modal.classList.add('active');
+                    this.isFullscreen = true;
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    this.closeFullscreen();
+                }
+            }
+
+            closeFullscreen(event) {
+                if (event) event.stopPropagation();
+                const modal = document.getElementById('fullscreenModal');
+                modal.classList.remove('active');
+                this.isFullscreen = false;
+                document.body.style.overflow = '';
+            }
+        }
+
+        // Initialize presentation system
+        let presentation;
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            presentation = new PresentationSystem();
+        });
+
+        // Global functions for inline handlers
+        function nextSlide(event) {
+            presentation.nextSlide(event);
+        }
+
+        function previousSlide(event) {
+            presentation.previousSlide(event);
+        }
+
+        function goToSlide(slideNumber) {
+            presentation.goToSlide(slideNumber);
+        }
+
+        function toggleFullscreen() {
+            presentation.toggleFullscreen();
+        }
+
+        function closeFullscreen(event) {
+            presentation.closeFullscreen(event);
+        }
+
+        function toggleNavigationExpanded() {
+            presentation.toggleNavigationExpanded();
+        }
+    </script>
+</body>
+</html>
