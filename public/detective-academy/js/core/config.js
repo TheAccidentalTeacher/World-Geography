@@ -44,6 +44,14 @@ const GDA_CONFIG = {
             description: 'Interactive case investigations'
         },
         {
+            id: 'presentation',
+            label: 'Presentation',
+            icon: '🎬',
+            panel: 'presentation',
+            module: 'presentation',
+            description: 'Interactive presentation slides'
+        },
+        {
             id: 'team-roles',
             label: 'Team Roles',
             icon: '👥',
