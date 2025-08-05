@@ -5067,18 +5067,18 @@
 
             updateSlide() {
                 // Update slide counters
-                const currentSlideElements = document.querySelectorAll('#current-slide, #current-slide-number');
+                const currentSlideElements = document.querySelectorAll('#current-slide, #current-slide-number, #current-slide-num');
                 currentSlideElements.forEach(element => {
                     element.textContent = this.currentSlide;
                 });
 
-                const totalSlideElements = document.querySelectorAll('#total-slides, .total-slides-display');
+                const totalSlideElements = document.querySelectorAll('#total-slides, .total-slides-display, #total-slides-num');
                 totalSlideElements.forEach(element => {
                     element.textContent = this.totalSlides;
                 });
 
-                // Update the slide image source
-                const slideImage = document.getElementById('current-slide-image');
+                // Update the slide image source - use correct element ID
+                const slideImage = document.getElementById('slide-image');
                 if (slideImage) {
                     console.log(`🔄 Loading slide ${this.currentSlide}`);
                     slideImage.src = `/api/slides/${this.currentSlide}`;
@@ -5092,7 +5092,7 @@
                         console.error(`❌ Failed to load slide ${this.currentSlide}:`, error);
                     };
                 } else {
-                    console.error('❌ Slide image element not found');
+                    console.error('❌ Slide image element not found - looking for #slide-image');
                 }
 
                 this.updateSlideNotes();
