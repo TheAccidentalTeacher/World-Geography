@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geographic Detective Academy - Teacher's Guide</title>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --detective-deep-blue: #1C2838;
+            --detective-charcoal: #2D3748;
+            --detective-slate: #4A5568;
+            --detective-gold: #D4AF37;
+            --detective-dark-gold: #B8941F;
+            --detective-light-gray: #E2E8F0;
+            --detective-accent: #FF6B6B;
+            --detective-success: #4CAF50;
+            --detective-warning: #FF9800;
+            --print-primary: #000000;
+            --print-secondary: #333333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--detective-deep-blue) 0%, var(--detective-charcoal) 100%);
+            color: var(--detective-light-gray);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: rgba(28, 40, 56, 0.95);
+            padding: 1rem 2rem;
+            border-bottom: 3px solid var(--detective-gold);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .detective-badge {
+            font-size: 2rem;
+            background: linear-gradient(135deg, var(--detective-gold), var(--detective-dark-gold));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.3));
+        }
+
+        .header-title h1 {
+            font-family: 'Crimson Text', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--detective-gold);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .control-button {
+            background: linear-gradient(135deg, var(--detective-gold) 0%, var(--detective-dark-gold) 100%);
+            color: var(--detective-deep-blue);
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
+        }
+
+        .control-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+            background: linear-gradient(135deg, #E6C547 0%, #D4AF37 100%);
+        }
+
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            min-height: calc(100vh - 100px);
+            gap: 1rem;
+            padding: 1rem;
+        }
+
+        .sidebar {
+            width: 350px;
+            background: rgba(28, 40, 56, 0.95);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            overflow-y: auto;
+            max-height: calc(100vh - 120px);
+            position: sticky;
+            top: 120px;
+        }
+
+        .sidebar h2 {
+            font-family: 'Crimson Text', serif;
+            color: var(--detective-gold);
+            margin-bottom: 1.5rem;
+            font-size: 1.4rem;
+            text-align: center;
+            border-bottom: 2px solid var(--detective-gold);
+            padding-bottom: 0.5rem;
+        }
+
+        .search-container {
+            margin-bottom: 1.5rem;
+        }
+
+        .search-input {
+            width: 100%;
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            color: var(--detective-light-gray);
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        .search-input::placeholder {
+            color: rgba(226, 232, 240, 0.6);
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            color: var(--detective-light-gray);
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn.active, .filter-btn:hover {
+            background: var(--detective-gold);
+            color: var(--detective-deep-blue);
+        }
+
+        .day-navigation {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .nav-day {
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            color: var(--detective-light-gray);
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            font-size: 0.9rem;
+            position: relative;
+        }
+
+        .nav-day:hover, .nav-day.active {
+            background: linear-gradient(135deg, var(--detective-gold) 0%, var(--detective-dark-gold) 100%);
+            color: var(--detective-deep-blue);
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+        }
+
+        .nav-day .day-title {
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+        }
+
+        .nav-day .day-subtitle {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        .nav-day .case-indicator {
+            position: absolute;
+            right: 0.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--detective-success);
+        }
+
+        .content-area {
+            flex: 1;
+            background: rgba(28, 40, 56, 0.95);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            overflow-y: auto;
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--detective-gold);
+            padding-bottom: 1rem;
+        }
+
+        .content-title {
+            font-family: 'Crimson Text', serif;
+            font-size: 2rem;
+            color: var(--detective-gold);
+            font-weight: 700;
+        }
+
+        .print-controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .print-btn {
+            background: var(--detective-slate);
+            border: 1px solid var(--detective-gold);
+            color: var(--detective-gold);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+
+        .print-btn:hover {
+            background: var(--detective-gold);
+            color: var(--detective-deep-blue);
+        }
+
+        .guide-content {
+            line-height: 1.8;
+        }
+
+        .overview-section {
+            background: rgba(212, 175, 55, 0.1);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--detective-gold);
+        }
+
+        .objectives-list {
+            background: rgba(212, 175, 55, 0.05);
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .objectives-list h3 {
+            color: var(--detective-gold);
+            margin-bottom: 1rem;
+            font-family: 'Crimson Text', serif;
+        }
+
+        .objectives-list ul {
+            padding-left: 1.5rem;
+        }
+
+        .objectives-list li {
+            margin-bottom: 0.5rem;
+        }
+
+        .materials-section {
+            background: rgba(212, 175, 55, 0.05);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+        }
+
+        .materials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .material-item {
+            background: rgba(212, 175, 55, 0.1);
+            padding: 0.75rem;
+            border-radius: 6px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .lesson-section {
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: rgba(212, 175, 55, 0.03);
+            border-radius: 8px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .scene-header {
+            color: var(--detective-gold);
+            font-family: 'Crimson Text', serif;
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+            padding-bottom: 0.5rem;
+        }
+
+        .teacher-script {
+            background: rgba(212, 175, 55, 0.08);
+            padding: 1rem;
+            border-radius: 6px;
+            border-left: 3px solid var(--detective-gold);
+            margin: 1rem 0;
+            font-style: italic;
+        }
+
+        .activity-box {
+            background: rgba(76, 175, 80, 0.1);
+            padding: 1rem;
+            border-radius: 6px;
+            border-left: 3px solid var(--detective-success);
+            margin: 1rem 0;
+        }
+
+        .discussion-questions {
+            background: rgba(255, 152, 0, 0.1);
+            padding: 1rem;
+            border-radius: 6px;
+            border-left: 3px solid var(--detective-warning);
+            margin: 1rem 0;
+        }
+
+        .quick-reference {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: rgba(28, 40, 56, 0.95);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--detective-gold);
+            backdrop-filter: blur(10px);
+            min-width: 200px;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .quick-reference.show {
+            transform: translateY(0);
+        }
+
+        .welcome-screen {
+            text-align: center;
+            padding: 3rem 2rem;
+        }
+
+        .welcome-screen h2 {
+            font-family: 'Crimson Text', serif;
+            color: var(--detective-gold);
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .welcome-screen p {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature-card {
+            background: rgba(212, 175, 55, 0.1);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.2);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            color: var(--detective-gold);
+            margin-bottom: 1rem;
+            font-family: 'Crimson Text', serif;
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: white !important;
+                color: var(--print-primary) !important;
+                font-size: 12pt;
+                line-height: 1.4;
+            }
+
+            .header, .sidebar, .print-controls, .quick-reference {
+                display: none !important;
+            }
+
+            .main-container {
+                max-width: none;
+                margin: 0;
+                padding: 0;
+                display: block;
+            }
+
+            .content-area {
+                background: white !important;
+                border: none !important;
+                box-shadow: none !important;
+                padding: 1rem;
+            }
+
+            .content-title {
+                color: var(--print-primary) !important;
+                border-bottom: 2px solid var(--print-primary) !important;
+                padding-bottom: 0.5rem;
+                margin-bottom: 1rem;
+            }
+
+            .overview-section, .materials-section, .lesson-section {
+                background: white !important;
+                border: 1px solid #ccc !important;
+                page-break-inside: avoid;
+                margin: 1rem 0;
+            }
+
+            .scene-header {
+                color: var(--print-primary) !important;
+                border-bottom: 1px solid #ccc !important;
+            }
+
+            .teacher-script, .activity-box, .discussion-questions {
+                background: #f9f9f9 !important;
+                border-left: 3px solid #666 !important;
+                page-break-inside: avoid;
+            }
+
+            .nav-day, .filter-btn, .control-button {
+                display: none !important;
+            }
+
+            h1, h2, h3, h4, h5, h6 {
+                color: var(--print-primary) !important;
+            }
+
+            .materials-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.5rem;
+            }
+
+            .page-break {
+                page-break-before: always;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                position: static;
+                max-height: none;
+            }
+
+            .header-content {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .content-title {
+                font-size: 1.5rem;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="header-title">
+                <div class="detective-badge">🔍</div>
+                <h1>Geographic Detective Academy - Teacher's Guide</h1>
+            </div>
+            <div class="header-controls">
+                <button class="control-button" onclick="printCurrentDay()">
+                    🖨️ Print Current Day
+                </button>
+                <button class="control-button" onclick="printFullSimulation()">
+                    📚 Print Full Simulation
+                </button>
+                <button class="control-button" onclick="showQuickReference()">
+                    📋 Quick Reference
+                </button>
+                <a href="/simulation" class="control-button">
+                    🏠 Back to Hub
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <aside class="sidebar">
+            <h2>Navigation</h2>
+            
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Search teacher guides..." id="searchInput">
+            </div>
+
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">All Days</button>
+                <button class="filter-btn" data-filter="setup">Setup</button>
+                <button class="filter-btn" data-filter="cases">Cases</button>
+                <button class="filter-btn" data-filter="materials">Materials</button>
+            </div>
+
+            <div class="day-navigation" id="dayNavigation">
+                <!-- Navigation will be populated by JavaScript -->
+            </div>
+        </aside>
+
+        <main class="content-area">
+            <div class="welcome-screen" id="welcomeScreen">
+                <h2>Welcome to the Teacher's Guide</h2>
+                <p>Your comprehensive resource for conducting the Geographic Detective Academy simulation. Navigate through daily lesson plans, access materials lists, and print individual days or the complete simulation guide.</p>
+                
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">📖</div>
+                        <h3>Daily Lesson Plans</h3>
+                        <p>Detailed guides for each day with scripts, activities, and timing</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📋</div>
+                        <h3>Materials Checklists</h3>
+                        <p>Complete lists of required materials and setup instructions</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🖨️</div>
+                        <h3>Print Ready</h3>
+                        <p>Print individual days or the complete simulation guide</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🔍</div>
+                        <h3>Quick Search</h3>
+                        <p>Find specific content across all days instantly</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="guide-content" id="guideContent" style="display: none;">
+                <!-- Content will be loaded here -->
+            </div>
+        </main>
+    </div>
+
+    <div class="quick-reference" id="quickReference">
+        <h3>Quick Reference</h3>
+        <div id="quickRefContent">
+            <p><strong>Total Days:</strong> 13 (Setup + 12 Days)</p>
+            <p><strong>Cases:</strong> 6 Major Investigations</p>
+            <p><strong>Student Groups:</strong> 4-5 per team</p>
+            <p><strong>Print Options:</strong> Individual days or full guide</p>
+        </div>
+    </div>
+
+    <script src="teacher-guide-loader.js"></script>
+    <script>
+        class TeacherGuideSystem {
+            constructor() {
+                this.currentDay = null;
+                this.guideData = {};
+                this.loader = new TeacherGuideLoader();
+                this.searchResults = [];
+                this.initializeSystem();
+            }
+
+            async initializeSystem() {
+                this.setupEventListeners();
+                this.populateNavigation();
+                this.setupSearch();
+                this.setupFilters();
+                
+                // Load the actual guide data
+                await this.loadGuideData();
+            }
+
+            setupEventListeners() {
+                // Search functionality
+                document.getElementById('searchInput').addEventListener('input', (e) => {
+                    this.searchGuides(e.target.value);
+                });
+
+                // Filter functionality
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                        e.target.classList.add('active');
+                        this.filterDays(e.target.dataset.filter);
+                    });
+                });
+
+                // Quick reference toggle
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'q' || e.key === 'Q') {
+                        this.toggleQuickReference();
+                    }
+                    if (e.key === 'p' || e.key === 'P') {
+                        this.printCurrentDay();
+                    }
+                });
+            }
+
+            populateNavigation() {
+                const navigation = document.getElementById('dayNavigation');
+                const days = [
+                    { id: 'setup', title: 'Setup Day', subtitle: 'Academy Orientation', type: 'setup' },
+                    { id: 'day1', title: 'Day 1', subtitle: 'Mystery in the Amazon (Part 1)', type: 'case', case: 1 },
+                    { id: 'day2', title: 'Day 2', subtitle: 'Mystery in the Amazon (Part 2)', type: 'case', case: 1 },
+                    { id: 'day3', title: 'Day 3', subtitle: 'Desert Dilemma (Part 1)', type: 'case', case: 2 },
+                    { id: 'day4', title: 'Day 4', subtitle: 'Desert Dilemma (Part 2)', type: 'case', case: 2 },
+                    { id: 'day5', title: 'Day 5', subtitle: 'Mystery in the Himalayas (Part 1)', type: 'case', case: 3 },
+                    { id: 'day6', title: 'Day 6', subtitle: 'Mystery in the Himalayas (Part 2)', type: 'case', case: 3 },
+                    { id: 'day7', title: 'Day 7', subtitle: 'Disaster at Sea (Part 1)', type: 'case', case: 4 },
+                    { id: 'day8', title: 'Day 8', subtitle: 'Disaster at Sea (Part 2)', type: 'case', case: 4 },
+                    { id: 'day9', title: 'Day 9', subtitle: 'Urban Emergency (Part 1)', type: 'case', case: 5 },
+                    { id: 'day10', title: 'Day 10', subtitle: 'Urban Emergency (Part 2)', type: 'case', case: 5 },
+                    { id: 'day11', title: 'Day 11', subtitle: 'Jurisdictional Crisis (Part 1)', type: 'case', case: 6 },
+                    { id: 'day12', title: 'Day 12', subtitle: 'Jurisdictional Crisis (Part 2)', type: 'case', case: 6 }
+                ];
+
+                navigation.innerHTML = days.map(day => `
+                    <div class="nav-day" data-day="${day.id}" data-type="${day.type}" onclick="teacherGuide.loadDay('${day.id}')">
+                        <div class="day-title">${day.title}</div>
+                        <div class="day-subtitle">${day.subtitle}</div>
+                        ${day.case ? `<div class="case-indicator" title="Case ${day.case}"></div>` : ''}
+                    </div>
+                `).join('');
+            }
+
+            async loadGuideData() {
+                try {
+                    console.log('🔄 Loading teacher guide data...');
+                    this.guideData = await this.loader.loadAllGuides();
+                    console.log('✅ Teacher guide data loaded successfully');
+                    
+                    // Update quick reference with actual data
+                    this.updateQuickReference();
+                } catch (error) {
+                    console.error('❌ Failed to load teacher guide data:', error);
+                    // Fallback to template data if needed
+                    this.createFallbackData();
+                }
+            }
+
+            updateQuickReference() {
+                const totalScenes = Object.values(this.guideData).reduce((total, guide) => total + guide.scenes.length, 0);
+                const totalMaterials = this.loader.getAllMaterials().length;
+                
+                document.getElementById('quickRefContent').innerHTML = `
+                    <p><strong>Total Days:</strong> ${Object.keys(this.guideData).length}</p>
+                    <p><strong>Total Scenes:</strong> ${totalScenes}</p>
+                    <p><strong>Unique Materials:</strong> ${totalMaterials}</p>
+                    <p><strong>Cases:</strong> 6 Major Investigations</p>
+                    <p><strong>Keyboard Shortcuts:</strong></p>
+                    <ul style="font-size: 0.8rem; margin: 0.5rem 0;">
+                        <li>Q - Toggle Quick Reference</li>
+                        <li>P - Print Current Day</li>
+                    </ul>
+                `;
+            }
+
+            loadDay(dayId) {
+                this.currentDay = dayId;
+                
+                // Update navigation
+                document.querySelectorAll('.nav-day').forEach(day => {
+                    day.classList.remove('active');
+                });
+                document.querySelector(`[data-day="${dayId}"]`).classList.add('active');
+
+                // Hide welcome screen and show content
+                document.getElementById('welcomeScreen').style.display = 'none';
+                document.getElementById('guideContent').style.display = 'block';
+
+                // Load the guide content
+                const guide = this.guideData[dayId];
+                if (guide) {
+                    this.renderGuide(guide);
+                } else {
+                    this.renderLoadingGuide(dayId);
+                }
+            }
+
+            renderGuide(guide) {
+                const content = document.getElementById('guideContent');
+                
+                // Calculate total timing
+                const totalTime = guide.scenes.reduce((total, scene) => total + (scene.timing || 0), 0);
+                
+                content.innerHTML = `
+                    <div class="content-header">
+                        <h1 class="content-title">${guide.title}</h1>
+                        <div class="print-controls">
+                            <button class="print-btn" onclick="teacherGuide.printCurrentDay()">🖨️ Print This Day</button>
+                            <button class="print-btn" onclick="teacherGuide.exportDay()">📄 Export MD</button>
+                            <button class="print-btn" onclick="teacherGuide.showMaterials()">📦 Materials</button>
+                        </div>
+                    </div>
+
+                    <div class="overview-section">
+                        <h3>📋 Overview</h3>
+                        <p>${guide.overview}</p>
+                        ${totalTime > 0 ? `<p><strong>⏱️ Estimated Time:</strong> ${totalTime} minutes</p>` : ''}
+                    </div>
+
+                    <div class="objectives-list">
+                        <h3>🎯 Learning Objectives</h3>
+                        <ul>
+                            ${guide.objectives.map(obj => `<li>${obj}</li>`).join('')}
+                        </ul>
+                    </div>
+
+                    <div class="materials-section">
+                        <h3>📦 Materials Needed</h3>
+                        <div class="materials-grid">
+                            ${guide.materials.map((material, index) => `
+                                <div class="material-item">
+                                    <input type="checkbox" id="material-${index}" style="margin-right: 0.5rem;">
+                                    <label for="material-${index}">${material}</label>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <button class="print-btn" onclick="teacherGuide.printMaterialsChecklist()" style="margin-top: 1rem;">
+                            📋 Print Checklist
+                        </button>
+                    </div>
+
+                    <div class="materials-section">
+                        <h3>🏫 Classroom Setup</h3>
+                        <ol>
+                            ${guide.setup.map(setup => `<li>${setup}</li>`).join('')}
+                        </ol>
+                    </div>
+
+                    <div class="lesson-sections">
+                        <h3>📚 Lesson Plan</h3>
+                        ${guide.scenes.map((scene, index) => `
+                            <div class="lesson-section">
+                                <h4 class="scene-header">
+                                    ${scene.title}
+                                    ${scene.timing ? `<span style="float: right; font-size: 0.8rem; opacity: 0.8;">${scene.timing} min</span>` : ''}
+                                </h4>
+                                
+                                ${scene.content ? `
+                                    <div style="margin-bottom: 1rem;">
+                                        <p>${scene.content}</p>
+                                    </div>
+                                ` : ''}
+
+                                ${scene.script ? `
+                                    <div class="teacher-script">
+                                        <h5>🎭 Teacher Script:</h5>
+                                        <p>"${scene.script}"</p>
+                                    </div>
+                                ` : ''}
+
+                                ${scene.actions.length > 0 ? `
+                                    <div class="activity-box">
+                                        <h5>📋 Actions:</h5>
+                                        <ol>
+                                            ${scene.actions.map(action => `<li>${action}</li>`).join('')}
+                                        </ol>
+                                    </div>
+                                ` : ''}
+
+                                ${scene.activities.length > 0 ? `
+                                    <div class="activity-box">
+                                        <h5>🎯 Activities:</h5>
+                                        <ul>
+                                            ${scene.activities.map(activity => `<li>${activity}</li>`).join('')}
+                                        </ul>
+                                    </div>
+                                ` : ''}
+
+                                ${scene.questions.length > 0 ? `
+                                    <div class="discussion-questions">
+                                        <h5>💭 Discussion Questions:</h5>
+                                        <ul>
+                                            ${scene.questions.map(question => `<li>${question}</li>`).join('')}
+                                        </ul>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            renderLoadingGuide(dayId) {
+                const content = document.getElementById('guideContent');
+                content.innerHTML = `
+                    <div class="content-header">
+                        <h1 class="content-title">Loading ${dayId.toUpperCase()}...</h1>
+                    </div>
+                    <div class="overview-section">
+                        <p>📖 Loading teacher guide content...</p>
+                    </div>
+                `;
+            }
+
+            searchGuides(query) {
+                if (!query.trim()) {
+                    // Reset navigation if search is empty
+                    document.querySelectorAll('.nav-day').forEach(day => {
+                        day.style.display = 'block';
+                    });
+                    return;
+                }
+
+                this.searchResults = this.loader.searchGuides(query);
+                
+                // Update navigation to show only matching days
+                document.querySelectorAll('.nav-day').forEach(day => {
+                    const dayId = day.dataset.day;
+                    const hasMatch = this.searchResults.some(result => result.dayId === dayId);
+                    day.style.display = hasMatch ? 'block' : 'none';
+                });
+
+                // If we have results and no current day selected, show search results
+                if (this.searchResults.length > 0 && !this.currentDay) {
+                    this.showSearchResults(query);
+                }
+            }
+
+            showSearchResults(query) {
+                document.getElementById('welcomeScreen').style.display = 'none';
+                document.getElementById('guideContent').style.display = 'block';
+                
+                const content = document.getElementById('guideContent');
+                content.innerHTML = `
+                    <div class="content-header">
+                        <h1 class="content-title">Search Results for "${query}"</h1>
+                        <div class="print-controls">
+                            <button class="print-btn" onclick="teacherGuide.clearSearch()">❌ Clear Search</button>
+                        </div>
+                    </div>
+
+                    <div class="search-results">
+                        ${this.searchResults.map(result => `
+                            <div class="overview-section" style="cursor: pointer;" onclick="teacherGuide.loadDay('${result.dayId}')">
+                                <h3>${result.guide.title}</h3>
+                                <div style="margin-top: 1rem;">
+                                    ${result.matches.map(match => `
+                                        <div style="margin: 0.5rem 0; padding: 0.5rem; background: rgba(212, 175, 55, 0.1); border-radius: 4px;">
+                                            <strong>${match.type}:</strong> ${match.text}
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            clearSearch() {
+                document.getElementById('searchInput').value = '';
+                this.searchGuides('');
+                document.getElementById('welcomeScreen').style.display = 'block';
+                document.getElementById('guideContent').style.display = 'none';
+                this.currentDay = null;
+            }
+
+            filterDays(filter) {
+                const days = document.querySelectorAll('.nav-day');
+                
+                days.forEach(day => {
+                    const type = day.dataset.type;
+                    
+                    if (filter === 'all' || 
+                        (filter === 'setup' && type === 'setup') ||
+                        (filter === 'cases' && type === 'case') ||
+                        (filter === 'materials' && type === 'case')) {
+                        day.style.display = 'block';
+                    } else {
+                        day.style.display = 'none';
+                    }
+                });
+            }
+
+            printCurrentDay() {
+                if (!this.currentDay) {
+                    alert('Please select a day to print first.');
+                    return;
+                }
+                
+                // Add print-specific styles
+                document.body.classList.add('printing');
+                
+                // Print
+                window.print();
+                
+                // Remove print styles
+                setTimeout(() => {
+                    document.body.classList.remove('printing');
+                }, 1000);
+            }
+
+            printFullSimulation() {
+                // Create a new window with all guides
+                const printWindow = window.open('', '_blank');
+                
+                let fullContent = `
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <title>Geographic Detective Academy - Complete Teacher's Guide</title>
+                        <style>
+                            body { font-family: Arial, sans-serif; line-height: 1.6; margin: 1in; color: #000; }
+                            .page-break { page-break-before: always; }
+                            .guide-title { color: #000; border-bottom: 2px solid #000; padding-bottom: 0.5rem; margin-bottom: 1rem; }
+                            .section { margin: 1rem 0; }
+                            .script { background: #f9f9f9; padding: 1rem; border-left: 3px solid #666; font-style: italic; page-break-inside: avoid; }
+                            .activities { background: #f0f8f0; padding: 1rem; border-left: 3px solid #4CAF50; page-break-inside: avoid; }
+                            .questions { background: #fff3e0; padding: 1rem; border-left: 3px solid #FF9800; page-break-inside: avoid; }
+                            .scene-header { margin-top: 2rem; margin-bottom: 1rem; font-weight: bold; }
+                            .materials-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+                            .material-item { padding: 0.25rem; border: 1px solid #ccc; }
+                            ol, ul { padding-left: 1.5rem; }
+                            h1, h2, h3, h4 { color: #000; }
+                        </style>
+                    </head>
+                    <body>
+                        <h1>Geographic Detective Academy - Complete Teacher's Guide</h1>
+                        <p><strong>Total Days:</strong> ${Object.keys(this.guideData).length}</p>
+                        <p><strong>Cases:</strong> 6 Major Geographic Investigations</p>
+                        <p><strong>Duration:</strong> Approximately 3 weeks</p>
+                        <p><strong>Generated:</strong> ${new Date().toLocaleDateString()}</p>
+                        <div class="page-break"></div>
+                `;
+
+                // Add each day's content
+                Object.entries(this.guideData).forEach(([dayId, guide], index) => {
+                    if (index > 0) fullContent += '<div class="page-break"></div>';
+                    
+                    const totalTime = guide.scenes.reduce((total, scene) => total + (scene.timing || 0), 0);
+                    
+                    fullContent += `
+                        <h2 class="guide-title">${guide.title}</h2>
+                        
+                        <div class="section">
+                            <h3>Overview</h3>
+                            <p>${guide.overview}</p>
+                            ${totalTime > 0 ? `<p><strong>Estimated Time:</strong> ${totalTime} minutes</p>` : ''}
+                        </div>
+
+                        <div class="section">
+                            <h3>Learning Objectives</h3>
+                            <ul>
+                                ${guide.objectives.map(obj => `<li>${obj}</li>`).join('')}
+                            </ul>
+                        </div>
+
+                        <div class="section">
+                            <h3>Materials Needed</h3>
+                            <div class="materials-grid">
+                                ${guide.materials.map(material => `<div class="material-item">☐ ${material}</div>`).join('')}
+                            </div>
+                        </div>
+
+                        <div class="section">
+                            <h3>Classroom Setup</h3>
+                            <ol>
+                                ${guide.setup.map(setup => `<li>${setup}</li>`).join('')}
+                            </ol>
+                        </div>
+
+                        <div class="section">
+                            <h3>Lesson Plan</h3>
+                            ${guide.scenes.map(scene => `
+                                <h4 class="scene-header">${scene.title} ${scene.timing ? `(${scene.timing} min)` : ''}</h4>
+                                ${scene.content ? `<p>${scene.content}</p>` : ''}
+                                ${scene.script ? `<div class="script"><strong>Teacher Script:</strong> "${scene.script}"</div>` : ''}
+                                ${scene.actions.length > 0 ? `
+                                    <div class="activities">
+                                        <strong>Actions:</strong>
+                                        <ol>${scene.actions.map(action => `<li>${action}</li>`).join('')}</ol>
+                                    </div>
+                                ` : ''}
+                                ${scene.activities.length > 0 ? `
+                                    <div class="activities">
+                                        <strong>Activities:</strong>
+                                        <ul>${scene.activities.map(activity => `<li>${activity}</li>`).join('')}</ul>
+                                    </div>
+                                ` : ''}
+                                ${scene.questions.length > 0 ? `
+                                    <div class="questions">
+                                        <strong>Discussion Questions:</strong>
+                                        <ul>${scene.questions.map(question => `<li>${question}</li>`).join('')}</ul>
+                                    </div>
+                                ` : ''}
+                            `).join('')}
+                        </div>
+                    `;
+                });
+
+                fullContent += '</body></html>';
+                
+                printWindow.document.write(fullContent);
+                printWindow.document.close();
+                printWindow.print();
+            }
+
+            exportDay() {
+                if (!this.currentDay) {
+                    alert('Please select a day to export first.');
+                    return;
+                }
+
+                const content = this.loader.exportGuideAsMarkdown(this.currentDay);
+                if (!content) {
+                    alert('Unable to export this day.');
+                    return;
+                }
+                
+                const guide = this.guideData[this.currentDay];
+                const blob = new Blob([content], { type: 'text/markdown' });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${guide.title.replace(/[^a-zA-Z0-9]/g, '_')}_Teacher_Guide.md`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                
+                URL.revokeObjectURL(url);
+            }
+
+            showMaterials() {
+                const allMaterials = this.loader.getAllMaterials();
+                const materialsByDay = this.loader.getMaterialsByDay();
+                
+                document.getElementById('welcomeScreen').style.display = 'none';
+                document.getElementById('guideContent').style.display = 'block';
+                
+                const content = document.getElementById('guideContent');
+                content.innerHTML = `
+                    <div class="content-header">
+                        <h1 class="content-title">Materials Overview</h1>
+                        <div class="print-controls">
+                            <button class="print-btn" onclick="teacherGuide.printAllMaterials()">🖨️ Print All Materials</button>
+                            <button class="print-btn" onclick="teacherGuide.exportMaterials()">📄 Export CSV</button>
+                        </div>
+                    </div>
+
+                    <div class="overview-section">
+                        <h3>📦 Complete Materials List</h3>
+                        <p>Total unique materials needed: <strong>${allMaterials.length}</strong></p>
+                        <div class="materials-grid">
+                            ${allMaterials.map((material, index) => `
+                                <div class="material-item">
+                                    <input type="checkbox" id="all-material-${index}" style="margin-right: 0.5rem;">
+                                    <label for="all-material-${index}">${material}</label>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div class="materials-section">
+                        <h3>📅 Materials by Day</h3>
+                        ${Object.entries(materialsByDay).map(([dayId, materials]) => {
+                            const guide = this.guideData[dayId];
+                            return `
+                                <div class="lesson-section">
+                                    <h4 class="scene-header">${guide ? guide.title : dayId.toUpperCase()}</h4>
+                                    <ul>
+                                        ${materials.map(material => `<li>${material}</li>`).join('')}
+                                    </ul>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                `;
+            }
+
+            printMaterialsChecklist() {
+                if (!this.currentDay) return;
+                
+                const guide = this.guideData[this.currentDay];
+                const printWindow = window.open('', '_blank');
+                
+                printWindow.document.write(`
+                    <html>
+                    <head>
+                        <title>${guide.title} - Materials Checklist</title>
+                        <style>
+                            body { font-family: Arial, sans-serif; margin: 1in; }
+                            .checklist-item { margin: 0.5rem 0; padding: 0.5rem; border: 1px solid #ccc; }
+                            input[type="checkbox"] { margin-right: 1rem; transform: scale(1.5); }
+                        </style>
+                    </head>
+                    <body>
+                        <h1>${guide.title} - Materials Checklist</h1>
+                        <p><strong>Date:</strong> ____________</p>
+                        <p><strong>Prepared by:</strong> ____________</p>
+                        <hr>
+                        ${guide.materials.map((material, index) => `
+                            <div class="checklist-item">
+                                <input type="checkbox" id="print-material-${index}">
+                                <label for="print-material-${index}">${material}</label>
+                            </div>
+                        `).join('')}
+                        <hr>
+                        <p><strong>Notes:</strong></p>
+                        <div style="border: 1px solid #ccc; height: 100px; margin-top: 1rem;"></div>
+                    </body>
+                    </html>
+                `);
+                
+                printWindow.document.close();
+                printWindow.print();
+            }
+
+            toggleQuickReference() {
+                const ref = document.getElementById('quickReference');
+                ref.classList.toggle('show');
+            }
+        }
+
+        // Global functions for button clicks
+        function printCurrentDay() {
+            teacherGuide.printCurrentDay();
+        }
+
+        function printFullSimulation() {
+            teacherGuide.printFullSimulation();
+        }
+
+        function showQuickReference() {
+            teacherGuide.toggleQuickReference();
+        }
+
+        // Initialize the system
+        const teacherGuide = new TeacherGuideSystem();
+    </script>
+</body>
+</html>

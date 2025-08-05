@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs');
 const axios = require('axios');
 const { GridFSBucket } = require('mongodb');
 const { Curriculum, Module, Lesson } = require('./models');
@@ -274,7 +275,35 @@ app.get('/simulation/overview', (req, res) => {
 });
 
 app.get('/simulation/teacher-guide', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'detective-academy', 'teacher-guide.html'));
+  res.sendFile(path.join(__dirname, 'public', 'detective-academy', 'teacher-guide-enhanced.html'));
+});
+
+// API endpoint to serve teacher guide markdown content
+app.get('/api/teacher-guide/:dayId', (req, res) => {
+  const { dayId } = req.params;
+  
+  try {
+    // Construct the file path
+    let fileName = '';
+    if (dayId === 'setup') {
+      fileName = 'Setup_Day_Teacher_Guide.md';
+    } else if (dayId.startsWith('day')) {
+      const dayNum = dayId.replace('day', '');
+      fileName = `Day_${dayNum}_Teacher_Guide.md`;
+    }
+    
+    const filePath = path.join(__dirname, 'public', 'Curriculum', 'World Geography', 'Geographic_Detective_Academy_Curriculum', 'Teacher_Guides', fileName);
+    
+    if (fs.existsSync(filePath)) {
+      const content = fs.readFileSync(filePath, 'utf8');
+      res.json({ success: true, content: content, filename: fileName });
+    } else {
+      res.json({ success: false, error: 'File not found', filename: fileName });
+    }
+  } catch (error) {
+    console.error('Error reading teacher guide:', error);
+    res.json({ success: false, error: error.message });
+  }
 });
 
 app.get('/simulation/presentation', (req, res) => {
@@ -406,9 +435,6 @@ app.get('/api/lessons/:id', async (req, res) => {
 // Get lesson calendar map for browse page
 app.get('/api/lesson-calendar', async (req, res) => {
   try {
-    const fs = require('fs');
-    const path = require('path');
-    
     // Try enhanced lesson map first, then fallback to regular map
     const enhancedMapPath = path.join(__dirname, 'lesson-calendar-map-enhanced.json');
     const regularMapPath = path.join(__dirname, 'lesson-calendar-map.json');
@@ -531,8 +557,6 @@ app.get('/api/status', async (req, res) => {
 // Debug endpoint to check PDF files
 app.get('/api/debug/files', async (req, res) => {
   try {
-    const fs = require('fs');
-    const path = require('path');
     const pdfDir = path.join(__dirname, 'pdf files');
     
     const debug = {
@@ -569,8 +593,6 @@ app.get('/api/debug/files', async (req, res) => {
 // Test endpoint to try processing one PDF
 app.post('/api/test-pdf', async (req, res) => {
   try {
-    const fs = require('fs');
-    const path = require('path');
     const pdf = require('pdf-parse');
     
     const pdfDir = path.join(__dirname, 'pdf files');
@@ -672,7 +694,6 @@ app.get('/api/dashboard/lesson/:dayNumber', async (req, res) => {
     const dayNumber = parseInt(req.params.dayNumber);
     
     // Try to load from lesson calendar mapping file (enhanced first)
-    const fs = require('fs');
     const enhancedMapPath = path.join(__dirname, 'lesson-calendar-map-enhanced.json');
     const regularMapPath = path.join(__dirname, 'lesson-calendar-map.json');
     
@@ -1853,8 +1874,6 @@ app.post('/api/extract', async (req, res) => {
     console.log('🚀 Manual extraction triggered via API');
     
     // Check if PDF files exist first
-    const fs = require('fs');
-    const path = require('path');
     const pdfDir = path.join(__dirname, 'pdf files');
     
     console.log('📁 Checking PDF directory:', pdfDir);
@@ -1897,8 +1916,6 @@ app.post('/api/extract', async (req, res) => {
 app.post('/api/extract-docx', async (req, res) => {
   try {
     const { processDocxFile } = require('./extract-docx');
-    const fs = require('fs');
-    const path = require('path');
     
     console.log('🚀 DOCX extraction triggered via API');
     
