@@ -139,14 +139,78 @@ app.get('/api/slides', async (req, res) => {
       length: file.length
     }));
     
-    res.json({ 
-      totalSlides: slideList.length,
-      slides: slideList.sort((a, b) => a.filename.localeCompare(b.filename))
-    });
+    res.json(slideList.sort((a, b) => a.filename.localeCompare(b.filename)));
     
   } catch (error) {
     console.error('❌ Error listing slides:', error);
     res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Get slide count
+app.get('/api/slides/count', async (req, res) => {
+  try {
+    if (!slidesBucket) {
+      return res.status(503).json({ error: 'Slides service not available' });
+    }
+    
+    const files = await slidesBucket.find({}).toArray();
+    res.json({ count: files.length });
+    
+  } catch (error) {
+    console.error('❌ Error counting slides:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Get individual slide by number
+app.get('/api/slides/:number', async (req, res) => {
+  try {
+    const slideNumber = parseInt(req.params.number);
+    
+    if (!slidesBucket) {
+      return res.status(503).json({ error: 'Slides service not available' });
+    }
+    
+    if (isNaN(slideNumber) || slideNumber < 1) {
+      return res.status(400).json({ error: 'Invalid slide number' });
+    }
+    
+    // Find slide by number (looking for filenames that start with the padded number)
+    const paddedNumber = slideNumber.toString().padStart(2, '0');
+    const files = await slidesBucket.find({ 
+      filename: { $regex: `^${paddedNumber}_`, $options: 'i' }
+    }).toArray();
+    
+    if (files.length === 0) {
+      return res.status(404).json({ error: `Slide ${slideNumber} not found` });
+    }
+    
+    const file = files[0];
+    
+    // Set appropriate headers
+    res.set({
+      'Content-Type': 'image/png',
+      'Content-Length': file.length,
+      'Cache-Control': 'public, max-age=3600' // Cache for 1 hour
+    });
+    
+    // Stream the file from GridFS
+    const downloadStream = slidesBucket.openDownloadStreamByName(file.filename);
+    downloadStream.pipe(res);
+    
+    downloadStream.on('error', (error) => {
+      console.error(`❌ Error streaming slide ${slideNumber}:`, error);
+      if (!res.headersSent) {
+        res.status(500).json({ error: 'Error streaming slide' });
+      }
+    });
+    
+  } catch (error) {
+    console.error(`❌ Error getting slide ${req.params.number}:`, error);
+    if (!res.headersSent) {
+      res.status(500).json({ error: 'Internal server error' });
+    }
   }
 });
 
