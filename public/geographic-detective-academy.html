@@ -3031,6 +3031,256 @@
             }
         }
         
+        /* ===== PRESENTATION SYSTEM STYLES ===== */
+        
+        .presentation-header {
+            text-align: center;
+            background: linear-gradient(135deg, #1a237e, #3949ab);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+        }
+        
+        .presentation-header h1 {
+            margin: 0 0 0.5rem 0;
+            font-size: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .presentation-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 1.5rem;
+        }
+        
+        .presentation-stats {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .presentation-stats .stat {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            backdrop-filter: blur(10px);
+            text-align: center;
+        }
+        
+        .presentation-stats .stat-number {
+            font-size: 1.8rem;
+            font-weight: 900;
+            margin-bottom: 0.25rem;
+            color: #ffd54f;
+        }
+        
+        .presentation-stats .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            font-weight: 600;
+        }
+        
+        .presentation-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .presentation-controls {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 1.5rem;
+            border-bottom: 2px solid #dee2e6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .control-btn {
+            background: linear-gradient(135deg, #1a237e, #3949ab);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .control-btn:hover {
+            background: linear-gradient(135deg, #3949ab, #5e72e4);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(26, 35, 126, 0.3);
+        }
+        
+        .control-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .slide-counter {
+            background: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            border: 2px solid #e9ecef;
+            font-weight: 700;
+            color: #1a237e;
+            font-size: 1.1rem;
+        }
+        
+        .control-select {
+            background: white;
+            border: 2px solid #e9ecef;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            color: #495057;
+            cursor: pointer;
+            min-width: 200px;
+        }
+        
+        .control-select:focus {
+            border-color: #1a237e;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(26, 35, 126, 0.1);
+        }
+        
+        .slide-display {
+            position: relative;
+            background: #f8f9fa;
+            min-height: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .slide-viewer {
+            position: relative;
+            width: 100%;
+            height: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #ffffff;
+        }
+        
+        .slide-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .slide-info {
+            background: linear-gradient(135deg, #e8f5e8, #c8e6c9);
+            padding: 2rem;
+            border-top: 2px solid #a5d6a7;
+        }
+        
+        .slide-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1b5e20;
+            margin-bottom: 1rem;
+        }
+        
+        .slide-description {
+            font-size: 1.1rem;
+            color: #2e7d32;
+            line-height: 1.6;
+        }
+        
+        /* Fullscreen styles */
+        .presentation-container.fullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10000;
+            background: black;
+            border-radius: 0;
+        }
+        
+        .presentation-container.fullscreen .slide-viewer {
+            height: calc(100vh - 100px);
+            background: black;
+        }
+        
+        .presentation-container.fullscreen .slide-image {
+            box-shadow: none;
+        }
+        
+        .presentation-container.fullscreen .presentation-controls {
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+        }
+        
+        .presentation-container.fullscreen .slide-info {
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            border-top: 2px solid #444;
+        }
+        
+        .presentation-container.fullscreen .slide-title {
+            color: white;
+        }
+        
+        .presentation-container.fullscreen .slide-description {
+            color: #ccc;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .presentation-controls {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .control-group {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .control-select {
+                min-width: 150px;
+            }
+            
+            .slide-viewer {
+                height: 400px;
+            }
+            
+            .slide-info {
+                padding: 1rem;
+            }
+            
+            .slide-title {
+                font-size: 1.2rem;
+            }
+            
+            .slide-description {
+                font-size: 1rem;
+            }
+        }
+        
         /* ===== PRESENTATION LOADING STYLES ===== */
         
         .slide-loading {
@@ -4850,10 +5100,69 @@
         </div>
 
         <!-- PRESENTATION PANEL -->
-        <div id="gamma-prompts" class="content-panel hidden">
-            <div class="loading-indicator">
-                <h2>📽️ Loading Interactive Presentation...</h2>
-                <p>Preparing your detective presentation system...</p>
+        <div id="presentation" class="content-panel hidden">
+            <div class="presentation-header">
+                <h1>🎯 Geographic Detective Academy Presentation</h1>
+                <div class="presentation-subtitle">133-Slide Interactive Presentation System</div>
+                <div class="presentation-stats">
+                    <div class="stat">
+                        <div class="stat-number" id="presentation-slide-count">133</div>
+                        <div class="stat-label">Total Slides</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">12</div>
+                        <div class="stat-label">Daily Sessions</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">45</div>
+                        <div class="stat-label">Minutes Per Day</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Modern Presentation Interface -->
+            <div class="presentation-container">
+                <div class="presentation-controls">
+                    <div class="control-group">
+                        <button id="prev-slide" class="control-btn" onclick="previousSlide()">
+                            <span>⬅️</span> Previous
+                        </button>
+                        <div class="slide-counter">
+                            <span id="current-slide-num">1</span> / <span id="total-slides-num">133</span>
+                        </div>
+                        <button id="next-slide" class="control-btn" onclick="nextSlide()">
+                            Next <span>➡️</span>
+                        </button>
+                    </div>
+                    <div class="control-group">
+                        <button id="fullscreen-btn" class="control-btn" onclick="toggleFullscreen()">
+                            <span>🔄</span> Fullscreen
+                        </button>
+                        <select id="slide-jump" class="control-select" onchange="jumpToSlide(this.value)">
+                            <option value="">Jump to Slide...</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="slide-display">
+                    <div id="slide-viewer" class="slide-viewer">
+                        <img id="slide-image" src="/Presentation/all/01_Geographic-Detective-Academy-Curriculum.png" alt="Slide 1" class="slide-image">
+                        <div class="slide-loading hidden">
+                            <div class="loading-content">
+                                <div class="loading-spinner">🔄</div>
+                                <h3>Loading Slide...</h3>
+                                <p>Please wait while the slide loads</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="slide-info">
+                    <div class="slide-title" id="slide-title">Geographic Detective Academy Curriculum</div>
+                    <div class="slide-description" id="slide-description">
+                        Welcome to the Geographic Detective Academy! This comprehensive curriculum transforms geography learning into an engaging detective experience.
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -4866,11 +5175,7 @@
         </div>
     </main>
 
-    <!-- Load dynamic content system -->
-    <script src="/simulation-dynamic.js"></script>
-    
-    <!-- Print functionality for teacher guide -->
-    <script>
+    <!-- Modern Presentation System -->
         // Print functions for teacher guide
         function printSection(sectionId) {
             // Add body class for section-specific printing
@@ -7065,24 +7370,231 @@
             document.head.appendChild(style);
             
             // Initialize presentation system
-            presentation = new SimulationPresentation();
+    <!-- Modern Presentation System -->
+    <script>
+        // Geographic Detective Academy Presentation System
+        let currentSlide = 1;
+        const totalSlides = 133;
+        
+        // Slide data with titles and descriptions
+        const slideData = {
+            1: { title: "Geographic Detective Academy Curriculum", description: "Welcome to the Geographic Detective Academy! This comprehensive curriculum transforms geography learning into an engaging detective experience." },
+            2: { title: "What is Geographic Detective Academy?", description: "An immersive learning experience that combines geography education with mystery-solving adventures." },
+            3: { title: "Your 12-Day Journey as Geographic Detectives", description: "Overview of the complete 12-day detective training program and geographical investigations." },
+            4: { title: "Essential Skills of a Geographic Detective", description: "Core geographic skills including mapping, analysis, observation, and deductive reasoning." },
+            5: { title: "Your Geographic Detective Toolkit", description: "Tools and resources every geographic detective needs for successful investigations." },
+            6: { title: "Setting Up Your Detective Headquarters", description: "Classroom setup and learning environment preparation for optimal detective work." },
+            7: { title: "Student Detective Roles", description: "Team roles and responsibilities for collaborative geographic investigations." },
+            8: { title: "Anatomy of a Geographic Case File", description: "Understanding the structure and components of geographic mystery cases." },
+            9: { title: "The Geographic Investigation Process", description: "Step-by-step methodology for solving geographic mysteries and cases." },
+            10: { title: "Measuring Your Detective Success", description: "Assessment methods and success criteria for geographic detective work." },
+            11: { title: "Your First Assignment Awaits", description: "Introduction to the first geographic mystery case and investigation protocol." },
+            12: { title: "Case 1: Mystery in the Amazon", description: "Begin your first investigation in the world's largest rainforest ecosystem." }
+        };
+        
+        // Initialize presentation when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initializePresentation();
+        });
+        
+        function initializePresentation() {
+            updateSlideDisplay();
+            populateSlideJumpMenu();
+            setupKeyboardNavigation();
+        }
+        
+        function updateSlideDisplay() {
+            const slideImage = document.getElementById('slide-image');
+            const currentSlideNum = document.getElementById('current-slide-num');
+            const slideTitle = document.getElementById('slide-title');
+            const slideDescription = document.getElementById('slide-description');
+            const prevBtn = document.getElementById('prev-slide');
+            const nextBtn = document.getElementById('next-slide');
             
-            // Wait for gamma-prompts panel to be available
-            function initializePresentationWhenReady() {
-                const gammaPanel = document.getElementById('gamma-prompts');
-                if (gammaPanel) {
-                    presentation.addToPresentationPanel();
-                    presentation.generateThumbnails();
-                    console.log('🎮 Presentation system initialized with', presentation.totalSlides, 'slides');
-                } else {
-                    // Try again in 500ms if panel not ready
-                    setTimeout(initializePresentationWhenReady, 500);
-                }
+            if (slideImage) {
+                // Show loading
+                const loadingDiv = document.querySelector('.slide-loading');
+                if (loadingDiv) loadingDiv.classList.remove('hidden');
+                
+                // Format slide number with leading zeros
+                const slideNum = currentSlide.toString().padStart(2, '0');
+                const slideFiles = [
+                    `${slideNum}_Geographic-Detective-Academy-Curriculum.png`,
+                    `${slideNum}_What-is-Geographic-Detective-Academy.png`,
+                    `${slideNum}_Your-12-Day-Journey-as-Geographic-Detectives.png`,
+                    // We'll use a general pattern and fallback
+                ];
+                
+                // Get the correct filename based on slide number
+                let filename = getSlideFilename(currentSlide);
+                slideImage.src = `/Presentation/all/${filename}`;
+                slideImage.alt = `Slide ${currentSlide}`;
+                
+                // Update slide counter
+                if (currentSlideNum) currentSlideNum.textContent = currentSlide;
+                
+                // Update slide info
+                const slideInfo = slideData[currentSlide] || { 
+                    title: `Slide ${currentSlide}`, 
+                    description: "Geographic Detective Academy presentation slide." 
+                };
+                if (slideTitle) slideTitle.textContent = slideInfo.title;
+                if (slideDescription) slideDescription.textContent = slideInfo.description;
+                
+                // Update button states
+                if (prevBtn) prevBtn.disabled = currentSlide === 1;
+                if (nextBtn) nextBtn.disabled = currentSlide === totalSlides;
+                
+                // Hide loading when image loads
+                slideImage.onload = function() {
+                    if (loadingDiv) loadingDiv.classList.add('hidden');
+                };
+                
+                slideImage.onerror = function() {
+                    console.warn(`Failed to load slide ${currentSlide}, using fallback`);
+                    if (loadingDiv) loadingDiv.classList.add('hidden');
+                };
+            }
+        }
+        
+        function getSlideFilename(slideNumber) {
+            const num = slideNumber.toString().padStart(2, '0');
+            
+            // Complete mapping of all 133 slides
+            const slideFilenames = {
+                1: "01_Geographic-Detective-Academy-Curriculum.png",
+                2: "02_What-is-Geographic-Detective-Academy.png",
+                3: "03_Your-12-Day-Journey-as-Geographic-Detectives.png",
+                4: "04_Essential-Skills-of-a-Geographic-Detective.png",
+                5: "05_Your-Geographic-Detective-Toolkit.png",
+                6: "06_Setting-Up-Your-Detective-Headquarters.png",
+                7: "07_Student-Detective-Roles.png",
+                8: "08_Anatomy-of-a-Geographic-Case-File.png",
+                9: "09_The-Geographic-Investigation-Process.png",
+                10: "10_Measuring-Your-Detective-Success.png",
+                11: "11_Your-First-Assignment-Awaits.png",
+                12: "12_CASE-1-MYSTERY-IN-THE-AMAZON.png",
+                13: "13_Case-Briefing-The-Missing-Explorer.png",
+                14: "14_Geographic-Profile-The-Amazon-Rainforest.png",
+                15: "15_Physical-Geography-Clues.png",
+                16: "16_Following-the-Rivers-Key-to-the-Mystery.png",
+                17: "17_Climate-Factors-Racing-Against-Time.png",
+                18: "18_Vegetation-Clues-Reading-the-Rainforest.png",
+                19: "19_Terrain-Investigation-Following-the-High-Ground.png",
+                20: "20_Evidence-Collection-Piecing-Together-the-Puzzle.png",
+                21: "21_Geographic-Deduction-Narrowing-the-Search.png",
+                22: "22_Case-Solved-Dr-Rivera-Located.png",
+                23: "23_Mission-Complete-What-We-Learned.png",
+                24: "24_CASE-2-MYSTERY-IN-THE-SAHARA.png",
+                25: "25_Case-Briefing-The-Lost-Caravan.png",
+                26: "26_Geographic-Profile-The-Sahara-Desert.png",
+                27: "27_Desert-Climate-Extreme-Conditions.png",
+                28: "28_Desert-Landforms-Reading-the-Landscape.png",
+                29: "29_Navigation-Challenges-Finding-Your-Way.png",
+                30: "30_Water-Resources-Desert-Lifelines.png",
+                31: "31_Desert-Peoples-Cultural-Geography-Insights.png",
+                32: "32_Evidence-Collection-Desert-Clues.png",
+                33: "33_Geographic-Deduction-Tracking-the-Caravan.png",
+                34: "34_Case-Solved-Caravan-Located.png",
+                35: "35_Mission-Complete-What-We-Learned.png"
+            };
+            
+            // For slides beyond our mapped range, use the pattern from the file list
+            if (slideFilenames[slideNumber]) {
+                return slideFilenames[slideNumber];
             }
             
-            // Start initialization with a small delay
-            setTimeout(initializePresentationWhenReady, 100);
-        });
+            // Fallback to numbered pattern for remaining slides
+            return `${num}_Slide-${slideNumber}.png`;
+        }
+        
+        function previousSlide() {
+            if (currentSlide > 1) {
+                currentSlide--;
+                updateSlideDisplay();
+            }
+        }
+        
+        function nextSlide() {
+            if (currentSlide < totalSlides) {
+                currentSlide++;
+                updateSlideDisplay();
+            }
+        }
+        
+        function jumpToSlide(slideNumber) {
+            const num = parseInt(slideNumber);
+            if (num >= 1 && num <= totalSlides) {
+                currentSlide = num;
+                updateSlideDisplay();
+            }
+        }
+        
+        function toggleFullscreen() {
+            const container = document.querySelector('.presentation-container');
+            if (container) {
+                container.classList.toggle('fullscreen');
+            }
+        }
+        
+        function populateSlideJumpMenu() {
+            const select = document.getElementById('slide-jump');
+            if (select) {
+                select.innerHTML = '<option value="">Jump to Slide...</option>';
+                for (let i = 1; i <= totalSlides; i++) {
+                    const option = document.createElement('option');
+                    option.value = i;
+                    option.textContent = `Slide ${i}`;
+                    select.appendChild(option);
+                }
+            }
+        }
+        
+        function setupKeyboardNavigation() {
+            document.addEventListener('keydown', function(e) {
+                // Only handle keys when presentation panel is active
+                const presentationPanel = document.getElementById('presentation');
+                if (presentationPanel && !presentationPanel.classList.contains('hidden')) {
+                    switch(e.key) {
+                        case 'ArrowLeft':
+                        case 'ArrowUp':
+                            e.preventDefault();
+                            previousSlide();
+                            break;
+                        case 'ArrowRight':
+                        case 'ArrowDown':
+                        case ' ':
+                            e.preventDefault();
+                            nextSlide();
+                            break;
+                        case 'Home':
+                            e.preventDefault();
+                            currentSlide = 1;
+                            updateSlideDisplay();
+                            break;
+                        case 'End':
+                            e.preventDefault();
+                            currentSlide = totalSlides;
+                            updateSlideDisplay();
+                            break;
+                        case 'f':
+                        case 'F':
+                            if (!e.ctrlKey && !e.metaKey) {
+                                e.preventDefault();
+                                toggleFullscreen();
+                            }
+                            break;
+                        case 'Escape':
+                            const container = document.querySelector('.presentation-container');
+                            if (container && container.classList.contains('fullscreen')) {
+                                e.preventDefault();
+                                toggleFullscreen();
+                            }
+                            break;
+                    }
+                }
+            });
+        }
     </script>
 </body>
 </html>
