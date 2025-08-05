@@ -5984,14 +5984,134 @@
         class SimulationPresentation {
             constructor() {
                 this.currentSlide = 1;
-                this.totalSlides = 133; // Will be loaded dynamically from API
-                this.slidesPath = '/slides/';
-                this.fullscreenMode = false;
-                this.autoPlay = false;
-                this.slideNotes = {};
-                this.slideFilenames = {}; // Will be populated from API
+                this.totalSlides = 133;
                 this.slidesLoaded = false;
                 
+                console.log('✅ SimulationPresentation initialized');
+                this.initializePresentation();
+            }
+
+            async initializePresentation() {
+                try {
+                    console.log('🎬 Initializing presentation system...');
+                    this.setupKeyboardNavigation();
+                    this.updateSlide();
+                    console.log('✅ Presentation system ready');
+                } catch (error) {
+                    console.error('❌ Failed to initialize presentation:', error);
+                }
+            }
+
+            previousSlide() {
+                if (this.currentSlide > 1) {
+                    this.currentSlide--;
+                    this.updateSlide();
+                }
+            }
+
+            nextSlide() {
+                if (this.currentSlide < this.totalSlides) {
+                    this.currentSlide++;
+                    this.updateSlide();
+                }
+            }
+
+            goToSlide(slideNumber) {
+                if (slideNumber >= 1 && slideNumber <= this.totalSlides) {
+                    this.currentSlide = slideNumber;
+                    this.updateSlide();
+                }
+            }
+
+            updateSlide() {
+                // Update slide counters
+                const currentSlideElements = document.querySelectorAll('#current-slide, #current-slide-number');
+                currentSlideElements.forEach(element => {
+                    element.textContent = this.currentSlide;
+                });
+
+                const totalSlideElements = document.querySelectorAll('#total-slides, .total-slides-display');
+                totalSlideElements.forEach(element => {
+                    element.textContent = this.totalSlides;
+                });
+
+                // Update the slide image source
+                const slideImage = document.getElementById('current-slide-image');
+                if (slideImage) {
+                    console.log(`🔄 Loading slide ${this.currentSlide}`);
+                    slideImage.src = `/api/slides/${this.currentSlide}`;
+                    slideImage.alt = `Geographic Detective Academy - Slide ${this.currentSlide}`;
+                    
+                    slideImage.onload = () => {
+                        console.log(`✅ Slide ${this.currentSlide} loaded successfully`);
+                    };
+                    
+                    slideImage.onerror = (error) => {
+                        console.error(`❌ Failed to load slide ${this.currentSlide}:`, error);
+                    };
+                } else {
+                    console.error('❌ Slide image element not found');
+                }
+
+                this.updateSlideNotes();
+            }
+
+            updateSlideNotes() {
+                const notesContent = document.getElementById('slide-notes-content');
+                if (notesContent) {
+                    notesContent.innerHTML = `
+                        <div class="slide-notes">
+                            <h3>🎯 Slide ${this.currentSlide} - Geographic Detective Academy</h3>
+                            <p><strong>Teacher:</strong> Welcome detectives to slide ${this.currentSlide} of our Geographic Detective training!</p>
+                            <p><em>This slide continues our investigation into geographic mysteries and builds essential geographic literacy skills.</em></p>
+                            
+                            <div class="discussion-prompt">
+                                <h5>🔍 Key Discussion Points:</h5>
+                                <ul>
+                                    <li>What geographic clues can you identify in this slide?</li>
+                                    <li>How does this information connect to our ongoing investigation?</li>
+                                    <li>What questions would a geographic detective ask about this evidence?</li>
+                                </ul>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            setupKeyboardNavigation() {
+                document.addEventListener('keydown', (e) => {
+                    // Only handle keyboard when presentation panel is active
+                    const presentationPanel = document.getElementById('presentation');
+                    if (!presentationPanel || presentationPanel.classList.contains('hidden')) {
+                        return;
+                    }
+
+                    switch(e.key) {
+                        case 'ArrowLeft':
+                        case 'ArrowUp':
+                            e.preventDefault();
+                            this.previousSlide();
+                            break;
+                        case 'ArrowRight':
+                        case 'ArrowDown':
+                        case ' ':
+                            e.preventDefault();
+                            this.nextSlide();
+                            break;
+                        case 'Home':
+                            e.preventDefault();
+                            this.goToSlide(1);
+                            break;
+                        case 'End':
+                            e.preventDefault();
+                            this.goToSlide(this.totalSlides);
+                            break;
+                    }
+                });
+                
+                console.log('⌨️ Keyboard navigation enabled');
+            }
+        }
                 this.initializePresentation();
             }
 
@@ -7406,6 +7526,34 @@
                 });
 
                 console.log('⌨️ Keyboard navigation enabled');
+            }
+        }
+
+        // Global functions for HTML button clicks
+        function previousSlide() {
+            if (window.presentationSystem) {
+                window.presentationSystem.previousSlide();
+            }
+        }
+
+        function nextSlide() {
+            if (window.presentationSystem) {
+                window.presentationSystem.nextSlide();
+            }
+        }
+
+        function jumpToSlide(slideNumber) {
+            if (window.presentationSystem) {
+                window.presentationSystem.goToSlide(slideNumber);
+            }
+        }
+
+        function toggleFullscreen() {
+            console.log('🔍 Fullscreen toggle requested');
+            // Simple fullscreen toggle for presentation panel
+            const presentationPanel = document.getElementById('presentation');
+            if (presentationPanel) {
+                presentationPanel.classList.toggle('fullscreen-mode');
             }
         }
 
