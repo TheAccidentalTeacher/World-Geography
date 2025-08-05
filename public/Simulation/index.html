@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geographic Detective Academy - Main Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo h1 {
+            color: #ffd700;
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .logo .subtitle {
+            color: #cccccc;
+            font-size: 0.9rem;
+        }
+
+        .main-container {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .welcome-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #ffd700;
+        }
+
+        .welcome-section p {
+            font-size: 1.2rem;
+            color: #cccccc;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .navigation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .nav-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .nav-card:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #ffd700;
+            transform: translateY(-5px);
+        }
+
+        .nav-card h3 {
+            color: #ffd700;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .nav-card p {
+            color: #cccccc;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .nav-button {
+            background: linear-gradient(45deg, #ffd700, #ffed4a);
+            color: #1e3c72;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .nav-button:hover {
+            background: linear-gradient(45deg, #ffed4a, #ffd700);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .back-button {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <h1>Geographic Detective Academy</h1>
+            <div class="subtitle">Quarter 1 Simulation System</div>
+        </div>
+        <a href="/" class="back-button">← Back to Main Site</a>
+    </header>
+
+    <div class="main-container">
+        <div class="welcome-section">
+            <h2>Welcome to the Geographic Detective Academy</h2>
+            <p>Navigate through the simulation using the sections below. Each area contains specialized tools and resources for your geographic investigation mission.</p>
+        </div>
+
+        <div class="navigation-grid">
+            <div class="nav-card">
+                <h3>🔍 Investigation Overview</h3>
+                <p>Mission briefing, objectives, and overall simulation structure. Start here to understand your role as a geographic detective.</p>
+                <a href="/simulation/overview" class="nav-button">Enter Overview</a>
+            </div>
+
+            <div class="nav-card">
+                <h3>👨‍🏫 Teacher Guide</h3>
+                <p>Complete teacher resources, lesson plans, and implementation guides for running the simulation in your classroom.</p>
+                <a href="/simulation/teacher-guide" class="nav-button">Access Guide</a>
+            </div>
+
+            <div class="nav-card">
+                <h3>📊 Live Presentation</h3>
+                <p>Interactive slideshow with 133 slides for classroom presentation and student engagement during the simulation.</p>
+                <a href="/simulation/presentation" class="nav-button">Start Presentation</a>
+            </div>
+
+            <div class="nav-card">
+                <h3>📱 Student Dashboard</h3>
+                <p>Student-facing interface with investigation tools, data collection forms, and collaboration features.</p>
+                <a href="/simulation/student-dashboard" class="nav-button">Open Dashboard</a>
+            </div>
+
+            <div class="nav-card">
+                <h3>📋 Student Materials</h3>
+                <p>Downloadable worksheets, investigation forms, reference materials, and assessment rubrics.</p>
+                <a href="/simulation/student-materials" class="nav-button">View Materials</a>
+            </div>
+
+            <div class="nav-card">
+                <h3>🗺️ Interactive Maps</h3>
+                <p>Dynamic mapping tools, geographic data visualization, and location-based investigation resources.</p>
+                <a href="/simulation/maps" class="nav-button">Explore Maps</a>
+            </div>
+
+            <div class="nav-card">
+                <h3>📈 Progress Tracking</h3>
+                <p>Monitor simulation progress, track student achievements, and generate assessment reports.</p>
+                <a href="/simulation/progress" class="nav-button">View Progress</a>
+            </div>
+
+            <div class="nav-card">
+                <h3>⚙️ System Settings</h3>
+                <p>Configure simulation parameters, manage user access, and customize the experience for your classroom.</p>
+                <a href="/simulation/settings" class="nav-button">Open Settings</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

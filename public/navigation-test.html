@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Navigation Test</title>
+    <style>
+        .hidden { display: none; }
+        .nav-item { cursor: pointer; padding: 10px; margin: 5px; background: blue; color: white; }
+        .nav-item.active { background: red; }
+        .content-panel { padding: 20px; border: 2px solid black; margin: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Simple Navigation Test</h1>
+    
+    <div class="navigation">
+        <div class="nav-item" data-panel="panel1" onclick="showPanel('panel1')">Panel 1</div>
+        <div class="nav-item" data-panel="panel2" onclick="showPanel('panel2')">Panel 2</div>
+        <div class="nav-item" data-panel="presentation" onclick="showPanel('presentation')">Presentation</div>
+    </div>
+    
+    <div id="panel1" class="content-panel">
+        <h2>PANEL 1 CONTENT</h2>
+        <p>This is panel 1</p>
+    </div>
+    
+    <div id="panel2" class="content-panel hidden">
+        <h2>PANEL 2 CONTENT</h2>
+        <p>This is panel 2</p>
+    </div>
+    
+    <div id="presentation" class="content-panel hidden">
+        <div style="background: red; color: white; padding: 20px; font-size: 24px; text-align: center;">
+            🚨 PRESENTATION PANEL 🚨
+        </div>
+        <h2>PRESENTATION CONTENT</h2>
+        <p>This is the presentation panel</p>
+    </div>
+    
+    <script>
+        function showPanel(panelName) {
+            console.log('showPanel called with:', panelName);
+            
+            // Hide all panels
+            const panels = ['panel1', 'panel2', 'presentation'];
+            panels.forEach(panel => {
+                const element = document.getElementById(panel);
+                if (element) {
+                    element.classList.add('hidden');
+                    console.log('Hidden:', panel);
+                }
+            });
+            
+            // Remove active class from all nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Show selected panel
+            const selectedPanel = document.getElementById(panelName);
+            if (selectedPanel) {
+                selectedPanel.classList.remove('hidden');
+                console.log('Showing:', panelName);
+            }
+            
+            // Add active class to nav item
+            const navItem = document.querySelector(`[data-panel="${panelName}"]`);
+            if (navItem) {
+                navItem.classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>

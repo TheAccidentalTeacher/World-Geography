@@ -8,7 +8,6 @@ const { Curriculum, Module, Lesson } = require('./models');
 const { extractAllPDFs } = require('./extract-pdfs');
 const { schoolCalendar, calendarUtils } = require('./calendar-config');
 const { extractCurriculumForDashboard } = require('./extract-curriculum-dashboard');
-const { createSimulationRoutes } = require('./simulation-system');
 
 // Try to load Replicate - it's optional
 let replicate = null;
@@ -223,8 +222,47 @@ app.get('/api/slides/:number', async (req, res) => {
   }
 });
 
-// Initialize Geographic Detective Academy Simulation System
-createSimulationRoutes(app);
+// Q1 Geographic Detectives Simulation Routes - New Clean System
+app.get('/simulation', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'simulation', 'index.html'));
+});
+
+app.get('/simulation/overview', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'simulation', 'overview.html'));
+});
+
+app.get('/simulation/teacher-guide', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'simulation', 'teacher-guide.html'));
+});
+
+app.get('/simulation/presentation', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'simulation', 'presentation.html'));
+});
+
+app.get('/simulation/student-dashboard', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'simulation', 'student-dashboard.html'));
+});
+
+app.get('/simulation/student-materials', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'simulation', 'student-materials.html'));
+});
+
+app.get('/simulation/maps', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'simulation', 'maps.html'));
+});
+
+app.get('/simulation/progress', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'simulation', 'progress.html'));
+});
+
+app.get('/simulation/settings', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'simulation', 'settings.html'));
+});
+
+// Legacy redirect for old broken panel system
+app.get('/simulation/geographic-detective-academy', (req, res) => {
+  res.redirect('/simulation');
+});
 
 // Serve lessons directory
 app.get('/lessons', (req, res) => {
@@ -1484,9 +1522,46 @@ app.get('/lesson-companion', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'lesson-companion.html'));
 });
 
-// Q1 Geographic Detectives Simulation Route - Redirect to new system
+// Q1 Geographic Detectives Simulation Routes - New Clean System
 app.get('/simulation', (req, res) => {
-  res.redirect('/simulation/geographic-detective-academy');
+  res.sendFile(path.join(__dirname, 'public', 'simulation', 'index.html'));
+});
+
+app.get('/simulation/overview', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'simulation', 'overview.html'));
+});
+
+app.get('/simulation/teacher-guide', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'simulation', 'teacher-guide.html'));
+});
+
+app.get('/simulation/presentation', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'simulation', 'presentation.html'));
+});
+
+app.get('/simulation/student-dashboard', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'simulation', 'student-dashboard.html'));
+});
+
+app.get('/simulation/student-materials', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'simulation', 'student-materials.html'));
+});
+
+app.get('/simulation/maps', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'simulation', 'maps.html'));
+});
+
+app.get('/simulation/progress', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'simulation', 'progress.html'));
+});
+
+app.get('/simulation/settings', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'simulation', 'settings.html'));
+});
+
+// Legacy redirect for old broken panel system
+app.get('/simulation/geographic-detective-academy', (req, res) => {
+  res.redirect('/simulation');
 });
 
 // Redirect browse to PDF lessons
