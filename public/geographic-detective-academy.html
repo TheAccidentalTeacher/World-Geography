@@ -5175,7 +5175,62 @@
         </div>
     </main>
 
-    <!-- Modern Presentation System -->
+    <!-- JavaScript for Enhanced Interface -->
+    <script>
+        // SimulationInterface class to handle panel navigation and UI interactions
+        class SimulationInterface {
+            constructor() {
+                this.currentPanel = 'overview';
+                this.initializeNavigation();
+                this.initializeStatusButtons();
+                console.log('🎯 SimulationInterface initialized');
+            }
+
+            initializeNavigation() {
+                // Handle navigation clicks
+                const navItems = document.querySelectorAll('.nav-item');
+                navItems.forEach(item => {
+                    item.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const panelId = item.getAttribute('data-panel');
+                        this.showPanel(panelId);
+                    });
+                });
+            }
+
+            initializeStatusButtons() {
+                // Handle status button interactions
+                const statusButtons = document.querySelectorAll('.badge');
+                statusButtons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        console.log('Status button clicked:', button.textContent);
+                    });
+                });
+            }
+
+            showPanel(panelId) {
+                // Hide all panels
+                const allPanels = document.querySelectorAll('.content-panel');
+                allPanels.forEach(panel => panel.classList.add('hidden'));
+
+                // Show selected panel
+                const targetPanel = document.getElementById(panelId);
+                if (targetPanel) {
+                    targetPanel.classList.remove('hidden');
+                    this.currentPanel = panelId;
+                    
+                    // Update navigation active state
+                    const navItems = document.querySelectorAll('.nav-item');
+                    navItems.forEach(item => item.classList.remove('active'));
+                    
+                    const activeNav = document.querySelector(`[data-panel="${panelId}"]`);
+                    if (activeNav) {
+                        activeNav.classList.add('active');
+                    }
+                }
+            }
+        }
+
         // Print functions for teacher guide
         function printSection(sectionId) {
             // Add body class for section-specific printing
@@ -5268,6 +5323,10 @@
                 // Create the main interface controller
                 window.simulationInterface = new SimulationInterface();
                 console.log('🎯 SimulationInterface initialized successfully');
+                
+                // Initialize the presentation system
+                window.presentationSystem = new SimulationPresentation();
+                console.log('🎬 Presentation system initialized successfully');
                 
                 // Verify status buttons are working
                 const classifiedBtn = document.querySelector('.badge.classified');
@@ -7368,11 +7427,12 @@
                 }
             `;
             document.head.appendChild(style);
-            
-            // Initialize presentation system
-    <!-- Modern Presentation System -->
-    <script>
-        // Geographic Detective Academy Presentation System
+        }
+    </script>
+</body>
+</html>
+        function initializePresentationSystem() {
+            // Geographic Detective Academy Presentation System
         let currentSlide = 1;
         const totalSlides = 133;
         
