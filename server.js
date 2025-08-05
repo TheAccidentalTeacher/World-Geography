@@ -264,36 +264,17 @@ app.get('/api/slides/:number', async (req, res) => {
   }
 });
 
-// Q1 Geographic Detectives Simulation Routes - Skeleton Pages
+// Q1 Geographic Detectives Simulation Routes - Professional Pages
 app.get('/simulation', (req, res) => {
-  res.send(`
-    <!DOCTYPE html>
-    <html>
-    <head><title>Geographic Detective Academy</title></head>
-    <body>
-      <h1>Geographic Detective Academy - Main Hub</h1>
-      <p>Simulation system under development</p>
-      <ul>
-        <li><a href="/simulation/overview">Overview</a></li>
-        <li><a href="/simulation/teacher-guide">Teacher Guide</a></li>
-        <li><a href="/simulation/presentation">Presentation</a></li>
-        <li><a href="/simulation/student-dashboard">Student Dashboard</a></li>
-        <li><a href="/simulation/student-materials">Student Materials</a></li>
-        <li><a href="/simulation/maps">Maps</a></li>
-        <li><a href="/simulation/progress">Progress</a></li>
-        <li><a href="/simulation/settings">Settings</a></li>
-      </ul>
-    </body>
-    </html>
-  `);
+  res.sendFile(path.join(__dirname, 'public', 'geographic-detective-academy-main.html'));
 });
 
 app.get('/simulation/overview', (req, res) => {
-  res.send('<h1>Overview</h1><p>Under construction</p><a href="/simulation">Back to Hub</a>');
+  res.sendFile(path.join(__dirname, 'public', 'detective-academy', 'overview.html'));
 });
 
 app.get('/simulation/teacher-guide', (req, res) => {
-  res.send('<h1>Teacher Guide</h1><p>Under construction</p><a href="/simulation">Back to Hub</a>');
+  res.sendFile(path.join(__dirname, 'public', 'detective-academy', 'teacher-guide.html'));
 });
 
 app.get('/simulation/presentation', (req, res) => {
@@ -301,7 +282,7 @@ app.get('/simulation/presentation', (req, res) => {
 });
 
 app.get('/simulation/student-dashboard', (req, res) => {
-  res.send('<h1>Student Dashboard</h1><p>Under construction</p><a href="/simulation">Back to Hub</a>');
+  res.sendFile(path.join(__dirname, 'public', 'detective-academy', 'student-dashboard.html'));
 });
 
 app.get('/simulation/student-materials', (req, res) => {

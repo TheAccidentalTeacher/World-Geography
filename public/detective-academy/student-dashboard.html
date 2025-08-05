@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detective Headquarters - Student Dashboard</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Roboto:wght@300;400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .detective-header {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px 0;
+            border-bottom: 3px solid #ffd700;
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+        }
+        
+        .back-button {
+            background: rgba(255, 215, 0, 0.2);
+            border: 2px solid #ffd700;
+            color: #ffd700;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-family: 'Courier Prime', monospace;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+        
+        .back-button:hover {
+            background: #ffd700;
+            color: #1a1a2e;
+        }
+        
+        .page-title {
+            font-family: 'Courier Prime', monospace;
+            font-size: 24px;
+            color: #ffd700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .detective-rank {
+            background: rgba(46, 204, 113, 0.3);
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 2px solid #2ecc71;
+            font-family: 'Courier Prime', monospace;
+            font-size: 14px;
+        }
+        
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .dashboard-card {
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 15px;
+            padding: 25px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .dashboard-card:hover {
+            border-color: #ffd700;
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(255, 215, 0, 0.2);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .card-icon {
+            font-size: 32px;
+            margin-right: 15px;
+        }
+        
+        .card-title {
+            font-family: 'Courier Prime', monospace;
+            color: #ffd700;
+            font-size: 20px;
+            margin: 0;
+        }
+        
+        .progress-bar {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            height: 20px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ffd700 0%, #ffb347 100%);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            position: relative;
+        }
+        
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.2) 50%, transparent 100%);
+            animation: shimmer 2s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .case-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 5px;
+        }
+        
+        .status-active {
+            color: #2ecc71;
+            font-weight: bold;
+        }
+        
+        .status-complete {
+            color: #ffd700;
+            font-weight: bold;
+        }
+        
+        .status-locked {
+            color: #7f8c8d;
+            font-weight: bold;
+        }
+        
+        .achievement-badge {
+            display: inline-block;
+            background: linear-gradient(45deg, #ffd700, #ffb347);
+            color: #1a1a2e;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+            margin: 5px 5px 5px 0;
+            box-shadow: 0 2px 5px rgba(255, 215, 0, 0.3);
+        }
+        
+        .current-mission {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            border: 2px solid #ffd700;
+            margin-bottom: 30px;
+        }
+        
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .tool-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .tool-item:hover {
+            background: rgba(255, 215, 0, 0.2);
+            transform: scale(1.05);
+        }
+        
+        .tool-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        .tool-name {
+            font-size: 12px;
+            color: #ccc;
+        }
+    </style>
+</head>
+<body>
+    <header class="detective-header">
+        <div class="header-content">
+            <a href="/simulation" class="back-button">← Back to HQ</a>
+            <h1 class="page-title">🎯 Detective Headquarters</h1>
+            <div class="detective-rank">ROOKIE DETECTIVE</div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="dashboard-grid">
+            <div class="dashboard-card current-mission">
+                <div class="card-header">
+                    <span class="card-icon">🚨</span>
+                    <h2 class="card-title">Current Mission</h2>
+                </div>
+                <h3 style="color: #ffd700; margin-bottom: 10px;">Case #001: The Missing Artifact of Egypt</h3>
+                <p style="margin-bottom: 15px; line-height: 1.5;">
+                    The Golden Sphinx of Giza has vanished! Your first assignment takes you to Egypt to investigate 
+                    the land of pyramids, the Nile River, and ancient mysteries.
+                </p>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 35%;"></div>
+                </div>
+                <p style="font-size: 14px; color: #ccc;">Progress: 35% Complete</p>
+            </div>
+
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <span class="card-icon">📊</span>
+                    <h2 class="card-title">Investigation Progress</h2>
+                </div>
+                <div class="case-status">
+                    <span>Cases Solved:</span>
+                    <span class="status-complete">0 / 7</span>
+                </div>
+                <div class="case-status">
+                    <span>Countries Investigated:</span>
+                    <span class="status-active">1 / 21</span>
+                </div>
+                <div class="case-status">
+                    <span>Clues Discovered:</span>
+                    <span class="status-active">3 / 50</span>
+                </div>
+                <div class="case-status">
+                    <span>Detective Rank:</span>
+                    <span style="color: #ffd700;">Rookie</span>
+                </div>
+            </div>
+
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <span class="card-icon">🏆</span>
+                    <h2 class="card-title">Achievements Earned</h2>
+                </div>
+                <div style="margin-top: 15px;">
+                    <div class="achievement-badge">🎯 First Investigation</div>
+                    <div class="achievement-badge">🗺️ Map Reader</div>
+                    <div class="achievement-badge">🔍 Clue Finder</div>
+                </div>
+                <p style="font-size: 14px; color: #ccc; margin-top: 15px;">
+                    Keep investigating to unlock more badges and advance your detective rank!
+                </p>
+            </div>
+
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <span class="card-icon">🌍</span>
+                    <h2 class="card-title">World Investigation Map</h2>
+                </div>
+                <p style="margin-bottom: 15px;">Track your global investigation progress:</p>
+                <div class="case-status">
+                    <span>🇪🇬 Egypt</span>
+                    <span class="status-active">IN PROGRESS</span>
+                </div>
+                <div class="case-status">
+                    <span>🇨🇳 China</span>
+                    <span class="status-locked">LOCKED</span>
+                </div>
+                <div class="case-status">
+                    <span>🇵🇪 Peru</span>
+                    <span class="status-locked">LOCKED</span>
+                </div>
+                <div class="case-status">
+                    <span>🇬🇷 Greece</span>
+                    <span class="status-locked">LOCKED</span>
+                </div>
+                <p style="font-size: 12px; color: #ccc; margin-top: 10px;">
+                    Complete Egypt to unlock the next destination!
+                </p>
+            </div>
+
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <span class="card-icon">🔧</span>
+                    <h2 class="card-title">Detective Tools</h2>
+                </div>
+                <p style="margin-bottom: 15px;">Your investigation toolkit:</p>
+                <div class="tools-grid">
+                    <div class="tool-item" onclick="useTool('notebook')">
+                        <span class="tool-icon">📝</span>
+                        <div class="tool-name">Evidence Notebook</div>
+                    </div>
+                    <div class="tool-item" onclick="useTool('maps')">
+                        <span class="tool-icon">🗺️</span>
+                        <div class="tool-name">World Maps</div>
+                    </div>
+                    <div class="tool-item" onclick="useTool('compass')">
+                        <span class="tool-icon">🧭</span>
+                        <div class="tool-name">Compass</div>
+                    </div>
+                    <div class="tool-item" onclick="useTool('magnifier')">
+                        <span class="tool-icon">🔍</span>
+                        <div class="tool-name">Magnifying Glass</div>
+                    </div>
+                    <div class="tool-item" onclick="useTool('camera')">
+                        <span class="tool-icon">📸</span>
+                        <div class="tool-name">Evidence Camera</div>
+                    </div>
+                    <div class="tool-item" onclick="useTool('translator')">
+                        <span class="tool-icon">🗣️</span>
+                        <div class="tool-name">Language Guide</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <span class="card-icon">📚</span>
+                    <h2 class="card-title">Learning Progress</h2>
+                </div>
+                <div style="margin: 15px 0;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <span>Geographic Skills</span>
+                        <span>40%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 40%;"></div>
+                    </div>
+                </div>
+                <div style="margin: 15px 0;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <span>Cultural Knowledge</span>
+                        <span>25%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 25%;"></div>
+                    </div>
+                </div>
+                <div style="margin: 15px 0;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <span>Problem Solving</span>
+                        <span>60%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 60%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function useTool(toolName) {
+            const toolMessages = {
+                'notebook': '📝 Opening evidence notebook... This is where you record clues and observations.',
+                'maps': '🗺️ Accessing world maps... Use these to find locations and plan investigations.',
+                'compass': '🧭 Compass activated... Shows direction and helps with navigation.',
+                'magnifier': '🔍 Magnifying glass ready... Perfect for examining detailed clues.',
+                'camera': '📸 Camera enabled... Capture evidence and important geographical features.',
+                'translator': '🗣️ Language guide loaded... Helps understand different cultures and languages.'
+            };
+
+            const message = toolMessages[toolName] || 'Tool activated...';
+            
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: rgba(0, 0, 0, 0.9);
+                color: #ffd700;
+                padding: 25px 35px;
+                border-radius: 15px;
+                border: 2px solid #ffd700;
+                font-family: 'Courier Prime', monospace;
+                font-size: 16px;
+                text-align: center;
+                z-index: 1000;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+                animation: fadeIn 0.3s ease-in;
+            `;
+            
+            notification.innerHTML = `
+                <div style="font-size: 24px; margin-bottom: 15px;">🕵️</div>
+                <div>${message}</div>
+                <div style="margin-top: 15px; font-size: 14px; color: #ccc;">
+                    Click to continue investigating...
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes fadeIn {
+                    from { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+                    to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+                }
+                @keyframes fadeOut {
+                    from { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+                    to { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            notification.addEventListener('click', () => {
+                notification.style.animation = 'fadeOut 0.3s ease-out forwards';
+                setTimeout(() => {
+                    if (document.body.contains(notification)) {
+                        document.body.removeChild(notification);
+                    }
+                    if (document.head.contains(style)) {
+                        document.head.removeChild(style);
+                    }
+                }, 300);
+            });
+            
+            setTimeout(() => {
+                if (document.body.contains(notification)) {
+                    notification.click();
+                }
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

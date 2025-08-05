@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Detective Agency - World Geography Investigation</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Roboto:wght@300;400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .detective-header {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px 0;
+            border-bottom: 3px solid #ffd700;
+            position: relative;
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+        }
+        
+        .agency-logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .badge {
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, #ffd700 0%, #ffb347 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            border: 3px solid #fff;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+        
+        .agency-title {
+            font-family: 'Courier Prime', monospace;
+            font-size: 28px;
+            font-weight: 700;
+            color: #ffd700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .case-status {
+            background: rgba(255, 0, 0, 0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 2px solid #ff4444;
+            font-family: 'Courier Prime', monospace;
+            font-weight: 700;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .mission-briefing {
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 40px;
+            border: 2px solid #ffd700;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+        
+        .briefing-title {
+            font-family: 'Courier Prime', monospace;
+            font-size: 24px;
+            color: #ffd700;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .briefing-text {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .navigation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 40px;
+        }
+        
+        .nav-card {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .nav-card:hover {
+            border-color: #ffd700;
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(255, 215, 0, 0.3);
+        }
+        
+        .nav-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 215, 0, 0.1), transparent);
+            transform: rotate(45deg);
+            transition: all 0.5s ease;
+            opacity: 0;
+        }
+        
+        .nav-card:hover::before {
+            opacity: 1;
+            animation: shine 0.5s ease-in-out;
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+        
+        .nav-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            display: block;
+        }
+        
+        .nav-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #ffd700;
+            margin-bottom: 12px;
+            font-family: 'Courier Prime', monospace;
+        }
+        
+        .nav-description {
+            font-size: 14px;
+            color: #bbb;
+            line-height: 1.5;
+        }
+        
+        .overview { background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); }
+        .teacher-guide { background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); }
+        .presentation { background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%); }
+        .student-dashboard { background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%); }
+        .student-materials { background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); }
+        .maps { background: linear-gradient(135deg, #1abc9c 0%, #16a085 100%); }
+        .progress { background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%); }
+        .settings { background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%); }
+        
+        .footer-section {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 50px;
+            text-align: center;
+            border: 2px dashed #ffd700;
+        }
+        
+        .footer-title {
+            font-family: 'Courier Prime', monospace;
+            font-size: 20px;
+            color: #ffd700;
+            margin-bottom: 15px;
+        }
+        
+        .footer-text {
+            font-size: 14px;
+            color: #ccc;
+            line-height: 1.6;
+        }
+        
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .agency-title {
+                font-size: 22px;
+                text-align: center;
+            }
+            
+            .navigation-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .nav-card {
+                min-height: 160px;
+                padding: 25px;
+            }
+            
+            .nav-icon {
+                font-size: 40px;
+            }
+            
+            .nav-title {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="detective-header">
+        <div class="header-content">
+            <div class="agency-logo">
+                <div class="badge">🕵️</div>
+                <h1 class="agency-title">Global Detective Agency</h1>
+            </div>
+            <div class="case-status">WORLD GEOGRAPHY CASE</div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <section class="mission-briefing">
+            <h2 class="briefing-title">🌍 Case File: Missing World Artifacts</h2>
+            <p class="briefing-text">
+                Welcome to the Global Detective Agency's most challenging case yet! Ancient artifacts from around 
+                the world have mysteriously disappeared, and it's up to our team of student detectives to track 
+                them down using their knowledge of world geography.
+            </p>
+            <p class="briefing-text">
+                <strong>Mission Objective:</strong> Navigate through different sections of our investigation 
+                headquarters to gather intelligence, access resources, and solve geographical mysteries 
+                from every corner of the globe.
+            </p>
+        </section>
+
+        <div class="navigation-grid">
+            <div class="nav-card overview" onclick="navigateToSection('overview')">
+                <span class="nav-icon">📋</span>
+                <h3 class="nav-title">Overview</h3>
+                <p class="nav-description">Get the complete mission briefing and understand the scope of your global investigation</p>
+            </div>
+
+            <div class="nav-card teacher-guide" onclick="navigateToSection('teacher-guide')">
+                <span class="nav-icon">👨‍🏫</span>
+                <h3 class="nav-title">Teacher Guide</h3>
+                <p class="nav-description">Access the master detective's handbook with lesson plans and investigation strategies</p>
+            </div>
+
+            <div class="nav-card presentation" onclick="navigateToSection('presentation')">
+                <span class="nav-icon">📺</span>
+                <h3 class="nav-title">Presentation</h3>
+                <p class="nav-description">View case briefings and geographical evidence through interactive presentations</p>
+            </div>
+
+            <div class="nav-card student-dashboard" onclick="navigateToSection('student-dashboard')">
+                <span class="nav-icon">🎯</span>
+                <h3 class="nav-title">Student Dashboard</h3>
+                <p class="nav-description">Your personal detective headquarters to track cases and manage investigations</p>
+            </div>
+
+            <div class="nav-card student-materials" onclick="navigateToSection('student-materials')">
+                <span class="nav-icon">📚</span>
+                <h3 class="nav-title">Student Materials</h3>
+                <p class="nav-description">Access your detective toolkit: worksheets, clue cards, and investigation resources</p>
+            </div>
+
+            <div class="nav-card maps" onclick="navigateToSection('maps')">
+                <span class="nav-icon">🗺️</span>
+                <h3 class="nav-title">Maps</h3>
+                <p class="nav-description">Explore interactive world maps and geographical evidence from crime scenes</p>
+            </div>
+
+            <div class="nav-card progress" onclick="navigateToSection('progress')">
+                <span class="nav-icon">📊</span>
+                <h3 class="nav-title">Progress</h3>
+                <p class="nav-description">Track your investigation progress and see how close you are to solving the case</p>
+            </div>
+
+            <div class="nav-card settings" onclick="navigateToSection('settings')">
+                <span class="nav-icon">⚙️</span>
+                <h3 class="nav-title">Settings</h3>
+                <p class="nav-description">Configure your detective preferences and customize your investigation experience</p>
+            </div>
+        </div>
+
+        <section class="footer-section">
+            <h3 class="footer-title">🔍 Detective's Note</h3>
+            <p class="footer-text">
+                Remember, every great detective knows that geography is the key to solving international mysteries. 
+                Pay attention to countries, capitals, landmarks, cultures, and physical features as you work through each case. 
+                The world is full of clues waiting to be discovered!
+            </p>
+        </section>
+    </main>
+
+    <script>
+        function navigateToSection(section) {
+            // Navigate to the actual simulation routes
+            const baseUrl = '/simulation';
+            window.location.href = `${baseUrl}/${section}`;
+        }
+
+        // Add some interactive effects on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate cards on scroll
+            const cards = document.querySelectorAll('.nav-card');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            entry.target.style.opacity = '1';
+                            entry.target.style.transform = 'translateY(0)';
+                        }, index * 100);
+                    }
+                });
+            });
+            
+            cards.forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(card);
+            });
+        });
+    </script>
+</body>
+</html>

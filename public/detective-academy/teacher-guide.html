@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Detective Handbook - Teacher Guide</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Roboto:wght@300;400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .detective-header {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px 0;
+            border-bottom: 3px solid #ffd700;
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+        }
+        
+        .back-button {
+            background: rgba(255, 215, 0, 0.2);
+            border: 2px solid #ffd700;
+            color: #ffd700;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-family: 'Courier Prime', monospace;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+        
+        .back-button:hover {
+            background: #ffd700;
+            color: #1a1a2e;
+        }
+        
+        .page-title {
+            font-family: 'Courier Prime', monospace;
+            font-size: 24px;
+            color: #ffd700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .security-badge {
+            background: rgba(220, 20, 60, 0.3);
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 2px solid #dc143c;
+            font-family: 'Courier Prime', monospace;
+            font-size: 14px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .handbook-section {
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 30px;
+            border: 2px solid #ffd700;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .handbook-section h2 {
+            font-family: 'Courier Prime', monospace;
+            color: #ffd700;
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .guide-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .guide-card {
+            background: linear-gradient(135deg, #8b0000 0%, #a52a2a 100%);
+            border-radius: 15px;
+            padding: 25px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .guide-card:hover {
+            border-color: #ffd700;
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(255, 215, 0, 0.2);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .card-icon {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+        
+        .card-title {
+            font-family: 'Courier Prime', monospace;
+            color: #ffd700;
+            font-size: 18px;
+            margin: 0;
+        }
+        
+        .card-content {
+            color: #fff;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+        
+        .lesson-structure {
+            background: rgba(25, 25, 112, 0.3);
+            border-left: 5px solid #ffd700;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .objectives-list {
+            list-style: none;
+            padding: 0;
+            margin: 15px 0;
+        }
+        
+        .objectives-list li {
+            margin: 8px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+        
+        .objectives-list li::before {
+            content: "🔍";
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+        
+        .implementation-tip {
+            background: rgba(255, 215, 0, 0.1);
+            border: 2px dashed #ffd700;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .implementation-tip h4 {
+            color: #ffd700;
+            font-family: 'Courier Prime', monospace;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header class="detective-header">
+        <div class="header-content">
+            <a href="/simulation" class="back-button">← Back to HQ</a>
+            <h1 class="page-title">👨‍🏫 Master Detective Handbook</h1>
+            <div class="security-badge">INSTRUCTOR ONLY</div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <section class="handbook-section">
+            <h2>📚 Teaching with the Global Detective Academy</h2>
+            
+            <p style="margin: 20px 0; line-height: 1.6; font-size: 16px;">
+                Welcome to the Master Detective Handbook! This comprehensive guide provides everything you need 
+                to successfully implement the Global Detective Academy simulation in your world geography classroom. 
+                Transform your students into international investigators while they learn essential geographic skills.
+            </p>
+
+            <div class="lesson-structure">
+                <h3 style="color: #ffd700; font-family: 'Courier Prime', monospace; margin-bottom: 15px;">
+                    🎯 Curriculum Alignment
+                </h3>
+                <ul class="objectives-list">
+                    <li>World Geography Standards: Countries, capitals, physical features</li>
+                    <li>Map Skills: Coordinate systems, scale, direction, symbols</li>
+                    <li>Cultural Geography: Traditions, languages, historical connections</li>
+                    <li>Physical Geography: Climate, landforms, natural resources</li>
+                    <li>Human Geography: Population, migration, urban development</li>
+                    <li>Critical Thinking: Analysis, synthesis, problem-solving</li>
+                </ul>
+            </div>
+
+            <div class="guide-grid">
+                <div class="guide-card">
+                    <div class="card-header">
+                        <span class="card-icon">🚀</span>
+                        <h3 class="card-title">Getting Started</h3>
+                    </div>
+                    <div class="card-content">
+                        <p><strong>Setup Time:</strong> 15 minutes</p>
+                        <p><strong>Class Period:</strong> 45-50 minutes</p>
+                        <p><strong>Materials Needed:</strong></p>
+                        <ul style="margin: 10px 0; padding-left: 20px;">
+                            <li>Computers/tablets for student access</li>
+                            <li>World map or atlas</li>
+                            <li>Student investigation notebooks</li>
+                            <li>Detective badges (optional)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="guide-card">
+                    <div class="card-header">
+                        <span class="card-icon">📖</span>
+                        <h3 class="card-title">Lesson Structure</h3>
+                    </div>
+                    <div class="card-content">
+                        <p><strong>Introduction (10 min):</strong> Mission briefing and case assignment</p>
+                        <p><strong>Investigation (25 min):</strong> Student exploration and evidence gathering</p>
+                        <p><strong>Analysis (8 min):</strong> Team discussion and findings</p>
+                        <p><strong>Debrief (7 min):</strong> Geographic concepts and next steps</p>
+                    </div>
+                </div>
+
+                <div class="guide-card">
+                    <div class="card-header">
+                        <span class="card-icon">🎭</span>
+                        <h3 class="card-title">Role-Playing Tips</h3>
+                    </div>
+                    <div class="card-content">
+                        <p>Encourage students to "stay in character" as detectives. Use detective terminology:</p>
+                        <ul style="margin: 10px 0; padding-left: 20px;">
+                            <li>"Investigate" instead of "study"</li>
+                            <li>"Evidence" instead of "information"</li>
+                            <li>"Case files" instead of "worksheets"</li>
+                            <li>"Mission briefing" instead of "instructions"</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="guide-card">
+                    <div class="card-header">
+                        <span class="card-icon">🏆</span>
+                        <h3 class="card-title">Assessment Ideas</h3>
+                    </div>
+                    <div class="card-content">
+                        <p><strong>Formative:</strong> Investigation logs, peer discussions</p>
+                        <p><strong>Summative:</strong> Case solution presentations, map skills quiz</p>
+                        <p><strong>Performance:</strong> Detective badge system based on accuracy and participation</p>
+                        <p><strong>Portfolio:</strong> Collection of solved cases and geographic discoveries</p>
+                    </div>
+                </div>
+
+                <div class="guide-card">
+                    <div class="card-header">
+                        <span class="card-icon">🔧</span>
+                        <h3 class="card-title">Differentiation</h3>
+                    </div>
+                    <div class="card-content">
+                        <p><strong>Advanced Learners:</strong> Additional mystery cases, cross-cultural connections</p>
+                        <p><strong>Struggling Learners:</strong> Partner investigations, simplified clue cards</p>
+                        <p><strong>ELL Students:</strong> Visual clues, geographic vocabulary supports</p>
+                        <p><strong>Special Needs:</strong> Assistive technology, modified activities</p>
+                    </div>
+                </div>
+
+                <div class="guide-card">
+                    <div class="card-header">
+                        <span class="card-icon">💡</span>
+                        <h3 class="card-title">Extension Activities</h3>
+                    </div>
+                    <div class="card-content">
+                        <p>• Create student-generated mystery cases</p>
+                        <p>• Research real archaeological discoveries</p>
+                        <p>• Design travel itineraries for investigations</p>
+                        <p>• Connect with classrooms in other countries</p>
+                        <p>• Virtual field trips to museums and landmarks</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="implementation-tip">
+                <h4>💡 Pro Tip: Setting the Mood</h4>
+                <p>
+                    Play instrumental spy or mystery music quietly in the background during investigations. 
+                    Dim the lights slightly and encourage "detective voices" (slightly hushed, serious tones). 
+                    Consider giving students detective badges or code names for the duration of the unit!
+                </p>
+            </div>
+
+            <div class="implementation-tip">
+                <h4>🌟 Success Strategy: Think-Pair-Share Detective Style</h4>
+                <p>
+                    <strong>Think:</strong> Individual investigation (3 min)<br>
+                    <strong>Pair:</strong> Partner evidence sharing (5 min)<br>
+                    <strong>Share:</strong> Team case presentation (7 min)
+                </p>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

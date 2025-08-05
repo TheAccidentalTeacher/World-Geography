@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Case Overview - Global Detective Agency</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Roboto:wght@300;400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .detective-header {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px 0;
+            border-bottom: 3px solid #ffd700;
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+        }
+        
+        .back-button {
+            background: rgba(255, 215, 0, 0.2);
+            border: 2px solid #ffd700;
+            color: #ffd700;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-family: 'Courier Prime', monospace;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+        
+        .back-button:hover {
+            background: #ffd700;
+            color: #1a1a2e;
+        }
+        
+        .page-title {
+            font-family: 'Courier Prime', monospace;
+            font-size: 24px;
+            color: #ffd700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .case-badge {
+            background: rgba(255, 0, 0, 0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 2px solid #ff4444;
+            font-family: 'Courier Prime', monospace;
+            font-size: 14px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .case-file {
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 30px;
+            border: 2px solid #ffd700;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .case-file h2 {
+            font-family: 'Courier Prime', monospace;
+            color: #ffd700;
+            font-size: 28px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .overview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .overview-card {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            border-radius: 15px;
+            padding: 25px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .overview-card:hover {
+            border-color: #ffd700;
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(255, 215, 0, 0.2);
+        }
+        
+        .card-icon {
+            font-size: 36px;
+            margin-bottom: 15px;
+            display: block;
+        }
+        
+        .card-title {
+            font-family: 'Courier Prime', monospace;
+            color: #ffd700;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        
+        .card-description {
+            color: #ccc;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+        
+        .mission-objectives {
+            background: rgba(25, 25, 112, 0.3);
+            border-left: 5px solid #ffd700;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .objectives-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .objectives-list li {
+            margin: 10px 0;
+            padding-left: 30px;
+            position: relative;
+        }
+        
+        .objectives-list li::before {
+            content: "🎯";
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+    </style>
+</head>
+<body>
+    <header class="detective-header">
+        <div class="header-content">
+            <a href="/simulation" class="back-button">← Back to HQ</a>
+            <h1 class="page-title">📋 Case Overview</h1>
+            <div class="case-badge">CLASSIFIED</div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <section class="case-file">
+            <h2>🔍 Mission Briefing: The Missing World Artifacts</h2>
+            
+            <div class="mission-objectives">
+                <h3 style="color: #ffd700; font-family: 'Courier Prime', monospace; margin-bottom: 15px;">Primary Objectives:</h3>
+                <ul class="objectives-list">
+                    <li>Learn about world geography through detective investigations</li>
+                    <li>Explore different countries, cultures, and geographical features</li>
+                    <li>Solve geographical mysteries using map skills and cultural knowledge</li>
+                    <li>Track down ancient artifacts scattered across the globe</li>
+                    <li>Build understanding of physical and human geography concepts</li>
+                </ul>
+            </div>
+
+            <p style="margin: 20px 0; line-height: 1.6; font-size: 16px;">
+                Welcome, Detective! You've been recruited by the Global Detective Agency to solve one of the 
+                most challenging cases in our history. Ancient artifacts from every continent have mysteriously 
+                disappeared from museums worldwide. Your mission is to use your growing knowledge of world 
+                geography to track down these priceless treasures.
+            </p>
+
+            <div class="overview-grid">
+                <div class="overview-card">
+                    <span class="card-icon">🌍</span>
+                    <h3 class="card-title">Global Investigation</h3>
+                    <p class="card-description">
+                        Travel virtually across all seven continents to gather clues. Each location offers 
+                        unique geographical challenges and cultural insights that will help solve the mystery.
+                    </p>
+                </div>
+
+                <div class="overview-card">
+                    <span class="card-icon">🗺️</span>
+                    <h3 class="card-title">Map Skills Development</h3>
+                    <p class="card-description">
+                        Use coordinates, scale, compass directions, and map symbols to navigate your investigations. 
+                        Master the tools that every great geographic detective needs.
+                    </p>
+                </div>
+
+                <div class="overview-card">
+                    <span class="card-icon">🏛️</span>
+                    <h3 class="card-title">Cultural Exploration</h3>
+                    <p class="card-description">
+                        Learn about different cultures, languages, traditions, and historical sites as you 
+                        search for clues about the missing artifacts and their origins.
+                    </p>
+                </div>
+
+                <div class="overview-card">
+                    <span class="card-icon">🔬</span>
+                    <h3 class="card-title">Evidence Analysis</h3>
+                    <p class="card-description">
+                        Examine physical geography features, climate patterns, and human-environment interactions 
+                        to piece together the mystery of the missing artifacts.
+                    </p>
+                </div>
+
+                <div class="overview-card">
+                    <span class="card-icon">🎯</span>
+                    <h3 class="card-title">Problem Solving</h3>
+                    <p class="card-description">
+                        Apply critical thinking skills and geographic knowledge to solve puzzles, analyze clues, 
+                        and make connections between different world regions.
+                    </p>
+                </div>
+
+                <div class="overview-card">
+                    <span class="card-icon">🏆</span>
+                    <h3 class="card-title">Achievement System</h3>
+                    <p class="card-description">
+                        Earn detective badges and certificates as you successfully complete investigations 
+                        and demonstrate mastery of geographic concepts and skills.
+                    </p>
+                </div>
+            </div>
+
+            <div style="margin-top: 40px; padding: 25px; background: rgba(255, 215, 0, 0.1); border: 2px dashed #ffd700; border-radius: 10px;">
+                <h3 style="color: #ffd700; font-family: 'Courier Prime', monospace; margin-bottom: 15px; text-align: center;">
+                    🚨 Case Status: ACTIVE
+                </h3>
+                <p style="text-align: center; color: #ccc; line-height: 1.6;">
+                    The investigation is ongoing. Seven artifacts remain missing from locations around the world. 
+                    Your geographic expertise is crucial to recovering these priceless treasures and solving this 
+                    international mystery. Begin your investigation immediately!
+                </p>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
