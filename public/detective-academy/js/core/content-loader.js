@@ -267,6 +267,22 @@ class ContentLoader {
         // Initialize any tooltip elements
         this.initializeTooltips();
 
+        // RESTORE SLIDE CONNECTION: Initialize presentation system if this is the presentation panel
+        const presentationPanel = this.contentContainer.querySelector('#presentation-panel');
+        if (presentationPanel && typeof PresentationModule !== 'undefined') {
+            console.log('🎬 Initializing presentation system with 133 slides database connection');
+            
+            // Initialize the presentation module
+            setTimeout(() => {
+                try {
+                    window.presentation = new PresentationModule();
+                    console.log('✅ Presentation system restored successfully');
+                } catch (error) {
+                    console.error('❌ Error initializing presentation system:', error);
+                }
+            }, 100); // Small delay to ensure DOM is ready
+        }
+
         ConfigUtils.log('debug', 'Content interactions initialized');
     }
 
