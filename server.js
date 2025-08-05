@@ -27,17 +27,18 @@ let slidesBucket;
 app.use(cors());
 app.use(express.json());
 
-// Add Content Security Policy headers
+// Add Content Security Policy headers - Enhanced for font loading
 app.use((req, res, next) => {
   res.setHeader('Content-Security-Policy', 
     "default-src 'self'; " +
-    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
-    "font-src 'self' https://fonts.gstatic.com data:; " +
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com; " +
+    "font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com data: blob:; " +
     "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
     "img-src 'self' data: https: blob:; " +
     "connect-src 'self' https: wss:; " +
     "frame-src 'self'; " +
-    "object-src 'none';"
+    "object-src 'none'; " +
+    "base-uri 'self';"
   );
   next();
 });
@@ -83,7 +84,8 @@ app.get('/api/health', (req, res) => {
     port: PORT,
     environment: process.env.NODE_ENV || 'development',
     uptime: Math.floor(process.uptime()),
-    memory: process.memoryUsage()
+    memory: process.memoryUsage(),
+    version: '2.0.0-simulation-system'
   });
 });
 
@@ -238,41 +240,60 @@ app.get('/api/slides/:number', async (req, res) => {
   }
 });
 
-// Q1 Geographic Detectives Simulation Routes - New Clean System
+// Q1 Geographic Detectives Simulation Routes - Skeleton Pages
 app.get('/simulation', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'simulation', 'index.html'));
+  res.send(`
+    <!DOCTYPE html>
+    <html>
+    <head><title>Geographic Detective Academy</title></head>
+    <body>
+      <h1>Geographic Detective Academy - Main Hub</h1>
+      <p>Simulation system under development</p>
+      <ul>
+        <li><a href="/simulation/overview">Overview</a></li>
+        <li><a href="/simulation/teacher-guide">Teacher Guide</a></li>
+        <li><a href="/simulation/presentation">Presentation</a></li>
+        <li><a href="/simulation/student-dashboard">Student Dashboard</a></li>
+        <li><a href="/simulation/student-materials">Student Materials</a></li>
+        <li><a href="/simulation/maps">Maps</a></li>
+        <li><a href="/simulation/progress">Progress</a></li>
+        <li><a href="/simulation/settings">Settings</a></li>
+      </ul>
+    </body>
+    </html>
+  `);
 });
 
 app.get('/simulation/overview', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'simulation', 'overview.html'));
+  res.send('<h1>Overview</h1><p>Under construction</p><a href="/simulation">Back to Hub</a>');
 });
 
 app.get('/simulation/teacher-guide', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'simulation', 'teacher-guide.html'));
+  res.send('<h1>Teacher Guide</h1><p>Under construction</p><a href="/simulation">Back to Hub</a>');
 });
 
 app.get('/simulation/presentation', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'simulation', 'presentation.html'));
+  res.send('<h1>Presentation</h1><p>Under construction</p><a href="/simulation">Back to Hub</a>');
 });
 
 app.get('/simulation/student-dashboard', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'simulation', 'student-dashboard.html'));
+  res.send('<h1>Student Dashboard</h1><p>Under construction</p><a href="/simulation">Back to Hub</a>');
 });
 
 app.get('/simulation/student-materials', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'simulation', 'student-materials.html'));
+  res.send('<h1>Student Materials</h1><p>Under construction</p><a href="/simulation">Back to Hub</a>');
 });
 
 app.get('/simulation/maps', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'simulation', 'maps.html'));
+  res.send('<h1>Maps</h1><p>Under construction</p><a href="/simulation">Back to Hub</a>');
 });
 
 app.get('/simulation/progress', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'simulation', 'progress.html'));
+  res.send('<h1>Progress</h1><p>Under construction</p><a href="/simulation">Back to Hub</a>');
 });
 
 app.get('/simulation/settings', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'simulation', 'settings.html'));
+  res.send('<h1>Settings</h1><p>Under construction</p><a href="/simulation">Back to Hub</a>');
 });
 
 // Legacy redirect for old broken panel system
@@ -1036,12 +1057,6 @@ process.on('unhandledRejection', (reason, promise) => {
   // Don't exit immediately, let's see what happens
 });
 
-// Log memory usage periodically to check for memory leaks  
-setInterval(() => {
-  const memUsage = process.memoryUsage();
-  console.log(`📊 Memory: RSS=${Math.round(memUsage.rss/1024/1024)}MB, Heap=${Math.round(memUsage.heapUsed/1024/1024)}MB`);
-}, 30000); // Every 30 seconds
-
 // =================================
 // TOOL 1: ADVANCED MAP GENERATOR
 // =================================
@@ -1543,43 +1558,6 @@ app.get('/lesson-companion', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'lesson-companion.html'));
 });
 
-// Q1 Geographic Detectives Simulation Routes - New Clean System
-app.get('/simulation', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'simulation', 'index.html'));
-});
-
-app.get('/simulation/overview', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'simulation', 'overview.html'));
-});
-
-app.get('/simulation/teacher-guide', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'simulation', 'teacher-guide.html'));
-});
-
-app.get('/simulation/presentation', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'simulation', 'presentation.html'));
-});
-
-app.get('/simulation/student-dashboard', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'simulation', 'student-dashboard.html'));
-});
-
-app.get('/simulation/student-materials', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'simulation', 'student-materials.html'));
-});
-
-app.get('/simulation/maps', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'simulation', 'maps.html'));
-});
-
-app.get('/simulation/progress', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'simulation', 'progress.html'));
-});
-
-app.get('/simulation/settings', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'simulation', 'settings.html'));
-});
-
 // Legacy redirect for old broken panel system
 app.get('/simulation/geographic-detective-academy', (req, res) => {
   res.redirect('/simulation');
@@ -2047,8 +2025,8 @@ app.get('/admin', (req, res) => {
             
             document.getElementById('status').innerHTML = '🚀 ' + data.message + ' - This may take several minutes...';
             
-            // Check status every 30 seconds
-            setTimeout(checkStatus, 30000);
+            // Check status once after extraction starts
+            setTimeout(checkStatus, 5000);
           } catch (error) {
             document.getElementById('status').innerHTML = '❌ Error: ' + error.message;
           }
@@ -2089,8 +2067,8 @@ app.get('/admin', (req, res) => {
             
             document.getElementById('status').innerHTML = '🚀 ' + data.message + ' - Processing curriculum for daily dashboard...';
             
-            // Check status every 30 seconds
-            setTimeout(checkStatus, 30000);
+            // Check status once after dashboard extraction starts
+            setTimeout(checkStatus, 5000);
           } catch (error) {
             document.getElementById('status').innerHTML = '❌ Error: ' + error.message;
           }
