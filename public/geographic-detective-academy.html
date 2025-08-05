@@ -3031,6 +3031,201 @@
             }
         }
         
+        /* ===== DAILY STRUCTURE STYLES ===== */
+        
+        .daily-structure-header {
+            text-align: center;
+            background: linear-gradient(135deg, #2c5aa0, #1a237e);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+        }
+        
+        .daily-structure-header h1 {
+            margin: 0 0 0.5rem 0;
+            font-size: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .structure-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 1.5rem;
+        }
+        
+        .structure-stats {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .structure-stats .stat {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            backdrop-filter: blur(10px);
+            text-align: center;
+        }
+        
+        .daily-overview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .day-overview-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid #2196f3;
+            transition: all 0.3s ease;
+        }
+        
+        .day-overview-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .day-overview-card.setup-day {
+            border-left-color: #9c27b0;
+            background: linear-gradient(135deg, #ffffff, #f3e5f5);
+        }
+        
+        .day-overview-card.graduation {
+            border-left-color: #ff9800;
+            background: linear-gradient(135deg, #ffffff, #fff3e0);
+        }
+        
+        .day-header h3 {
+            margin: 0 0 1rem 0;
+            color: #1a237e;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+        
+        .day-badges {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+        
+        .time-badge, .slide-badge, .module-badge, .difficulty-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .time-badge {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+        
+        .slide-badge {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+        
+        .module-badge {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+        
+        .difficulty-badge.master {
+            background: #fff3e0;
+            color: #ef6c00;
+        }
+        
+        .difficulty-badge.graduation {
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+            color: white;
+        }
+        
+        .day-summary p {
+            margin: 0 0 1rem 0;
+            color: #555;
+            font-weight: 500;
+        }
+        
+        .day-activities h4 {
+            margin: 1rem 0 0.5rem 0;
+            color: #1a237e;
+            font-size: 1rem;
+        }
+        
+        .day-activities ul {
+            margin: 0;
+            padding-left: 1.2rem;
+        }
+        
+        .day-activities li {
+            margin: 0.3rem 0;
+            color: #666;
+            line-height: 1.4;
+        }
+        
+        .structure-navigation {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .structure-navigation h3 {
+            margin: 0 0 1rem 0;
+            color: #1a237e;
+        }
+        
+        .structure-navigation p {
+            margin: 0 0 2rem 0;
+            color: #666;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .nav-btn {
+            background: linear-gradient(135deg, #1a237e, #3949ab);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-btn:hover {
+            background: linear-gradient(135deg, #3949ab, #5e72e4);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(26, 35, 126, 0.3);
+        }
+        
+        @media (max-width: 768px) {
+            .daily-overview-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .structure-stats {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .nav-buttons {
+                flex-direction: column;
+            }
+        }
+        
         /* ===== PRESENTATION SYSTEM STYLES ===== */
         
         .presentation-header {
@@ -3516,8 +3711,351 @@
 
         <!-- DAILY STRUCTURE PANEL -->
         <div id="daily-structure" class="content-panel hidden">
-            <h2>📅 Daily Structure</h2>
-            <p>Detailed daily progression and activities will be loaded here...</p>
+            <div class="daily-structure-header">
+                <h1>📅 Geographic Detective Academy - Daily Structure</h1>
+                <div class="structure-subtitle">12-Day Progressive Investigation Training</div>
+                <div class="structure-stats">
+                    <div class="stat">
+                        <div class="stat-number">12</div>
+                        <div class="stat-label">Daily Cases</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">45</div>
+                        <div class="stat-label">Minutes Per Day</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">133</div>
+                        <div class="stat-label">Presentation Slides</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="daily-overview-grid">
+                <!-- Setup Day -->
+                <div class="day-overview-card setup-day">
+                    <div class="day-header">
+                        <h3>SETUP DAY (Day 0)</h3>
+                        <div class="day-badges">
+                            <span class="time-badge">⏰ 45 minutes</span>
+                            <span class="slide-badge">📊 Slides 1-10</span>
+                        </div>
+                    </div>
+                    <div class="day-summary">
+                        <p><strong>Mission:</strong> Character creation, team formation, introduction to the Bureau</p>
+                        <div class="day-activities">
+                            <h4>Activities:</h4>
+                            <ul>
+                                <li>Detective character creation (15 min)</li>
+                                <li>Geographic Bureau orientation (15 min)</li>
+                                <li>First case briefing (15 min)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Day 1 -->
+                <div class="day-overview-card day-1">
+                    <div class="day-header">
+                        <h3>DAY 1: THE MISSING GLOBE MYSTERY</h3>
+                        <div class="day-badges">
+                            <span class="time-badge">⏰ 45 minutes</span>
+                            <span class="slide-badge">📊 Slides 11-20</span>
+                            <span class="module-badge">🗺️ Module 1: Maps and Globes</span>
+                        </div>
+                    </div>
+                    <div class="day-summary">
+                        <p><strong>Case:</strong> Ancient globe stolen from International Geographic Society</p>
+                        <div class="day-activities">
+                            <h4>Investigation Focus:</h4>
+                            <ul>
+                                <li>Map reading and interpretation</li>
+                                <li>Latitude and longitude coordinates</li>
+                                <li>Globe vs. flat map analysis</li>
+                                <li>Evidence: mysterious coordinates</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Day 2 -->
+                <div class="day-overview-card day-2">
+                    <div class="day-header">
+                        <h3>DAY 2: MOUNTAIN RANGE HEIST</h3>
+                        <div class="day-badges">
+                            <span class="time-badge">⏰ 45 minutes</span>
+                            <span class="slide-badge">📊 Slides 21-30</span>
+                            <span class="module-badge">🏔️ Module 2: Landforms and Physical Features</span>
+                        </div>
+                    </div>
+                    <div class="day-summary">
+                        <p><strong>Case:</strong> Topographic maps of major mountain ranges stolen</p>
+                        <div class="day-activities">
+                            <h4>Investigation Focus:</h4>
+                            <ul>
+                                <li>Elevation and topographic maps</li>
+                                <li>Mountain formation processes</li>
+                                <li>Physical geography analysis</li>
+                                <li>Evidence: 8,848m clue (Mt. Everest)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Day 3 -->
+                <div class="day-overview-card day-3">
+                    <div class="day-header">
+                        <h3>DAY 3: CLIMATE CHANGE MYSTERY</h3>
+                        <div class="day-badges">
+                            <span class="time-badge">⏰ 45 minutes</span>
+                            <span class="slide-badge">📊 Slides 31-40</span>
+                            <span class="module-badge">🌡️ Module 3: Climate and Weather</span>
+                        </div>
+                    </div>
+                    <div class="day-summary">
+                        <p><strong>Case:</strong> Unusual weather patterns affecting global crops</p>
+                        <div class="day-activities">
+                            <h4>Investigation Focus:</h4>
+                            <ul>
+                                <li>Weather vs. climate analysis</li>
+                                <li>Global climate patterns</li>
+                                <li>Data correlation and prediction</li>
+                                <li>Evidence: temperature and precipitation data</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Day 4 -->
+                <div class="day-overview-card day-4">
+                    <div class="day-header">
+                        <h3>DAY 4: OCEAN CURRENT CONSPIRACY</h3>
+                        <div class="day-badges">
+                            <span class="time-badge">⏰ 45 minutes</span>
+                            <span class="slide-badge">📊 Slides 41-50</span>
+                            <span class="module-badge">🌊 Module 4: Oceans and Water Systems</span>
+                        </div>
+                    </div>
+                    <div class="day-summary">
+                        <p><strong>Case:</strong> Disrupted shipping routes due to altered ocean currents</p>
+                        <div class="day-activities">
+                            <h4>Investigation Focus:</h4>
+                            <ul>
+                                <li>Ocean current patterns</li>
+                                <li>Water cycle connections</li>
+                                <li>Marine geography</li>
+                                <li>Evidence: shipping delay reports</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Day 5 -->
+                <div class="day-overview-card day-5">
+                    <div class="day-header">
+                        <h3>DAY 5: ECOSYSTEM ESPIONAGE</h3>
+                        <div class="day-badges">
+                            <span class="time-badge">⏰ 45 minutes</span>
+                            <span class="slide-badge">📊 Slides 51-60</span>
+                            <span class="module-badge">🌳 Module 5: Ecosystems and Biomes</span>
+                        </div>
+                    </div>
+                    <div class="day-summary">
+                        <p><strong>Case:</strong> Mysterious species disappearances across biomes</p>
+                        <div class="day-activities">
+                            <h4>Investigation Focus:</h4>
+                            <ul>
+                                <li>Biome characteristics</li>
+                                <li>Ecosystem interconnections</li>
+                                <li>Species distribution patterns</li>
+                                <li>Evidence: wildlife tracking data</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Day 6 -->
+                <div class="day-overview-card day-6">
+                    <div class="day-header">
+                        <h3>DAY 6: POPULATION PUZZLE</h3>
+                        <div class="day-badges">
+                            <span class="time-badge">⏰ 45 minutes</span>
+                            <span class="slide-badge">📊 Slides 61-70</span>
+                            <span class="module-badge">👥 Module 6: Human Geography</span>
+                        </div>
+                    </div>
+                    <div class="day-summary">
+                        <p><strong>Case:</strong> Unusual migration patterns in major cities</p>
+                        <div class="day-activities">
+                            <h4>Investigation Focus:</h4>
+                            <ul>
+                                <li>Population distribution analysis</li>
+                                <li>Urban vs. rural patterns</li>
+                                <li>Migration factors</li>
+                                <li>Evidence: census anomalies</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Day 7 -->
+                <div class="day-overview-card day-7">
+                    <div class="day-header">
+                        <h3>DAY 7: CULTURAL GEOGRAPHY CAPER</h3>
+                        <div class="day-badges">
+                            <span class="time-badge">⏰ 45 minutes</span>
+                            <span class="slide-badge">📊 Slides 71-80</span>
+                            <span class="module-badge">🏛️ Module 7: Culture and Society</span>
+                        </div>
+                    </div>
+                    <div class="day-summary">
+                        <p><strong>Case:</strong> Cultural artifacts vanishing from world heritage sites</p>
+                        <div class="day-activities">
+                            <h4>Investigation Focus:</h4>
+                            <ul>
+                                <li>Cultural regions and traditions</li>
+                                <li>Language distribution patterns</li>
+                                <li>Heritage site geography</li>
+                                <li>Evidence: cultural mapping data</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Day 8 -->
+                <div class="day-overview-card day-8">
+                    <div class="day-header">
+                        <h3>DAY 8: ECONOMIC GEOGRAPHY MYSTERY</h3>
+                        <div class="day-badges">
+                            <span class="time-badge">⏰ 45 minutes</span>
+                            <span class="slide-badge">📊 Slides 81-90</span>
+                            <span class="module-badge">💰 Module 8: Economic Systems</span>
+                        </div>
+                    </div>
+                    <div class="day-summary">
+                        <p><strong>Case:</strong> Global trade route disruptions</p>
+                        <div class="day-activities">
+                            <h4>Investigation Focus:</h4>
+                            <ul>
+                                <li>Trade patterns and routes</li>
+                                <li>Resource distribution</li>
+                                <li>Economic geography principles</li>
+                                <li>Evidence: supply chain data</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Day 9 -->
+                <div class="day-overview-card day-9">
+                    <div class="day-header">
+                        <h3>DAY 9: POLITICAL BOUNDARIES BREACH</h3>
+                        <div class="day-badges">
+                            <span class="time-badge">⏰ 45 minutes</span>
+                            <span class="slide-badge">📊 Slides 91-100</span>
+                            <span class="module-badge">🗳️ Module 9: Political Geography</span>
+                        </div>
+                    </div>
+                    <div class="day-summary">
+                        <p><strong>Case:</strong> International boundary disputes escalating</p>
+                        <div class="day-activities">
+                            <h4>Investigation Focus:</h4>
+                            <ul>
+                                <li>Political boundaries and sovereignty</li>
+                                <li>Geopolitical relationships</li>
+                                <li>Territory and governance</li>
+                                <li>Evidence: diplomatic communications</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Day 10 -->
+                <div class="day-overview-card day-10">
+                    <div class="day-header">
+                        <h3>DAY 10: ENVIRONMENTAL EMERGENCY</h3>
+                        <div class="day-badges">
+                            <span class="time-badge">⏰ 45 minutes</span>
+                            <span class="slide-badge">📊 Slides 101-110</span>
+                            <span class="module-badge">🌍 Module 10: Environmental Issues</span>
+                        </div>
+                    </div>
+                    <div class="day-summary">
+                        <p><strong>Case:</strong> Coordinated environmental disasters worldwide</p>
+                        <div class="day-activities">
+                            <h4>Investigation Focus:</h4>
+                            <ul>
+                                <li>Environmental impact assessment</li>
+                                <li>Sustainability principles</li>
+                                <li>Human-environment interaction</li>
+                                <li>Evidence: environmental monitoring data</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Day 11 -->
+                <div class="day-overview-card day-11">
+                    <div class="day-header">
+                        <h3>DAY 11: THE MASTER INVESTIGATION</h3>
+                        <div class="day-badges">
+                            <span class="time-badge">⏰ 45 minutes</span>
+                            <span class="slide-badge">📊 Slides 111-120</span>
+                            <span class="difficulty-badge master">🏆 MASTER LEVEL</span>
+                        </div>
+                    </div>
+                    <div class="day-summary">
+                        <p><strong>Final Case:</strong> All previous mysteries connected - uncover The Cartographers' master plan</p>
+                        <div class="day-activities">
+                            <h4>Master Investigation:</h4>
+                            <ul>
+                                <li>Synthesize all previous evidence</li>
+                                <li>Advanced geographic analysis</li>
+                                <li>Multi-layered problem solving</li>
+                                <li>Evidence: comprehensive case files</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Day 12 -->
+                <div class="day-overview-card day-12 graduation">
+                    <div class="day-header">
+                        <h3>DAY 12: GRADUATION DAY</h3>
+                        <div class="day-badges">
+                            <span class="time-badge">⏰ 45 minutes</span>
+                            <span class="slide-badge">📊 Slides 121-133</span>
+                            <span class="difficulty-badge graduation">🎓 GRADUATION</span>
+                        </div>
+                    </div>
+                    <div class="day-summary">
+                        <p><strong>Ceremony:</strong> Final case presentation, mastery showcase, and academy graduation</p>
+                        <div class="day-activities">
+                            <h4>Graduation Events:</h4>
+                            <ul>
+                                <li>Final case presentations (20 min)</li>
+                                <li>Skill demonstration showcase (15 min)</li>
+                                <li>Academy graduation ceremony (10 min)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Daily Structure Navigation -->
+            <div class="structure-navigation">
+                <div class="nav-section">
+                    <h3>🗓️ View Detailed Day Structure</h3>
+                    <p>Click on any day above to see detailed activities, or use the Teacher Guide for complete lesson scripts.</p>
+                    <div class="nav-buttons">
+                        <button class="nav-btn" onclick="window.simulationInterface.showPanel('teacher-guide')">
+                            📖 View Complete Teacher Guide
+                        </button>
+                        <button class="nav-btn" onclick="window.simulationInterface.showPanel('presentation')">
+                            🎬 Access Presentation Slides
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- TEAM ROLES PANEL -->
@@ -5641,28 +6179,54 @@
                 const slideImage = document.getElementById('current-slide-image');
                 if (slideImage) {
                     const slideFilename = this.slideFilenames[this.currentSlide];
-                    if (slideFilename) {
-                        console.log(`🔄 Loading slide ${this.currentSlide}: ${slideFilename}`);
-                        
-                        // Use API endpoint for production, fallback to local path for development
-                        if (this.slidesLoaded && slideFilename !== `${this.currentSlide.toString().padStart(2, '0')}_slide.png`) {
-                            // Database slides - use API endpoint
-                            slideImage.src = `/api/slides/${this.currentSlide}`;
-                        } else {
-                            // Local development or fallback slides
-                            slideImage.src = `/slides/${slideFilename}`;
-                        }
-                        
-                        slideImage.alt = `Geographic Detective Academy - Slide ${this.currentSlide}`;
+                    console.log(`🔄 Loading slide ${this.currentSlide}, filename: ${slideFilename}, slidesLoaded: ${this.slidesLoaded}`);
+                    
+                    if (this.slidesLoaded && slideFilename) {
+                        // Database slides - use API endpoint with slide number
+                        console.log(`📥 Loading from API: /api/slides/${this.currentSlide}`);
+                        slideImage.src = `/api/slides/${this.currentSlide}`;
                     } else {
-                        console.error(`❌ No filename mapping for slide ${this.currentSlide}`);
-                        // Show placeholder if no filename found
-                        const placeholder = document.getElementById('current-slide-placeholder');
-                        if (placeholder) {
-                            slideImage.style.display = 'none';
-                            placeholder.style.display = 'flex';
-                        }
+                        // Fallback to local path or use slide number anyway
+                        console.log(`📁 Fallback loading: /api/slides/${this.currentSlide}`);
+                        slideImage.src = `/api/slides/${this.currentSlide}`;
                     }
+                    
+                    slideImage.alt = `Geographic Detective Academy - Slide ${this.currentSlide}`;
+                    
+                    // Add load and error handlers for debugging
+                    slideImage.onload = () => {
+                        console.log(`✅ Slide ${this.currentSlide} loaded successfully`);
+                    };
+                    
+                    slideImage.onerror = (error) => {
+                        console.error(`❌ Failed to load slide ${this.currentSlide}:`, error);
+                        console.log(`🔄 Attempted URL: ${slideImage.src}`);
+                    };
+                } else {
+                        console.error(`❌ No filename mapping for slide ${this.currentSlide}`);
+                        // Try loading anyway with slide number
+                        console.log(`📁 No mapping, trying API: /api/slides/${this.currentSlide}`);
+                        slideImage.src = `/api/slides/${this.currentSlide}`;
+                        slideImage.alt = `Geographic Detective Academy - Slide ${this.currentSlide}`;
+                        
+                        // Add load and error handlers for debugging
+                        slideImage.onload = () => {
+                            console.log(`✅ Slide ${this.currentSlide} loaded successfully (no mapping)`);
+                        };
+                        
+                        slideImage.onerror = (error) => {
+                            console.error(`❌ Failed to load slide ${this.currentSlide} (no mapping):`, error);
+                            console.log(`🔄 Attempted URL: ${slideImage.src}`);
+                            // Show placeholder if slide fails to load
+                            const placeholder = document.getElementById('current-slide-placeholder');
+                            if (placeholder) {
+                                slideImage.style.display = 'none';
+                                placeholder.style.display = 'flex';
+                            }
+                        };
+                    }
+                } else {
+                    console.error('❌ Slide image element not found');
                 }
 
                 this.updateSlideNotes();
