@@ -293,6 +293,12 @@
             <button class="detective-btn" onclick="toggleLayer('evidence')">🔍 Evidence</button>
         </div>
         <div class="control-group">
+            <button class="detective-btn" onclick="toggleLayer('boundaries')">🗺️ Countries</button>
+            <button class="detective-btn" onclick="toggleLayer('cities')">🏙️ Cities</button>
+            <button class="detective-btn" onclick="toggleLayer('indigenous')">🏕️ Indigenous</button>
+            <button class="detective-btn" onclick="toggleLayer('deforestation')">🪵 Deforestation</button>
+        </div>
+        <div class="control-group">
             <div class="evidence-counter">Evidence Found: <span id="evidenceCount">0</span>/8</div>
             <button class="detective-btn" onclick="togglePanel()">📋 Investigation Notes</button>
             <button class="detective-btn" onclick="printMap()">🖨️ Print Map</button>
@@ -322,6 +328,22 @@
         <div class="legend-item">
             <div class="legend-color" style="background: #9b59b6;"></div>
             <span>Last Known Position</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #34495e; border: 2px dashed #fff;"></div>
+            <span>Country Boundaries</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #e67e22;"></div>
+            <span>Major Cities</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #8e44ad;"></div>
+            <span>Indigenous Areas</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #c0392b;"></div>
+            <span>Deforestation Zones</span>
         </div>
     </div>
     
@@ -367,7 +389,11 @@
             rivers: L.layerGroup(),
             vegetation: L.layerGroup(),
             stations: L.layerGroup(),
-            evidence: L.layerGroup()
+            evidence: L.layerGroup(),
+            boundaries: L.layerGroup(),
+            cities: L.layerGroup(),
+            indigenous: L.layerGroup(),
+            deforestation: L.layerGroup()
         };
         
         // Evidence tracking
@@ -481,6 +507,72 @@
             }
         ];
         
+        // Country boundaries data
+        const boundaryData = [
+            {
+                country: "Brazil",
+                coords: [
+                    [[-5.2, -75.0], [-5.2, -34.8], [5.3, -34.8], [5.3, -75.0], [-5.2, -75.0]]
+                ],
+                color: "#34495e"
+            },
+            {
+                country: "Peru", 
+                coords: [
+                    [[-18.3, -81.3], [-18.3, -68.7], [0.0, -68.7], [0.0, -81.3], [-18.3, -81.3]]
+                ],
+                color: "#34495e"
+            },
+            {
+                country: "Colombia",
+                coords: [
+                    [[12.4, -81.7], [12.4, -66.9], [-4.2, -66.9], [-4.2, -81.7], [12.4, -81.7]]
+                ],
+                color: "#34495e"
+            }
+        ];
+        
+        // Major cities data
+        const cityData = [
+            { name: "Manaus", coords: [-3.1190, -60.0217], population: "2.2M", country: "Brazil" },
+            { name: "Belém", coords: [-1.4558, -48.5044], population: "1.5M", country: "Brazil" },
+            { name: "Iquitos", coords: [-3.7437, -73.2516], population: "377K", country: "Peru" },
+            { name: "Santarém", coords: [-2.4093, -54.7085], population: "295K", country: "Brazil" },
+            { name: "Macapá", coords: [0.0389, -51.0664], population: "512K", country: "Brazil" },
+            { name: "Porto Velho", coords: [-8.7612, -63.9039], population: "539K", country: "Brazil" }
+        ];
+        
+        // Indigenous territories data
+        const indigenousData = [
+            { name: "Yanomami Territory", coords: [-1.5, -65.0], area: "Protected Reserve", people: "Yanomami" },
+            { name: "Kayapo Territory", coords: [-7.5, -54.0], area: "Traditional Lands", people: "Kayapo" },
+            { name: "Tikuna Reserve", coords: [-3.8, -70.2], area: "Cultural Preserve", people: "Tikuna" },
+            { name: "Xingu Territory", coords: [-11.0, -53.5], area: "National Park", people: "Multiple Tribes" },
+            { name: "Awá Territory", coords: [-3.0, -46.5], area: "Protected Area", people: "Awá-Guajá" }
+        ];
+        
+        // Deforestation zones data
+        const deforestationData = [
+            { 
+                name: "Arc of Deforestation", 
+                coords: [[-8.0, -63.0], [-10.0, -55.0], [-12.0, -50.0], [-8.0, -50.0], [-6.0, -55.0], [-8.0, -63.0]],
+                severity: "High",
+                year: "2020-2024"
+            },
+            {
+                name: "Rondônia Clearing",
+                coords: [[-8.5, -64.0], [-9.5, -64.0], [-9.5, -62.0], [-8.5, -62.0], [-8.5, -64.0]],
+                severity: "Critical",
+                year: "2022-2024"
+            },
+            {
+                name: "Mato Grosso Front",
+                coords: [[-13.0, -57.0], [-15.0, -57.0], [-15.0, -54.0], [-13.0, -54.0], [-13.0, -57.0]],
+                severity: "Moderate",
+                year: "2021-2023"
+            }
+        ];
+        
         // Add rivers to map
         function addRivers() {
             riverData.forEach(river => {
@@ -550,6 +642,99 @@
                                 style="background: #2ecc71; color: white; border: none; padding: 8px 15px; border-radius: 5px; margin-top: 10px; cursor: pointer;">
                             📝 Record Evidence
                         </button>
+                    </div>
+                `);
+            });
+        }
+        
+        // Add country boundaries
+        function addBoundaries() {
+            boundaryData.forEach(boundary => {
+                const polygon = L.polygon(boundary.coords, {
+                    color: boundary.color,
+                    weight: 3,
+                    opacity: 0.8,
+                    fillOpacity: 0,
+                    dashArray: '10, 10'
+                }).addTo(layers.boundaries);
+                
+                polygon.bindPopup(`
+                    <div style="font-family: 'Roboto', sans-serif;">
+                        <h3 style="color: #34495e; margin-bottom: 10px;">🗺️ ${boundary.country}</h3>
+                        <p><strong>Type:</strong> National Boundary</p>
+                        <p><strong>Amazon Coverage:</strong> Significant portion</p>
+                        <p><strong>Investigation Status:</strong> Cross-border coordination required</p>
+                    </div>
+                `);
+            });
+        }
+        
+        // Add major cities
+        function addCities() {
+            cityData.forEach(city => {
+                const cityIcon = L.divIcon({
+                    className: 'city-marker',
+                    html: `<div style="background: #e67e22; border: 3px solid white; border-radius: 8px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">🏙️</div>`,
+                    iconSize: [32, 32],
+                    iconAnchor: [16, 16]
+                });
+                
+                const marker = L.marker(city.coords, { icon: cityIcon }).addTo(layers.cities);
+                
+                marker.bindPopup(`
+                    <div style="font-family: 'Roboto', sans-serif; min-width: 200px;">
+                        <h3 style="color: #e67e22; margin-bottom: 10px;">🏙️ ${city.name}</h3>
+                        <p><strong>Country:</strong> ${city.country}</p>
+                        <p><strong>Population:</strong> ${city.population}</p>
+                        <p><strong>Role:</strong> Regional hub for Amazon research and logistics</p>
+                        <p style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 5px;">Key staging point for Dr. Rivera's expedition supplies and communications.</p>
+                    </div>
+                `);
+            });
+        }
+        
+        // Add indigenous territories
+        function addIndigenous() {
+            indigenousData.forEach(territory => {
+                const territoryIcon = L.divIcon({
+                    className: 'indigenous-marker',
+                    html: `<div style="background: #8e44ad; border: 3px solid white; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">🏕️</div>`,
+                    iconSize: [28, 28],
+                    iconAnchor: [14, 14]
+                });
+                
+                const marker = L.marker(territory.coords, { icon: territoryIcon }).addTo(layers.indigenous);
+                
+                marker.bindPopup(`
+                    <div style="font-family: 'Roboto', sans-serif; min-width: 250px;">
+                        <h3 style="color: #8e44ad; margin-bottom: 10px;">🏕️ ${territory.name}</h3>
+                        <p><strong>People:</strong> ${territory.people}</p>
+                        <p><strong>Status:</strong> ${territory.area}</p>
+                        <p><strong>Cultural Significance:</strong> Traditional guardians of the rainforest</p>
+                        <p style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 5px;">Indigenous communities possess invaluable knowledge about Dr. Rivera's research area and local environmental changes.</p>
+                    </div>
+                `);
+            });
+        }
+        
+        // Add deforestation zones
+        function addDeforestation() {
+            deforestationData.forEach(zone => {
+                const deforestationZone = L.polygon(zone.coords, {
+                    color: '#c0392b',
+                    weight: 2,
+                    opacity: 0.8,
+                    fillColor: '#c0392b',
+                    fillOpacity: 0.3
+                }).addTo(layers.deforestation);
+                
+                deforestationZone.bindPopup(`
+                    <div style="font-family: 'Roboto', sans-serif; min-width: 250px;">
+                        <h3 style="color: #c0392b; margin-bottom: 10px;">🪵 ${zone.name}</h3>
+                        <p><strong>Severity:</strong> <span style="color: ${zone.severity === 'Critical' ? '#e74c3c' : zone.severity === 'High' ? '#f39c12' : '#f1c40f'}">${zone.severity}</span></p>
+                        <p><strong>Period:</strong> ${zone.year}</p>
+                        <p><strong>Environmental Impact:</strong> Significant habitat loss</p>
+                        <p style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 5px;">Dr. Rivera's research focused on understanding the connection between deforestation patterns and biodiversity loss in these critical areas.</p>
                     </div>
                 `);
             });
@@ -659,15 +844,20 @@
             addRivers();
             addStations();
             addEvidence();
+            addBoundaries();
+            addCities();
+            addIndigenous();
+            addDeforestation();
             
-            // Add all layers by default and mark buttons as active
-            Object.values(layers).forEach(layer => {
-                amazonMap.addLayer(layer);
-            });
+            // Add core layers by default (rivers, stations, evidence)
+            amazonMap.addLayer(layers.rivers);
+            amazonMap.addLayer(layers.stations);
+            amazonMap.addLayer(layers.evidence);
             
-            // Mark all layer buttons as active initially
+            // Mark core layer buttons as active initially
             document.querySelectorAll('.detective-btn').forEach(btn => {
-                if (btn.onclick && btn.onclick.toString().includes('toggleLayer')) {
+                const btnText = btn.textContent.trim();
+                if (btnText.includes('Rivers') || btnText.includes('Stations') || btnText.includes('Evidence')) {
                     btn.classList.add('active');
                 }
             });
