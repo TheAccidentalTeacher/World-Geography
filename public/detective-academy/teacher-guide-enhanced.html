@@ -649,20 +649,93 @@
                 await this.loadGuideData();
             }
 
-            setupEventListeners() {
-                // Search functionality
-                document.getElementById('searchInput').addEventListener('input', (e) => {
-                    this.searchGuides(e.target.value);
-                });
+            setupSearch() {
+                // Initialize search functionality
+                const searchInput = document.getElementById('searchInput');
+                if (searchInput) {
+                    searchInput.addEventListener('input', (e) => {
+                        this.searchGuides(e.target.value);
+                    });
+                }
+            }
 
-                // Filter functionality
-                document.querySelectorAll('.filter-btn').forEach(btn => {
+            setupFilters() {
+                // Initialize filter functionality
+                const filterBtns = document.querySelectorAll('.filter-btn');
+                filterBtns.forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
                         e.target.classList.add('active');
                         this.filterDays(e.target.dataset.filter);
                     });
                 });
+            }
+
+            searchGuides(query) {
+                // Simple search implementation
+                if (!query.trim()) {
+                    this.showAllDays();
+                    return;
+                }
+
+                const searchTerm = query.toLowerCase();
+                const dayElements = document.querySelectorAll('.nav-day');
+                
+                dayElements.forEach(dayEl => {
+                    const dayId = dayEl.dataset.day;
+                    const guide = this.guideData[dayId];
+                    
+                    if (guide) {
+                        const searchableText = `${guide.title} ${guide.overview} ${guide.objectives.join(' ')} ${guide.materials.join(' ')}`.toLowerCase();
+                        if (searchableText.includes(searchTerm)) {
+                            dayEl.style.display = 'block';
+                        } else {
+                            dayEl.style.display = 'none';
+                        }
+                    }
+                });
+            }
+
+            filterDays(filter) {
+                const dayElements = document.querySelectorAll('.nav-day');
+                
+                dayElements.forEach(dayEl => {
+                    const dayType = dayEl.dataset.type;
+                    if (filter === 'all' || dayType === filter) {
+                        dayEl.style.display = 'block';
+                    } else {
+                        dayEl.style.display = 'none';
+                    }
+                });
+            }
+
+            showAllDays() {
+                const dayElements = document.querySelectorAll('.nav-day');
+                dayElements.forEach(dayEl => {
+                    dayEl.style.display = 'block';
+                });
+            }
+
+            setupEventListeners() {
+                // Search functionality - only if search input exists
+                const searchInput = document.getElementById('searchInput');
+                if (searchInput) {
+                    searchInput.addEventListener('input', (e) => {
+                        this.searchGuides(e.target.value);
+                    });
+                }
+
+                // Filter functionality - only if filter buttons exist
+                const filterBtns = document.querySelectorAll('.filter-btn');
+                if (filterBtns.length > 0) {
+                    filterBtns.forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                            e.target.classList.add('active');
+                            this.filterDays(e.target.dataset.filter);
+                        });
+                    });
+                }
 
                 // Quick reference toggle
                 document.addEventListener('keydown', (e) => {
@@ -705,8 +778,16 @@
             async loadGuideData() {
                 try {
                     console.log('🔄 Loading teacher guide data...');
-                    this.guideData = await this.loader.loadAllGuides();
-                    console.log('✅ Teacher guide data loaded successfully');
+                    const guidesMap = await this.loader.loadAllGuides();
+                    
+                    // Convert Map to regular object for easier access
+                    this.guideData = {};
+                    for (const [dayId, guide] of guidesMap.entries()) {
+                        this.guideData[dayId] = guide;
+                    }
+                    
+                    console.log('✅ Teacher guide data loaded successfully:', Object.keys(this.guideData));
+                    console.log('📊 Sample guide data:', this.guideData.day1 ? this.guideData.day1.title : 'No day1 data');
                     
                     // Update quick reference with actual data
                     this.updateQuickReference();
@@ -717,14 +798,58 @@
                 }
             }
 
+            createFallbackData() {
+                console.log('🔄 Creating fallback teacher guide data...');
+                this.guideData = {
+                    setup: {
+                        title: 'Geographic Detective Academy - Setup Day',
+                        overview: 'Initial setup and orientation for the Geographic Detective Academy simulation.',
+                        objectives: ['Orient students to the academy system', 'Establish teams and procedures'],
+                        materials: ['Student badges', 'Team assignments', 'Academy manual'],
+                        setup: ['Arrange classroom as academy headquarters', 'Prepare team areas'],
+                        scenes: [{
+                            title: 'Academy Orientation',
+                            content: 'Welcome to the Geographic Detective Academy!',
+                            script: 'Welcome, new recruits, to the Geographic Detective Academy.',
+                            actions: ['Assign detective badges', 'Form investigation teams'],
+                            activities: ['Team formation', 'Academy tour'],
+                            questions: ['What makes a good detective?'],
+                            timing: 45
+                        }]
+                    },
+                    day1: {
+                        title: 'Day 1 - Mystery in the Amazon (Part 1)',
+                        overview: 'Students begin their first investigation in the Amazon rainforest.',
+                        objectives: ['Analyze Amazon geography', 'Investigate environmental clues'],
+                        materials: ['Amazon maps', 'Investigation sheets', 'Geographic tools'],
+                        setup: ['Display Amazon map', 'Prepare evidence packets'],
+                        scenes: [{
+                            title: 'Case Introduction',
+                            content: 'A mysterious discovery in the Amazon requires investigation.',
+                            script: 'Detectives, we have received reports of unusual activity in the Amazon rainforest.',
+                            actions: ['Present case file', 'Distribute maps'],
+                            activities: ['Map analysis', 'Evidence review'],
+                            questions: ['What geographic factors might be involved?'],
+                            timing: 45
+                        }]
+                    }
+                };
+                console.log('✅ Fallback data created');
+            }
+
             updateQuickReference() {
-                const totalScenes = Object.values(this.guideData).reduce((total, guide) => total + guide.scenes.length, 0);
-                const totalMaterials = this.loader.getAllMaterials().length;
+                const totalScenes = Object.values(this.guideData).reduce((total, guide) => total + (guide.scenes ? guide.scenes.length : 0), 0);
+                const allMaterials = new Set();
+                Object.values(this.guideData).forEach(guide => {
+                    if (guide.materials) {
+                        guide.materials.forEach(material => allMaterials.add(material));
+                    }
+                });
                 
                 document.getElementById('quickRefContent').innerHTML = `
                     <p><strong>Total Days:</strong> ${Object.keys(this.guideData).length}</p>
                     <p><strong>Total Scenes:</strong> ${totalScenes}</p>
-                    <p><strong>Unique Materials:</strong> ${totalMaterials}</p>
+                    <p><strong>Unique Materials:</strong> ${allMaterials.size}</p>
                     <p><strong>Cases:</strong> 6 Major Investigations</p>
                     <p><strong>Keyboard Shortcuts:</strong></p>
                     <ul style="font-size: 0.8rem; margin: 0.5rem 0;">
