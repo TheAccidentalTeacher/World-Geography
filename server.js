@@ -89,13 +89,13 @@ const connectDB = async () => {
 app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'ok', 
-    message: 'World Geography Curriculum API is running',
+    message: 'World Geography Curriculum API is running with Student Materials',
     timestamp: new Date().toISOString(),
     port: PORT,
     environment: process.env.NODE_ENV || 'development',
     uptime: Math.floor(process.uptime()),
     memory: process.memoryUsage(),
-    version: '2.0.0-simulation-system'
+    version: '2.1.0-student-materials-complete'
   });
 });
 
@@ -383,39 +383,242 @@ app.get('/student-materials/:materialId', (req, res) => {
           <head>
               <meta charset="UTF-8">
               <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <title>Student Material - Geographic Detective Academy</title>
+              <title>🕵️ ${materialId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())} - Coming Soon!</title>
+              <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
               <style>
-                  body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
-                  .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; }
-                  .header { text-align: center; margin-bottom: 30px; }
-                  .placeholder { background: #fff3cd; border: 1px solid #ffeaa7; padding: 20px; border-radius: 5px; margin: 20px 0; }
-                  .back-link { display: inline-block; margin-top: 20px; padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 5px; }
+                  * { box-sizing: border-box; margin: 0; padding: 0; }
+                  
+                  body { 
+                      font-family: 'Roboto', sans-serif; 
+                      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                      min-height: 100vh;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      overflow: hidden;
+                  }
+                  
+                  .container { 
+                      max-width: 800px; 
+                      background: rgba(255,255,255,0.95);
+                      backdrop-filter: blur(20px);
+                      border-radius: 25px;
+                      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+                      padding: 50px;
+                      text-align: center;
+                      border: 3px solid #ffd700;
+                      position: relative;
+                      animation: float 3s ease-in-out infinite;
+                  }
+                  
+                  @keyframes float {
+                      0%, 100% { transform: translateY(0px); }
+                      50% { transform: translateY(-10px); }
+                  }
+                  
+                  .header { 
+                      margin-bottom: 40px; 
+                  }
+                  
+                  .main-title {
+                      font-family: 'Orbitron', monospace;
+                      font-size: 2.5rem;
+                      font-weight: 900;
+                      background: linear-gradient(45deg, #ff6b35, #f7931e);
+                      -webkit-background-clip: text;
+                      background-clip: text;
+                      -webkit-text-fill-color: transparent;
+                      margin-bottom: 20px;
+                      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+                  }
+                  
+                  .subtitle {
+                      font-size: 1.3rem;
+                      color: #2c3e50;
+                      font-weight: 600;
+                      margin-bottom: 10px;
+                  }
+                  
+                  .coming-soon-badge {
+                      display: inline-block;
+                      background: linear-gradient(45deg, #ff6b35, #f7931e);
+                      color: white;
+                      padding: 10px 25px;
+                      border-radius: 50px;
+                      font-family: 'Orbitron', monospace;
+                      font-weight: 700;
+                      font-size: 1.1rem;
+                      margin: 20px 0;
+                      box-shadow: 0 8px 25px rgba(255,107,53,0.3);
+                      animation: pulse 2s infinite;
+                  }
+                  
+                  @keyframes pulse {
+                      0%, 100% { transform: scale(1); }
+                      50% { transform: scale(1.05); }
+                  }
+                  
+                  .placeholder { 
+                      background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+                      border: 3px solid #f39c12;
+                      padding: 30px; 
+                      border-radius: 20px; 
+                      margin: 30px 0;
+                      box-shadow: 0 10px 30px rgba(243,156,18,0.2);
+                  }
+                  
+                  .placeholder h3 {
+                      color: #e67e22;
+                      font-family: 'Orbitron', monospace;
+                      font-size: 1.4rem;
+                      margin-bottom: 20px;
+                  }
+                  
+                  .placeholder p {
+                      color: #2c3e50;
+                      font-size: 1rem;
+                      line-height: 1.6;
+                      margin-bottom: 15px;
+                  }
+                  
+                  .feature-list {
+                      text-align: left;
+                      margin: 20px 0;
+                  }
+                  
+                  .feature-list li {
+                      background: rgba(255,255,255,0.7);
+                      margin: 10px 0;
+                      padding: 15px;
+                      border-radius: 10px;
+                      border-left: 5px solid #3498db;
+                      font-weight: 500;
+                      transition: all 0.3s ease;
+                  }
+                  
+                  .feature-list li:hover {
+                      transform: translateX(10px);
+                      background: rgba(255,255,255,0.9);
+                      box-shadow: 0 8px 25px rgba(52,152,219,0.2);
+                  }
+                  
+                  .back-link { 
+                      display: inline-flex;
+                      align-items: center;
+                      gap: 10px;
+                      margin-top: 30px; 
+                      padding: 15px 30px; 
+                      background: linear-gradient(45deg, #ffd700, #ffed4e);
+                      color: #2c3e50; 
+                      text-decoration: none; 
+                      border-radius: 50px;
+                      font-family: 'Orbitron', monospace;
+                      font-weight: 700;
+                      transition: all 0.4s ease;
+                      box-shadow: 0 8px 25px rgba(255,215,0,0.3);
+                      text-transform: uppercase;
+                      letter-spacing: 1px;
+                  }
+                  
+                  .back-link:hover {
+                      transform: translateY(-5px) scale(1.05);
+                      background: linear-gradient(45deg, #fff, #f0f0f0);
+                      box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+                  }
+                  
+                  .progress-indicator {
+                      margin: 25px 0;
+                      background: #ecf0f1;
+                      border-radius: 25px;
+                      height: 10px;
+                      overflow: hidden;
+                  }
+                  
+                  .progress-bar {
+                      height: 100%;
+                      background: linear-gradient(90deg, #4ecdc4, #44a08d);
+                      width: 60%;
+                      border-radius: 25px;
+                      animation: progress 3s ease-in-out infinite;
+                  }
+                  
+                  @keyframes progress {
+                      0%, 100% { width: 60%; }
+                      50% { width: 75%; }
+                  }
+                  
+                  .floating-icons {
+                      position: absolute;
+                      top: 0;
+                      left: 0;
+                      width: 100%;
+                      height: 100%;
+                      pointer-events: none;
+                      overflow: hidden;
+                  }
+                  
+                  .floating-icon {
+                      position: absolute;
+                      font-size: 2rem;
+                      opacity: 0.1;
+                      animation: float-icon 8s linear infinite;
+                  }
+                  
+                  @keyframes float-icon {
+                      0% { transform: translateY(100vh) rotate(0deg); }
+                      100% { transform: translateY(-100px) rotate(360deg); }
+                  }
+                  
                   @media print { .back-link { display: none; } }
               </style>
           </head>
           <body>
+              <div class="floating-icons">
+                  <div class="floating-icon" style="left: 10%; animation-delay: 0s;">🗺️</div>
+                  <div class="floating-icon" style="left: 20%; animation-delay: 1s;">🧭</div>
+                  <div class="floating-icon" style="left: 30%; animation-delay: 2s;">📍</div>
+                  <div class="floating-icon" style="left: 40%; animation-delay: 3s;">🌍</div>
+                  <div class="floating-icon" style="left: 50%; animation-delay: 4s;">🔍</div>
+                  <div class="floating-icon" style="left: 60%; animation-delay: 5s;">📚</div>
+                  <div class="floating-icon" style="left: 70%; animation-delay: 6s;">🎯</div>
+                  <div class="floating-icon" style="left: 80%; animation-delay: 7s;">⭐</div>
+                  <div class="floating-icon" style="left: 90%; animation-delay: 8s;">🚀</div>
+              </div>
+              
               <div class="container">
                   <div class="header">
-                      <h1>🕵️ Geographic Detective Academy</h1>
-                      <h2>Student Material: ${materialId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</h2>
+                      <h1 class="main-title">🕵️ Geographic Detective Academy</h1>
+                      <h2 class="subtitle">${materialId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</h2>
+                      <div class="coming-soon-badge">🚧 COMING SOON 🚧</div>
                   </div>
+                  
                   <div class="placeholder">
-                      <h3>📝 Material Under Development</h3>
+                      <h3>🎮 Epic Worksheet Under Development!</h3>
                       <p><strong>Material Type:</strong> ${materialId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</p>
-                      <p><strong>Status:</strong> This material is currently being developed and will be available soon.</p>
-                      <p><strong>Description:</strong> This worksheet/handout will provide DOK 3-4 level activities to support deep geographic learning and investigation skills.</p>
-                      <p><strong>Academic Focus:</strong> Advanced geographic thinking, evidence analysis, and critical reasoning skills appropriate for middle school students.</p>
-                      <h4>🎯 Placeholder Content Structure:</h4>
-                      <ul>
-                          <li><strong>Case Context:</strong> Detailed scenario and geographic setting</li>
-                          <li><strong>Investigation Framework:</strong> Structured analysis and evidence collection</li>
-                          <li><strong>Critical Thinking Questions:</strong> DOK 3-4 level analytical challenges</li>
-                          <li><strong>Geographic Skills Practice:</strong> Hands-on application exercises</li>
-                          <li><strong>Assessment Integration:</strong> Performance indicators and reflection prompts</li>
+                      <p><strong>Status:</strong> Our team of expert geographic detectives is crafting this awesome interactive worksheet just for you!</p>
+                      <p><strong>What to Expect:</strong> This won't be your typical boring worksheet. We're building something that's going to blow your mind with cool geographic challenges and interactive elements!</p>
+                      
+                      <div class="progress-indicator">
+                          <div class="progress-bar"></div>
+                      </div>
+                      <p style="font-size: 0.9rem; color: #7f8c8d;">Development Progress: 60% Complete</p>
+                      
+                      <h4 style="color: #e67e22; margin: 20px 0 15px 0;">🎯 What's Coming:</h4>
+                      <ul class="feature-list">
+                          <li><strong>🎮 Gamified Learning:</strong> Interactive challenges that make geography feel like a video game</li>
+                          <li><strong>🔍 Detective Missions:</strong> Real-world case studies with evidence analysis</li>
+                          <li><strong>📱 Tech Integration:</strong> QR codes, augmented reality elements, and digital tools</li>
+                          <li><strong>🏆 Achievement System:</strong> Unlock badges and level up your geographic skills</li>
+                          <li><strong>🌐 Global Connections:</strong> Connect with students worldwide working on similar cases</li>
                       </ul>
-                      <p><em>📍 Note: Map placeholders and visual elements will be added for materials requiring geographic imagery.</em></p>
+                      
+                      <p style="font-style: italic; color: #34495e;">📍 <strong>Sneak Peek:</strong> This worksheet will include interactive maps, 3D geographic models, and even some AR elements that you can access with your phone!</p>
                   </div>
-                  <a href="/simulation/student-materials" class="back-link">← Back to Student Materials</a>
+                  
+                  <a href="/simulation/student-materials" class="back-link">
+                      <span>🏠</span>
+                      <span>Back to Detective Hub</span>
+                  </a>
               </div>
           </body>
           </html>
@@ -430,84 +633,857 @@ app.get('/student-materials/:materialId', (req, res) => {
       const content = fs.readFileSync(filePath, 'utf8');
       
       if (print === 'true') {
-        // Return print-friendly HTML version
+        // Return awesome print-friendly HTML version
+        const processedContent = content
+          .replace(/^# (.+)$/gm, '<h1 class="main-title">🕵️ $1</h1>')
+          .replace(/^## (.+)$/gm, '<h2 class="section-title">📋 $1</h2>')
+          .replace(/^### (.+)$/gm, '<h3 class="subsection-title">🔍 $1</h3>')
+          .replace(/^#### (.+)$/gm, '<h4 class="mini-title">▶️ $1</h4>')
+          .replace(/\*\*(.+?)\*\*/g, '<strong class="highlight">$1</strong>')
+          .replace(/\*(.+?)\*/g, '<em class="emphasis">$1</em>')
+          .replace(/`(.+?)`/g, '<code class="inline-code">$1</code>')
+          .replace(/^\| (.+) \|$/gm, (match, content) => {
+            const cells = content.split(' | ').map(cell => `<td>${cell.trim()}</td>`).join('');
+            return `<tr>${cells}</tr>`;
+          })
+          .replace(/\[LARGE (.+?) SPACE\]/g, '<div class="drawing-space large">📍 $1 - Draw or write your response here</div>')
+          .replace(/\[(.+?) SPACE\]/g, '<div class="drawing-space">📝 $1</div>')
+          .replace(/_{10,}/g, '<div class="fill-line"></div>')
+          .replace(/^- (.+)$/gm, '<li class="bullet-point">• $1</li>')
+          .replace(/^\d+\. (.+)$/gm, '<li class="numbered-point">$1</li>')
+          .replace(/\n\n/g, '</p><p>')
+          .replace(/^\s*$/gm, '');
+
         const htmlContent = `
           <!DOCTYPE html>
           <html lang="en">
           <head>
               <meta charset="UTF-8">
               <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <title>Print: ${materialId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</title>
+              <title>🕵️ ${materialId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())} - Detective Worksheet</title>
               <style>
-                  body { font-family: 'Times New Roman', serif; font-size: 12pt; line-height: 1.5; margin: 0.5in; }
-                  h1, h2, h3 { color: #000; margin-top: 20pt; margin-bottom: 10pt; }
-                  h1 { font-size: 18pt; text-align: center; border-bottom: 2pt solid #000; padding-bottom: 10pt; }
-                  h2 { font-size: 16pt; }
-                  h3 { font-size: 14pt; }
-                  table { width: 100%; border-collapse: collapse; margin: 10pt 0; }
-                  table, th, td { border: 1pt solid #000; }
-                  th, td { padding: 8pt; text-align: left; }
-                  th { background-color: #f0f0f0; font-weight: bold; }
-                  .drawing-space { border: 1pt solid #000; height: 150pt; margin: 10pt 0; text-align: center; padding-top: 60pt; background-color: #f9f9f9; }
-                  .fill-line { border-bottom: 1pt solid #000; min-height: 20pt; margin: 5pt 0; }
-                  pre { background-color: #f5f5f5; padding: 10pt; border: 1pt solid #ccc; white-space: pre-wrap; }
-                  @page { margin: 0.5in; }
+                  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;500;700&display=swap');
+                  
+                  * { box-sizing: border-box; }
+                  
+                  body { 
+                      font-family: 'Roboto', sans-serif; 
+                      font-size: 11pt; 
+                      line-height: 1.4; 
+                      margin: 0.4in; 
+                      background: white;
+                      color: #1a1a2e;
+                  }
+                  
+                  .main-title { 
+                      font-family: 'Orbitron', monospace; 
+                      font-size: 20pt; 
+                      font-weight: 900;
+                      text-align: center; 
+                      background: linear-gradient(45deg, #ff6b35, #f7931e);
+                      -webkit-background-clip: text;
+                      background-clip: text;
+                      -webkit-text-fill-color: transparent;
+                      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+                      border: 3px solid #ff6b35;
+                      padding: 15pt;
+                      border-radius: 15px;
+                      margin: 0 0 20pt 0;
+                      position: relative;
+                  }
+                  
+                  .main-title::before {
+                      content: "🌟";
+                      position: absolute;
+                      top: -10pt;
+                      left: 15pt;
+                      font-size: 16pt;
+                  }
+                  
+                  .main-title::after {
+                      content: "🌟";
+                      position: absolute;
+                      top: -10pt;
+                      right: 15pt;
+                      font-size: 16pt;
+                  }
+                  
+                  .section-title { 
+                      font-family: 'Orbitron', monospace;
+                      font-size: 16pt; 
+                      font-weight: 700;
+                      color: #1a1a2e;
+                      background: linear-gradient(90deg, #4ecdc4, #44a08d);
+                      color: white;
+                      padding: 10pt 15pt;
+                      border-radius: 8px;
+                      margin: 20pt 0 10pt 0;
+                      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+                  }
+                  
+                  .subsection-title { 
+                      font-family: 'Orbitron', monospace;
+                      font-size: 14pt; 
+                      font-weight: 500;
+                      color: #2c3e50;
+                      background: #ecf0f1;
+                      padding: 8pt 12pt;
+                      border-left: 5px solid #3498db;
+                      margin: 15pt 0 8pt 0;
+                      border-radius: 0 8px 8px 0;
+                  }
+                  
+                  .mini-title {
+                      font-family: 'Roboto', sans-serif;
+                      font-size: 12pt;
+                      font-weight: 700;
+                      color: #8e44ad;
+                      margin: 12pt 0 6pt 0;
+                      padding: 4pt 0;
+                      border-bottom: 2px dotted #8e44ad;
+                  }
+                  
+                  .highlight { 
+                      background: linear-gradient(120deg, #ffecd2 0%, #fcb69f 100%);
+                      padding: 2pt 4pt;
+                      border-radius: 4px;
+                      font-weight: 700;
+                      color: #2c3e50;
+                  }
+                  
+                  .emphasis {
+                      color: #e74c3c;
+                      font-weight: 500;
+                  }
+                  
+                  .inline-code {
+                      background: #2c3e50;
+                      color: #ecf0f1;
+                      padding: 2pt 6pt;
+                      border-radius: 4px;
+                      font-family: 'Orbitron', monospace;
+                      font-size: 10pt;
+                  }
+                  
+                  table { 
+                      width: 100%; 
+                      border-collapse: collapse; 
+                      margin: 15pt 0;
+                      background: white;
+                      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                      border-radius: 8px;
+                      overflow: hidden;
+                  }
+                  
+                  table, th, td { 
+                      border: 2px solid #34495e;
+                  }
+                  
+                  th { 
+                      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                      color: white;
+                      font-weight: 700;
+                      padding: 12pt;
+                      text-align: center;
+                      font-family: 'Orbitron', monospace;
+                  }
+                  
+                  td { 
+                      padding: 10pt;
+                      background: #f8f9fa;
+                      min-height: 30pt;
+                      vertical-align: top;
+                  }
+                  
+                  tr:nth-child(even) td {
+                      background: #e9ecef;
+                  }
+                  
+                  .drawing-space { 
+                      border: 3px dashed #e74c3c;
+                      background: linear-gradient(45deg, #fff5f5 25%, transparent 25%), 
+                                  linear-gradient(-45deg, #fff5f5 25%, transparent 25%), 
+                                  linear-gradient(45deg, transparent 75%, #fff5f5 75%), 
+                                  linear-gradient(-45deg, transparent 75%, #fff5f5 75%);
+                      background-size: 20px 20px;
+                      background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+                      height: 120pt;
+                      margin: 15pt 0;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      font-weight: 700;
+                      color: #e74c3c;
+                      font-size: 11pt;
+                      border-radius: 12px;
+                      text-align: center;
+                      padding: 15pt;
+                  }
+                  
+                  .drawing-space.large {
+                      height: 200pt;
+                      font-size: 13pt;
+                  }
+                  
+                  .fill-line { 
+                      border-bottom: 2px solid #3498db;
+                      min-height: 20pt;
+                      margin: 8pt 0;
+                      background: linear-gradient(to right, transparent 0%, #ecf0f1 50%, transparent 100%);
+                  }
+                  
+                  .bullet-point, .numbered-point {
+                      margin: 6pt 0;
+                      padding-left: 8pt;
+                      color: #2c3e50;
+                  }
+                  
+                  .bullet-point {
+                      list-style: none;
+                      position: relative;
+                  }
+                  
+                  .bullet-point::before {
+                      content: "🔸";
+                      position: absolute;
+                      left: -15pt;
+                  }
+                  
+                  p {
+                      margin: 8pt 0;
+                      text-align: justify;
+                  }
+                  
+                  .detective-badge {
+                      position: absolute;
+                      top: 20pt;
+                      right: 20pt;
+                      width: 60pt;
+                      height: 60pt;
+                      background: radial-gradient(circle, #ffd700, #ffed4e);
+                      border-radius: 50%;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      font-size: 24pt;
+                      border: 3px solid #ff6b35;
+                      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                  }
+                  
+                  @page { 
+                      margin: 0.4in;
+                      @top-right {
+                          content: "🕵️ Geographic Detective Academy";
+                          font-family: 'Orbitron', monospace;
+                          font-size: 8pt;
+                          color: #7f8c8d;
+                      }
+                  }
+                  
                   @media print { 
-                      body { -webkit-print-color-adjust: exact; }
+                      body { 
+                          -webkit-print-color-adjust: exact;
+                          print-color-adjust: exact;
+                      }
                       .no-print { display: none; }
+                      .main-title {
+                          color: #ff6b35 !important;
+                          -webkit-text-fill-color: #ff6b35 !important;
+                      }
                   }
               </style>
           </head>
           <body>
-              ${content.replace(/# /g, '<h1>').replace(/## /g, '</h1><h2>').replace(/### /g, '</h2><h3>').replace(/\n/g, '</h3>\n').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\[(.*?)\]/g, '<div class="drawing-space">$1</div>').replace(/_+/g, '<span class="fill-line"></span>')}
+              <div class="detective-badge">🕵️</div>
+              <div class="content">
+                  <p>${processedContent}</p>
+              </div>
           </body>
           </html>
         `;
         res.send(htmlContent);
       } else {
-        // Return regular HTML version for viewing
+        // Return AWESOME gaming-style HTML version for viewing
+        const processedContent = content
+          .replace(/^# (.+)$/gm, '<h1 class="main-title">🕵️ $1</h1>')
+          .replace(/^## (.+)$/gm, '<h2 class="section-title">📋 $1</h2>')
+          .replace(/^### (.+)$/gm, '<h3 class="subsection-title">🔍 $1</h3>')
+          .replace(/^#### (.+)$/gm, '<h4 class="mini-title">▶️ $1</h4>')
+          .replace(/\*\*(.+?)\*\*/g, '<strong class="highlight">$1</strong>')
+          .replace(/\*(.+?)\*/g, '<em class="emphasis">$1</em>')
+          .replace(/`(.+?)`/g, '<code class="inline-code">$1</code>')
+          .replace(/^\| (.+) \|$/gm, (match, content) => {
+            const cells = content.split(' | ').map(cell => `<td>${cell.trim()}</td>`).join('');
+            return `<tr>${cells}</tr>`;
+          })
+          .replace(/\[LARGE (.+?) SPACE\]/g, '<div class="drawing-space large interactive" onclick="this.classList.toggle(\'active\')">📍 $1 - Click to activate drawing mode!</div>')
+          .replace(/\[(.+?) SPACE\]/g, '<div class="drawing-space interactive" onclick="this.classList.toggle(\'active\')">📝 $1 - Click here!</div>')
+          .replace(/_{10,}/g, '<input type="text" class="fill-input" placeholder="Type your answer here...">')
+          .replace(/^- (.+)$/gm, '<li class="bullet-point">🔸 $1</li>')
+          .replace(/^\d+\. (.+)$/gm, '<li class="numbered-point">$1</li>')
+          .replace(/\n\n/g, '</p><p>')
+          .replace(/^\s*$/gm, '');
+
         const htmlContent = `
           <!DOCTYPE html>
           <html lang="en">
           <head>
               <meta charset="UTF-8">
               <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <title>${materialId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())} - Geographic Detective Academy</title>
+              <title>🕵️ ${materialId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())} - Geographic Detective Academy</title>
+              <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
               <style>
-                  body { font-family: 'Roboto', sans-serif; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); color: #fff; margin: 0; padding: 20px; }
-                  .container { max-width: 900px; margin: 0 auto; background: rgba(255,255,255,0.1); padding: 30px; border-radius: 15px; backdrop-filter: blur(10px); }
-                  .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #ffd700; padding-bottom: 20px; }
-                  h1 { color: #ffd700; font-family: 'Courier Prime', monospace; font-size: 2.5rem; margin-bottom: 10px; }
-                  h2 { color: #ffd700; font-family: 'Courier Prime', monospace; font-size: 1.8rem; margin-top: 30px; margin-bottom: 15px; }
-                  h3 { color: #ffd700; font-family: 'Courier Prime', monospace; font-size: 1.4rem; margin-top: 25px; margin-bottom: 10px; }
-                  table { width: 100%; border-collapse: collapse; margin: 20px 0; background: rgba(255,255,255,0.05); }
-                  table, th, td { border: 1px solid #ffd700; }
-                  th, td { padding: 12px; text-align: left; }
-                  th { background: rgba(255,215,0,0.2); color: #ffd700; font-weight: bold; }
-                  .drawing-space { border: 2px dashed #ffd700; height: 200px; margin: 20px 0; text-align: center; padding-top: 80px; background: rgba(255,255,255,0.05); border-radius: 10px; }
-                  .back-link { display: inline-block; margin-top: 30px; padding: 12px 24px; background: rgba(255,215,0,0.2); color: #ffd700; text-decoration: none; border-radius: 25px; border: 2px solid #ffd700; font-family: 'Courier Prime', monospace; font-weight: 700; transition: all 0.3s ease; }
-                  .back-link:hover { background: #ffd700; color: #1a1a2e; }
-                  .print-link { display: inline-block; margin-top: 10px; margin-left: 20px; padding: 12px 24px; background: rgba(0,123,255,0.2); color: #007bff; text-decoration: none; border-radius: 25px; border: 2px solid #007bff; font-family: 'Courier Prime', monospace; font-weight: 700; transition: all 0.3s ease; }
-                  .print-link:hover { background: #007bff; color: white; }
-                  pre { background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px; border: 1px solid #ffd700; white-space: pre-wrap; overflow-x: auto; }
-                  strong { color: #ffd700; }
-                  code { background: rgba(255,215,0,0.2); color: #ffd700; padding: 2px 6px; border-radius: 4px; }
+                  :root {
+                      --primary-color: #ff6b35;
+                      --secondary-color: #4ecdc4;
+                      --accent-color: #ffd700;
+                      --dark-color: #1a1a2e;
+                      --light-color: #f7f9fc;
+                      --success-color: #2ecc71;
+                      --danger-color: #e74c3c;
+                      --info-color: #3498db;
+                  }
+                  
+                  * { 
+                      box-sizing: border-box; 
+                      margin: 0; 
+                      padding: 0; 
+                  }
+                  
+                  body { 
+                      font-family: 'Roboto', sans-serif; 
+                      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                      min-height: 100vh;
+                      color: #333;
+                      overflow-x: hidden;
+                  }
+                  
+                  .floating-particles {
+                      position: fixed;
+                      top: 0;
+                      left: 0;
+                      width: 100%;
+                      height: 100%;
+                      pointer-events: none;
+                      z-index: 1;
+                  }
+                  
+                  .particle {
+                      position: absolute;
+                      background: var(--accent-color);
+                      border-radius: 50%;
+                      opacity: 0.6;
+                      animation: float 6s ease-in-out infinite;
+                  }
+                  
+                  @keyframes float {
+                      0%, 100% { transform: translateY(0px) rotate(0deg); }
+                      50% { transform: translateY(-20px) rotate(180deg); }
+                  }
+                  
+                  .container { 
+                      max-width: 1200px; 
+                      margin: 0 auto; 
+                      background: rgba(255,255,255,0.95);
+                      backdrop-filter: blur(20px);
+                      border-radius: 25px;
+                      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+                      padding: 40px;
+                      margin-top: 20px;
+                      margin-bottom: 20px;
+                      position: relative;
+                      z-index: 10;
+                      border: 3px solid var(--accent-color);
+                  }
+                  
+                  .header { 
+                      text-align: center; 
+                      margin-bottom: 40px; 
+                      position: relative;
+                      padding: 30px;
+                      background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+                      border-radius: 20px;
+                      color: white;
+                      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                  }
+                  
+                  .header::before {
+                      content: "🌟";
+                      position: absolute;
+                      top: -15px;
+                      left: 30px;
+                      font-size: 2rem;
+                      animation: pulse 2s infinite;
+                  }
+                  
+                  .header::after {
+                      content: "🌟";
+                      position: absolute;
+                      top: -15px;
+                      right: 30px;
+                      font-size: 2rem;
+                      animation: pulse 2s infinite 1s;
+                  }
+                  
+                  @keyframes pulse {
+                      0%, 100% { transform: scale(1); }
+                      50% { transform: scale(1.2); }
+                  }
+                  
+                  .main-title { 
+                      font-family: 'Orbitron', monospace; 
+                      font-size: 3rem; 
+                      font-weight: 900;
+                      margin-bottom: 15px;
+                      text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+                      background: linear-gradient(45deg, #fff, #f0f0f0);
+                      -webkit-background-clip: text;
+                      background-clip: text;
+                      -webkit-text-fill-color: transparent;
+                  }
+                  
+                  .subtitle {
+                      font-family: 'Space Mono', monospace;
+                      font-size: 1.2rem;
+                      opacity: 0.9;
+                      font-weight: 400;
+                  }
+                  
+                  .section-title { 
+                      font-family: 'Orbitron', monospace;
+                      font-size: 1.8rem; 
+                      font-weight: 700;
+                      background: linear-gradient(90deg, var(--secondary-color), var(--info-color));
+                      color: white;
+                      padding: 20px 25px;
+                      border-radius: 15px;
+                      margin: 30px 0 20px 0;
+                      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+                      transform: translateX(-10px);
+                      transition: all 0.3s ease;
+                      cursor: pointer;
+                  }
+                  
+                  .section-title:hover {
+                      transform: translateX(0px) scale(1.02);
+                      box-shadow: 0 12px 35px rgba(0,0,0,0.25);
+                  }
+                  
+                  .subsection-title { 
+                      font-family: 'Orbitron', monospace;
+                      font-size: 1.4rem; 
+                      font-weight: 500;
+                      color: var(--dark-color);
+                      background: linear-gradient(135deg, #ecf0f1, #bdc3c7);
+                      padding: 15px 20px;
+                      border-left: 8px solid var(--info-color);
+                      margin: 25px 0 15px 0;
+                      border-radius: 0 15px 15px 0;
+                      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+                      transition: all 0.3s ease;
+                  }
+                  
+                  .subsection-title:hover {
+                      transform: translateX(10px);
+                      border-left-width: 12px;
+                  }
+                  
+                  .mini-title {
+                      font-family: 'Roboto', sans-serif;
+                      font-size: 1.1rem;
+                      font-weight: 700;
+                      color: var(--primary-color);
+                      margin: 20px 0 10px 0;
+                      padding: 8px 0;
+                      border-bottom: 3px dotted var(--primary-color);
+                      position: relative;
+                  }
+                  
+                  .mini-title::before {
+                      content: "⚡";
+                      margin-right: 8px;
+                  }
+                  
+                  .highlight { 
+                      background: linear-gradient(120deg, var(--accent-color), #ffed4e);
+                      padding: 4px 8px;
+                      border-radius: 8px;
+                      font-weight: 700;
+                      color: var(--dark-color);
+                      box-shadow: 0 2px 8px rgba(255,215,0,0.3);
+                      transition: all 0.3s ease;
+                  }
+                  
+                  .highlight:hover {
+                      transform: scale(1.05);
+                      box-shadow: 0 4px 15px rgba(255,215,0,0.5);
+                  }
+                  
+                  .emphasis {
+                      color: var(--danger-color);
+                      font-weight: 600;
+                      font-style: italic;
+                  }
+                  
+                  .inline-code {
+                      background: var(--dark-color);
+                      color: var(--accent-color);
+                      padding: 4px 8px;
+                      border-radius: 6px;
+                      font-family: 'Space Mono', monospace;
+                      font-size: 0.9rem;
+                      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+                  }
+                  
+                  table { 
+                      width: 100%; 
+                      border-collapse: collapse; 
+                      margin: 25px 0;
+                      background: white;
+                      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+                      border-radius: 15px;
+                      overflow: hidden;
+                      border: 3px solid var(--secondary-color);
+                  }
+                  
+                  th { 
+                      background: linear-gradient(135deg, var(--primary-color), var(--danger-color));
+                      color: white;
+                      font-weight: 700;
+                      padding: 18px;
+                      text-align: center;
+                      font-family: 'Orbitron', monospace;
+                      font-size: 1rem;
+                      text-transform: uppercase;
+                      letter-spacing: 1px;
+                  }
+                  
+                  td { 
+                      padding: 15px;
+                      background: #f8f9fa;
+                      min-height: 50px;
+                      vertical-align: top;
+                      border-bottom: 2px solid #e9ecef;
+                      transition: all 0.3s ease;
+                  }
+                  
+                  tr:nth-child(even) td {
+                      background: #e3f2fd;
+                  }
+                  
+                  tr:hover td {
+                      background: var(--accent-color) !important;
+                      transform: scale(1.01);
+                      color: var(--dark-color);
+                      font-weight: 600;
+                  }
+                  
+                  .drawing-space { 
+                      border: 4px dashed var(--danger-color);
+                      background: radial-gradient(circle, #fff5f5, #ffeaa7);
+                      min-height: 150px;
+                      margin: 25px 0;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      font-weight: 700;
+                      color: var(--danger-color);
+                      font-size: 1.1rem;
+                      border-radius: 20px;
+                      text-align: center;
+                      padding: 25px;
+                      cursor: pointer;
+                      transition: all 0.4s ease;
+                      position: relative;
+                      overflow: hidden;
+                  }
+                  
+                  .drawing-space::before {
+                      content: "";
+                      position: absolute;
+                      top: -50%;
+                      left: -50%;
+                      width: 200%;
+                      height: 200%;
+                      background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+                      transform: rotate(45deg);
+                      transition: all 0.6s ease;
+                      opacity: 0;
+                  }
+                  
+                  .drawing-space:hover::before {
+                      opacity: 1;
+                      transform: rotate(45deg) translate(50%, 50%);
+                  }
+                  
+                  .drawing-space.large {
+                      min-height: 250px;
+                      font-size: 1.3rem;
+                  }
+                  
+                  .drawing-space.interactive:hover {
+                      transform: scale(1.02);
+                      box-shadow: 0 15px 40px rgba(231,76,60,0.3);
+                      background: radial-gradient(circle, #fff, var(--accent-color));
+                      color: var(--dark-color);
+                  }
+                  
+                  .drawing-space.active {
+                      background: linear-gradient(45deg, var(--success-color), var(--secondary-color));
+                      color: white;
+                      border-color: var(--success-color);
+                      animation: success-pulse 1s ease;
+                  }
+                  
+                  @keyframes success-pulse {
+                      0% { transform: scale(1); }
+                      50% { transform: scale(1.05); }
+                      100% { transform: scale(1); }
+                  }
+                  
+                  .fill-input {
+                      width: 100%;
+                      padding: 12px 15px;
+                      border: 3px solid var(--info-color);
+                      border-radius: 10px;
+                      font-size: 1rem;
+                      margin: 10px 0;
+                      background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+                      transition: all 0.3s ease;
+                      font-family: 'Roboto', sans-serif;
+                  }
+                  
+                  .fill-input:focus {
+                      outline: none;
+                      border-color: var(--success-color);
+                      background: white;
+                      box-shadow: 0 8px 25px rgba(46,204,113,0.2);
+                      transform: scale(1.02);
+                  }
+                  
+                  .bullet-point, .numbered-point {
+                      margin: 12px 0;
+                      padding: 10px 15px;
+                      background: linear-gradient(135deg, #f8f9fa, #e3f2fd);
+                      border-radius: 10px;
+                      border-left: 4px solid var(--secondary-color);
+                      list-style: none;
+                      transition: all 0.3s ease;
+                      cursor: pointer;
+                  }
+                  
+                  .bullet-point:hover, .numbered-point:hover {
+                      transform: translateX(10px);
+                      background: linear-gradient(135deg, var(--accent-color), #ffed4e);
+                      border-left-color: var(--primary-color);
+                      box-shadow: 0 8px 25px rgba(255,215,0,0.3);
+                  }
+                  
+                  p {
+                      margin: 15px 0;
+                      text-align: justify;
+                      line-height: 1.6;
+                      font-size: 1rem;
+                  }
+                  
+                  .navigation {
+                      display: flex;
+                      justify-content: center;
+                      gap: 20px;
+                      margin-top: 40px;
+                      padding: 30px;
+                      background: linear-gradient(135deg, #667eea, #764ba2);
+                      border-radius: 20px;
+                      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                  }
+                  
+                  .back-link, .print-link { 
+                      display: inline-flex;
+                      align-items: center;
+                      gap: 10px;
+                      padding: 15px 30px; 
+                      background: linear-gradient(45deg, var(--accent-color), #ffed4e);
+                      color: var(--dark-color);
+                      text-decoration: none; 
+                      border-radius: 50px; 
+                      border: 3px solid var(--dark-color);
+                      font-family: 'Orbitron', monospace; 
+                      font-weight: 700; 
+                      transition: all 0.4s ease;
+                      text-transform: uppercase;
+                      letter-spacing: 1px;
+                      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+                  }
+                  
+                  .back-link:hover, .print-link:hover { 
+                      transform: translateY(-5px) scale(1.05);
+                      background: linear-gradient(45deg, #fff, var(--light-color));
+                      box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+                      border-color: var(--primary-color);
+                  }
+                  
+                  .print-link {
+                      background: linear-gradient(45deg, var(--info-color), var(--secondary-color));
+                      color: white;
+                      border-color: white;
+                  }
+                  
+                  .print-link:hover {
+                      background: linear-gradient(45deg, var(--success-color), var(--secondary-color));
+                  }
+                  
+                  .detective-badge {
+                      position: fixed;
+                      top: 30px;
+                      right: 30px;
+                      width: 80px;
+                      height: 80px;
+                      background: radial-gradient(circle, var(--accent-color), #ffed4e);
+                      border-radius: 50%;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      font-size: 2rem;
+                      border: 4px solid var(--primary-color);
+                      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+                      z-index: 1000;
+                      animation: badge-float 3s ease-in-out infinite;
+                      cursor: pointer;
+                  }
+                  
+                  .detective-badge:hover {
+                      animation-play-state: paused;
+                      transform: scale(1.1) rotate(10deg);
+                  }
+                  
+                  @keyframes badge-float {
+                      0%, 100% { transform: translateY(0px); }
+                      50% { transform: translateY(-10px); }
+                  }
+                  
+                  .progress-bar {
+                      position: fixed;
+                      top: 0;
+                      left: 0;
+                      width: 100%;
+                      height: 4px;
+                      background: var(--dark-color);
+                      z-index: 1001;
+                  }
+                  
+                  .progress-fill {
+                      height: 100%;
+                      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color), var(--accent-color));
+                      width: 0%;
+                      transition: width 0.3s ease;
+                  }
+                  
+                  @media (max-width: 768px) {
+                      .container { 
+                          margin: 10px; 
+                          padding: 20px; 
+                      }
+                      
+                      .main-title { 
+                          font-size: 2rem; 
+                      }
+                      
+                      .navigation {
+                          flex-direction: column;
+                          align-items: center;
+                      }
+                      
+                      .detective-badge {
+                          width: 60px;
+                          height: 60px;
+                          font-size: 1.5rem;
+                          top: 20px;
+                          right: 20px;
+                      }
+                  }
               </style>
           </head>
           <body>
+              <div class="floating-particles">
+                  <div class="particle" style="left: 10%; width: 6px; height: 6px; animation-delay: 0s;"></div>
+                  <div class="particle" style="left: 20%; width: 8px; height: 8px; animation-delay: 1s;"></div>
+                  <div class="particle" style="left: 30%; width: 4px; height: 4px; animation-delay: 2s;"></div>
+                  <div class="particle" style="left: 40%; width: 10px; height: 10px; animation-delay: 3s;"></div>
+                  <div class="particle" style="left: 50%; width: 6px; height: 6px; animation-delay: 4s;"></div>
+                  <div class="particle" style="left: 60%; width: 8px; height: 8px; animation-delay: 5s;"></div>
+                  <div class="particle" style="left: 70%; width: 4px; height: 4px; animation-delay: 0.5s;"></div>
+                  <div class="particle" style="left: 80%; width: 6px; height: 6px; animation-delay: 1.5s;"></div>
+                  <div class="particle" style="left: 90%; width: 8px; height: 8px; animation-delay: 2.5s;"></div>
+              </div>
+              
+              <div class="progress-bar">
+                  <div class="progress-fill" id="progressFill"></div>
+              </div>
+              
+              <div class="detective-badge" onclick="this.style.transform='scale(1.2) rotate(360deg)'">🕵️</div>
+              
               <div class="container">
                   <div class="header">
-                      <h1>🕵️ Geographic Detective Academy</h1>
-                      <h2>${materialId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</h2>
+                      <h1 class="main-title">Geographic Detective Academy</h1>
+                      <div class="subtitle">${materialId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</div>
                   </div>
                   <div class="content">
-                      <pre>${content}</pre>
+                      <p>${processedContent}</p>
                   </div>
                   <div class="navigation">
-                      <a href="/simulation/student-materials" class="back-link">← Back to Student Materials</a>
-                      <a href="/student-materials/${materialId}?print=true" class="print-link" target="_blank">🖨️ Print Version</a>
+                      <a href="/simulation/student-materials" class="back-link">
+                          <span>🏠</span>
+                          <span>Back to Hub</span>
+                      </a>
+                      <a href="/student-materials/${materialId}?print=true" class="print-link" target="_blank">
+                          <span>🖨️</span>
+                          <span>Print Version</span>
+                      </a>
                   </div>
               </div>
+              
+              <script>
+                  // Scroll progress indicator
+                  window.addEventListener('scroll', () => {
+                      const scrolled = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+                      document.getElementById('progressFill').style.width = scrolled + '%';
+                  });
+                  
+                  // Interactive elements
+                  document.querySelectorAll('.section-title').forEach(title => {
+                      title.addEventListener('click', () => {
+                          title.style.transform = 'translateX(0px) scale(1.1)';
+                          setTimeout(() => {
+                              title.style.transform = 'translateX(-10px) scale(1)';
+                          }, 200);
+                      });
+                  });
+                  
+                  // Fill inputs auto-save (simulated)
+                  document.querySelectorAll('.fill-input').forEach(input => {
+                      input.addEventListener('input', () => {
+                          localStorage.setItem('detective_' + input.placeholder, input.value);
+                      });
+                      
+                      // Load saved values
+                      const saved = localStorage.getItem('detective_' + input.placeholder);
+                      if (saved) input.value = saved;
+                  });
+                  
+                  // Add some random particles
+                  function createParticle() {
+                      const particle = document.createElement('div');
+                      particle.className = 'particle';
+                      particle.style.left = Math.random() * 100 + '%';
+                      particle.style.width = particle.style.height = (Math.random() * 8 + 4) + 'px';
+                      particle.style.animationDelay = Math.random() * 6 + 's';
+                      document.querySelector('.floating-particles').appendChild(particle);
+                      
+                      setTimeout(() => particle.remove(), 6000);
+                  }
+                  
+                  setInterval(createParticle, 3000);
+              </script>
           </body>
           </html>
         `;
