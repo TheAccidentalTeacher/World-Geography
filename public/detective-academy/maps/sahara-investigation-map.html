@@ -1,51 +1,13 @@
-<!DOCTYPE html>
+<!DOC    <title>🕵️ Sahara Desert Investigation Map - Case #2</title>YPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>�️ Sahara Desert Investigation Map - Case #2</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <title>🌳 Amazon Rainforest Investigation Map - Case #1</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;90        const amazonMap = L.map('amazonMap').setView([23.0, 8.0], 4);&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     
-    <!-- Leaflet CSS -->        const overlayLa        const layers = {
-            rivers: overlayL                name: "Siwa Oasis Station",
-                coords: [29.2022, 25.5198],
-                status: "Contact Lost"        // Add trade routes to map
-        function addTradeRoutes() {
-            tradeRouteData.forEach(route => {
-                const routeLine = L.polyline(route.coords, {
-                    color: route.color,
-                    weight: route.weight,
-                    opacity: 0.8
-                }).addTo(layers.rivers);
-                
-                routeLine.bindPopup(`
-                    <div style="font-family: 'Roboto', sans-serif;">
-                        <h3 style="color: #d4a574; margin-bottom: 10px;">${route.name}</h3>
-                        <p><strong>Navigation:</strong> Dr. Hassan's likely route</p>      lastContact: "Day 3", 
-                description: "Local guides confirm Dr. Hassan passed through. Collected pottery samples."
-            },
-            {
-                name: "Remote Outpost Alpha",
-                coords: [23.5, 15.0],
-                status: "Unknown",
-                lastContact: "Day 5",
-                description: "Emergency beacon activated briefly. No response to radio calls."
-            }de Routes'],
-            vegetation: overlayLayers['🌿 Vegetation Zones'],
-            stations: overlayLayers['🏗️ Research Stations'],
-            evidence: overlayLayers['🎯 Evidence Locations'],
-            cities: overlayLayers['🏙️ Major Cities'],
-            indigenous: overlayLayers['🏛️ Indigenous Territories'],
-            deforestation: overlayLayers['🔥 Deforestation Zones']
-        };
-            '🌊 Trade Routes': L.layerGroup(),
-            '🌿 Vegetation Zones': L.layerGroup(),
-            '🏗️ Research Stations': L.layerGroup(),
-            '🎯 Evidence Locations': L.layerGroup(),
-            '🏙️ Major Cities': L.layerGroup(),
-            '🏛️ Indigenous Territories': L.layerGroup(),
-            '🔥 Deforestation Zones': L.layerGroup()
-        };nk rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     
     <!-- Leaflet Plugins -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-draw@1.0.4/dist/leaflet.draw.css"/>
@@ -57,10 +19,9 @@
             --accent-color: #ffd700;
             --success-color: #2ecc71;
             --danger-color: #e74c3c;
-            --sahara-sand: #d4a574;
-            --sahara-deep: #b8956a;
-            --sahara-light: #e6c794;
-            --oasis-blue: #0a74da;
+            --amazon-green: #1e3a14;
+            --amazon-light: #4a7c59;
+            --water-blue: #0077be;
         }
         
         * { 
@@ -71,7 +32,7 @@
         
         body { 
             font-family: 'Roboto', sans-serif; 
-            background: linear-gradient(135deg, #d4a574 0%, #b8956a 100%);
+            background: linear-gradient(135deg, #1e3a14 0%, #4a7c59 100%);
             min-height: 100vh;
             color: #333;
         }
@@ -89,7 +50,7 @@
             font-family: 'Orbitron', monospace;
             font-size: 2.5rem;
             font-weight: 900;
-            color: var(--sahara-deep);
+            color: var(--amazon-green);
             margin-bottom: 10px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
         }
@@ -116,7 +77,7 @@
             align-items: center;
             background: rgba(255,255,255,0.9);
             padding: 15px 20px;
-            border-bottom: 2px solid var(--sahara-deep);
+            border-bottom: 2px solid var(--amazon-light);
         }
         
         .control-group {
@@ -144,7 +105,7 @@
         }
         
         .detective-btn.active {
-            background: linear-gradient(45deg, var(--success-color), var(--sahara-deep));
+            background: linear-gradient(45deg, var(--success-color), var(--amazon-green));
             box-shadow: 0 0 20px rgba(46, 204, 113, 0.5);
         }
         
@@ -157,10 +118,10 @@
             font-weight: 700;
         }
         
-        #saharaMap {
+        #amazonMap {
             height: 70vh;
             width: 100%;
-            border: 3px solid var(--sahara-light);
+            border: 3px solid var(--amazon-light);
         }
         
         .investigation-panel {
@@ -186,7 +147,7 @@
             font-family: 'Orbitron', monospace;
             font-size: 1.5rem;
             font-weight: 900;
-            color: var(--sahara-deep);
+            color: var(--amazon-green);
             margin-bottom: 20px;
             border-bottom: 2px solid var(--accent-color);
             padding-bottom: 10px;
@@ -219,7 +180,7 @@
         
         .evidence-item {
             background: rgba(46, 204, 113, 0.1);
-            border-left: 4px solid var(--sahara-deep);
+            border-left: 4px solid var(--amazon-green);
             padding: 15px;
             margin-bottom: 15px;
             border-radius: 8px;
@@ -234,7 +195,7 @@
         .evidence-title {
             font-family: 'Orbitron', monospace;
             font-weight: 700;
-            color: var(--sahara-deep);
+            color: var(--amazon-green);
             margin-bottom: 8px;
             font-size: 1.1em;
         }
@@ -244,12 +205,12 @@
             padding: 15px;
             margin-bottom: 15px;
             border-radius: 10px;
-            border-left: 4px solid var(--sahara-light);
+            border-left: 4px solid var(--amazon-light);
         }
         
         .evidence-title {
             font-weight: 700;
-            color: var(--sahara-deep);
+            color: var(--amazon-green);
             margin-bottom: 8px;
         }
         
@@ -289,7 +250,7 @@
             font-family: 'Orbitron', monospace;
             font-weight: 700;
             margin-bottom: 10px;
-            color: var(--sahara-deep);
+            color: var(--amazon-green);
         }
         
         .legend-item {
@@ -308,7 +269,7 @@
         
         @media print {
             .detective-header, .map-controls, .investigation-panel, .back-btn { display: none; }
-            #saharaMap { height: 100vh; border: none; }
+            #amazonMap { height: 100vh; border: none; }
         }
     </style>
 </head>
@@ -316,23 +277,25 @@
     <button class="back-btn" onclick="window.location.href='/detective-academy/maps-central'">← Back to Maps Central</button>
     
     <div class="detective-header">
-        <h1 class="case-title">�️ Sahara Desert Investigation</h1>
-        <p class="case-subtitle">Case #2: The Missing Archaeologist</p>
+        <h1 class="case-title">�️ CASE #2: SAHARA INVESTIGATION</h1>
+        <p class="case-subtitle">Track Dr. Hassan Through the World's Largest Desert</p>
         <div class="mission-brief">
-            🔍 <strong>Mission:</strong> Dr. Sarah Hassan has vanished while researching ancient trade routes in the Sahara. Use the interactive map to track her last known locations through oases, archaeological sites, and trade routes. Discover evidence and solve the mystery of her disappearance!
+            <strong>MISSION:</strong> Dr. Hassan has disappeared while researching ancient trade routes in the Sahara. 
+            Use this interactive map to track her route through oasis networks, archaeological sites, and nomadic territories.
         </div>
     </div>
     
     <div class="map-controls">
         <div class="control-group">
-            <button class="detective-btn" onclick="toggleLayer('oases')">💧 Oases</button>
-            <button class="detective-btn" onclick="toggleLayer('tradeRoutes')">🐪 Trade Routes</button>
+            <button class="detective-btn" onclick="toggleLayer('rivers')">🌊 Rivers</button>
+            <button class="detective-btn" onclick="toggleLayer('vegetation')">🌿 Vegetation</button>
+            <button class="detective-btn" onclick="toggleLayer('stations')">🏠 Stations</button>
             <button class="detective-btn" onclick="toggleLayer('evidence')">🔍 Evidence</button>
-            <button class="detective-btn" onclick="toggleLayer('archaeological')">🏺 Archaeological Sites</button>
         </div>
         <div class="control-group">
-            <button class="detective-btn" onclick="toggleLayer('settlements')">🏘️ Settlements</button>
-            <button class="detective-btn" onclick="toggleLayer('climate')">🌡️ Climate Zones</button>
+            <button class="detective-btn" onclick="toggleLayer('cities')">🏙️ Cities</button>
+            <button class="detective-btn" onclick="toggleLayer('indigenous')">🏕️ Indigenous</button>
+            <button class="detective-btn" onclick="toggleLayer('deforestation')">🪵 Deforestation</button>
         </div>
         <div class="control-group">
             <div class="evidence-counter">Evidence Found: <span id="evidenceCount">0</span>/8</div>
@@ -341,7 +304,7 @@
         </div>
     </div>
     
-    <div id="saharaMap"></div>
+    <div id="amazonMap"></div>
     
     <div class="legend">
         <div class="legend-title">Map Legend</div>
@@ -394,8 +357,8 @@
     <script src="https://cdn.jsdelivr.net/npm/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
     
     <script>
-        // Initialize the map centered on Sahara region
-        const saharaMap = L.map('saharaMap').setView([20.0, 10.0], 5);
+        // Initialize the map centered on Amazon region
+        const amazonMap = L.map('amazonMap').setView([-3.4653, -62.2159], 6);
         
         // Add multiple professional base layers like Google Maps
         const baseLayers = {
@@ -419,18 +382,18 @@
             })
         };
         
-        // Start with satellite view for better Sahara visualization
-        baseLayers['Satellite'].addTo(saharaMap);
+        // Start with satellite view for better Amazon visualization
+        baseLayers['Satellite'].addTo(amazonMap);
         
         // Create enhanced layer control with base maps and overlays separate
         const layerControl = L.control.layers(baseLayers, {}, {
             position: 'topright',
             collapsed: false
-        }).addTo(saharaMap);
+        }).addTo(amazonMap);
         
         // Layer groups for different map elements (overlays only)
         const overlayLayers = {
-            '🌊 Trade Routes': L.layerGroup(),
+            '🌊 Amazon Rivers': L.layerGroup(),
             '🌳 Vegetation Zones': L.layerGroup(), 
             '🏢 Research Stations': L.layerGroup(),
             '🔍 Evidence Locations': L.layerGroup(),
@@ -446,12 +409,12 @@
         
         // Keep internal reference for easy access
         const layers = {
-            rivers: overlayLayers['🌊 Trade Routes'],
-            vegetation: overlayLayers['� Vegetation Zones'],
-            stations: overlayLayers['�️ Research Stations'], 
-            evidence: overlayLayers['🎯 Evidence Locations'],
+            rivers: overlayLayers['🌊 Amazon Rivers'],
+            vegetation: overlayLayers['🌳 Vegetation Zones'],
+            stations: overlayLayers['🏢 Research Stations'], 
+            evidence: overlayLayers['🔍 Evidence Locations'],
             cities: overlayLayers['🏙️ Major Cities'],
-            indigenous: overlayLayers['�️ Indigenous Territories'],
+            indigenous: overlayLayers['🏘️ Indigenous Territories'],
             deforestation: overlayLayers['🔥 Deforestation Zones']
         };
         
@@ -459,24 +422,24 @@
         let evidenceFound = 0;
         const totalEvidence = 8;
         
-        // Sahara trade routes and oasis data
-        const tradeRouteData = [
+        // Amazon River system data
+        const riverData = [
             {
-                name: "Trans-Saharan Trade Route",
-                coords: [[31.2001, 29.9187], [25.6892, 32.6407], [16.7666, 3.0026], [12.6392, -7.9465]],
-                color: "#d4a574",
+                name: "Amazon River",
+                coords: [[-3.1419, -59.9716], [-3.4653, -62.2159], [-3.7436, -64.3086], [-4.2581, -69.9406]],
+                color: "#0077be",
                 weight: 6
             },
             {
-                name: "Salt Route to Timbuktu",
-                coords: [[25.0, 0.0], [20.0, -1.0], [16.7666, -3.0026]],
-                color: "#b8956a",
+                name: "Rio Negro",
+                coords: [[-0.1314, -67.0164], [-1.4558, -62.2159], [-3.1419, -59.9716]],
+                color: "#003d5c",
                 weight: 4
             },
             {
-                name: "Nile Trade Connection",
-                coords: [[31.2357, 30.0444], [25.6892, 32.6407], [15.5007, 32.5599]],
-                color: "#0a74da",
+                name: "Madeira River",
+                coords: [[-3.3792, -58.9878], [-4.8844, -60.6892], [-7.2307, -62.7834]],
+                color: "#004d73",
                 weight: 4
             }
         ];
@@ -484,18 +447,18 @@
         // Research stations data
         const stationData = [
             {
-                name: "Cairo Research Station",
-                coords: [30.0444, 31.2357],
+                name: "Manaus Research Station",
+                coords: [-3.1190, -60.0217],
                 status: "Active",
                 lastContact: "Day 1",
-                description: "Dr. Hassan's starting point. GPS logs show departure heading southwest into the desert."
+                description: "Dr. Rivera's starting point. Boat logs show departure heading west."
             },
             {
                 name: "Tefe Field Station",
                 coords: [-3.3514, -64.7103],
                 status: "Visited",
                 lastContact: "Day 3",
-                description: "Local guides confirm Dr. Hassan passed through. Collected pottery samples."
+                description: "Local guides confirm Dr. Rivera passed through. Collected soil samples."
             },
             {
                 name: "Remote Outpost Alpha",
@@ -509,56 +472,56 @@
         // Evidence locations with educational content
         const evidenceData = [
             {
-                coords: [30.0444, 31.2357],
+                coords: [-3.1190, -60.0217],
                 title: "Research Notes",
-                content: "Dr. Hassan's notebook found at hotel. Shows interest in ancient trade route patterns across the desert.",
+                content: "Dr. Rivera's notebook found at dock. Shows interest in deforestation patterns along tributary systems.",
                 type: "document",
                 difficulty: "Easy"
             },
             {
-                coords: [29.2022, 25.5198],
+                coords: [-3.3514, -64.7103],
                 title: "GPS Device",
-                content: "Handheld GPS shows waypoints leading deeper into desert. Battery at 23%.",
+                content: "Handheld GPS shows waypoints leading deeper into rainforest. Battery at 23%.",
                 type: "technology",
                 difficulty: "Medium"
             },
             {
-                coords: [23.5, 15.0],
-                title: "Camel Gear",
-                content: "Damaged saddle found at oasis. Indicates possible navigation difficulties.",
+                coords: [-3.7436, -64.3086],
+                title: "Boat Engine Part",
+                content: "Damaged propeller found on riverbank. Indicates possible mechanical failure.",
                 type: "physical",
                 difficulty: "Medium"
             },
             {
-                coords: [21.0, 12.0],
+                coords: [-4.0558, -67.2406],
                 title: "Emergency Beacon Signal",
-                content: "Weak signal detected. Triangulation suggests location in remote dune area.",
+                content: "Weak signal detected. Triangulation suggests location in dense canopy area.",
                 type: "signal",
                 difficulty: "Hard"
             },
             {
-                coords: [22.5, 13.5],
+                coords: [-3.8436, -66.3086],
                 title: "Local Witness Account",
-                content: "Tuareg guide reports seeing researcher heading toward ancient caravan route.",
+                content: "Indigenous guide reports seeing research boat heading toward uncharted tributary.",
                 type: "testimony",
                 difficulty: "Medium"
             },
             {
-                coords: [20.5, 11.0],
+                coords: [-4.1558, -68.5406],
                 title: "Satellite Phone",
-                content: "Found damaged satellite phone. Last message mentions 'unusual archaeological pattern discovered'.",
+                content: "Found damaged satellite phone. Last message mentions 'unusual deforestation pattern discovered'.",
                 type: "technology",
                 difficulty: "Hard"
             },
             {
-                coords: [19.5, 10.0],
+                coords: [-4.2558, -69.2406],
                 title: "Campsite Remains",
                 content: "Temporary camp with research equipment. Shows signs of hasty departure.",
                 type: "physical",
                 difficulty: "Hard"
             },
             {
-                coords: [18.0, 9.0],
+                coords: [-4.2558, -69.9406],
                 title: "Final Radio Transmission",
                 content: "Last known communication: 'Have made significant discovery. Coordinates follow...' [TRANSMISSION ENDS]",
                 type: "signal",
@@ -568,48 +531,48 @@
         
         // Major cities data
         const cityData = [
-            { name: "Cairo", coords: [30.0444, 31.2357], population: "10.1M", country: "Egypt" },
-            { name: "Algiers", coords: [36.7525, 3.0420], population: "2.9M", country: "Algeria" },
-            { name: "Tripoli", coords: [32.8925, 13.1802], population: "1.1M", country: "Libya" },
-            { name: "Khartoum", coords: [15.5007, 32.5599], population: "5.2M", country: "Sudan" },
-            { name: "Casablanca", coords: [33.5731, -7.5898], population: "3.7M", country: "Morocco" },
-            { name: "Tunis", coords: [36.8065, 10.1815], population: "2.4M", country: "Tunisia" }
+            { name: "Manaus", coords: [-3.1190, -60.0217], population: "2.2M", country: "Brazil" },
+            { name: "Belém", coords: [-1.4558, -48.5044], population: "1.5M", country: "Brazil" },
+            { name: "Iquitos", coords: [-3.7437, -73.2516], population: "377K", country: "Peru" },
+            { name: "Santarém", coords: [-2.4093, -54.7085], population: "295K", country: "Brazil" },
+            { name: "Macapá", coords: [0.0389, -51.0664], population: "512K", country: "Brazil" },
+            { name: "Porto Velho", coords: [-8.7612, -63.9039], population: "539K", country: "Brazil" }
         ];
         
         // Indigenous territories data
         const indigenousData = [
-            { name: "Tuareg Territory", coords: [20.0, 5.0], area: "Traditional Lands", people: "Tuareg" },
-            { name: "Berber Territory", coords: [31.0, -5.0], area: "Cultural Preserve", people: "Berber" },
-            { name: "Tebu Territory", coords: [18.0, 23.0], area: "Protected Area", people: "Tebu" },
-            { name: "Fulani Territory", coords: [12.0, 2.0], area: "Pastoral Lands", people: "Fulani" },
-            { name: "Sahrawi Territory", coords: [25.0, -13.0], area: "Disputed Region", people: "Sahrawi" }
+            { name: "Yanomami Territory", coords: [-1.5, -65.0], area: "Protected Reserve", people: "Yanomami" },
+            { name: "Kayapo Territory", coords: [-7.5, -54.0], area: "Traditional Lands", people: "Kayapo" },
+            { name: "Tikuna Reserve", coords: [-3.8, -70.2], area: "Cultural Preserve", people: "Tikuna" },
+            { name: "Xingu Territory", coords: [-11.0, -53.5], area: "National Park", people: "Multiple Tribes" },
+            { name: "Awá Territory", coords: [-3.0, -46.5], area: "Protected Area", people: "Awá-Guajá" }
         ];
         
-        // Desertification zones data
-        const desertificationData = [
+        // Deforestation zones data
+        const deforestationData = [
             { 
-                name: "Sahel Degradation Zone", 
-                coords: [[10.0, -15.0], [18.0, -10.0], [18.0, 20.0], [10.0, 15.0], [10.0, -15.0]],
+                name: "Arc of Deforestation", 
+                coords: [[-8.0, -63.0], [-10.0, -55.0], [-12.0, -50.0], [-8.0, -50.0], [-6.0, -55.0], [-8.0, -63.0]],
                 severity: "High",
                 year: "2020-2024"
             },
             {
-                name: "Lake Chad Basin",
-                coords: [[12.0, 13.0], [14.0, 13.0], [14.0, 15.0], [12.0, 15.0], [12.0, 13.0]],
+                name: "Rondônia Clearing",
+                coords: [[-8.5, -64.0], [-9.5, -64.0], [-9.5, -62.0], [-8.5, -62.0], [-8.5, -64.0]],
                 severity: "Critical",
                 year: "2022-2024"
             },
             {
-                name: "Atlas Mountains Foothills",
-                coords: [[31.0, -8.0], [33.0, -8.0], [33.0, -5.0], [31.0, -5.0], [31.0, -8.0]],
+                name: "Mato Grosso Front",
+                coords: [[-13.0, -57.0], [-15.0, -57.0], [-15.0, -54.0], [-13.0, -54.0], [-13.0, -57.0]],
                 severity: "Moderate",
                 year: "2021-2023"
             }
         ];
         
         // Add rivers to map
-        function addTradeRoutes() {
-            tradeRouteData.forEach(river => {
+        function addRivers() {
+            riverData.forEach(river => {
                 const riverLine = L.polyline(river.coords, {
                     color: river.color,
                     weight: river.weight,
@@ -620,7 +583,7 @@
                     <div style="font-family: 'Roboto', sans-serif;">
                         <h3 style="color: #0077be; margin-bottom: 10px;">${river.name}</h3>
                         <p><strong>Length:</strong> Major waterway</p>
-                        <p><strong>Navigation:</strong> Dr. Hassan's likely route</p>
+                        <p><strong>Navigation:</strong> Dr. Rivera's likely route</p>
                         <p><strong>Current:</strong> Moderate to strong</p>
                     </div>
                 `);
@@ -698,8 +661,8 @@
                         <h3 style="color: #e67e22; margin-bottom: 10px;">🏙️ ${city.name}</h3>
                         <p><strong>Country:</strong> ${city.country}</p>
                         <p><strong>Population:</strong> ${city.population}</p>
-                        <p><strong>Role:</strong> Regional hub for Sahara research and logistics</p>
-                        <p style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 5px;">Key staging point for Dr. Hassan's expedition supplies and communications.</p>
+                        <p><strong>Role:</strong> Regional hub for Amazon research and logistics</p>
+                        <p style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 5px;">Key staging point for Dr. Rivera's expedition supplies and communications.</p>
                     </div>
                 `);
             });
@@ -722,17 +685,17 @@
                         <h3 style="color: #8e44ad; margin-bottom: 10px;">🏕️ ${territory.name}</h3>
                         <p><strong>People:</strong> ${territory.people}</p>
                         <p><strong>Status:</strong> ${territory.area}</p>
-                        <p><strong>Cultural Significance:</strong> Traditional guardians of the desert</p>
-                        <p style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 5px;">Indigenous communities possess invaluable knowledge about Dr. Hassan's research area and local environmental changes.</p>
+                        <p><strong>Cultural Significance:</strong> Traditional guardians of the rainforest</p>
+                        <p style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 5px;">Indigenous communities possess invaluable knowledge about Dr. Rivera's research area and local environmental changes.</p>
                     </div>
                 `);
             });
         }
         
-        // Add desertification zones
-        function addDesertification() {
-            desertificationData.forEach(zone => {
-                const desertificationZone = L.polygon(zone.coords, {
+        // Add deforestation zones
+        function addDeforestation() {
+            deforestationData.forEach(zone => {
+                const deforestationZone = L.polygon(zone.coords, {
                     color: '#c0392b',
                     weight: 2,
                     opacity: 0.8,
@@ -740,13 +703,13 @@
                     fillOpacity: 0.3
                 }).addTo(layers.deforestation);
                 
-                desertificationZone.bindPopup(`
+                deforestationZone.bindPopup(`
                     <div style="font-family: 'Roboto', sans-serif; min-width: 250px;">
-                        <h3 style="color: #c0392b; margin-bottom: 10px;">🏜️ ${zone.name}</h3>
+                        <h3 style="color: #c0392b; margin-bottom: 10px;">🪵 ${zone.name}</h3>
                         <p><strong>Severity:</strong> <span style="color: ${zone.severity === 'Critical' ? '#e74c3c' : zone.severity === 'High' ? '#f39c12' : '#f1c40f'}">${zone.severity}</span></p>
                         <p><strong>Period:</strong> ${zone.year}</p>
-                        <p><strong>Environmental Impact:</strong> Significant land degradation</p>
-                        <p style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 5px;">Dr. Hassan's research focused on understanding the connection between desertification patterns and ancient settlement locations in these critical areas.</p>
+                        <p><strong>Environmental Impact:</strong> Significant habitat loss</p>
+                        <p style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 5px;">Dr. Rivera's research focused on understanding the connection between deforestation patterns and biodiversity loss in these critical areas.</p>
                     </div>
                 `);
             });
@@ -811,7 +774,7 @@
             // Check if all evidence found
             if (evidenceFound === totalEvidence) {
                 setTimeout(() => {
-                    alert('🎉 Congratulations! You have found all evidence and successfully tracked Dr. Hassan through the Sahara! Case #2 SOLVED!');
+                    alert('🎉 Congratulations! You have found all evidence and successfully tracked Dr. Rivera through the Amazon! Case #1 SOLVED!');
                 }, 500);
             }
         }
@@ -831,11 +794,11 @@
         function toggleLayer(layerName) {
             const button = event.target; // Get the button that was clicked
             
-            if (saharaMap.hasLayer(layers[layerName])) {
-                saharaMap.removeLayer(layers[layerName]);
+            if (amazonMap.hasLayer(layers[layerName])) {
+                amazonMap.removeLayer(layers[layerName]);
                 button.classList.remove('active');
             } else {
-                saharaMap.addLayer(layers[layerName]);
+                amazonMap.addLayer(layers[layerName]);
                 button.classList.add('active');
             }
         }
@@ -853,17 +816,17 @@
         
         // Initialize map with all layers
         function initializeMap() {
-            addTradeRoutes();
+            addRivers();
             addStations();
             addEvidence();
             addCities();
             addIndigenous();
-            addDesertification();
+            addDeforestation();
             
             // Add core layers by default (rivers, stations, evidence)
-            saharaMap.addLayer(layers.rivers);
-            saharaMap.addLayer(layers.stations);
-            saharaMap.addLayer(layers.evidence);
+            amazonMap.addLayer(layers.rivers);
+            amazonMap.addLayer(layers.stations);
+            amazonMap.addLayer(layers.evidence);
             
             // Mark core layer buttons as active initially
             document.querySelectorAll('.detective-btn').forEach(btn => {
@@ -874,10 +837,10 @@
             });
             
             // Add scale
-            L.control.scale().addTo(saharaMap);
+            L.control.scale().addTo(amazonMap);
             
             // Add coordinates display on click
-            saharaMap.on('click', function(e) {
+            amazonMap.on('click', function(e) {
                 console.log(`Clicked at: ${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)}`);
             });
         }
