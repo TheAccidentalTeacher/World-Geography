@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏜️ Sahara Desert Investigation Map - Case #2</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-draw@1.0.4/dist/leaflet.draw.css" />
+    
+    <style>
+        :root {
+            --primary-color: #ff6b35;
+            --secondary-color: #4ecdc4;
+            --accent-color: #ffd700;
+            --success-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --sahara-sand: #d4a574;
+            --sahara-deep: #b8956a;
+            --oasis-blue: #0a74da;
+            --desert-orange: #ff6b35;
+            --desert-red: #e74c3c;
+        }
+        
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+        }
+        
+        body { 
+            font-family: 'Roboto', sans-serif; 
+            background: linear-gradient(135deg, #d4a574 0%, #b8956a 100%);
+            min-height: 100vh;
+            color: #333;
+            overflow: hidden;
+        }
+        
+        .detective-header {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 4px solid var(--accent-color);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1001;
+        }
+        
+        .case-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--sahara-deep);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 10px;
+        }
+        
+        .case-subtitle {
+            font-size: 1.2rem;
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .mission-brief {
+            background: linear-gradient(135deg, var(--desert-orange), var(--desert-red));
+            color: white;
+            padding: 15px 25px;
+            margin: 15px 0;
+            border-radius: 15px;
+            font-weight: 500;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(255,107,53,0.3);
+        }
+        
+        #saharaMap {
+            height: calc(100vh - 140px);
+            width: 100%;
+            margin-top: 140px;
+            border-radius: 0;
+            border: none;
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.1);
+        }
+        
+        .map-controls {
+            position: fixed;
+            top: 160px;
+            left: 20px;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            z-index: 1000;
+            max-width: 280px;
+        }
+        
+        .control-group {
+            margin-bottom: 15px;
+        }
+        
+        .control-title {
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            color: var(--sahara-deep);
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .detective-btn {
+            background: linear-gradient(135deg, var(--sahara-sand), var(--sahara-deep));
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            margin: 5px;
+            border-radius: 25px;
+            font-family: 'Roboto', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .detective-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            background: linear-gradient(135deg, var(--desert-orange), var(--desert-red));
+        }
+        
+        .detective-btn.active {
+            background: linear-gradient(135deg, var(--success-color), #27ae60);
+            box-shadow: 0 0 20px rgba(46,204,113,0.5);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 20px rgba(46,204,113,0.5); }
+            50% { box-shadow: 0 0 30px rgba(46,204,113,0.8); }
+            100% { box-shadow: 0 0 20px rgba(46,204,113,0.5); }
+        }
+        
+        .evidence-counter {
+            background: linear-gradient(135deg, var(--primary-color), var(--danger-color));
+            color: white;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            text-align: center;
+            margin: 10px 5px;
+            box-shadow: 0 4px 15px rgba(255,107,53,0.3);
+            font-size: 1.1em;
+        }
+        
+        .evidence-item {
+            background: linear-gradient(45deg, #f8f9fa, #e9ecef);
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            border-left: 4px solid var(--sahara-sand);
+        }
+        
+        .evidence-title {
+            font-weight: 700;
+            color: var(--sahara-deep);
+            margin-bottom: 8px;
+        }
+        
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: var(--danger-color);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            cursor: pointer;
+            z-index: 1002;
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+        
+        .legend {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(255,255,255,0.9);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+        
+        .legend-title {
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--sahara-deep);
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 10px;
+            border: 2px solid #333;
+        }
+        
+        .investigation-panel {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 380px;
+            height: 100vh;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            box-shadow: -5px 0 25px rgba(0,0,0,0.3);
+            transition: right 0.4s ease;
+            z-index: 1003;
+            overflow-y: auto;
+        }
+        
+        .investigation-panel.open {
+            right: 0;
+        }
+        
+        .panel-header {
+            background: linear-gradient(135deg, var(--sahara-sand), var(--sahara-deep));
+            color: white;
+            padding: 20px;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            transition: background 0.3s ease;
+        }
+        
+        .close-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        #evidenceLog {
+            padding: 20px;
+            max-height: calc(100vh - 80px);
+            overflow-y: auto;
+            font-size: 1.1em;
+        }
+        
+        /* Leaflet Layer Control Styling */
+        .leaflet-control-layers {
+            background: rgba(255,255,255,0.95) !important;
+            backdrop-filter: blur(20px);
+            border-radius: 15px !important;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2) !important;
+            padding: 15px !important;
+            border: none !important;
+        }
+        
+        .leaflet-control-layers-toggle {
+            background: linear-gradient(135deg, var(--sahara-sand), var(--sahara-deep)) !important;
+            border-radius: 10px !important;
+            width: 40px !important;
+            height: 40px !important;
+        }
+        
+        .leaflet-control-layers-expanded {
+            padding: 20px !important;
+        }
+        
+        .leaflet-control-layers label {
+            font-family: 'Roboto', sans-serif !important;
+            font-weight: 500 !important;
+            font-size: 1.1em !important;
+            color: #333 !important;
+        }
+        
+        @media print {
+            .detective-header, .map-controls, .investigation-panel, .back-btn { display: none; }
+            #saharaMap { height: 100vh; border: none; margin-top: 0; }
+        }
+    </style>
+</head>
+<body>
+    <button class="back-btn" onclick="window.history.back()">← Back to Maps Central</button>
+    
+    <div class="detective-header">
+        <h1 class="case-title">🏜️ CASE #2: SAHARA INVESTIGATION</h1>
+        <p class="case-subtitle">Navigate the World's Largest Hot Desert to Locate the Missing Caravan</p>
+        <div class="mission-brief">
+            <strong>MISSION:</strong> Dr. Hassan's archaeological caravan has vanished while studying ancient trade routes. Use this 
+            interactive map to track their route through climate zones, oasis locations, and historical pathways across the vast Sahara Desert.
+        </div>
+    </div>
+    
+    <div class="map-controls">
+        <div class="control-group">
+            <div class="control-title">Environmental Layers</div>
+            <button class="detective-btn" onclick="toggleLayer('oases')">💧 Oases</button>
+            <button class="detective-btn" onclick="toggleLayer('dunes')">🏔️ Dune Systems</button>
+            <button class="detective-btn" onclick="toggleLayer('routes')">🐪 Trade Routes</button>
+            <button class="detective-btn" onclick="toggleLayer('evidence')">🔍 Evidence</button>
+        </div>
+        <div class="control-group">
+            <button class="detective-btn" onclick="toggleLayer('cities')">🏘️ Cities</button>
+            <button class="detective-btn" onclick="toggleLayer('tribes')">👥 Tribal Areas</button>
+            <button class="detective-btn" onclick="toggleLayer('climate')">🌡️ Climate Zones</button>
+        </div>
+        <div class="control-group">
+            <div class="evidence-counter">Evidence Found: <span id="evidenceCount">0</span>/8</div>
+            <button class="detective-btn" onclick="togglePanel()">📋 Investigation Notes</button>
+            <button class="detective-btn" onclick="printMap()">🖨️ Print Map</button>
+        </div>
+    </div>
+    
+    <div id="saharaMap"></div>
+    
+    <div class="legend">
+        <div class="legend-title">Map Legend</div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #0a74da;"></div>
+            <span>Oases & Water Sources</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #f39c12;"></div>
+            <span>Ancient Trade Routes</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #e74c3c;"></div>
+            <span>Evidence Locations</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #9b59b6;"></div>
+            <span>Last Known Position</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #e67e22;"></div>
+            <span>Desert Cities</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #8e44ad;"></div>
+            <span>Tribal Territories</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #c0392b;"></div>
+            <span>Extreme Climate Zones</span>
+        </div>
+    </div>
+    
+    <div class="investigation-panel" id="investigationPanel">
+        <div class="panel-header">
+            🕵️ Investigation Log
+            <button class="close-btn" onclick="togglePanel()" title="Close Investigation Log">✕</button>
+        </div>
+        <div id="evidenceLog">
+            <p style="color: #666; font-style: italic;">Click on evidence markers to record your findings...</p>
+        </div>
+    </div>
+    
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
+    
+    <script>
+        // Initialize the map centered on Sahara Desert region
+        const saharaMap = L.map('saharaMap').setView([23.4162, 25.6628], 5);
+        
+        // Add multiple professional base layers like Google Maps
+        const baseLayers = {
+            'Satellite': L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+            }),
+            'Street Map': L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }),
+            'Countries & Boundaries': L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }),
+            'Terrain & Elevation': L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+                attribution: 'Map data: &copy; OpenStreetMap contributors, SRTM | Map style: &copy; OpenTopoMap (CC-BY-SA)'
+            }),
+            'Dark Mode': L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
+            }),
+            'Physical Features': L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Physical_Map/MapServer/tile/{z}/{y}/{x}', {
+                attribution: 'Tiles &copy; Esri &mdash; Source: US National Park Service'
+            })
+        };
+        
+        // Start with satellite view for better Sahara visualization
+        baseLayers['Satellite'].addTo(saharaMap);
+        
+        // Create enhanced layer control with base maps and overlays separate
+        const layerControl = L.control.layers(baseLayers, {}, {
+            position: 'topright',
+            collapsed: false
+        }).addTo(saharaMap);
+        
+        // Layer groups for different map elements (overlays only)
+        const overlayLayers = {
+            '💧 Oases & Water Sources': L.layerGroup(),
+            '🏔️ Dune Systems': L.layerGroup(), 
+            '🐪 Ancient Trade Routes': L.layerGroup(),
+            '🔍 Evidence Locations': L.layerGroup(),
+            '🏘️ Desert Cities': L.layerGroup(),
+            '👥 Tribal Territories': L.layerGroup(),
+            '🌡️ Climate Zones': L.layerGroup()
+        };
+        
+        // Add overlay layers to the control
+        Object.entries(overlayLayers).forEach(([name, layer]) => {
+            layerControl.addOverlay(layer, name);
+        });
+        
+        // Keep internal reference for easy access
+        const layers = {
+            oases: overlayLayers['💧 Oases & Water Sources'],
+            dunes: overlayLayers['🏔️ Dune Systems'],
+            routes: overlayLayers['🐪 Ancient Trade Routes'], 
+            evidence: overlayLayers['🔍 Evidence Locations'],
+            cities: overlayLayers['🏘️ Desert Cities'],
+            tribes: overlayLayers['👥 Tribal Territories'],
+            climate: overlayLayers['🌡️ Climate Zones']
+        };
+        
+        // Evidence tracking
+        let evidenceFound = 0;
+        const totalEvidence = 8;
+        
+        // Oases and water sources data
+        const oasisData = [
+            {
+                name: "Siwa Oasis",
+                coords: [29.2028, 25.5197],
+                type: "Major Oasis",
+                description: "Historic oasis with ancient oracle temple. Dr. Hassan's team collected water samples here."
+            },
+            {
+                name: "Bahariya Oasis",
+                coords: [28.3489, 28.8619],
+                type: "Archaeological Site",
+                description: "Rich in archaeological finds. Research team documented new trade route markers."
+            },
+            {
+                name: "Farafra Oasis",
+                coords: [27.0571, 27.9693],
+                type: "Research Station",
+                description: "Modern research facility. Last confirmed radio contact with expedition."
+            },
+            {
+                name: "Dakhla Oasis",
+                coords: [25.4970, 29.0970],
+                type: "Ancient Settlement",
+                description: "Contains Roman-era ruins. Team found unusual pottery fragments."
+            },
+            {
+                name: "Kharga Oasis",
+                coords: [25.4417, 30.5417],
+                type: "Supply Cache",
+                description: "Emergency supplies depot. Signs of recent expedition activity."
+            }
+        ];
+        
+        // Trade routes data
+        const routeData = [
+            {
+                name: "Trans-Saharan Gold Route",
+                coords: [[31.2001, 29.9187], [28.3489, 28.8619], [25.4970, 29.0970], [20.1619, 30.4518]],
+                color: "#f39c12",
+                weight: 5,
+                period: "Medieval (800-1600 CE)"
+            },
+            {
+                name: "Salt Caravan Path",
+                coords: [[27.0571, 27.9693], [23.8859, 32.9020], [18.0735, 25.9540]],
+                color: "#e67e22",
+                weight: 4,
+                period: "Ancient (500 BCE - 800 CE)"
+            },
+            {
+                name: "Ivory Trade Route",
+                coords: [[29.2028, 25.5197], [25.4970, 29.0970], [21.0079, 31.2357], [16.8775, 19.9548]],
+                color: "#d35400",
+                weight: 4,
+                period: "Classical (100-500 CE)"
+            }
+        ];
+        
+        // Evidence locations with educational content
+        const evidenceData = [
+            {
+                coords: [29.1028, 25.4197],
+                title: "Ancient Papyrus Map",
+                content: "Discovered papyrus showing previously unknown trade route connections. Contains hieroglyphic notations about water sources.",
+                type: "archaeological",
+                difficulty: "Easy"
+            },
+            {
+                coords: [28.2489, 28.7619],
+                title: "Abandoned Equipment",
+                content: "Dr. Hassan's geological surveying equipment found half-buried in sand. GPS shows last recorded coordinates.",
+                type: "physical",
+                difficulty: "Easy"
+            },
+            {
+                coords: [27.1571, 27.8693],
+                title: "Local Guide Interview",
+                content: "Tuareg guide reports seeing expedition heading toward unexplored valley. Mentions urgent radio transmissions.",
+                type: "testimony",
+                difficulty: "Medium"
+            },
+            {
+                coords: [25.3970, 29.1970],
+                title: "Pottery Fragment Analysis",
+                content: "Ancient pottery shards with unusual glaze composition. May indicate previously unknown trade connections.",
+                type: "archaeological",
+                difficulty: "Medium"
+            },
+            {
+                coords: [23.8859, 32.8020],
+                title: "Satellite Phone Signal",
+                content: "Brief satellite phone transmission detected. Message fragmented: 'Found the lost... coordinates are...' [SIGNAL LOST]",
+                type: "technology",
+                difficulty: "Hard"
+            },
+            {
+                coords: [21.0079, 31.1357],
+                title: "Emergency Supply Cache",
+                content: "Hidden supply cache with recent activity. Food containers show expedition passed through 3 days ago.",
+                type: "physical",
+                difficulty: "Hard"
+            },
+            {
+                coords: [18.2735, 25.8540],
+                title: "Ancient Inscriptions",
+                content: "Rock carvings describe secret water source. Dr. Hassan's notes found nearby with translation attempts.",
+                type: "archaeological",
+                difficulty: "Very Hard"
+            },
+            {
+                coords: [16.9775, 19.8548],
+                title: "Final Radio Transmission",
+                content: "Last communication from expedition: 'Archaeological discovery of unprecedented importance. Coordinates follow...' [TRANSMISSION ENDS]",
+                type: "signal",
+                difficulty: "Very Hard"
+            }
+        ];
+        
+        // Desert cities data
+        const cityData = [
+            { name: "Cairo", coords: [30.0444, 31.2357], population: "20.5M", country: "Egypt" },
+            { name: "Marrakech", coords: [31.6295, -7.9811], population: "928K", country: "Morocco" },
+            { name: "Tunis", coords: [36.8065, 10.1815], population: "1.2M", country: "Tunisia" },
+            { name: "Tripoli", coords: [32.8872, 13.1913], population: "1.1M", country: "Libya" },
+            { name: "Nouakchott", coords: [18.0735, -15.9582], population: "1.3M", country: "Mauritania" },
+            { name: "N'Djamena", coords: [12.1067, 15.0444], population: "1.6M", country: "Chad" }
+        ];
+        
+        // Tribal territories data
+        const tribalData = [
+            { name: "Tuareg Territory", coords: [18.5, 2.0], area: "Nomadic Range", people: "Tuareg" },
+            { name: "Bedouin Lands", coords: [27.0, 33.0], area: "Eastern Desert", people: "Bedouin" },
+            { name: "Toubou Region", coords: [15.0, 20.0], area: "Tibesti Mountains", people: "Toubou" },
+            { name: "Moorish Territory", coords: [20.0, -10.0], area: "Western Sahara", people: "Moors" }
+        ];
+        
+        // Climate zones data
+        const climateData = [
+            { 
+                name: "Extreme Arid Zone", 
+                coords: [[[23.0, 15.0], [25.0, 15.0], [25.0, 35.0], [23.0, 35.0], [23.0, 15.0]]],
+                severity: "Extreme",
+                description: "Less than 25mm annual rainfall"
+            },
+            {
+                name: "Hyper-Arid Core",
+                coords: [[[20.0, 10.0], [22.0, 10.0], [22.0, 30.0], [20.0, 30.0], [20.0, 10.0]]],
+                severity: "Critical",
+                description: "Less than 5mm annual rainfall"
+            }
+        ];
+        
+        // Dune systems data
+        const duneData = [
+            { name: "Great Sand Sea", coords: [26.0, 28.0], type: "Massive Erg", description: "Vast sand dune field covering 72,000 km²" },
+            { name: "Murzuq Sand Sea", coords: [24.0, 14.0], type: "Erg System", description: "Major dune field in central Sahara" },
+            { name: "Ténéré Desert", coords: [18.0, 10.0], type: "Sand Plain", description: "Part of the larger Sahara with scattered dunes" },
+            { name: "Erg Chebbi", coords: [31.1, -4.0], type: "Dune Field", description: "Famous orange sand dunes near Morocco" }
+        ];
+        
+        // Add functions for each layer type
+        function addOases() {
+            oasisData.forEach(oasis => {
+                const oasisIcon = L.divIcon({
+                    className: 'oasis-marker',
+                    html: `<div style="background: #0a74da; border: 3px solid white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-size: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">💧</div>`,
+                    iconSize: [30, 30],
+                    iconAnchor: [15, 15]
+                });
+                
+                const marker = L.marker(oasis.coords, { icon: oasisIcon }).addTo(layers.oases);
+                
+                marker.bindPopup(`
+                    <div style="font-family: 'Roboto', sans-serif; min-width: 200px;">
+                        <h3 style="color: #0a74da; margin-bottom: 10px;">💧 ${oasis.name}</h3>
+                        <p><strong>Type:</strong> ${oasis.type}</p>
+                        <p><strong>Significance:</strong> Critical water source</p>
+                        <p style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 5px;">${oasis.description}</p>
+                    </div>
+                `);
+            });
+        }
+        
+        function addRoutes() {
+            routeData.forEach(route => {
+                const routeLine = L.polyline(route.coords, {
+                    color: route.color,
+                    weight: route.weight,
+                    opacity: 0.8,
+                    dashArray: '10, 5'
+                }).addTo(layers.routes);
+                
+                routeLine.bindPopup(`
+                    <div style="font-family: 'Roboto', sans-serif;">
+                        <h3 style="color: ${route.color}; margin-bottom: 10px;">🐪 ${route.name}</h3>
+                        <p><strong>Period:</strong> ${route.period}</p>
+                        <p><strong>Purpose:</strong> Major trade corridor</p>
+                        <p><strong>Investigation Status:</strong> Dr. Hassan's likely path</p>
+                    </div>
+                `);
+            });
+        }
+        
+        function addEvidence() {
+            evidenceData.forEach((evidence, index) => {
+                const evidenceIcon = L.divIcon({
+                    className: 'evidence-marker',
+                    html: `<div style="background: #e74c3c; border: 3px solid white; border-radius: 50%; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.3); animation: pulse 2s infinite;">🔍</div>`,
+                    iconSize: [35, 35],
+                    iconAnchor: [17, 17]
+                });
+                
+                const marker = L.marker(evidence.coords, { icon: evidenceIcon }).addTo(layers.evidence);
+                
+                marker.on('click', function() {
+                    if (!this.discovered) {
+                        this.discovered = true;
+                        evidenceFound++;
+                        document.getElementById('evidenceCount').textContent = evidenceFound;
+                        
+                        const logEntry = document.createElement('div');
+                        logEntry.className = 'evidence-item';
+                        logEntry.innerHTML = `
+                            <div class="evidence-title">Evidence #${evidenceFound}: ${evidence.title}</div>
+                            <p><strong>Type:</strong> ${evidence.type} evidence</p>
+                            <p><strong>Difficulty:</strong> ${evidence.difficulty}</p>
+                            <p><strong>Discovery:</strong> ${evidence.content}</p>
+                            <p style="margin-top: 8px; font-size: 0.9em; color: #666;"><em>Discovered at coordinates: ${evidence.coords[0].toFixed(4)}, ${evidence.coords[1].toFixed(4)}</em></p>
+                        `;
+                        document.getElementById('evidenceLog').appendChild(logEntry);
+                        
+                        if (evidenceFound === totalEvidence) {
+                            setTimeout(() => {
+                                alert('🎉 CASE SOLVED! You have discovered all evidence and successfully tracked Dr. Hassan\'s expedition route through the Sahara Desert!');
+                            }, 500);
+                        }
+                    }
+                });
+                
+                marker.bindPopup(`
+                    <div style="font-family: 'Roboto', sans-serif; min-width: 250px;">
+                        <h3 style="color: #e74c3c; margin-bottom: 10px;">🔍 ${evidence.title}</h3>
+                        <p><strong>Evidence Type:</strong> ${evidence.type}</p>
+                        <p><strong>Difficulty Level:</strong> ${evidence.difficulty}</p>
+                        <p style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 5px;">${evidence.content}</p>
+                        <p style="margin-top: 10px; font-size: 0.9em; color: #666;"><em>Click marker to record this evidence in your investigation log</em></p>
+                    </div>
+                `);
+            });
+        }
+        
+        function addCities() {
+            cityData.forEach(city => {
+                const cityIcon = L.divIcon({
+                    className: 'city-marker',
+                    html: `<div style="background: #e67e22; border: 3px solid white; border-radius: 8px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">🏘️</div>`,
+                    iconSize: [32, 32],
+                    iconAnchor: [16, 16]
+                });
+                
+                const marker = L.marker(city.coords, { icon: cityIcon }).addTo(layers.cities);
+                
+                marker.bindPopup(`
+                    <div style="font-family: 'Roboto', sans-serif; min-width: 200px;">
+                        <h3 style="color: #e67e22; margin-bottom: 10px;">🏘️ ${city.name}</h3>
+                        <p><strong>Country:</strong> ${city.country}</p>
+                        <p><strong>Population:</strong> ${city.population}</p>
+                        <p><strong>Role:</strong> Regional hub for Sahara expeditions</p>
+                        <p style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 5px;">Key staging point for Dr. Hassan's expedition supplies and communications.</p>
+                    </div>
+                `);
+            });
+        }
+        
+        function addTribes() {
+            tribalData.forEach(territory => {
+                const tribalIcon = L.divIcon({
+                    className: 'tribal-marker',
+                    html: `<div style="background: #8e44ad; border: 3px solid white; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">👥</div>`,
+                    iconSize: [28, 28],
+                    iconAnchor: [14, 14]
+                });
+                
+                const marker = L.marker(territory.coords, { icon: tribalIcon }).addTo(layers.tribes);
+                
+                marker.bindPopup(`
+                    <div style="font-family: 'Roboto', sans-serif; min-width: 250px;">
+                        <h3 style="color: #8e44ad; margin-bottom: 10px;">👥 ${territory.name}</h3>
+                        <p><strong>People:</strong> ${territory.people}</p>
+                        <p><strong>Region:</strong> ${territory.area}</p>
+                        <p><strong>Cultural Significance:</strong> Traditional desert navigators</p>
+                        <p style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 5px;">These communities possess invaluable knowledge about Dr. Hassan's research area and traditional desert survival techniques.</p>
+                    </div>
+                `);
+            });
+        }
+        
+        function addClimate() {
+            climateData.forEach(zone => {
+                const polygon = L.polygon(zone.coords, {
+                    color: '#c0392b',
+                    weight: 3,
+                    opacity: 0.8,
+                    fillColor: '#e74c3c',
+                    fillOpacity: 0.2
+                }).addTo(layers.climate);
+                
+                polygon.bindPopup(`
+                    <div style="font-family: 'Roboto', sans-serif; min-width: 200px;">
+                        <h3 style="color: #c0392b; margin-bottom: 10px;">🌡️ ${zone.name}</h3>
+                        <p><strong>Severity:</strong> ${zone.severity}</p>
+                        <p><strong>Conditions:</strong> ${zone.description}</p>
+                        <p><strong>Danger Level:</strong> Extreme caution required</p>
+                        <p style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 5px;">Critical climate zone that may have affected Dr. Hassan's expedition route.</p>
+                    </div>
+                `);
+            });
+        }
+        
+        function addDunes() {
+            duneData.forEach(dune => {
+                const duneIcon = L.divIcon({
+                    className: 'dune-marker',
+                    html: `<div style="background: #d4a574; border: 3px solid white; border-radius: 8px; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-size: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">🏔️</div>`,
+                    iconSize: [30, 30],
+                    iconAnchor: [15, 15]
+                });
+                
+                const marker = L.marker(dune.coords, { icon: duneIcon }).addTo(layers.dunes);
+                
+                marker.bindPopup(`
+                    <div style="font-family: 'Roboto', sans-serif; min-width: 200px;">
+                        <h3 style="color: #d4a574; margin-bottom: 10px;">🏔️ ${dune.name}</h3>
+                        <p><strong>Type:</strong> ${dune.type}</p>
+                        <p><strong>Navigation Challenge:</strong> Shifting sands and limited visibility</p>
+                        <p style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 5px;">${dune.description}</p>
+                    </div>
+                `);
+            });
+        }
+        
+        function toggleLayer(layerName) {
+            const button = event.target;
+            
+            if (saharaMap.hasLayer(layers[layerName])) {
+                saharaMap.removeLayer(layers[layerName]);
+                button.classList.remove('active');
+            } else {
+                saharaMap.addLayer(layers[layerName]);
+                button.classList.add('active');
+            }
+        }
+        
+        function togglePanel() {
+            const panel = document.getElementById('investigationPanel');
+            panel.classList.toggle('open');
+        }
+        
+        function printMap() {
+            window.print();
+        }
+        
+        function initializeMap() {
+            addOases();
+            addRoutes();
+            addEvidence();
+            addCities();
+            addTribes();
+            addClimate();
+            addDunes();
+            
+            // Add core layers by default
+            saharaMap.addLayer(layers.oases);
+            saharaMap.addLayer(layers.routes);
+            saharaMap.addLayer(layers.evidence);
+            
+            // Mark core layer buttons as active
+            document.querySelectorAll('.detective-btn').forEach(btn => {
+                const btnText = btn.textContent.trim();
+                if (btnText.includes('Oases') || btnText.includes('Trade Routes') || btnText.includes('Evidence')) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            saharaMap.on('click', function(e) {
+                console.log(`Clicked at: ${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)}`);
+            });
+        }
+        
+        document.addEventListener('DOMContentLoaded', initializeMap);
+    </script>
+</body>
+</html>

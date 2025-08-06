@@ -8,6 +8,7 @@
     
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-draw@1.0.4/dist/leaflet.draw.css" />
     
     <style>
         :root {
@@ -19,6 +20,8 @@
             --sahara-sand: #d4a574;
             --sahara-deep: #b8956a;
             --oasis-blue: #0a74da;
+            --desert-orange: #ff6b35;
+            --desert-red: #e74c3c;
         }
         
         * { 
@@ -32,6 +35,7 @@
             background: linear-gradient(135deg, #d4a574 0%, #b8956a 100%);
             min-height: 100vh;
             color: #333;
+            overflow: hidden;
         }
         
         .detective-header {
@@ -41,6 +45,11 @@
             text-align: center;
             border-bottom: 4px solid var(--accent-color);
             box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1001;
         }
         
         .case-title {
@@ -48,6 +57,311 @@
             font-size: 2.5rem;
             font-weight: 900;
             color: var(--sahara-deep);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 10px;
+        }
+        
+        .case-subtitle {
+            font-size: 1.2rem;
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .mission-brief {
+            background: linear-gradient(135deg, var(--desert-orange), var(--desert-red));
+            color: white;
+            padding: 15px 25px;
+            margin: 15px 0;
+            border-radius: 15px;
+            font-weight: 500;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(255,107,53,0.3);
+        }
+        
+        #saharaMap {
+            height: calc(100vh - 140px);
+            width: 100%;
+            margin-top: 140px;
+            border-radius: 0;
+            border: none;
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.1);
+        }
+        
+        .map-controls {
+            position: fixed;
+            top: 160px;
+            left: 20px;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            z-index: 1000;
+            max-width: 280px;
+        }
+        
+        .control-group {
+            margin-bottom: 15px;
+        }
+        
+        .control-title {
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            color: var(--sahara-deep);
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .detective-btn {
+            background: linear-gradient(135deg, var(--sahara-sand), var(--sahara-deep));
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            margin: 5px;
+            border-radius: 25px;
+            font-family: 'Roboto', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .detective-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            background: linear-gradient(135deg, var(--desert-orange), var(--desert-red));
+        }
+        
+        .detective-btn.active {
+            background: linear-gradient(135deg, var(--success-color), #27ae60);
+            box-shadow: 0 0 20px rgba(46,204,113,0.5);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 20px rgba(46,204,113,0.5); }
+            50% { box-shadow: 0 0 30px rgba(46,204,113,0.8); }
+            100% { box-shadow: 0 0 20px rgba(46,204,113,0.5); }
+        }
+        
+        .evidence-counter {
+            background: linear-gradient(135deg, var(--primary-color), var(--danger-color));
+            color: white;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            text-align: center;
+            margin: 10px 5px;
+            box-shadow: 0 4px 15px rgba(255,107,53,0.3);
+            font-size: 1.1em;
+        }
+        
+        .evidence-item {
+            background: linear-gradient(45deg, #f8f9fa, #e9ecef);
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            border-left: 4px solid var(--sahara-sand);
+        }
+        
+        .evidence-title {
+            font-weight: 700;
+            color: var(--sahara-deep);
+            margin-bottom: 8px;
+        }
+        
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: var(--danger-color);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            cursor: pointer;
+            z-index: 1002;
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+        
+        .legend {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(255,255,255,0.9);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+        
+        .legend-title {
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--sahara-deep);
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 10px;
+            border: 2px solid #333;
+        }
+        
+        .investigation-panel {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 380px;
+            height: 100vh;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            box-shadow: -5px 0 25px rgba(0,0,0,0.3);
+            transition: right 0.4s ease;
+            z-index: 1003;
+            overflow-y: auto;
+        }
+        
+        .investigation-panel.open {
+            right: 0;
+        }
+        
+        .panel-header {
+            background: linear-gradient(135deg, var(--sahara-sand), var(--sahara-deep));
+            color: white;
+            padding: 20px;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            transition: background 0.3s ease;
+        }
+        
+        .close-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        #evidenceLog {
+            padding: 20px;
+            max-height: calc(100vh - 80px);
+            overflow-y: auto;
+            font-size: 1.1em;
+        }
+        
+        @media print {
+            .detective-header, .map-controls, .investigation-panel, .back-btn { display: none; }
+            #saharaMap { height: 100vh; border: none; margin-top: 0; }
+        }
+    </style>
+</head>
+<body>
+    <button class="back-btn" onclick="window.history.back()">← Back to Maps Central</button>
+    
+    <div class="detective-header">
+        <h1 class="case-title">🏜️ CASE #2: SAHARA INVESTIGATION</h1>
+        <p class="case-subtitle">Navigate the World's Largest Hot Desert to Locate the Missing Caravan</p>
+        <div class="mission-brief">
+            <strong>MISSION:</strong> Dr. Hassan's archaeological caravan has vanished while studying ancient trade routes. Use this 
+            interactive map to track their route through climate zones, oasis locations, and historical pathways across the vast Sahara Desert.
+        </div>
+    </div>
+    
+    <div class="map-controls">
+        <div class="control-group">
+            <div class="control-title">Environmental Layers</div>
+            <button class="detective-btn" onclick="toggleLayer('oases')">💧 Oases</button>
+            <button class="detective-btn" onclick="toggleLayer('dunes')">🏔️ Dune Systems</button>
+            <button class="detective-btn" onclick="toggleLayer('routes')">🐪 Trade Routes</button>
+            <button class="detective-btn" onclick="toggleLayer('evidence')">🔍 Evidence</button>
+        </div>
+        <div class="control-group">
+            <button class="detective-btn" onclick="toggleLayer('cities')">🏘️ Cities</button>
+            <button class="detective-btn" onclick="toggleLayer('tribes')">👥 Tribal Areas</button>
+            <button class="detective-btn" onclick="toggleLayer('climate')">🌡️ Climate Zones</button>
+        </div>
+        <div class="control-group">
+            <div class="evidence-counter">Evidence Found: <span id="evidenceCount">0</span>/8</div>
+            <button class="detective-btn" onclick="togglePanel()">📋 Investigation Notes</button>
+            <button class="detective-btn" onclick="printMap()">🖨️ Print Map</button>
+        </div>
+    </div>
+    
+    <div id="saharaMap"></div>
+    
+    <div class="legend">
+        <div class="legend-title">Map Legend</div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #0a74da;"></div>
+            <span>Oases & Water Sources</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #f39c12;"></div>
+            <span>Ancient Trade Routes</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #e74c3c;"></div>
+            <span>Evidence Locations</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #9b59b6;"></div>
+            <span>Last Known Position</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #e67e22;"></div>
+            <span>Desert Cities</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #8e44ad;"></div>
+            <span>Tribal Territories</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #c0392b;"></div>
+            <span>Extreme Climate Zones</span>
+        </div>
+    </div>
+    
+    <div class="investigation-panel" id="investigationPanel">
+        <div class="panel-header">
+            🕵️ Investigation Log
+            <button class="close-btn" onclick="togglePanel()" title="Close Investigation Log">✕</button>
+        </div>
+        <div id="evidenceLog">
+            <p style="color: #666; font-style: italic;">Click on evidence markers to record your findings...</p>
+        </div>
+    </div>
             margin-bottom: 10px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
         }
