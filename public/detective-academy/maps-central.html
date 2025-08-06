@@ -452,7 +452,7 @@
                     </div>
                 </div>
                 
-                <div class="map-card" onclick="printMap('amazon-river-basin')">
+                <div class="map-card" onclick="openInteractiveMap('amazon-watershed-map.html')">
                     <div class="case-badge">Case #4: River Systems</div>
                     <div class="map-icon">🌊</div>
                     <h3 class="map-title">Amazon River Basin Watershed Map</h3>
@@ -464,7 +464,10 @@
                         <li>🌊 Flow direction indicators</li>
                         <li>🏘️ Human settlement patterns</li>
                     </ul>
-                    <button class="print-button" onclick="event.stopPropagation(); printMap('amazon-river-basin')">🖨️ Print River Map</button>
+                    <div class="map-actions">
+                        <button class="interactive-button" onclick="event.stopPropagation(); openInteractiveMap('amazon-watershed-map.html')">🗺️ Interactive Map</button>
+                        <button class="print-button" onclick="event.stopPropagation(); printMap('amazon-river-basin')">🖨️ Print Version</button>
+                    </div>
                 </div>
                 
                 <div class="map-card" onclick="printMap('metropolitan-urban')">

@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌊 Amazon River Basin Watershed Map - Case #4</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- Leaflet Plugins -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-draw@1.0.4/dist/leaflet.draw.css"/>
+    
+    <style>
+        :root {
+            --primary-color: #0077be;
+            --secondary-color: #4ecdc4;
+            --accent-color: #ffd700;
+            --success-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --water-blue: #0077be;
+            --pollution-red: #c0392b;
+            --watershed-green: #27ae60;
+        }
+        
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+        }
+        
+        body { 
+            font-family: 'Roboto', sans-serif; 
+            background: linear-gradient(135deg, #0077be 0%, #4ecdc4 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .detective-header {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 4px solid var(--accent-color);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        .case-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: var(--water-blue);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 8px;
+        }
+        
+        .case-subtitle {
+            font-size: 1.2rem;
+            color: #666;
+            font-weight: 500;
+            margin-bottom: 15px;
+        }
+        
+        .mission-brief {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-left: 5px solid var(--water-blue);
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1.05rem;
+            line-height: 1.6;
+            margin: 0 auto;
+            max-width: 800px;
+        }
+        
+        #watershedMap {
+            height: calc(100vh - 300px);
+            width: 100%;
+            border: 3px solid var(--water-blue);
+            border-radius: 0 0 15px 15px;
+        }
+        
+        .map-controls {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            padding: 15px;
+            background: rgba(255,255,255,0.9);
+            border-bottom: 2px solid var(--water-blue);
+        }
+        
+        .control-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        
+        .detective-btn {
+            background: linear-gradient(135deg, var(--water-blue) 0%, var(--secondary-color) 100%);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 20px;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        
+        .detective-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,119,190,0.4);
+        }
+        
+        .detective-btn.active {
+            background: linear-gradient(135deg, var(--accent-color) 0%, #f39c12 100%);
+            color: #333;
+            text-shadow: none;
+        }
+        
+        .evidence-counter {
+            background: var(--success-color);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+        
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: var(--danger-color);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            cursor: pointer;
+            z-index: 1002;
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+        
+        .legend {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(255,255,255,0.9);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+        
+        .legend-title {
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--water-blue);
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 10px;
+            border: 2px solid #333;
+        }
+        
+        .investigation-panel {
+            position: fixed;
+            right: -400px;
+            top: 0;
+            width: 400px;
+            height: 100vh;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            box-shadow: -5px 0 20px rgba(0,0,0,0.2);
+            transition: right 0.3s ease;
+            z-index: 1001;
+            overflow-y: auto;
+        }
+        
+        .investigation-panel.open {
+            right: 0;
+        }
+        
+        .panel-header {
+            background: var(--water-blue);
+            color: white;
+            padding: 20px;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px;
+        }
+        
+        #evidenceLog {
+            padding: 20px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        @media print {
+            .detective-header, .map-controls, .investigation-panel, .back-btn { display: none; }
+            #watershedMap { height: 100vh; border: none; }
+        }
+    </style>
+</head>
+<body>
+    <button class="back-btn" onclick="window.history.back()">← Back to Maps Central</button>
+    
+    <div class="detective-header">
+        <h1 class="case-title">🌊 CASE #4: AMAZON WATERSHED INVESTIGATION</h1>
+        <p class="case-subtitle">Environmental Detective Work - Water Quality Crisis</p>
+        <div class="mission-brief">
+            <strong>MISSION:</strong> Communities along the Amazon River tributary have reported mysterious water quality changes. 
+            Use this watershed analysis map to track pollution sources, analyze water flow patterns, and identify the contamination origin.
+        </div>
+    </div>
+    
+    <div class="map-controls">
+        <div class="control-group">
+            <button class="detective-btn" onclick="toggleLayer('watershed')">🗺️ Watershed</button>
+            <button class="detective-btn" onclick="toggleLayer('rivers')">🌊 Rivers</button>
+            <button class="detective-btn" onclick="toggleLayer('pollution')">🏭 Pollution</button>
+            <button class="detective-btn" onclick="toggleLayer('waterquality')">📊 Water Quality</button>
+        </div>
+        <div class="control-group">
+            <button class="detective-btn" onclick="toggleLayer('flow')">➡️ Flow Direction</button>
+            <button class="detective-btn" onclick="toggleLayer('settlements')">🏘️ Settlements</button>
+            <button class="detective-btn" onclick="toggleLayer('evidence')">🔍 Evidence</button>
+        </div>
+        <div class="control-group">
+            <div class="evidence-counter">Evidence Found: <span id="evidenceCount">0</span>/8</div>
+            <button class="detective-btn" onclick="togglePanel()">📋 Investigation Notes</button>
+            <button class="detective-btn" onclick="printMap()">🖨️ Print Map</button>
+        </div>
+    </div>
+    
+    <div id="watershedMap"></div>
+    
+    <div class="legend">
+        <div class="legend-title">Map Legend</div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #0077be;"></div>
+            <span>Major Rivers</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #27ae60;"></div>
+            <span>Watershed Boundary</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #c0392b;"></div>
+            <span>Pollution Sources</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #f39c12;"></div>
+            <span>Water Quality Stations</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #9b59b6;"></div>
+            <span>Human Settlements</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #e74c3c;"></div>
+            <span>Evidence Locations</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #2ecc71;"></div>
+            <span>Flow Direction</span>
+        </div>
+    </div>
+    
+    <div class="investigation-panel" id="investigationPanel">
+        <div class="panel-header">
+            🕵️ Water Quality Investigation
+            <button class="close-btn" onclick="togglePanel()" title="Close Investigation Log">✕</button>
+        </div>
+        <div id="evidenceLog">
+            <p style="color: #666; font-style: italic;">Click on evidence markers to record your watershed analysis findings...</p>
+        </div>
+    </div>
+    
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
+    
+    <script>
+        // Initialize the map centered on Amazon watershed region
+        const watershedMap = L.map('watershedMap').setView([-8.0, -60.0], 5);
+        
+        // Base map layers
+        const baseLayers = {
+            'Standard': L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }),
+            'Satellite': L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DigitalGlobe, GeoEye, Earthstar Geographics'
+            }),
+            'Terrain': L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+                attribution: 'Map data: &copy; OpenStreetMap contributors, SRTM | Map style: &copy; OpenTopoMap (CC-BY-SA)'
+            }),
+            'Hydrology': L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Physical_Map/MapServer/tile/{z}/{y}/{x}', {
+                attribution: 'Tiles &copy; Esri &mdash; Source: US National Park Service'
+            })
+        };
+        
+        // Start with hydrology view for watershed analysis
+        baseLayers['Hydrology'].addTo(watershedMap);
+        
+        // Create enhanced layer control
+        const layerControl = L.control.layers(baseLayers, {}, {
+            position: 'topright',
+            collapsed: false
+        }).addTo(watershedMap);
+        
+        // Layer groups for different map elements
+        const overlayLayers = {
+            '🗺️ Watershed Boundaries': L.layerGroup(),
+            '🌊 River System': L.layerGroup(), 
+            '🏭 Pollution Sources': L.layerGroup(),
+            '📊 Water Quality Data': L.layerGroup(),
+            '➡️ Flow Direction': L.layerGroup(),
+            '🏘️ Human Settlements': L.layerGroup(),
+            '🔍 Evidence Locations': L.layerGroup()
+        };
+        
+        // Add overlay layers to the control
+        Object.entries(overlayLayers).forEach(([name, layer]) => {
+            layerControl.addOverlay(layer, name);
+        });
+        
+        // Keep internal reference for easy access
+        const layers = {
+            watershed: overlayLayers['🗺️ Watershed Boundaries'],
+            rivers: overlayLayers['🌊 River System'],
+            pollution: overlayLayers['🏭 Pollution Sources'], 
+            waterquality: overlayLayers['📊 Water Quality Data'],
+            flow: overlayLayers['➡️ Flow Direction'],
+            settlements: overlayLayers['🏘️ Human Settlements'],
+            evidence: overlayLayers['🔍 Evidence Locations']
+        };
+        
+        // Evidence tracking
+        let evidenceFound = 0;
+        const totalEvidence = 8;
+        let discoveredEvidence = new Set();
+        
+        function updateEvidenceCounter() {
+            document.getElementById('evidenceCount').textContent = evidenceFound;
+            
+            if (evidenceFound >= totalEvidence) {
+                alert('🎉 Investigation Complete! You have found all evidence. The Porto Verde mining operation is confirmed as the primary pollution source threatening the Amazon watershed.');
+            }
+        }
+        
+        function logEvidence(evidence) {
+            const logDiv = document.getElementById('evidenceLog');
+            const evidenceEntry = document.createElement('div');
+            evidenceEntry.style.marginBottom = '15px';
+            evidenceEntry.style.padding = '10px';
+            evidenceEntry.style.background = '#f8f9fa';
+            evidenceEntry.style.borderRadius = '5px';
+            evidenceEntry.style.borderLeft = '4px solid #e74c3c';
+            
+            evidenceEntry.innerHTML = `
+                <strong>${evidence.name}</strong><br>
+                <small style="color: #666;">Discovered: ${new Date().toLocaleTimeString()}</small><br>
+                ${evidence.description}
+            `;
+            
+            logDiv.appendChild(evidenceEntry);
+        }
+        
+        // Layer toggle functions
+        function toggleLayer(layerName) {
+            const button = event.target;
+            
+            if (watershedMap.hasLayer(layers[layerName])) {
+                watershedMap.removeLayer(layers[layerName]);
+                button.classList.remove('active');
+            } else {
+                watershedMap.addLayer(layers[layerName]);
+                button.classList.add('active');
+            }
+        }
+        
+        // Investigation panel toggle
+        function togglePanel() {
+            const panel = document.getElementById('investigationPanel');
+            panel.classList.toggle('open');
+        }
+        
+        // Print function
+        function printMap() {
+            window.print();
+        }
+        
+        // Initialize map with all layers
+        function initializeMap() {
+            addWatershed();
+            addRivers();
+            addPollution();
+            addWaterQuality();
+            addFlow();
+            addSettlements();
+            addEvidence();
+            
+            // Add core layers by default (watershed, rivers, pollution, evidence)
+            watershedMap.addLayer(layers.watershed);
+            watershedMap.addLayer(layers.rivers);
+            watershedMap.addLayer(layers.pollution);
+            watershedMap.addLayer(layers.evidence);
+            
+            // Mark core layer buttons as active initially
+            document.querySelectorAll('.detective-btn').forEach(btn => {
+                const btnText = btn.textContent.trim();
+                if (btnText.includes('Watershed') || btnText.includes('Rivers') || 
+                    btnText.includes('Pollution') || btnText.includes('Evidence')) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // Add scale control
+            L.control.scale().addTo(watershedMap);
+            
+            // Add coordinates display on click (for development)
+            watershedMap.on('click', function(e) {
+                console.log(`Clicked at: ${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)}`);
+            });
+        }
+        
+        // Initialize the map when page loads
+        document.addEventListener('DOMContentLoaded', initializeMap);
+    </script>
+</body>
+</html>
+        
+        // Amazon watershed boundary data (major sub-basins)
+        const watershedData = [
+            {
+                name: "Amazon Main Basin",
+                coords: [
+                    [-5.0, -75.0], [-2.0, -70.0], [2.0, -67.0], [1.0, -60.0], 
+                    [-1.0, -55.0], [-3.0, -50.0], [-8.0, -48.0], [-12.0, -55.0], 
+                    [-15.0, -60.0], [-18.0, -65.0], [-15.0, -70.0], [-10.0, -75.0], [-5.0, -75.0]
+                ],
+                area: "7,000,000 km²",
+                description: "Main Amazon drainage basin covering 40% of South America"
+            },
+            {
+                name: "Rio Negro Sub-basin",
+                coords: [
+                    [-3.0, -67.0], [-1.0, -65.0], [2.0, -67.0], [0.5, -70.0], 
+                    [-2.0, -70.0], [-4.0, -68.0], [-3.0, -67.0]
+                ],
+                area: "691,000 km²",
+                description: "Black water tributary system - natural buffer zone"
+            },
+            {
+                name: "Madeira River Sub-basin", 
+                coords: [
+                    [-4.0, -65.0], [-6.0, -62.0], [-9.0, -60.0], [-12.0, -62.0], 
+                    [-15.0, -65.0], [-12.0, -68.0], [-8.0, -66.0], [-4.0, -65.0]
+                ],
+                area: "1,420,000 km²",
+                description: "Major sediment-carrying tributary from Andes"
+            },
+            {
+                name: "Tapajos River Sub-basin",
+                coords: [
+                    [-2.0, -58.0], [-4.0, -55.0], [-8.0, -55.0], [-12.0, -58.0], 
+                    [-10.0, -62.0], [-6.0, -60.0], [-2.0, -58.0]
+                ],
+                area: "493,000 km²", 
+                description: "Clear water system - high biodiversity area"
+            }
+        ];
+        
+        // River system data with flow characteristics
+        const riverSystemData = [
+            {
+                name: "Amazon River Main Stem",
+                coords: [
+                    [-3.1419, -59.9716], [-3.4653, -62.2159], [-3.7436, -64.3086], 
+                    [-4.2581, -69.9406], [-5.1561, -73.6424], [-6.2234, -77.0234]
+                ],
+                color: "#0077be",
+                weight: 8,
+                flow: "209,000 m³/s",
+                type: "White Water",
+                pollution_risk: "High - major transport route"
+            },
+            {
+                name: "Rio Negro",
+                coords: [
+                    [-3.1314, -60.0217], [-1.4558, -62.2159], [-0.5014, -65.0164], 
+                    [0.3014, -67.0164], [1.2558, -67.8424]
+                ],
+                color: "#003d5c",
+                weight: 6,
+                flow: "35,000 m³/s",
+                type: "Black Water",
+                pollution_risk: "Low - natural filtration"
+            },
+            {
+                name: "Madeira River",
+                coords: [
+                    [-3.3792, -58.9878], [-4.8844, -60.6892], [-7.2307, -62.7834], 
+                    [-10.4486, -65.3479], [-12.8789, -67.2357]
+                ],
+                color: "#8B4513",
+                weight: 6,
+                flow: "23,000 m³/s", 
+                type: "Brown Water",
+                pollution_risk: "Very High - mining upstream"
+            },
+            {
+                name: "Tapajos River",
+                coords: [
+                    [-2.4093, -54.7085], [-4.2789, -56.0234], [-7.1234, -57.8901], 
+                    [-9.4567, -58.9012], [-11.7890, -59.7823]
+                ],
+                color: "#20B2AA",
+                weight: 5,
+                flow: "13,500 m³/s",
+                type: "Clear Water",
+                pollution_risk: "Medium - agricultural runoff"
+            },
+            {
+                name: "Xingu River",
+                coords: [
+                    [-1.8456, -52.0123], [-3.4567, -52.7890], [-6.7890, -54.1234], 
+                    [-9.1234, -55.4567], [-11.4567, -56.7890]
+                ],
+                color: "#4682B4",
+                weight: 5,
+                flow: "9,700 m³/s",
+                type: "Clear Water", 
+                pollution_risk: "High - dam construction"
+            },
+            {
+                name: "Tocantins River",
+                coords: [
+                    [-1.4567, -48.5012], [-3.7890, -49.2345], [-7.1234, -50.5678], 
+                    [-10.4567, -51.8901], [-13.7890, -53.2234]
+                ],
+                color: "#5F9EA0",
+                weight: 5,
+                flow: "11,800 m³/s",
+                type: "Mixed Water",
+                pollution_risk: "Very High - industrial corridor"
+            }
+        ];
+        
+        // Pollution sources data with contamination details
+        const pollutionData = [
+            {
+                name: "Porto Verde Mining Operation",
+                coords: [-7.2456, -63.1789],
+                type: "Gold Mining",
+                severity: "Critical",
+                contaminants: ["Mercury", "Cyanide", "Heavy Metals"],
+                status: "Active - Under Investigation",
+                impact_radius: 30,
+                discovery_day: "Evidence Point Alpha"
+            },
+            {
+                name: "Santarem Industrial Complex", 
+                coords: [-2.4093, -54.7085],
+                type: "Soy Processing",
+                severity: "High",
+                contaminants: ["Nitrogen", "Phosphorus", "Pesticide Runoff"],
+                status: "Monitoring Required",
+                impact_radius: 45,
+                discovery_day: "Day 7 Baseline"
+            },
+            {
+                name: "Manaus Urban Discharge",
+                coords: [-3.1190, -60.0217],
+                type: "Municipal Waste",
+                severity: "Moderate",
+                contaminants: ["E. coli", "Nitrogen", "Plastic Debris"],
+                status: "Treatment Facility Overloaded", 
+                impact_radius: 25,
+                discovery_day: "Day 7 Background"
+            },
+            {
+                name: "Rondônia Cattle Ranch Cluster",
+                coords: [-8.7612, -63.9039],
+                type: "Agricultural Runoff",
+                severity: "High",
+                contaminants: ["Ammonia", "Sediment", "Antibiotics"],
+                status: "Seasonal Peak Impact",
+                impact_radius: 60,
+                discovery_day: "Evidence Point Beta" 
+            },
+            {
+                name: "Illegal Logging Operation",
+                coords: [-5.8901, -61.2345],
+                type: "Deforestation",
+                severity: "High", 
+                contaminants: ["Sediment Load", "Chemical Runoff"],
+                status: "Recently Detected",
+                impact_radius: 35,
+                discovery_day: "Evidence Point Gamma"
+            },
+            {
+                name: "Altamira Dam Disruption",
+                coords: [-3.2123, -52.2067],
+                type: "Hydroelectric",
+                severity: "Moderate",
+                contaminants: ["Flow Disruption", "Methane"],
+                status: "Environmental Impact Assessment",
+                impact_radius: 80,
+                discovery_day: "Day 8 Infrastructure"
+            }
+        ];
+        
+        // Water quality monitoring stations with data
+        const waterQualityData = [
+            {
+                name: "WQ-001 Porto Verde Upstream",
+                coords: [-7.1234, -63.0456],
+                ph: 7.2,
+                dissolved_oxygen: 8.1,
+                turbidity: 5.2,
+                mercury_ppm: 0.002,
+                status: "Baseline Normal",
+                trend: "Stable",
+                alert_level: "Green"
+            },
+            {
+                name: "WQ-002 Porto Verde Downstream", 
+                coords: [-7.3678, -63.2901],
+                ph: 4.8,
+                dissolved_oxygen: 3.2,
+                turbidity: 47.8,
+                mercury_ppm: 0.089,
+                status: "Critical Contamination",
+                trend: "Worsening",
+                alert_level: "Red"
+            },
+            {
+                name: "WQ-003 Rio Negro Junction",
+                coords: [-3.1314, -60.0217], 
+                ph: 6.8,
+                dissolved_oxygen: 7.5,
+                turbidity: 12.1,
+                mercury_ppm: 0.012,
+                status: "Slightly Elevated",
+                trend: "Increasing",
+                alert_level: "Yellow"
+            },
+            {
+                name: "WQ-004 Santarem Confluence",
+                coords: [-2.4093, -54.7085],
+                ph: 6.9,
+                dissolved_oxygen: 6.8,
+                turbidity: 28.5,
+                mercury_ppm: 0.005,
+                status: "Nutrient Loading",
+                trend: "Seasonal",
+                alert_level: "Yellow"
+            },
+            {
+                name: "WQ-005 Madeira River Mouth",
+                coords: [-3.3792, -58.9878],
+                ph: 5.2,
+                dissolved_oxygen: 4.1,
+                turbidity: 89.3,
+                mercury_ppm: 0.156,
+                status: "Severe Contamination",
+                trend: "Critical",
+                alert_level: "Red"
+            },
+            {
+                name: "WQ-006 Tapajos Headwaters",
+                coords: [-11.7890, -59.7823],
+                ph: 7.1,
+                dissolved_oxygen: 8.3,
+                turbidity: 3.8,
+                mercury_ppm: 0.001,
+                status: "Pristine Reference",
+                trend: "Stable",
+                alert_level: "Green"
+            },
+            {
+                name: "WQ-007 Xingu Dam Site",
+                coords: [-3.2123, -52.2067],
+                ph: 6.5,
+                dissolved_oxygen: 5.9,
+                turbidity: 15.7,
+                mercury_ppm: 0.008,
+                status: "Flow Altered",
+                trend: "Variable",
+                alert_level: "Yellow"
+            },
+            {
+                name: "WQ-008 Amazon Mouth Monitor",
+                coords: [-1.4558, -48.5044],
+                ph: 6.2,
+                dissolved_oxygen: 5.4,
+                turbidity: 35.6,
+                mercury_ppm: 0.023,
+                status: "Cumulative Impact",
+                trend: "Concerning",
+                alert_level: "Orange"
+            }
+        ];
+        
+        // Human settlements with population impact data
+        const settlementData = [
+            {
+                name: "Manaus",
+                coords: [-3.1190, -60.0217],
+                population: "2,200,000",
+                type: "Major City",
+                water_demand: "850,000 m³/day",
+                waste_treatment: "65% capacity",
+                vulnerability: "High - drinking water source"
+            },
+            {
+                name: "Porto Verde", 
+                coords: [-7.2789, -63.1234],
+                population: "15,000",
+                type: "River Community",
+                water_demand: "5,200 m³/day",
+                waste_treatment: "Basic filtration only",
+                vulnerability: "Critical - directly affected"
+            },
+            {
+                name: "Santarém",
+                coords: [-2.4093, -54.7085],
+                population: "295,000",
+                type: "Port City",
+                water_demand: "120,000 m³/day", 
+                waste_treatment: "45% capacity",
+                vulnerability: "High - agricultural chemicals"
+            },
+            {
+                name: "Altamira",
+                coords: [-3.2034, -52.2089],
+                population: "112,000",
+                type: "Dam Community",
+                water_demand: "38,000 m³/day",
+                waste_treatment: "80% capacity",
+                vulnerability: "Medium - regulated supply"
+            },
+            {
+                name: "Indigenous Village Cluster",
+                coords: [-5.8456, -61.5678],
+                population: "3,500",
+                type: "Traditional Community",
+                water_demand: "850 m³/day",
+                waste_treatment: "Traditional methods",
+                vulnerability: "Extreme - subsistence fishing"
+            },
+            {
+                name: "Fishing Communities Network",
+                coords: [-4.5678, -59.8901],
+                population: "8,200",
+                type: "River Communities",
+                water_demand: "2,100 m³/day",
+                waste_treatment: "None - direct river use",
+                vulnerability: "Critical - livelihood dependent"
+            },
+            {
+                name: "Miners' Camp",
+                coords: [-7.5012, -63.4567],
+                population: "1,800",
+                type: "Temporary Settlement",
+                water_demand: "950 m³/day",
+                waste_treatment: "None",
+                vulnerability: "Source of contamination"
+            }
+        ];
+        
+        // Flow direction indicators 
+        const flowData = [
+            {
+                start: [-7.1234, -63.0456],
+                end: [-7.3678, -63.2901],
+                river: "Tributary to Madeira",
+                velocity: "1.2 m/s",
+                flow_rate: "450 m³/s",
+                pollution_travel_time: "3.5 hours"
+            },
+            {
+                start: [-7.3678, -63.2901],
+                end: [-5.8901, -62.1234],
+                river: "Madeira Main Channel",
+                velocity: "2.1 m/s", 
+                flow_rate: "8,500 m³/s",
+                pollution_travel_time: "18 hours"
+            },
+            {
+                start: [-5.8901, -62.1234],
+                end: [-3.3792, -58.9878],
+                river: "Madeira to Amazon",
+                velocity: "1.8 m/s",
+                flow_rate: "15,200 m³/s", 
+                pollution_travel_time: "32 hours"
+            },
+            {
+                start: [-3.3792, -58.9878],
+                end: [-3.1314, -60.0217],
+                river: "Amazon Main Stem",
+                velocity: "2.5 m/s",
+                flow_rate: "125,000 m³/s",
+                pollution_travel_time: "14 hours"
+            },
+            {
+                start: [-3.1314, -60.0217],
+                end: [-2.4093, -54.7085],
+                river: "Amazon Downstream",
+                velocity: "2.3 m/s",
+                flow_rate: "180,000 m³/s",
+                pollution_travel_time: "28 hours"
+            },
+            {
+                start: [-2.4093, -54.7085],
+                end: [-1.4558, -48.5044],
+                river: "Amazon to Atlantic",
+                velocity: "2.0 m/s",
+                flow_rate: "209,000 m³/s",
+                pollution_travel_time: "48 hours"
+            }
+        ];
+        
+        // Evidence locations for investigation
+        const evidenceData = [
+            {
+                id: "EVIDENCE-Alpha",
+                name: "Water Sample Analysis Report",
+                coords: [-7.2456, -63.1789],
+                type: "Laboratory Evidence",
+                description: "Water samples showing 4,450% increase in mercury levels downstream from mining operation.",
+                significance: "Critical - links pollution source to water quality decline",
+                day_discovered: "Day 7",
+                analysis: "Mercury: 0.089 ppm (44x safe limit), pH: 4.8 (highly acidic), Heavy metals detected"
+            },
+            {
+                id: "EVIDENCE-Beta", 
+                name: "Drone Footage of Discharge Pipes",
+                coords: [-7.2789, -63.2345],
+                type: "Visual Evidence",
+                description: "Aerial footage showing direct chemical discharge into tributary system.",
+                significance: "Smoking gun - visual proof of illegal dumping",
+                day_discovered: "Day 8",
+                analysis: "Multiple discharge points, acidic runoff visible, no treatment systems"
+            },
+            {
+                id: "EVIDENCE-Gamma",
+                name: "Fish Kill Documentation",
+                coords: [-6.8901, -62.7890],
+                type: "Biological Evidence", 
+                description: "Mass fish die-off in 15km stretch downstream from pollution source.",
+                significance: "Environmental impact confirmation",
+                day_discovered: "Day 7",
+                analysis: "500+ dead fish collected, tissue samples show mercury poisoning"
+            },
+            {
+                id: "EVIDENCE-Delta",
+                name: "Community Health Reports",
+                coords: [-7.2789, -63.1234],
+                type: "Human Impact Evidence",
+                description: "Medical reports from Porto Verde showing skin rashes and gastrointestinal illness.",
+                significance: "Human health impact - strengthens case urgency",
+                day_discovered: "Day 7",
+                analysis: "15 children affected, symptoms consistent with heavy metal exposure"
+            },
+            {
+                id: "EVIDENCE-Echo",
+                name: "Illegal Mining Permit Investigation",
+                coords: [-7.3456, -63.2901],
+                type: "Legal Evidence",
+                description: "Mining operation exceeds permitted area and lacks environmental compliance.",
+                significance: "Legal violation documentation",
+                day_discovered: "Day 8",
+                analysis: "Operating 300% beyond permitted boundaries, no environmental impact assessment"
+            },
+            {
+                id: "EVIDENCE-Foxtrot",
+                name: "Historical Water Quality Data",
+                coords: [-7.1234, -63.0456],
+                type: "Baseline Evidence",
+                description: "5-year water quality trend showing dramatic change coinciding with mining start.",
+                significance: "Timeline correlation - proves mining is cause",
+                day_discovered: "Day 7",
+                analysis: "Clean baseline until 4 months ago, exponential contamination increase"
+            },
+            {
+                id: "EVIDENCE-Golf",
+                name: "Satellite Imagery Analysis",
+                coords: [-7.4012, -63.3678],
+                type: "Remote Sensing Evidence",
+                description: "Time-lapse satellite images showing expansion of mining operation and deforestation.",
+                significance: "Scale of environmental destruction",
+                day_discovered: "Day 8", 
+                analysis: "400% operation expansion in 6 months, 1,200 hectares deforested"
+            },
+            {
+                id: "EVIDENCE-Hotel",
+                name: "Witness Testimony from Local Fishers",
+                coords: [-7.1789, -63.0890],
+                type: "Testimonial Evidence",
+                description: "Detailed accounts from fishers describing timeline and nature of water changes.",
+                significance: "Ground truth validation from affected community",
+                day_discovered: "Day 7",
+                analysis: "Consistent timeline across 8 independent witnesses, matches water quality data"
+            }
+        ];
+        
+        // Add watershed boundaries to map
+        function addWatershed() {
+            watershedData.forEach(basin => {
+                const watershedBoundary = L.polygon(basin.coords, {
+                    color: '#27ae60',
+                    weight: 3,
+                    opacity: 0.8,
+                    fillColor: '#27ae60',
+                    fillOpacity: 0.1,
+                    dashArray: '10, 10'
+                }).addTo(layers.watershed);
+                
+                watershedBoundary.bindPopup(`
+                    <div style="font-family: 'Roboto', sans-serif; min-width: 280px;">
+                        <h3 style="color: #27ae60; margin-bottom: 10px;">🗺️ ${basin.name}</h3>
+                        <p><strong>Drainage Area:</strong> ${basin.area}</p>
+                        <p><strong>Description:</strong> ${basin.description}</p>
+                        <p style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 5px;">
+                            <strong>Investigation Note:</strong> Watershed boundaries determine pollution flow patterns. 
+                            Everything that happens within this area can affect water quality downstream.
+                        </p>
+                    </div>
+                `);
+            });
+        }
+        
+        // Add river system to map
+        function addRivers() {
+            riverSystemData.forEach(river => {
+                const riverLine = L.polyline(river.coords, {
+                    color: river.color,
+                    weight: river.weight,
+                    opacity: 0.9
+                }).addTo(layers.rivers);
+                
+                riverLine.bindPopup(`
+                    <div style="font-family: 'Roboto', sans-serif; min-width: 300px;">
+                        <h3 style="color: ${river.color}; margin-bottom: 10px;">🌊 ${river.name}</h3>
+                        <p><strong>Flow Rate:</strong> ${river.flow}</p>
+                        <p><strong>Water Type:</strong> ${river.type}</p>
+                        <p><strong>Pollution Risk:</strong> <span style="color: ${getPollutionRiskColor(river.pollution_risk)}">${river.pollution_risk}</span></p>
+                        <p style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 5px;">
+                            <strong>Detective Analysis:</strong> ${getWaterTypeDescription(river.type)}
+                        </p>
+                    </div>
+                `);
+            });
+        }
+        
+        // Add pollution sources to map
+        function addPollution() {
+            pollutionData.forEach(source => {
+                const pollutionIcon = L.divIcon({
+                    className: 'pollution-marker',
+                    html: getPollutionIcon(source.type),
+                    iconSize: [30, 30],
+                    iconAnchor: [15, 15]
+                });
+                
+                const pollutionMarker = L.marker(source.coords, { icon: pollutionIcon })
+                    .addTo(layers.pollution);
+                
+                // Add impact radius circle
+                const impactCircle = L.circle(source.coords, {
+                    radius: source.impact_radius * 1000, // Convert km to meters
+                    color: getSeverityColor(source.severity),
+                    weight: 2,
+                    opacity: 0.6,
+                    fillColor: getSeverityColor(source.severity),
+                    fillOpacity: 0.1
+                }).addTo(layers.pollution);
+                
+                const popupContent = `
+                    <div style="font-family: 'Roboto', sans-serif; min-width: 320px;">
+                        <h3 style="color: #c0392b; margin-bottom: 10px;">🏭 ${source.name}</h3>
+                        <p><strong>Type:</strong> ${source.type}</p>
+                        <p><strong>Severity:</strong> <span style="color: ${getSeverityColor(source.severity)}; font-weight: bold;">${source.severity}</span></p>
+                        <p><strong>Status:</strong> ${source.status}</p>
+                        <p><strong>Impact Radius:</strong> ${source.impact_radius} km</p>
+                        <p><strong>Contaminants:</strong></p>
+                        <ul style="margin: 5px 0; padding-left: 20px;">
+                            ${source.contaminants.map(c => `<li>${c}</li>`).join('')}
+                        </ul>
+                        <p style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 5px;">
+                            <strong>Evidence Link:</strong> ${source.discovery_day}
+                        </p>
+                    </div>
+                `;
+                
+                pollutionMarker.bindPopup(popupContent);
+                impactCircle.bindPopup(popupContent);
+            });
+        }
+        
+        // Add water quality monitoring stations
+        function addWaterQuality() {
+            waterQualityData.forEach(station => {
+                const stationIcon = L.divIcon({
+                    className: 'water-quality-marker',
+                    html: `<div style="background: ${getAlertColor(station.alert_level)}; border-radius: 50%; width: 25px; height: 25px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 12px;">📊</div>`,
+                    iconSize: [25, 25],
+                    iconAnchor: [12, 12]
+                });
+                
+                const qualityMarker = L.marker(station.coords, { icon: stationIcon })
+                    .addTo(layers.waterquality);
+                
+                qualityMarker.bindPopup(`
+                    <div style="font-family: 'Roboto', sans-serif; min-width: 300px;">
+                        <h3 style="color: #f39c12; margin-bottom: 10px;">📊 ${station.name}</h3>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0;">
+                            <div><strong>pH:</strong> ${station.ph}</div>
+                            <div><strong>DO:</strong> ${station.dissolved_oxygen} mg/L</div>
+                            <div><strong>Turbidity:</strong> ${station.turbidity} NTU</div>
+                            <div><strong>Mercury:</strong> ${station.mercury_ppm} ppm</div>
+                        </div>
+                        <p><strong>Status:</strong> <span style="color: ${getAlertColor(station.alert_level)}; font-weight: bold;">${station.status}</span></p>
+                        <p><strong>Trend:</strong> ${station.trend}</p>
+                        <p style="margin-top: 10px; padding: 10px; background: ${getAlertColor(station.alert_level)}; color: white; border-radius: 5px;">
+                            <strong>Alert Level:</strong> ${station.alert_level}
+                        </p>
+                    </div>
+                `);
+            });
+        }
+        
+        // Add flow direction arrows
+        function addFlow() {
+            flowData.forEach(flow => {
+                const flowArrow = L.polyline([flow.start, flow.end], {
+                    color: '#2ecc71',
+                    weight: 4,
+                    opacity: 0.8
+                }).addTo(layers.flow);
+                
+                // Add arrowhead
+                const arrowIcon = L.divIcon({
+                    className: 'flow-arrow',
+                    html: '<div style="color: #2ecc71; font-size: 20px; transform: rotate(45deg);">➤</div>',
+                    iconSize: [20, 20],
+                    iconAnchor: [10, 10]
+                });
+                
+                const arrowMarker = L.marker(flow.end, { icon: arrowIcon })
+                    .addTo(layers.flow);
+                
+                const flowPopup = `
+                    <div style="font-family: 'Roboto', sans-serif; min-width: 280px;">
+                        <h3 style="color: #2ecc71; margin-bottom: 10px;">➡️ ${flow.river}</h3>
+                        <p><strong>Flow Velocity:</strong> ${flow.velocity}</p>
+                        <p><strong>Flow Rate:</strong> ${flow.flow_rate}</p>
+                        <p><strong>Pollution Travel Time:</strong> ${flow.pollution_travel_time}</p>
+                        <p style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 5px;">
+                            <strong>Investigation Key:</strong> Understanding flow patterns helps track how quickly pollution spreads downstream and affects communities.
+                        </p>
+                    </div>
+                `;
+                
+                flowArrow.bindPopup(flowPopup);
+                arrowMarker.bindPopup(flowPopup);
+            });
+        }
+        
+        // Add human settlements
+        function addSettlements() {
+            settlementData.forEach(settlement => {
+                const settlementIcon = L.divIcon({
+                    className: 'settlement-marker',
+                    html: getSettlementIcon(settlement.type),
+                    iconSize: [25, 25],
+                    iconAnchor: [12, 12]
+                });
+                
+                const settlementMarker = L.marker(settlement.coords, { icon: settlementIcon })
+                    .addTo(layers.settlements);
+                
+                settlementMarker.bindPopup(`
+                    <div style="font-family: 'Roboto', sans-serif; min-width: 280px;">
+                        <h3 style="color: #9b59b6; margin-bottom: 10px;">🏘️ ${settlement.name}</h3>
+                        <p><strong>Population:</strong> ${settlement.population}</p>
+                        <p><strong>Type:</strong> ${settlement.type}</p>
+                        <p><strong>Water Demand:</strong> ${settlement.water_demand}</p>
+                        <p><strong>Waste Treatment:</strong> ${settlement.waste_treatment}</p>
+                        <p><strong>Vulnerability:</strong> <span style="color: ${getVulnerabilityColor(settlement.vulnerability)}; font-weight: bold;">${settlement.vulnerability}</span></p>
+                        <p style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 5px;">
+                            Communities dependent on river water are most at risk from upstream contamination.
+                        </p>
+                    </div>
+                `);
+            });
+        }
+        
+        // Add evidence locations
+        function addEvidence() {
+            evidenceData.forEach(evidence => {
+                const evidenceIcon = L.divIcon({
+                    className: 'evidence-marker',
+                    html: '<div style="background: #e74c3c; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; border: 3px solid white; box-shadow: 0 2px 10px rgba(0,0,0,0.3);">🔍</div>',
+                    iconSize: [30, 30],
+                    iconAnchor: [15, 15]
+                });
+                
+                const evidenceMarker = L.marker(evidence.coords, { icon: evidenceIcon })
+                    .addTo(layers.evidence);
+                
+                evidenceMarker.bindPopup(`
+                    <div style="font-family: 'Roboto', sans-serif; min-width: 350px;">
+                        <h3 style="color: #e74c3c; margin-bottom: 10px;">🔍 ${evidence.name}</h3>
+                        <p><strong>Evidence ID:</strong> ${evidence.id}</p>
+                        <p><strong>Type:</strong> ${evidence.type}</p>
+                        <p><strong>Discovery:</strong> ${evidence.day_discovered}</p>
+                        <p><strong>Description:</strong> ${evidence.description}</p>
+                        <p><strong>Analysis:</strong> ${evidence.analysis}</p>
+                        <p style="margin-top: 10px; padding: 10px; background: #fff3cd; border-radius: 5px; border-left: 4px solid #ffc107;">
+                            <strong>Significance:</strong> ${evidence.significance}
+                        </p>
+                    </div>
+                `);
+                
+                // Track evidence discovery
+                evidenceMarker.on('click', function() {
+                    if (!discoveredEvidence.has(evidence.id)) {
+                        discoveredEvidence.add(evidence.id);
+                        evidenceFound++;
+                        updateEvidenceCounter();
+                        logEvidence(evidence);
+                    }
+                });
+            });
+        }
+        
+        // Utility functions for styling
+        function getPollutionRiskColor(risk) {
+            switch(risk.split(' ')[0]) {
+                case 'Very': return '#8e44ad';
+                case 'High': return '#e74c3c';
+                case 'Medium': return '#f39c12';
+                case 'Low': return '#2ecc71';
+                default: return '#95a5a6';
+            }
+        }
+        
+        function getWaterTypeDescription(type) {
+            switch(type) {
+                case 'White Water': return 'Sediment-rich water from Andes mountains - carries nutrients but also pollutants';
+                case 'Black Water': return 'Naturally dark water from organic matter - good natural filtration properties';
+                case 'Clear Water': return 'Low-sediment water - high visibility but vulnerable to contamination';
+                case 'Brown Water': return 'High sediment load - can mask pollution but spreads contaminants widely';
+                case 'Mixed Water': return 'Confluence zone where different water types meet and mix';
+                default: return 'Study water characteristics to understand pollution patterns';
+            }
+        }
+        
+        function getSeverityColor(severity) {
+            switch(severity) {
+                case 'Critical': return '#8e44ad';
+                case 'High': return '#e74c3c'; 
+                case 'Moderate': return '#f39c12';
+                case 'Low': return '#2ecc71';
+                default: return '#95a5a6';
+            }
+        }
+        
+        function getAlertColor(level) {
+            switch(level) {
+                case 'Red': return '#e74c3c';
+                case 'Orange': return '#f39c12';
+                case 'Yellow': return '#f1c40f';
+                case 'Green': return '#2ecc71';
+                default: return '#95a5a6';
+            }
+        }
+        
+        function getPollutionIcon(type) {
+            switch(type) {
+                case 'Gold Mining': return '<div style="background: #f1c40f; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; color: black; font-weight: bold;">⛏️</div>';
+                case 'Soy Processing': return '<div style="background: #27ae60; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">🌾</div>';
+                case 'Municipal Waste': return '<div style="background: #95a5a6; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">🏭</div>';
+                case 'Agricultural Runoff': return '<div style="background: #8e44ad; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">🐄</div>';
+                case 'Deforestation': return '<div style="background: #c0392b; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">🪵</div>';
+                case 'Hydroelectric': return '<div style="background: #3498db; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">⚡</div>';
+                default: return '<div style="background: #e74c3c; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">❗</div>';
+            }
+        }
+        
+        function getSettlementIcon(type) {
+            switch(type) {
+                case 'Major City': return '<div style="background: #2c3e50; border-radius: 3px; width: 25px; height: 25px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">🏙️</div>';
+                case 'Port City': return '<div style="background: #34495e; border-radius: 3px; width: 25px; height: 25px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">🚢</div>';
+                case 'River Community': return '<div style="background: #16a085; border-radius: 50%; width: 25px; height: 25px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">🏘️</div>';
+                case 'Traditional Community': return '<div style="background: #d35400; border-radius: 50%; width: 25px; height: 25px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">🏕️</div>';
+                case 'Dam Community': return '<div style="background: #2980b9; border-radius: 3px; width: 25px; height: 25px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">🏗️</div>';
+                case 'Temporary Settlement': return '<div style="background: #c0392b; border-radius: 50%; width: 25px; height: 25px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">⛺</div>';
+                default: return '<div style="background: #9b59b6; border-radius: 50%; width: 25px; height: 25px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">🏘️</div>';
+            }
+        }
+        
+        function getVulnerabilityColor(vulnerability) {
+            switch(vulnerability.split(' ')[0]) {
+                case 'Extreme': return '#8e44ad';
+                case 'Critical': return '#e74c3c';
+                case 'High': return '#f39c12';
+                case 'Medium': return '#f1c40f';
+                case 'Low': return '#2ecc71';
+                default: return '#95a5a6';
+            }
+        }
