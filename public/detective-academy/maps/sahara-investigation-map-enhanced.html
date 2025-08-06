@@ -17,6 +17,7 @@
             --accent-color: #ffd700;
             --success-color: #2ecc71;
             --danger-color: #e74c3c;
+            --warning-color: #f39c12;
             --sahara-sand: #d4a574;
             --sahara-deep: #b8956a;
             --oasis-blue: #0a74da;
@@ -45,11 +46,6 @@
             text-align: center;
             border-bottom: 4px solid var(--accent-color);
             box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1001;
         }
         
         .case-title {
@@ -65,76 +61,50 @@
             font-size: 1.2rem;
             color: #666;
             font-weight: 500;
-        }
-        
-        .mission-brief {
-            background: linear-gradient(135deg, var(--desert-orange), var(--desert-red));
-            color: white;
-            padding: 15px 25px;
-            margin: 15px 0;
-            border-radius: 15px;
-            font-weight: 500;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(255,107,53,0.3);
-        }
-        
-        #saharaMap {
-            height: calc(100vh - 140px);
-            width: 100%;
-            margin-top: 140px;
-            border-radius: 0;
-            border: none;
-            box-shadow: inset 0 0 50px rgba(0,0,0,0.1);
-        }
-        
-        .map-controls {
-            position: fixed;
-            top: 160px;
-            left: 20px;
-            background: rgba(255,255,255,0.95);
-            backdrop-filter: blur(20px);
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-            z-index: 1000;
-            max-width: 280px;
-        }
-        
-        .control-group {
             margin-bottom: 15px;
         }
         
-        .control-title {
-            font-family: 'Orbitron', monospace;
-            font-weight: 700;
-            color: var(--sahara-deep);
-            margin-bottom: 10px;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        .mission-brief {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px auto;
+            max-width: 800px;
+            font-weight: 500;
+        }
+        
+        .map-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,255,255,0.9);
+            padding: 15px 20px;
+            border-bottom: 2px solid var(--sahara-deep);
+        }
+        
+        .control-group {
+            display: flex;
+            gap: 15px;
+            align-items: center;
         }
         
         .detective-btn {
-            background: linear-gradient(135deg, var(--sahara-sand), var(--sahara-deep));
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
             color: white;
             border: none;
-            padding: 10px 15px;
-            margin: 5px;
+            padding: 10px 20px;
             border-radius: 25px;
-            font-family: 'Roboto', sans-serif;
-            font-weight: 600;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-size: 0.9rem;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            position: relative;
-            overflow: hidden;
         }
         
         .detective-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-            background: linear-gradient(135deg, var(--desert-orange), var(--desert-red));
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
         }
         
         .detective-btn.active {
@@ -143,23 +113,19 @@
             animation: pulse 2s infinite;
         }
         
-        @keyframes pulse {
-            0% { box-shadow: 0 0 20px rgba(46,204,113,0.5); }
-            50% { box-shadow: 0 0 30px rgba(46,204,113,0.8); }
-            100% { box-shadow: 0 0 20px rgba(46,204,113,0.5); }
-        }
-        
         .evidence-counter {
-            background: linear-gradient(135deg, var(--primary-color), var(--danger-color));
+            background: var(--warning-color);
             color: white;
-            padding: 12px 20px;
-            border-radius: 25px;
+            padding: 8px 15px;
+            border-radius: 20px;
             font-family: 'Orbitron', monospace;
             font-weight: 700;
-            text-align: center;
-            margin: 10px 5px;
-            box-shadow: 0 4px 15px rgba(255,107,53,0.3);
-            font-size: 1.1em;
+        }
+        
+        #saharaMap {
+            height: 70vh;
+            width: 100%;
+            border: 3px solid var(--sahara-deep);
         }
         
         .evidence-item {
@@ -289,6 +255,7 @@
             box-shadow: 0 8px 32px rgba(0,0,0,0.2) !important;
             padding: 15px !important;
             border: none !important;
+            font-family: 'Roboto', sans-serif !important;
         }
         
         .leaflet-control-layers-toggle {
@@ -300,6 +267,7 @@
         
         .leaflet-control-layers-expanded {
             padding: 20px !important;
+            min-width: 200px !important;
         }
         
         .leaflet-control-layers label {
@@ -307,6 +275,24 @@
             font-weight: 500 !important;
             font-size: 1.1em !important;
             color: #333 !important;
+            margin-bottom: 8px !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+        }
+        
+        .leaflet-control-layers-base label {
+            font-weight: 600 !important;
+            color: #2c3e50 !important;
+        }
+        
+        .leaflet-control-layers-overlays label {
+            color: #27ae60 !important;
+        }
+        
+        .leaflet-control-layers-separator {
+            border-top: 2px solid #ecf0f1 !important;
+            margin: 10px 0 !important;
         }
         
         @media print {
@@ -316,29 +302,27 @@
     </style>
 </head>
 <body>
-    <button class="back-btn" onclick="window.history.back()">← Back to Maps Central</button>
+    <button class="back-btn" onclick="window.location.href='/detective-academy/maps-central'">← Back to Maps Central</button>
     
     <div class="detective-header">
         <h1 class="case-title">🏜️ CASE #2: SAHARA INVESTIGATION</h1>
-        <p class="case-subtitle">Navigate the World's Largest Hot Desert to Locate the Missing Caravan</p>
+        <p class="case-subtitle">Navigate the Desert to Find the Lost Caravan</p>
         <div class="mission-brief">
-            <strong>MISSION:</strong> Dr. Hassan's archaeological caravan has vanished while studying ancient trade routes. Use this 
-            interactive map to track their route through climate zones, oasis locations, and historical pathways across the vast Sahara Desert.
+            <strong>MISSION:</strong> A trading caravan has vanished in the Sahara Desert. Use climate zones, oasis locations, and ancient trade routes to track their path and determine their fate.
         </div>
     </div>
     
     <div class="map-controls">
         <div class="control-group">
-            <div class="control-title">Environmental Layers</div>
             <button class="detective-btn" onclick="toggleLayer('oases')">💧 Oases</button>
+            <button class="detective-btn" onclick="toggleLayer('routes')">🛤️ Trade Routes</button>
             <button class="detective-btn" onclick="toggleLayer('dunes')">🏔️ Dune Systems</button>
-            <button class="detective-btn" onclick="toggleLayer('routes')">🐪 Trade Routes</button>
             <button class="detective-btn" onclick="toggleLayer('evidence')">🔍 Evidence</button>
         </div>
         <div class="control-group">
             <button class="detective-btn" onclick="toggleLayer('cities')">🏘️ Cities</button>
-            <button class="detective-btn" onclick="toggleLayer('tribes')">👥 Tribal Areas</button>
-            <button class="detective-btn" onclick="toggleLayer('climate')">🌡️ Climate Zones</button>
+            <button class="detective-btn" onclick="toggleLayer('tribes')">👥 Indigenous</button>
+            <button class="detective-btn" onclick="toggleLayer('climate')">🌡️ Climate</button>
         </div>
         <div class="control-group">
             <div class="evidence-counter">Evidence Found: <span id="evidenceCount">0</span>/8</div>
