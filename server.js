@@ -324,7 +324,7 @@ app.get('/detective-academy/maps/amazon-investigation-map.html', (req, res) => {
 });
 
 app.get('/detective-academy/maps/sahara-investigation-map.html', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'detective-academy', 'maps', 'sahara-investigation-map-enhanced.html'));
+  res.sendFile(path.join(__dirname, 'public', 'detective-academy', 'maps', 'sahara-investigation-map.html'));
 });
 
 app.get('/detective-academy/maps/himalayas-investigation-map.html', (req, res) => {

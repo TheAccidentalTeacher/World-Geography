@@ -101,6 +101,11 @@
             box-shadow: 0 8px 25px rgba(0,0,0,0.3);
         }
         
+        .detective-btn.active {
+            background: linear-gradient(45deg, var(--success-color), var(--mountain-blue));
+            box-shadow: 0 0 20px rgba(46, 204, 113, 0.5);
+        }
+        
         .artifact-counter {
             background: var(--cultural-gold);
             color: white;
@@ -603,10 +608,14 @@
         
         // Layer toggle functions
         function toggleLayer(layerName) {
+            const button = event.target;
+            
             if (himalayasMap.hasLayer(layers[layerName])) {
                 himalayasMap.removeLayer(layers[layerName]);
+                button.classList.remove('active');
             } else {
                 himalayasMap.addLayer(layers[layerName]);
+                button.classList.add('active');
             }
         }
         
@@ -639,6 +648,12 @@
             // Add all layers by default
             Object.values(layers).forEach(layer => {
                 himalayasMap.addLayer(layer);
+            });
+            
+            // Set all layer buttons as active by default
+            const layerButtons = document.querySelectorAll('[onclick*="toggleLayer"]');
+            layerButtons.forEach(button => {
+                button.classList.add('active');
             });
             
             // Add scale
