@@ -1499,7 +1499,128 @@ app.get('/student-materials/:materialId', (req, res) => {
 });
 
 app.get('/simulation/maps', (req, res) => {
-  res.send('<h1>Maps</h1><p>Under construction</p><a href="/simulation">Back to Hub</a>');
+  res.sendFile(path.join(__dirname, 'public', 'detective-academy', 'maps-central.html'));
+});
+
+// Individual map routes for printing
+app.get('/maps/amazon-rainforest', (req, res) => {
+    const isPrint = req.query.print === 'true';
+    res.send(generateMapHTML('Amazon Rainforest Investigation Map', 'amazon', '🌳', [
+        'Complete topographic relief showing elevation changes',
+        'Major rivers: Amazon, Orinoco, and tributary systems',
+        'Vegetation zones: dense canopy, secondary growth, clearings',
+        'Evidence markers at key investigation sites',
+        'Coordinate grid for precise location tracking',
+        'Scale: 1:2,500,000 with detailed insets at 1:100,000'
+    ], isPrint));
+});
+
+app.get('/maps/sahara-desert', (req, res) => {
+    const isPrint = req.query.print === 'true';
+    res.send(generateMapHTML('Sahara Desert Investigation Map', 'sahara', '🏜️', [
+        'Climate zones: hyperarid, arid, and semi-arid regions',
+        'Major oases and water sources with seasonal availability',
+        'Historical caravan routes and modern transportation',
+        'Sand dune systems and rocky plateau regions',
+        'Astronomical navigation points and compass references',
+        'Scale: 1:5,000,000 covering 9 million km² desert area'
+    ], isPrint));
+});
+
+app.get('/maps/himalayas-mountains', (req, res) => {
+    const isPrint = req.query.print === 'true';
+    res.send(generateMapHTML('Himalayas Cultural Geography Map', 'himalayas', '🏔️', [
+        'Elevation contours from 500m to 8,848m (Mt. Everest)',
+        'Buddhist and Hindu monasteries with cultural significance',
+        'Mountain passes: Thorong La, Cho La, Renjo La',
+        'Vertical climate zones from subtropical to alpine',
+        'Cultural regions: Tibet, Nepal, Bhutan, Northern India',
+        'Scale: 1:1,000,000 with monastery detail insets'
+    ], isPrint));
+});
+
+app.get('/maps/amazon-river-basin', (req, res) => {
+    const isPrint = req.query.print === 'true';
+    res.send(generateMapHTML('Amazon River Basin Watershed Map', 'river', '🌊', [
+        'Complete watershed covering 7 million km²',
+        'Pollution sources: mining, agriculture, urban runoff',
+        'Water quality monitoring stations and data points',
+        'Flow direction arrows and seasonal variation zones',
+        'Human settlements and population impact areas',
+        'Scale: 1:7,500,000 with detailed pollution site insets'
+    ], isPrint));
+});
+
+app.get('/maps/metropolitan-urban', (req, res) => {
+    const isPrint = req.query.print === 'true';
+    res.send(generateMapHTML('Metropolitan Urban Planning Map', 'urban', '🏙️', [
+        'Land use zones: residential, commercial, industrial',
+        'Transportation networks: metro, bus, highways',
+        'Green spaces: parks, forests, urban agriculture',
+        'Development timeline from 1950-2024',
+        'Population density per square kilometer',
+        'Scale: 1:50,000 with neighborhood detail at 1:10,000'
+    ], isPrint));
+});
+
+app.get('/maps/political-boundaries', (req, res) => {
+    const isPrint = req.query.print === 'true';
+    res.send(generateMapHTML('Political Boundaries & Jurisdictions Map', 'political', '🌐', [
+        'International boundary lines and border checkpoints',
+        'Territorial waters and Exclusive Economic Zones',
+        'Federal, state, and local jurisdictional boundaries',
+        'Treaty zones and international agreements',
+        'Disputed territories and conflict zones',
+        'Scale: 1:10,000,000 with border detail insets'
+    ], isPrint));
+});
+
+app.get('/maps/world-physical', (req, res) => {
+    const isPrint = req.query.print === 'true';
+    res.send(generateMapHTML('World Physical Geography Reference', 'world', '🌍', [
+        'Major mountain ranges: Himalayas, Andes, Rocky Mountains',
+        'Desert regions: Sahara, Gobi, Australian Outback',
+        'Ocean currents: Gulf Stream, Kuroshio, Antarctic Circumpolar',
+        'Latitude/longitude grid with major coordinate lines',
+        'Physical features legend and elevation key',
+        'Scale: 1:50,000,000 (Robinson Projection)'
+    ], isPrint));
+});
+
+app.get('/maps/navigation-tools', (req, res) => {
+    const isPrint = req.query.print === 'true';
+    res.send(generateMapHTML('Detective Navigation Tools', 'tools', '🧭', [
+        'Compass rose with 16-point directional system',
+        'Scale conversion charts for different map projections',
+        'Coordinate system templates (lat/long, UTM, MGRS)',
+        'Distance measurement tools and calculations',
+        'Map symbol legend for geographic features',
+        'Print size: A4 landscape for easy field use'
+    ], isPrint));
+});
+
+app.get('/maps/blank-investigation', (req, res) => {
+    const isPrint = req.query.print === 'true';
+    res.send(generateMapHTML('Blank Investigation Workspace', 'workspace', '📝', [
+        'Evidence tracking grid with numbered sections',
+        'Blank regional outline maps for annotation',
+        'Data collection tables and measurement grids',
+        'Investigation timeline chart template',
+        'Hypothesis testing and conclusion workspace',
+        'Multiple copies for team investigation work'
+    ], isPrint));
+});
+
+app.get('/maps/detective-atlas', (req, res) => {
+    const isPrint = req.query.print === 'true';
+    const isDownload = req.query.download === 'true';
+    
+    if (isDownload) {
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', 'attachment; filename="Geographic-Detective-Atlas.pdf"');
+    }
+    
+    res.send(generateAtlasHTML(isPrint, isDownload));
 });
 
 app.get('/simulation/progress', (req, res) => {
@@ -2229,6 +2350,300 @@ app.post('/api/ai/connections', async (req, res) => {
     });
   }
 });
+
+// Helper function to generate individual map HTML
+function generateMapHTML(title, mapType, icon, features, isPrint = false) {
+    const printStyles = isPrint ? `
+        <style>
+            @media print {
+                body { background: white !important; }
+                .no-print { display: none !important; }
+                .print-break { page-break-after: always; }
+                .map-container { 
+                    width: 100%; 
+                    height: 100vh; 
+                    border: 2px solid #333;
+                    margin: 0;
+                    padding: 20px;
+                }
+            }
+        </style>
+    ` : '';
+    
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${title} - Geographic Detective Academy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    ${printStyles}
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .map-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            border: 3px solid #ffd700;
+        }
+        .map-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(45deg, #ff6b35, #4ecdc4);
+            border-radius: 10px;
+            color: white;
+        }
+        .map-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 10px;
+        }
+        .map-icon {
+            font-size: 4rem;
+            margin: 20px 0;
+        }
+        .map-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .feature-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #3498db;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        .map-placeholder {
+            width: 100%;
+            height: 500px;
+            background: linear-gradient(45deg, #f0f0f0, #e0e0e0);
+            border: 3px dashed #ccc;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Orbitron', monospace;
+            font-size: 1.5rem;
+            color: #666;
+            margin: 30px 0;
+            position: relative;
+        }
+        .map-placeholder::before {
+            content: "${title}\\AACTUAL MAP CONTENT\\AWOULD BE GENERATED HERE\\AWITH DETAILED GEOGRAPHIC FEATURES";
+            white-space: pre-line;
+            text-align: center;
+            line-height: 1.8;
+        }
+        .controls {
+            text-align: center;
+            margin: 30px 0;
+        }
+        .btn {
+            padding: 12px 25px;
+            margin: 10px;
+            border: none;
+            border-radius: 25px;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-print {
+            background: linear-gradient(45deg, #2ecc71, #4ecdc4);
+            color: white;
+        }
+        .btn-back {
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            color: #333;
+        }
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="map-container">
+        <div class="map-header">
+            <div class="map-icon">${icon}</div>
+            <h1 class="map-title">${title}</h1>
+        </div>
+        
+        <div class="map-features">
+            ${features.map(feature => `<div class="feature-item">📍 ${feature}</div>`).join('')}
+        </div>
+        
+        <div class="map-placeholder"></div>
+        
+        <div class="controls ${isPrint ? 'no-print' : ''}">
+            <button class="btn btn-print" onclick="window.print()">🖨️ Print This Map</button>
+            <a href="/simulation/maps" class="btn btn-back">🔙 Back to Maps Central</a>
+        </div>
+    </div>
+</body>
+</html>`;
+}
+
+// Helper function to generate complete atlas HTML
+function generateAtlasHTML(isPrint = false, isDownload = false) {
+    const atlasContent = [
+        { title: 'Amazon Rainforest Investigation Map', type: 'amazon', icon: '🌳' },
+        { title: 'Sahara Desert Investigation Map', type: 'sahara', icon: '🏜️' },
+        { title: 'Himalayas Cultural Geography Map', type: 'himalayas', icon: '🏔️' },
+        { title: 'Amazon River Basin Watershed Map', type: 'river', icon: '🌊' },
+        { title: 'Metropolitan Urban Planning Map', type: 'urban', icon: '🏙️' },
+        { title: 'Political Boundaries & Jurisdictions Map', type: 'political', icon: '🌐' },
+        { title: 'World Physical Geography Reference', type: 'world', icon: '🌍' },
+        { title: 'Detective Navigation Tools', type: 'tools', icon: '🧭' },
+        { title: 'Blank Investigation Workspace', type: 'workspace', icon: '📝' }
+    ];
+    
+    const printStyles = isPrint || isDownload ? `
+        <style>
+            @media print {
+                body { background: white !important; }
+                .no-print { display: none !important; }
+                .atlas-page { page-break-after: always; min-height: 100vh; }
+                .atlas-page:last-child { page-break-after: avoid; }
+            }
+        </style>
+    ` : '';
+    
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geographic Detective Atlas - Complete Collection</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    ${printStyles}
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+        }
+        .atlas-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            min-height: 100vh;
+        }
+        .atlas-cover {
+            text-align: center;
+            padding: 80px 40px;
+            background: linear-gradient(135deg, #ff6b35, #4ecdc4);
+            color: white;
+        }
+        .atlas-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 4rem;
+            font-weight: 900;
+            margin-bottom: 20px;
+        }
+        .atlas-subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 40px;
+        }
+        .atlas-page {
+            padding: 40px;
+            border-bottom: 3px solid #eee;
+        }
+        .page-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .map-preview {
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(45deg, #f0f0f0, #e0e0e0);
+            border: 2px dashed #ccc;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #666;
+            margin: 20px 0;
+        }
+        .controls {
+            text-align: center;
+            margin: 40px 0;
+            padding: 30px;
+            background: #f8f9fa;
+        }
+        .btn {
+            padding: 15px 30px;
+            margin: 10px;
+            border: none;
+            border-radius: 25px;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            background: linear-gradient(45deg, #3498db, #2ecc71);
+            color: white;
+        }
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="atlas-container">
+        <div class="atlas-cover atlas-page">
+            <h1 class="atlas-title">🗺️ GEOGRAPHIC DETECTIVE ATLAS</h1>
+            <p class="atlas-subtitle">Complete Investigation Maps Collection</p>
+            <p>🕵️ Essential maps for all Geographic Detective Academy cases</p>
+            <p style="margin-top: 40px; font-size: 1.2rem;">📅 Generated: ${new Date().toLocaleDateString()}</p>
+        </div>
+        
+        ${atlasContent.map(map => `
+            <div class="atlas-page">
+                <h2 class="page-title">${map.icon} ${map.title}</h2>
+                <div class="map-preview">
+                    <div style="text-align: center;">
+                        <div style="font-size: 4rem; margin-bottom: 20px;">${map.icon}</div>
+                        <div>${map.title}</div>
+                        <div style="margin-top: 20px; font-size: 1rem; color: #888;">
+                            [Detailed ${map.type} map would be rendered here]
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `).join('')}
+        
+        <div class="controls ${isPrint || isDownload ? 'no-print' : ''}">
+            <button class="btn" onclick="window.print()">🖨️ Print Complete Atlas</button>
+            <a href="/simulation/maps" class="btn">🔙 Back to Maps Central</a>
+        </div>
+    </div>
+</body>
+</html>`;
+}
 
 // Start the server
 const server = app.listen(PORT, '0.0.0.0', () => {

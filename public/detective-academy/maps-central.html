@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🗺️ Detective Maps Central - Geographic Detective Academy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #ff6b35;
+            --secondary-color: #4ecdc4;
+            --accent-color: #ffd700;
+            --dark-color: #1a1a2e;
+            --light-color: #f7f9fc;
+            --success-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --info-color: #3498db;
+            --warning-color: #f39c12;
+        }
+        
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+        }
+        
+        body { 
+            font-family: 'Roboto', sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            overflow-x: hidden;
+        }
+        
+        .floating-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .particle {
+            position: absolute;
+            background: var(--accent-color);
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+        
+        .container { 
+            max-width: 1400px; 
+            margin: 0 auto; 
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 10;
+            border: 3px solid var(--accent-color);
+        }
+        
+        .header { 
+            text-align: center; 
+            margin-bottom: 40px; 
+            position: relative;
+            padding: 30px;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            border-radius: 20px;
+            color: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .main-title { 
+            font-family: 'Orbitron', monospace; 
+            font-size: 3rem; 
+            font-weight: 900;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-family: 'Space Mono', monospace;
+            font-size: 1.2rem;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+        
+        .maps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+        
+        .map-card {
+            background: linear-gradient(135deg, #fff, #f8f9fa);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            border: 3px solid transparent;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        
+        .map-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--accent-color);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+        }
+        
+        .map-icon {
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .map-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-align: center;
+            color: var(--dark-color);
+        }
+        
+        .map-description {
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #555;
+        }
+        
+        .case-badge {
+            display: inline-block;
+            background: linear-gradient(45deg, var(--info-color), var(--secondary-color));
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .map-features {
+            list-style: none;
+            margin: 15px 0;
+        }
+        
+        .map-features li {
+            margin: 8px 0;
+            padding: 8px 12px;
+            background: rgba(255,255,255,0.7);
+            border-radius: 10px;
+            border-left: 4px solid var(--info-color);
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        .print-button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(45deg, var(--success-color), var(--secondary-color));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 10px;
+        }
+        
+        .print-button:hover {
+            background: linear-gradient(45deg, var(--accent-color), var(--warning-color));
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(46,204,113,0.3);
+        }
+        
+        .category-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--secondary-color), var(--info-color));
+            color: white;
+            padding: 20px 25px;
+            border-radius: 15px;
+            margin: 30px 0 20px 0;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            text-align: center;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 40px;
+            padding: 30px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .back-link { 
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px 30px; 
+            background: linear-gradient(45deg, var(--accent-color), #ffed4e);
+            color: var(--dark-color);
+            text-decoration: none; 
+            border-radius: 50px; 
+            border: 3px solid var(--dark-color);
+            font-family: 'Orbitron', monospace; 
+            font-weight: 700; 
+            transition: all 0.4s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+        
+        .back-link:hover { 
+            transform: translateY(-5px) scale(1.05);
+            background: linear-gradient(45deg, #fff, var(--light-color));
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+            border-color: var(--primary-color);
+        }
+        
+        .detective-badge {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, var(--accent-color), #ffed4e);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            border: 4px solid var(--primary-color);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            z-index: 1000;
+            animation: badge-float 3s ease-in-out infinite;
+            cursor: pointer;
+        }
+        
+        @keyframes badge-float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .print-all-section {
+            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+            border: 3px solid var(--warning-color);
+            padding: 30px;
+            border-radius: 20px;
+            margin: 40px 0;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(243,156,18,0.2);
+        }
+        
+        .print-all-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.8rem;
+            color: var(--warning-color);
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        
+        .print-all-button {
+            padding: 15px 40px;
+            background: linear-gradient(45deg, var(--warning-color), #e67e22);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 15px;
+            box-shadow: 0 8px 25px rgba(243,156,18,0.3);
+        }
+        
+        .print-all-button:hover {
+            background: linear-gradient(45deg, var(--danger-color), var(--primary-color));
+            transform: scale(1.05);
+            box-shadow: 0 15px 40px rgba(243,156,18,0.4);
+        }
+        
+        @media (max-width: 768px) {
+            .container { 
+                margin: 10px; 
+                padding: 20px; 
+            }
+            
+            .main-title { 
+                font-size: 2rem; 
+            }
+            
+            .maps-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-particles">
+        <div class="particle" style="left: 10%; width: 6px; height: 6px; animation-delay: 0s;"></div>
+        <div class="particle" style="left: 20%; width: 8px; height: 8px; animation-delay: 1s;"></div>
+        <div class="particle" style="left: 30%; width: 4px; height: 4px; animation-delay: 2s;"></div>
+        <div class="particle" style="left: 40%; width: 10px; height: 10px; animation-delay: 3s;"></div>
+        <div class="particle" style="left: 50%; width: 6px; height: 6px; animation-delay: 4s;"></div>
+        <div class="particle" style="left: 60%; width: 8px; height: 8px; animation-delay: 5s;"></div>
+    </div>
+    
+    <div class="detective-badge" onclick="this.style.transform='scale(1.2) rotate(360deg)'">🗺️</div>
+    
+    <div class="container">
+        <div class="header">
+            <h1 class="main-title">Detective Maps Central</h1>
+            <div class="subtitle">🕵️ Essential Investigation Maps for Geographic Detectives</div>
+        </div>
+        
+        <div class="print-all-section">
+            <h2 class="print-all-title">🎯 Complete Map Collection</h2>
+            <p style="margin-bottom: 20px; font-size: 1.1rem; color: #2c3e50;">Print all case investigation maps in one comprehensive detective atlas!</p>
+            <button class="print-all-button" onclick="printAllMaps()">🖨️ Print Detective Atlas</button>
+            <button class="print-all-button" onclick="downloadAllMaps()">📥 Download All Maps</button>
+        </div>
+        
+        <div class="map-categories">
+            <h2 class="category-title">🌍 Case Investigation Maps</h2>
+            
+            <div class="maps-grid">
+                <div class="map-card" onclick="printMap('amazon-rainforest')">
+                    <div class="case-badge">Case #1: Amazon</div>
+                    <div class="map-icon">🌳</div>
+                    <h3 class="map-title">Amazon Rainforest Investigation Map</h3>
+                    <p class="map-description">Track Dr. Rivera through river systems, vegetation zones, and terrain features of the world's largest rainforest.</p>
+                    <ul class="map-features">
+                        <li>🏞️ Detailed topographic relief</li>
+                        <li>🌊 River systems & tributaries</li>
+                        <li>🌿 Vegetation zone overlay</li>
+                        <li>📍 Evidence location markers</li>
+                        <li>🧭 Navigation grid system</li>
+                    </ul>
+                    <button class="print-button" onclick="event.stopPropagation(); printMap('amazon-rainforest')">🖨️ Print Amazon Map</button>
+                </div>
+                
+                <div class="map-card" onclick="printMap('sahara-desert')">
+                    <div class="case-badge">Case #2: Sahara</div>
+                    <div class="map-icon">🏜️</div>
+                    <h3 class="map-title">Sahara Desert Investigation Map</h3>
+                    <p class="map-description">Navigate the world's largest hot desert to locate the missing caravan using climate zones and ancient trade routes.</p>
+                    <ul class="map-features">
+                        <li>🌡️ Climate zone boundaries</li>
+                        <li>💧 Oasis locations & water sources</li>
+                        <li>🛤️ Historical caravan routes</li>
+                        <li>🏔️ Dune systems & landforms</li>
+                        <li>⭐ Astronomical navigation aids</li>
+                    </ul>
+                    <button class="print-button" onclick="event.stopPropagation(); printMap('sahara-desert')">🖨️ Print Sahara Map</button>
+                </div>
+                
+                <div class="map-card" onclick="printMap('himalayas-mountains')">
+                    <div class="case-badge">Case #3: Himalayas</div>
+                    <div class="map-icon">🏔️</div>
+                    <h3 class="map-title">Himalayas Cultural Geography Map</h3>
+                    <p class="map-description">Investigate the sacred artifact theft through monastery locations, mountain passes, and cultural regions.</p>
+                    <ul class="map-features">
+                        <li>⛰️ Elevation contour lines</li>
+                        <li>🏛️ Monastery & cultural sites</li>
+                        <li>🛤️ Mountain passes & trails</li>
+                        <li>❄️ Vertical climate zones</li>
+                        <li>🌸 Cultural region boundaries</li>
+                    </ul>
+                    <button class="print-button" onclick="event.stopPropagation(); printMap('himalayas-mountains')">🖨️ Print Himalayas Map</button>
+                </div>
+                
+                <div class="map-card" onclick="printMap('amazon-river-basin')">
+                    <div class="case-badge">Case #4: River Systems</div>
+                    <div class="map-icon">🌊</div>
+                    <h3 class="map-title">Amazon River Basin Watershed Map</h3>
+                    <p class="map-description">Analyze water quality and pollution sources throughout the Amazon River system's massive watershed.</p>
+                    <ul class="map-features">
+                        <li>🗺️ Complete watershed boundaries</li>
+                        <li>🏭 Pollution source markers</li>
+                        <li>📊 Water quality data points</li>
+                        <li>🌊 Flow direction indicators</li>
+                        <li>🏘️ Human settlement patterns</li>
+                    </ul>
+                    <button class="print-button" onclick="event.stopPropagation(); printMap('amazon-river-basin')">🖨️ Print River Map</button>
+                </div>
+                
+                <div class="map-card" onclick="printMap('metropolitan-urban')">
+                    <div class="case-badge">Case #5: Metropolis</div>
+                    <div class="map-icon">🏙️</div>
+                    <h3 class="map-title">Metropolitan Urban Planning Map</h3>
+                    <p class="map-description">Solve the mystery of disappearing green spaces through urban development and transportation networks.</p>
+                    <ul class="map-features">
+                        <li>🏗️ Zoning & land use patterns</li>
+                        <li>🚇 Transportation networks</li>
+                        <li>🌳 Green space distribution</li>
+                        <li>📈 Development timeline overlay</li>
+                        <li>🏘️ Population density zones</li>
+                    </ul>
+                    <button class="print-button" onclick="event.stopPropagation(); printMap('metropolitan-urban')">🖨️ Print Urban Map</button>
+                </div>
+                
+                <div class="map-card" onclick="printMap('political-boundaries')">
+                    <div class="case-badge">Case #6: Political</div>
+                    <div class="map-icon">🌐</div>
+                    <h3 class="map-title">Political Boundaries & Jurisdictions Map</h3>
+                    <p class="map-description">Navigate complex territorial disputes and international boundaries in this jurisdictional crisis investigation.</p>
+                    <ul class="map-features">
+                        <li>🗺️ International boundary lines</li>
+                        <li>⚓ Territorial waters & EEZ</li>
+                        <li>🏛️ Jurisdictional authorities</li>
+                        <li>📋 Treaty zone boundaries</li>
+                        <li>⚖️ Disputed territory markers</li>
+                    </ul>
+                    <button class="print-button" onclick="event.stopPropagation(); printMap('political-boundaries')">🖨️ Print Political Map</button>
+                </div>
+            </div>
+            
+            <h2 class="category-title">🛠️ Reference & Tools Maps</h2>
+            
+            <div class="maps-grid">
+                <div class="map-card" onclick="printMap('world-physical')">
+                    <div class="case-badge">Reference</div>
+                    <div class="map-icon">🌍</div>
+                    <h3 class="map-title">World Physical Geography Reference</h3>
+                    <p class="map-description">Complete world physical map with major landforms, climate zones, and geographic features for cross-case analysis.</p>
+                    <ul class="map-features">
+                        <li>🏔️ Mountain ranges & peaks</li>
+                        <li>🏜️ Desert & climate regions</li>
+                        <li>🌊 Ocean currents & features</li>
+                        <li>📏 Latitude & longitude grid</li>
+                        <li>🗺️ Scale & projection info</li>
+                    </ul>
+                    <button class="print-button" onclick="event.stopPropagation(); printMap('world-physical')">🖨️ Print World Map</button>
+                </div>
+                
+                <div class="map-card" onclick="printMap('navigation-tools')">
+                    <div class="case-badge">Tools</div>
+                    <div class="map-icon">🧭</div>
+                    <h3 class="map-title">Detective Navigation Tools</h3>
+                    <p class="map-description">Essential compass rose, coordinate systems, and map reading tools for geographic detective work.</p>
+                    <ul class="map-features">
+                        <li>🧭 Compass rose & directions</li>
+                        <li>📐 Scale conversion tools</li>
+                        <li>📍 Coordinate grid templates</li>
+                        <li>📏 Distance measurement aids</li>
+                        <li>🗺️ Symbol legend reference</li>
+                    </ul>
+                    <button class="print-button" onclick="event.stopPropagation(); printMap('navigation-tools')">🖨️ Print Tools</button>
+                </div>
+                
+                <div class="map-card" onclick="printMap('blank-investigation')">
+                    <div class="case-badge">Workspace</div>
+                    <div class="map-icon">📝</div>
+                    <h3 class="map-title">Blank Investigation Workspace</h3>
+                    <p class="map-description">Printable blank maps and grid templates for students to create their own investigation maps and evidence tracking.</p>
+                    <ul class="map-features">
+                        <li>📋 Evidence tracking templates</li>
+                        <li>🗺️ Blank regional outlines</li>
+                        <li>📊 Data collection grids</li>
+                        <li>✏️ Annotation workspace</li>
+                        <li>📈 Investigation timeline charts</li>
+                    </ul>
+                    <button class="print-button" onclick="event.stopPropagation(); printMap('blank-investigation')">🖨️ Print Workspace</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="navigation">
+            <a href="/simulation" class="back-link">
+                <span>🏠</span>
+                <span>Back to Detective HQ</span>
+            </a>
+        </div>
+    </div>
+    
+    <script>
+        function printMap(mapType) {
+            // Open print-friendly version of specific map
+            window.open(`/maps/${mapType}?print=true`, '_blank');
+        }
+        
+        function printAllMaps() {
+            // Print all maps as a comprehensive atlas
+            window.open('/maps/detective-atlas?print=true', '_blank');
+        }
+        
+        function downloadAllMaps() {
+            // Download all maps as PDF package
+            window.open('/maps/detective-atlas?download=true', '_blank');
+        }
+        
+        // Add floating map icons
+        function createMapIcon() {
+            const icons = ['🗺️', '🧭', '📍', '🌍', '🔍', '⭐'];
+            const icon = document.createElement('div');
+            icon.className = 'particle';
+            icon.textContent = icons[Math.floor(Math.random() * icons.length)];
+            icon.style.left = Math.random() * 100 + '%';
+            icon.style.fontSize = '1.5rem';
+            icon.style.animationDelay = Math.random() * 6 + 's';
+            document.querySelector('.floating-particles').appendChild(icon);
+            
+            setTimeout(() => icon.remove(), 6000);
+        }
+        
+        setInterval(createMapIcon, 2000);
+    </script>
+</body>
+</html>
