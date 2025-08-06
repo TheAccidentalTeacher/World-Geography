@@ -393,7 +393,7 @@
         
         // Layer groups for different map elements (overlays only)
         const overlayLayers = {
-            '🌊 Amazon Rivers': L.layerGroup(),
+            '🌊 Trade Routes': L.layerGroup(),
             '🌳 Vegetation Zones': L.layerGroup(), 
             '🏢 Research Stations': L.layerGroup(),
             '🔍 Evidence Locations': L.layerGroup(),
@@ -409,7 +409,7 @@
         
         // Keep internal reference for easy access
         const layers = {
-            rivers: overlayLayers['🌊 Amazon Rivers'],
+            rivers: overlayLayers['🌊 Trade Routes'],
             vegetation: overlayLayers['🌳 Vegetation Zones'],
             stations: overlayLayers['🏢 Research Stations'], 
             evidence: overlayLayers['🔍 Evidence Locations'],
@@ -422,47 +422,47 @@
         let evidenceFound = 0;
         const totalEvidence = 8;
         
-        // Amazon River system data
-        const riverData = [
+        // Sahara trade routes data
+        const tradeRouteData = [
             {
-                name: "Amazon River",
-                coords: [[-3.1419, -59.9716], [-3.4653, -62.2159], [-3.7436, -64.3086], [-4.2581, -69.9406]],
-                color: "#0077be",
+                name: "Trans-Saharan Salt Route",
+                coords: [[25.0, 0.0], [20.0, 10.0], [16.0, 20.0], [15.0, 25.0]],
+                color: "#d4a574",
                 weight: 6
             },
             {
-                name: "Rio Negro",
-                coords: [[-0.1314, -67.0164], [-1.4558, -62.2159], [-3.1419, -59.9716]],
-                color: "#003d5c",
+                name: "Gold Trade Route",
+                coords: [[12.0, -8.0], [16.0, 0.0], [20.0, 10.0], [25.0, 20.0]],
+                color: "#f39c12",
                 weight: 4
             },
             {
-                name: "Madeira River",
-                coords: [[-3.3792, -58.9878], [-4.8844, -60.6892], [-7.2307, -62.7834]],
-                color: "#004d73",
+                name: "Caravan Route to Cairo",
+                coords: [[25.0, 20.0], [28.0, 25.0], [30.0, 31.0]],
+                color: "#0a74da",
                 weight: 4
             }
         ];
         
-        // Research stations data
+        // Sahara research stations data
         const stationData = [
             {
-                name: "Manaus Research Station",
-                coords: [-3.1190, -60.0217],
+                name: "Cairo Research Base",
+                coords: [30.0444, 31.2357],
                 status: "Active",
                 lastContact: "Day 1",
-                description: "Dr. Rivera's starting point. Boat logs show departure heading west."
+                description: "Dr. Hassan's starting point. Equipment logs show departure heading southwest."
             },
             {
-                name: "Tefe Field Station",
-                coords: [-3.3514, -64.7103],
+                name: "Siwa Oasis Station",
+                coords: [29.2022, 25.5198],
                 status: "Visited",
                 lastContact: "Day 3",
-                description: "Local guides confirm Dr. Rivera passed through. Collected soil samples."
+                description: "Local guides confirm Dr. Hassan passed through. Collected pottery shards."
             },
             {
-                name: "Remote Outpost Alpha",
-                coords: [-4.2558, -69.9406],
+                name: "Remote Desert Outpost",
+                coords: [20.0, 15.0],
                 status: "Unknown",
                 lastContact: "Day 5",
                 description: "Emergency beacon activated briefly. No response to radio calls."
@@ -472,22 +472,22 @@
         // Evidence locations with educational content
         const evidenceData = [
             {
-                coords: [-3.1190, -60.0217],
+                coords: [30.0444, 31.2357],
                 title: "Research Notes",
-                content: "Dr. Rivera's notebook found at dock. Shows interest in deforestation patterns along tributary systems.",
+                content: "Dr. Hassan's notebook found at hotel. Shows interest in ancient trade route patterns across desert regions.",
                 type: "document",
                 difficulty: "Easy"
             },
             {
-                coords: [-3.3514, -64.7103],
+                coords: [29.2022, 25.5198],
                 title: "GPS Device",
-                content: "Handheld GPS shows waypoints leading deeper into rainforest. Battery at 23%.",
+                content: "Handheld GPS shows waypoints leading deeper into desert. Battery at 23%.",
                 type: "technology",
                 difficulty: "Medium"
             },
             {
-                coords: [-3.7436, -64.3086],
-                title: "Boat Engine Part",
+                coords: [25.0, 20.0],
+                title: "Camel Saddle Fragment",
                 content: "Damaged propeller found on riverbank. Indicates possible mechanical failure.",
                 type: "physical",
                 difficulty: "Medium"
@@ -571,8 +571,8 @@
         ];
         
         // Add rivers to map
-        function addRivers() {
-            riverData.forEach(river => {
+        function addTradeRoutes() {
+            tradeRouteData.forEach(river => {
                 const riverLine = L.polyline(river.coords, {
                     color: river.color,
                     weight: river.weight,
@@ -816,7 +816,7 @@
         
         // Initialize map with all layers
         function initializeMap() {
-            addRivers();
+            addTradeRoutes();
             addStations();
             addEvidence();
             addCities();
