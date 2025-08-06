@@ -735,6 +735,7 @@
             }
 
             loadDay(dayId) {
+                console.log(`🔄 Loading day: ${dayId}`);
                 this.currentDay = dayId;
                 
                 // Update navigation
@@ -749,9 +750,13 @@
 
                 // Load the guide content
                 const guide = this.guideData[dayId];
+                console.log(`📊 Guide data for ${dayId}:`, guide);
+                
                 if (guide) {
+                    console.log(`✅ Rendering guide for ${dayId}`);
                     this.renderGuide(guide);
                 } else {
+                    console.log(`⚠️ No guide data found for ${dayId}, showing loading screen`);
                     this.renderLoadingGuide(dayId);
                 }
             }

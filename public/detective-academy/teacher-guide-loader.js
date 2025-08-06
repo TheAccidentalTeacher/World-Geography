@@ -28,11 +28,20 @@ class TeacherGuideLoader {
     }
 
     async loadGuideFromAPI(dayId) {
+        console.log(`🔄 Loading ${dayId} from API...`);
         const response = await fetch(`/api/teacher-guide/${dayId}`);
         const data = await response.json();
         
         if (data.success) {
-            return this.parseMarkdownGuide(data.content, data.filename);
+            console.log(`✅ API returned content for ${dayId}:`, data.content.substring(0, 100) + '...');
+            const parsed = this.parseMarkdownGuide(data.content, data.filename);
+            console.log(`📊 Parsed guide for ${dayId}:`, {
+                title: parsed.title,
+                scenes: parsed.scenes.length,
+                objectives: parsed.objectives.length,
+                materials: parsed.materials.length
+            });
+            return parsed;
         } else {
             throw new Error(data.error || 'Failed to load guide');
         }
