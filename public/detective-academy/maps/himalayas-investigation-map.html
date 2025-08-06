@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏔️ Himalayas Cultural Investigation Map - Case #3</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <style>
+        :root {
+            --primary-color: #ff6b35;
+            --secondary-color: #4ecdc4;
+            --accent-color: #ffd700;
+            --success-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --mountain-blue: #2980b9;
+            --mountain-white: #ecf0f1;
+            --cultural-gold: #f39c12;
+        }
+        
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+        }
+        
+        body { 
+            font-family: 'Roboto', sans-serif; 
+            background: linear-gradient(135deg, #2980b9 0%, #3498db 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .detective-header {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 4px solid var(--accent-color);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        
+        .case-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--mountain-blue);
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .case-subtitle {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .mission-brief {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px auto;
+            max-width: 800px;
+            font-weight: 500;
+        }
+        
+        .map-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,255,255,0.9);
+            padding: 15px 20px;
+            border-bottom: 2px solid var(--mountain-blue);
+        }
+        
+        .control-group {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .detective-btn {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .detective-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+        
+        .artifact-counter {
+            background: var(--cultural-gold);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+        }
+        
+        #himalayasMap {
+            height: 70vh;
+            width: 100%;
+            border: 3px solid var(--mountain-blue);
+        }
+        
+        .investigation-panel {
+            position: fixed;
+            right: -400px;
+            top: 0;
+            width: 400px;
+            height: 100vh;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            padding: 20px;
+            box-shadow: -5px 0 20px rgba(0,0,0,0.3);
+            transition: right 0.3s ease;
+            z-index: 1001;
+            overflow-y: auto;
+        }
+        
+        .investigation-panel.open {
+            right: 0;
+        }
+        
+        .panel-header {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--mountain-blue);
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 10px;
+        }
+        
+        .artifact-item {
+            background: linear-gradient(45deg, #f8f9fa, #e9ecef);
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            border-left: 4px solid var(--cultural-gold);
+        }
+        
+        .artifact-title {
+            font-weight: 700;
+            color: var(--mountain-blue);
+            margin-bottom: 8px;
+        }
+        
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: var(--danger-color);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            cursor: pointer;
+            z-index: 1002;
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+        
+        .legend {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(255,255,255,0.9);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+        
+        .legend-title {
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--mountain-blue);
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 10px;
+            border: 2px solid #333;
+        }
+        
+        .elevation-counter {
+            background: var(--mountain-blue);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+        }
+        
+        @media print {
+            .detective-header, .map-controls, .investigation-panel, .back-btn { display: none; }
+            #himalayasMap { height: 100vh; border: none; }
+        }
+    </style>
+</head>
+<body>
+    <button class="back-btn" onclick="window.history.back()">← Back to Maps Central</button>
+    
+    <div class="detective-header">
+        <h1 class="case-title">🏔️ CASE #3: HIMALAYAS INVESTIGATION</h1>
+        <p class="case-subtitle">Track the Sacred Artifact Through Mountain Monasteries</p>
+        <div class="mission-brief">
+            <strong>MISSION:</strong> A priceless cultural artifact has been stolen from a high-altitude monastery. 
+            Navigate treacherous mountain passes, cultural boundaries, and elevation zones to recover the treasure.
+        </div>
+    </div>
+    
+    <div class="map-controls">
+        <div class="control-group">
+            <button class="detective-btn" onclick="toggleLayer('elevation')">⛰️ Elevation</button>
+            <button class="detective-btn" onclick="toggleLayer('monasteries')">🏛️ Monasteries</button>
+            <button class="detective-btn" onclick="toggleLayer('passes')">🛤️ Passes</button>
+            <button class="detective-btn" onclick="toggleLayer('artifacts')">💎 Artifacts</button>
+        </div>
+        <div class="control-group">
+            <div class="artifact-counter">Artifacts Found: <span id="artifactCount">0</span>/7</div>
+            <div class="elevation-counter">⚡ Current Elevation: <span id="currentElevation">3000m</span></div>
+            <button class="detective-btn" onclick="togglePanel()">📋 Cultural Log</button>
+            <button class="detective-btn" onclick="printMap()">🖨️ Print Map</button>
+        </div>
+    </div>
+    
+    <div id="himalayasMap"></div>
+    
+    <div class="legend">
+        <div class="legend-title">Mountain Investigation Legend</div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #f39c12;"></div>
+            <span>Buddhist Monasteries</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #8e44ad;"></div>
+            <span>Mountain Passes</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #e74c3c;"></div>
+            <span>Artifact Locations</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #2980b9;"></div>
+            <span>High Elevation (>4000m)</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #27ae60;"></div>
+            <span>Cultural Regions</span>
+        </div>
+    </div>
+    
+    <div class="investigation-panel" id="investigationPanel">
+        <div class="panel-header">🏔️ Cultural Investigation Log</div>
+        <div id="artifactLog">
+            <p style="color: #666; font-style: italic;">Discover cultural artifacts and piece together the theft...</p>
+        </div>
+    </div>
+    
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <script>
+        // Initialize the map centered on Himalayas region
+        const himalayasMap = L.map('himalayasMap').setView([28.2380, 83.9956], 6);
+        
+        // Add multiple base layers for different perspectives
+        const baseLayers = {
+            'Satellite': L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+            }),
+            'Terrain': L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+                attribution: 'Map data: &copy; OpenStreetMap contributors, SRTM | Map style: &copy; OpenTopoMap (CC-BY-SA)'
+            }),
+            'Mountain View': L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            })
+        };
+        
+        // Start with terrain view for better mountain visualization
+        baseLayers['Terrain'].addTo(himalayasMap);
+        
+        // Add layer control
+        L.control.layers(baseLayers).addTo(himalayasMap);
+        
+        // Layer groups for different map elements
+        const layers = {
+            elevation: L.layerGroup(),
+            monasteries: L.layerGroup(),
+            passes: L.layerGroup(),
+            artifacts: L.layerGroup()
+        };
+        
+        // Artifact tracking
+        let artifactsFound = 0;
+        const totalArtifacts = 7;
+        
+        // Monastery data with cultural context
+        const monasteryData = [
+            {
+                name: "Tengboche Monastery",
+                coords: [27.8367, 86.7644],
+                elevation: "3867m",
+                status: "Crime Scene",
+                description: "The theft occurred here. Sacred prayer wheel containing ancient texts was stolen during evening prayers."
+            },
+            {
+                name: "Rongbuk Monastery",
+                coords: [28.1500, 86.8522],
+                elevation: "5030m",
+                status: "Witness Reports",
+                description: "Monks report seeing suspicious figures heading toward Everest Base Camp with heavy pack."
+            },
+            {
+                name: "Samye Monastery",
+                coords: [29.3189, 91.7506],
+                elevation: "3556m",
+                status: "Safe Haven",
+                description: "Ancient monastery with no recent suspicious activity. Offers shelter and information."
+            },
+            {
+                name: "Tashilhunpo Monastery",
+                coords: [29.2653, 88.8733],
+                elevation: "3200m",
+                status: "Investigation Hub",
+                description: "Local authorities coordinating search efforts. Cultural experts analyzing theft patterns."
+            }
+        ];
+        
+        // Mountain passes and routes
+        const passesData = [
+            {
+                name: "Thorong La Pass",
+                coords: [28.7667, 83.9500],
+                elevation: "5416m",
+                difficulty: "Extreme",
+                status: "Possible Escape Route"
+            },
+            {
+                name: "Cho La Pass",
+                coords: [27.9167, 86.7000],
+                elevation: "5420m",
+                difficulty: "Very Hard",
+                status: "Under Surveillance"
+            },
+            {
+                name: "Renjo La Pass",
+                coords: [27.9833, 86.6167],
+                elevation: "5340m",
+                difficulty: "Hard",
+                status: "Clear"
+            }
+        ];
+        
+        // Cultural artifact clues with educational content
+        const artifactData = [
+            {
+                coords: [27.8367, 86.7644],
+                title: "Prayer Wheel Fragment",
+                content: "Broken piece of the stolen prayer wheel found near monastery entrance. Contains partial Tibetan script about enlightenment.",
+                cultural_significance: "Prayer wheels are sacred devices for accumulating wisdom and merit in Buddhist practice.",
+                difficulty: "Easy"
+            },
+            {
+                coords: [27.9000, 86.8000],
+                title: "Yak Hair Fibers",
+                content: "Unusual yak hair fibers suggest thieves used traditional mountain transport. Pattern indicates northern route.",
+                cultural_significance: "Yaks are essential for high-altitude transportation in Himalayan cultures.",
+                difficulty: "Medium"
+            },
+            {
+                coords: [28.0000, 86.9000],
+                title: "Ancient Coins",
+                content: "Tibetan silver coins dropped during escape. Date suggests connection to historical trade routes.",
+                cultural_significance: "These coins represent centuries of trans-Himalayan trade and cultural exchange.",
+                difficulty: "Medium"
+            },
+            {
+                coords: [28.1500, 86.8522],
+                title: "Monastery Records",
+                content: "Rongbuk monks' written testimony describes group heading toward sacred mountain caves.",
+                cultural_significance: "Monastery records preserve cultural memory and witness accounts.",
+                difficulty: "Hard"
+            },
+            {
+                coords: [28.2000, 87.0000],
+                title: "Sacred Text Page",
+                content: "Torn page from stolen prayer wheel found on mountain path. Contains protection mantras.",
+                cultural_significance: "Sacred texts are considered living embodiments of Buddha's teachings.",
+                difficulty: "Hard"
+            },
+            {
+                coords: [28.3000, 87.1000],
+                title: "Cave Paintings",
+                content: "Ancient cave shows historical hiding spots used by treasure protectors during invasions.",
+                cultural_significance: "Cave art represents thousands of years of spiritual and cultural continuity.",
+                difficulty: "Very Hard"
+            },
+            {
+                coords: [28.3500, 87.1500],
+                title: "The Sacred Treasure",
+                content: "Prayer wheel recovered intact! Hidden in sacred cave by thieves who experienced spiritual awakening.",
+                cultural_significance: "The power of sacred objects to transform even those who would steal them.",
+                difficulty: "Very Hard"
+            }
+        ];
+        
+        // Add elevation zones
+        function addElevationZones() {
+            const elevationZones = [
+                {
+                    name: "Death Zone (>8000m)",
+                    coords: [[28.0000, 86.5000], [28.5000, 87.2000], [28.3000, 87.5000], [27.8000, 86.8000]],
+                    color: "#e74c3c",
+                    opacity: 0.3
+                },
+                {
+                    name: "High Altitude (4000-8000m)",
+                    coords: [[27.5000, 86.0000], [29.0000, 88.0000], [28.8000, 88.5000], [27.3000, 86.5000]],
+                    color: "#2980b9",
+                    opacity: 0.2
+                }
+            ];
+            
+            elevationZones.forEach(zone => {
+                const polygon = L.polygon(zone.coords, {
+                    color: zone.color,
+                    fillColor: zone.color,
+                    fillOpacity: zone.opacity,
+                    weight: 2
+                }).addTo(layers.elevation);
+                
+                polygon.bindPopup(`
+                    <div style="font-family: 'Roboto', sans-serif;">
+                        <h3 style="color: ${zone.color}; margin-bottom: 10px;">${zone.name}</h3>
+                        <p><strong>Risk Level:</strong> ${zone.name.includes('Death') ? 'EXTREME' : 'HIGH'}</p>
+                        <p><strong>Oxygen Level:</strong> ${zone.name.includes('Death') ? '<30%' : '30-60%'}</p>
+                    </div>
+                `);
+            });
+        }
+        
+        // Add monasteries
+        function addMonasteries() {
+            monasteryData.forEach(monastery => {
+                const monasteryIcon = L.divIcon({
+                    className: 'monastery-marker',
+                    html: `<div style="background: #f39c12; border: 3px solid white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-size: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">🏛️</div>`,
+                    iconSize: [30, 30],
+                    iconAnchor: [15, 15]
+                });
+                
+                const marker = L.marker(monastery.coords, { icon: monasteryIcon }).addTo(layers.monasteries);
+                
+                marker.bindPopup(`
+                    <div style="font-family: 'Roboto', sans-serif; min-width: 200px;">
+                        <h3 style="color: #f39c12; margin-bottom: 10px;">${monastery.name}</h3>
+                        <p><strong>Elevation:</strong> ${monastery.elevation}</p>
+                        <p><strong>Status:</strong> <span style="color: ${getStatusColor(monastery.status)}">${monastery.status}</span></p>
+                        <p style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 5px;">${monastery.description}</p>
+                    </div>
+                `);
+            });
+        }
+        
+        // Add mountain passes
+        function addPasses() {
+            passesData.forEach(pass => {
+                const passIcon = L.divIcon({
+                    className: 'pass-marker',
+                    html: `<div style="background: #8e44ad; border: 3px solid white; border-radius: 50%; width: 25px; height: 25px; display: flex; align-items: center; justify-content: center; font-size: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">🛤️</div>`,
+                    iconSize: [25, 25],
+                    iconAnchor: [12.5, 12.5]
+                });
+                
+                const marker = L.marker(pass.coords, { icon: passIcon }).addTo(layers.passes);
+                
+                marker.bindPopup(`
+                    <div style="font-family: 'Roboto', sans-serif;">
+                        <h3 style="color: #8e44ad; margin-bottom: 10px;">${pass.name}</h3>
+                        <p><strong>Elevation:</strong> ${pass.elevation}</p>
+                        <p><strong>Difficulty:</strong> ${pass.difficulty}</p>
+                        <p><strong>Status:</strong> ${pass.status}</p>
+                    </div>
+                `);
+            });
+        }
+        
+        // Add artifact clues
+        function addArtifacts() {
+            artifactData.forEach((artifact, index) => {
+                const artifactIcon = L.divIcon({
+                    className: 'artifact-marker',
+                    html: `<div style="background: #e74c3c; border: 3px solid white; border-radius: 50%; width: 25px; height: 25px; display: flex; align-items: center; justify-content: center; font-size: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.3); cursor: pointer;">💎</div>`,
+                    iconSize: [25, 25],
+                    iconAnchor: [12.5, 12.5]
+                });
+                
+                const marker = L.marker(artifact.coords, { icon: artifactIcon }).addTo(layers.artifacts);
+                
+                marker.on('click', function() {
+                    discoverArtifact(index, artifact);
+                });
+                
+                marker.bindPopup(`
+                    <div style="font-family: 'Roboto', sans-serif; min-width: 250px;">
+                        <h3 style="color: #e74c3c; margin-bottom: 10px;">💎 ${artifact.title}</h3>
+                        <p style="background: #f8f9fa; padding: 10px; border-radius: 5px; margin-bottom: 10px;">${artifact.content}</p>
+                        <p style="background: #fff3cd; padding: 8px; border-radius: 5px; margin-bottom: 10px; border-left: 4px solid #f39c12;">
+                            <strong>Cultural Note:</strong> ${artifact.cultural_significance}
+                        </p>
+                        <p><strong>Difficulty:</strong> <span style="color: ${getDifficultyColor(artifact.difficulty)}">${artifact.difficulty}</span></p>
+                        <button onclick="discoverArtifact(${index}, ${JSON.stringify(artifact).replace(/"/g, '&quot;')})" 
+                                style="background: #2ecc71; color: white; border: none; padding: 8px 15px; border-radius: 5px; margin-top: 10px; cursor: pointer;">
+                            📝 Record Discovery
+                        </button>
+                    </div>
+                `);
+            });
+        }
+        
+        // Artifact discovery function
+        function discoverArtifact(index, artifact) {
+            artifactsFound++;
+            document.getElementById('artifactCount').textContent = artifactsFound;
+            
+            const artifactLog = document.getElementById('artifactLog');
+            const artifactItem = document.createElement('div');
+            artifactItem.className = 'artifact-item';
+            artifactItem.innerHTML = `
+                <div class="artifact-title">Discovery #${artifactsFound}: ${artifact.title}</div>
+                <p>${artifact.content}</p>
+                <p style="margin-top: 8px; font-size: 0.9em; color: #f39c12; font-weight: 500;">
+                    <strong>Cultural Insight:</strong> ${artifact.cultural_significance}
+                </p>
+                <p style="margin-top: 8px; font-size: 0.9em; color: #666;">
+                    <strong>Difficulty:</strong> ${artifact.difficulty}
+                </p>
+            `;
+            
+            if (artifactLog.children.length === 1 && artifactLog.children[0].tagName === 'P') {
+                artifactLog.innerHTML = '';
+            }
+            
+            artifactLog.appendChild(artifactItem);
+            
+            // Check if all artifacts found
+            if (artifactsFound === totalArtifacts) {
+                setTimeout(() => {
+                    alert('🎉 SACRED MISSION ACCOMPLISHED! You have recovered the stolen prayer wheel and learned about Himalayan culture! The thieves experienced a spiritual awakening and chose to return the treasure to its rightful place. Case #3 SOLVED!');
+                }, 500);
+            }
+        }
+        
+        // Helper functions
+        function getStatusColor(status) {
+            if (status.includes('Crime')) return '#e74c3c';
+            if (status.includes('Witness')) return '#f39c12';
+            if (status.includes('Safe')) return '#2ecc71';
+            if (status.includes('Investigation')) return '#3498db';
+            return '#333';
+        }
+        
+        function getDifficultyColor(difficulty) {
+            switch(difficulty) {
+                case 'Easy': return '#2ecc71';
+                case 'Medium': return '#f39c12';
+                case 'Hard': return '#e74c3c';
+                case 'Very Hard': return '#8e44ad';
+                default: return '#333';
+            }
+        }
+        
+        // Layer toggle functions
+        function toggleLayer(layerName) {
+            if (himalayasMap.hasLayer(layers[layerName])) {
+                himalayasMap.removeLayer(layers[layerName]);
+            } else {
+                himalayasMap.addLayer(layers[layerName]);
+            }
+        }
+        
+        // Investigation panel toggle
+        function togglePanel() {
+            const panel = document.getElementById('investigationPanel');
+            panel.classList.toggle('open');
+        }
+        
+        // Print function
+        function printMap() {
+            window.print();
+        }
+        
+        // Update elevation display on map move
+        himalayasMap.on('moveend', function() {
+            const center = himalayasMap.getCenter();
+            // Simulate elevation based on latitude (higher = more north in Himalayas)
+            const elevation = Math.round(2000 + (center.lat - 27) * 1000);
+            document.getElementById('currentElevation').textContent = elevation + 'm';
+        });
+        
+        // Initialize map with all layers
+        function initializeMap() {
+            addElevationZones();
+            addMonasteries();
+            addPasses();
+            addArtifacts();
+            
+            // Add all layers by default
+            Object.values(layers).forEach(layer => {
+                himalayasMap.addLayer(layer);
+            });
+            
+            // Add scale
+            L.control.scale().addTo(himalayasMap);
+            
+            // Add coordinates display on click
+            himalayasMap.on('click', function(e) {
+                console.log(`Clicked at: ${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)}`);
+            });
+        }
+        
+        // Initialize the map when page loads
+        document.addEventListener('DOMContentLoaded', initializeMap);
+    </script>
+</body>
+</html>

@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌳 Amazon Rainforest Investigation Map - Case #1</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- Leaflet Plugins -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-draw@1.0.4/dist/leaflet.draw.css"/>
+    
+    <style>
+        :root {
+            --primary-color: #ff6b35;
+            --secondary-color: #4ecdc4;
+            --accent-color: #ffd700;
+            --success-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --amazon-green: #1e3a14;
+            --amazon-light: #4a7c59;
+            --water-blue: #0077be;
+        }
+        
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+        }
+        
+        body { 
+            font-family: 'Roboto', sans-serif; 
+            background: linear-gradient(135deg, #1e3a14 0%, #4a7c59 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .detective-header {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 4px solid var(--accent-color);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        
+        .case-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--amazon-green);
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .case-subtitle {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .mission-brief {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px auto;
+            max-width: 800px;
+            font-weight: 500;
+        }
+        
+        .map-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,255,255,0.9);
+            padding: 15px 20px;
+            border-bottom: 2px solid var(--amazon-light);
+        }
+        
+        .control-group {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .detective-btn {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .detective-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+        
+        .evidence-counter {
+            background: var(--success-color);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+        }
+        
+        #amazonMap {
+            height: 70vh;
+            width: 100%;
+            border: 3px solid var(--amazon-light);
+        }
+        
+        .investigation-panel {
+            position: fixed;
+            right: -400px;
+            top: 0;
+            width: 400px;
+            height: 100vh;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            padding: 20px;
+            box-shadow: -5px 0 20px rgba(0,0,0,0.3);
+            transition: right 0.3s ease;
+            z-index: 1001;
+            overflow-y: auto;
+        }
+        
+        .investigation-panel.open {
+            right: 0;
+        }
+        
+        .panel-header {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--amazon-green);
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 10px;
+        }
+        
+        .evidence-item {
+            background: linear-gradient(45deg, #f8f9fa, #e9ecef);
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            border-left: 4px solid var(--amazon-light);
+        }
+        
+        .evidence-title {
+            font-weight: 700;
+            color: var(--amazon-green);
+            margin-bottom: 8px;
+        }
+        
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: var(--danger-color);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            cursor: pointer;
+            z-index: 1002;
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+        
+        .legend {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(255,255,255,0.9);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+        
+        .legend-title {
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--amazon-green);
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 10px;
+            border: 2px solid #333;
+        }
+        
+        @media print {
+            .detective-header, .map-controls, .investigation-panel, .back-btn { display: none; }
+            #amazonMap { height: 100vh; border: none; }
+        }
+    </style>
+</head>
+<body>
+    <button class="back-btn" onclick="window.history.back()">← Back to Maps Central</button>
+    
+    <div class="detective-header">
+        <h1 class="case-title">🌳 CASE #1: AMAZON INVESTIGATION</h1>
+        <p class="case-subtitle">Track Dr. Rivera Through the World's Largest Rainforest</p>
+        <div class="mission-brief">
+            <strong>MISSION:</strong> Dr. Rivera has disappeared while researching deforestation patterns in the Amazon. 
+            Use this interactive map to track her route through river systems, vegetation zones, and remote research stations.
+        </div>
+    </div>
+    
+    <div class="map-controls">
+        <div class="control-group">
+            <button class="detective-btn" onclick="toggleLayer('rivers')">🌊 Rivers</button>
+            <button class="detective-btn" onclick="toggleLayer('vegetation')">🌿 Vegetation</button>
+            <button class="detective-btn" onclick="toggleLayer('stations')">🏠 Stations</button>
+            <button class="detective-btn" onclick="toggleLayer('evidence')">🔍 Evidence</button>
+        </div>
+        <div class="control-group">
+            <div class="evidence-counter">Evidence Found: <span id="evidenceCount">0</span>/8</div>
+            <button class="detective-btn" onclick="togglePanel()">📋 Investigation Notes</button>
+            <button class="detective-btn" onclick="printMap()">🖨️ Print Map</button>
+        </div>
+    </div>
+    
+    <div id="amazonMap"></div>
+    
+    <div class="legend">
+        <div class="legend-title">Map Legend</div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #0077be;"></div>
+            <span>Major Rivers</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #2ecc71;"></div>
+            <span>Dense Forest</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #f39c12;"></div>
+            <span>Research Stations</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #e74c3c;"></div>
+            <span>Evidence Locations</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #9b59b6;"></div>
+            <span>Last Known Position</span>
+        </div>
+    </div>
+    
+    <div class="investigation-panel" id="investigationPanel">
+        <div class="panel-header">🕵️ Investigation Log</div>
+        <div id="evidenceLog">
+            <p style="color: #666; font-style: italic;">Click on evidence markers to record your findings...</p>
+        </div>
+    </div>
+    
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
+    
+    <script>
+        // Initialize the map centered on Amazon region
+        const amazonMap = L.map('amazonMap').setView([-3.4653, -62.2159], 6);
+        
+        // Add multiple base layers for educational variety
+        const baseLayers = {
+            'Satellite': L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+            }),
+            'Terrain': L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+                attribution: 'Map data: &copy; OpenStreetMap contributors, SRTM | Map style: &copy; OpenTopoMap (CC-BY-SA)'
+            }),
+            'Street Map': L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            })
+        };
+        
+        // Start with satellite view for better Amazon visualization
+        baseLayers['Satellite'].addTo(amazonMap);
+        
+        // Add layer control
+        L.control.layers(baseLayers).addTo(amazonMap);
+        
+        // Layer groups for different map elements
+        const layers = {
+            rivers: L.layerGroup(),
+            vegetation: L.layerGroup(),
+            stations: L.layerGroup(),
+            evidence: L.layerGroup()
+        };
+        
+        // Evidence tracking
+        let evidenceFound = 0;
+        const totalEvidence = 8;
+        
+        // Amazon River system data
+        const riverData = [
+            {
+                name: "Amazon River",
+                coords: [[-3.1419, -59.9716], [-3.4653, -62.2159], [-3.7436, -64.3086], [-4.2581, -69.9406]],
+                color: "#0077be",
+                weight: 6
+            },
+            {
+                name: "Rio Negro",
+                coords: [[-0.1314, -67.0164], [-1.4558, -62.2159], [-3.1419, -59.9716]],
+                color: "#003d5c",
+                weight: 4
+            },
+            {
+                name: "Madeira River",
+                coords: [[-3.3792, -58.9878], [-4.8844, -60.6892], [-7.2307, -62.7834]],
+                color: "#004d73",
+                weight: 4
+            }
+        ];
+        
+        // Research stations data
+        const stationData = [
+            {
+                name: "Manaus Research Station",
+                coords: [-3.1190, -60.0217],
+                status: "Active",
+                lastContact: "Day 1",
+                description: "Dr. Rivera's starting point. Boat logs show departure heading west."
+            },
+            {
+                name: "Tefe Field Station",
+                coords: [-3.3514, -64.7103],
+                status: "Visited",
+                lastContact: "Day 3",
+                description: "Local guides confirm Dr. Rivera passed through. Collected soil samples."
+            },
+            {
+                name: "Remote Outpost Alpha",
+                coords: [-4.2558, -69.9406],
+                status: "Unknown",
+                lastContact: "Day 5",
+                description: "Emergency beacon activated briefly. No response to radio calls."
+            }
+        ];
+        
+        // Evidence locations with educational content
+        const evidenceData = [
+            {
+                coords: [-3.1190, -60.0217],
+                title: "Research Notes",
+                content: "Dr. Rivera's notebook found at dock. Shows interest in deforestation patterns along tributary systems.",
+                type: "document",
+                difficulty: "Easy"
+            },
+            {
+                coords: [-3.3514, -64.7103],
+                title: "GPS Device",
+                content: "Handheld GPS shows waypoints leading deeper into rainforest. Battery at 23%.",
+                type: "technology",
+                difficulty: "Medium"
+            },
+            {
+                coords: [-3.7436, -64.3086],
+                title: "Boat Engine Part",
+                content: "Damaged propeller found on riverbank. Indicates possible mechanical failure.",
+                type: "physical",
+                difficulty: "Medium"
+            },
+            {
+                coords: [-4.0558, -67.2406],
+                title: "Emergency Beacon Signal",
+                content: "Weak signal detected. Triangulation suggests location in dense canopy area.",
+                type: "signal",
+                difficulty: "Hard"
+            },
+            {
+                coords: [-3.8436, -66.3086],
+                title: "Local Witness Account",
+                content: "Indigenous guide reports seeing research boat heading toward uncharted tributary.",
+                type: "testimony",
+                difficulty: "Medium"
+            },
+            {
+                coords: [-4.1558, -68.5406],
+                title: "Satellite Phone",
+                content: "Found damaged satellite phone. Last message mentions 'unusual deforestation pattern discovered'.",
+                type: "technology",
+                difficulty: "Hard"
+            },
+            {
+                coords: [-4.2558, -69.2406],
+                title: "Campsite Remains",
+                content: "Temporary camp with research equipment. Shows signs of hasty departure.",
+                type: "physical",
+                difficulty: "Hard"
+            },
+            {
+                coords: [-4.2558, -69.9406],
+                title: "Final Radio Transmission",
+                content: "Last known communication: 'Have made significant discovery. Coordinates follow...' [TRANSMISSION ENDS]",
+                type: "signal",
+                difficulty: "Very Hard"
+            }
+        ];
+        
+        // Add rivers to map
+        function addRivers() {
+            riverData.forEach(river => {
+                const riverLine = L.polyline(river.coords, {
+                    color: river.color,
+                    weight: river.weight,
+                    opacity: 0.8
+                }).addTo(layers.rivers);
+                
+                riverLine.bindPopup(`
+                    <div style="font-family: 'Roboto', sans-serif;">
+                        <h3 style="color: #0077be; margin-bottom: 10px;">${river.name}</h3>
+                        <p><strong>Length:</strong> Major waterway</p>
+                        <p><strong>Navigation:</strong> Dr. Rivera's likely route</p>
+                        <p><strong>Current:</strong> Moderate to strong</p>
+                    </div>
+                `);
+            });
+        }
+        
+        // Add research stations
+        function addStations() {
+            stationData.forEach(station => {
+                const stationIcon = L.divIcon({
+                    className: 'station-marker',
+                    html: `<div style="background: #f39c12; border: 3px solid white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-size: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">🏠</div>`,
+                    iconSize: [30, 30],
+                    iconAnchor: [15, 15]
+                });
+                
+                const marker = L.marker(station.coords, { icon: stationIcon }).addTo(layers.stations);
+                
+                marker.bindPopup(`
+                    <div style="font-family: 'Roboto', sans-serif; min-width: 200px;">
+                        <h3 style="color: #f39c12; margin-bottom: 10px;">${station.name}</h3>
+                        <p><strong>Status:</strong> <span style="color: ${station.status === 'Active' ? '#2ecc71' : station.status === 'Visited' ? '#f39c12' : '#e74c3c'}">${station.status}</span></p>
+                        <p><strong>Last Contact:</strong> ${station.lastContact}</p>
+                        <p style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 5px;">${station.description}</p>
+                    </div>
+                `);
+            });
+        }
+        
+        // Add evidence markers with interactive discovery
+        function addEvidence() {
+            evidenceData.forEach((evidence, index) => {
+                const evidenceIcon = L.divIcon({
+                    className: 'evidence-marker',
+                    html: `<div style="background: #e74c3c; border: 3px solid white; border-radius: 50%; width: 25px; height: 25px; display: flex; align-items: center; justify-content: center; font-size: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.3); cursor: pointer;">🔍</div>`,
+                    iconSize: [25, 25],
+                    iconAnchor: [12.5, 12.5]
+                });
+                
+                const marker = L.marker(evidence.coords, { icon: evidenceIcon }).addTo(layers.evidence);
+                
+                marker.on('click', function() {
+                    discoverEvidence(index, evidence);
+                });
+                
+                marker.bindPopup(`
+                    <div style="font-family: 'Roboto', sans-serif; min-width: 250px;">
+                        <h3 style="color: #e74c3c; margin-bottom: 10px;">🔍 ${evidence.title}</h3>
+                        <p style="background: #f8f9fa; padding: 10px; border-radius: 5px; margin-bottom: 10px;">${evidence.content}</p>
+                        <p><strong>Evidence Type:</strong> ${evidence.type}</p>
+                        <p><strong>Difficulty:</strong> <span style="color: ${getDifficultyColor(evidence.difficulty)}">${evidence.difficulty}</span></p>
+                        <button onclick="discoverEvidence(${index}, ${JSON.stringify(evidence).replace(/"/g, '&quot;')})" 
+                                style="background: #2ecc71; color: white; border: none; padding: 8px 15px; border-radius: 5px; margin-top: 10px; cursor: pointer;">
+                            📝 Record Evidence
+                        </button>
+                    </div>
+                `);
+            });
+        }
+        
+        // Evidence discovery function
+        function discoverEvidence(index, evidence) {
+            evidenceFound++;
+            document.getElementById('evidenceCount').textContent = evidenceFound;
+            
+            const evidenceLog = document.getElementById('evidenceLog');
+            const evidenceItem = document.createElement('div');
+            evidenceItem.className = 'evidence-item';
+            evidenceItem.innerHTML = `
+                <div class="evidence-title">Evidence #${evidenceFound}: ${evidence.title}</div>
+                <p>${evidence.content}</p>
+                <p style="margin-top: 8px; font-size: 0.9em; color: #666;">
+                    <strong>Type:</strong> ${evidence.type} | 
+                    <strong>Difficulty:</strong> ${evidence.difficulty}
+                </p>
+            `;
+            
+            if (evidenceLog.children.length === 1 && evidenceLog.children[0].tagName === 'P') {
+                evidenceLog.innerHTML = '';
+            }
+            
+            evidenceLog.appendChild(evidenceItem);
+            
+            // Check if all evidence found
+            if (evidenceFound === totalEvidence) {
+                setTimeout(() => {
+                    alert('🎉 Congratulations! You have found all evidence and successfully tracked Dr. Rivera through the Amazon! Case #1 SOLVED!');
+                }, 500);
+            }
+        }
+        
+        // Helper function for difficulty colors
+        function getDifficultyColor(difficulty) {
+            switch(difficulty) {
+                case 'Easy': return '#2ecc71';
+                case 'Medium': return '#f39c12';
+                case 'Hard': return '#e74c3c';
+                case 'Very Hard': return '#8e44ad';
+                default: return '#333';
+            }
+        }
+        
+        // Layer toggle functions
+        function toggleLayer(layerName) {
+            if (amazonMap.hasLayer(layers[layerName])) {
+                amazonMap.removeLayer(layers[layerName]);
+            } else {
+                amazonMap.addLayer(layers[layerName]);
+            }
+        }
+        
+        // Investigation panel toggle
+        function togglePanel() {
+            const panel = document.getElementById('investigationPanel');
+            panel.classList.toggle('open');
+        }
+        
+        // Print function
+        function printMap() {
+            window.print();
+        }
+        
+        // Initialize map with all layers
+        function initializeMap() {
+            addRivers();
+            addStations();
+            addEvidence();
+            
+            // Add all layers by default
+            Object.values(layers).forEach(layer => {
+                amazonMap.addLayer(layer);
+            });
+            
+            // Add scale
+            L.control.scale().addTo(amazonMap);
+            
+            // Add coordinates display on click
+            amazonMap.on('click', function(e) {
+                console.log(`Clicked at: ${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)}`);
+            });
+        }
+        
+        // Initialize the map when page loads
+        document.addEventListener('DOMContentLoaded', initializeMap);
+    </script>
+</body>
+</html>

@@ -318,6 +318,24 @@ app.get('/simulation/student-materials', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'detective-academy', 'student-materials.html'));
 });
 
+// Interactive Detective Maps Routes
+app.get('/detective-academy/maps/amazon-investigation-map.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'detective-academy', 'maps', 'amazon-investigation-map.html'));
+});
+
+app.get('/detective-academy/maps/sahara-investigation-map.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'detective-academy', 'maps', 'sahara-investigation-map.html'));
+});
+
+app.get('/detective-academy/maps/himalayas-investigation-map.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'detective-academy', 'maps', 'himalayas-investigation-map.html'));
+});
+
+// Maps Central Route
+app.get('/detective-academy/maps-central', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'detective-academy', 'maps-central.html'));
+});
+
 // Student Materials Routes - Serve individual handouts and worksheets
 app.get('/student-materials/:materialId', (req, res) => {
   const { materialId } = req.params;

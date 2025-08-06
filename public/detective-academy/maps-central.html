@@ -196,6 +196,48 @@
             box-shadow: 0 8px 25px rgba(46,204,113,0.3);
         }
         
+        .map-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .interactive-button {
+            flex: 1;
+            padding: 12px;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .interactive-button:hover {
+            background: linear-gradient(45deg, var(--secondary-color), var(--info-color));
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(255,107,53,0.3);
+        }
+        
+        .print-button {
+            flex: 1;
+            padding: 12px;
+            background: linear-gradient(45deg, var(--success-color), var(--secondary-color));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
         .category-title {
             font-family: 'Orbitron', monospace;
             font-size: 2rem;
@@ -356,7 +398,7 @@
             <h2 class="category-title">🌍 Case Investigation Maps</h2>
             
             <div class="maps-grid">
-                <div class="map-card" onclick="printMap('amazon-rainforest')">
+                <div class="map-card" onclick="openInteractiveMap('amazon-investigation-map.html')">
                     <div class="case-badge">Case #1: Amazon</div>
                     <div class="map-icon">🌳</div>
                     <h3 class="map-title">Amazon Rainforest Investigation Map</h3>
@@ -368,10 +410,13 @@
                         <li>📍 Evidence location markers</li>
                         <li>🧭 Navigation grid system</li>
                     </ul>
-                    <button class="print-button" onclick="event.stopPropagation(); printMap('amazon-rainforest')">🖨️ Print Amazon Map</button>
+                    <div class="map-actions">
+                        <button class="interactive-button" onclick="event.stopPropagation(); openInteractiveMap('amazon-investigation-map.html')">🗺️ Interactive Map</button>
+                        <button class="print-button" onclick="event.stopPropagation(); printMap('amazon-rainforest')">🖨️ Print Version</button>
+                    </div>
                 </div>
                 
-                <div class="map-card" onclick="printMap('sahara-desert')">
+                <div class="map-card" onclick="openInteractiveMap('sahara-investigation-map.html')">
                     <div class="case-badge">Case #2: Sahara</div>
                     <div class="map-icon">🏜️</div>
                     <h3 class="map-title">Sahara Desert Investigation Map</h3>
@@ -383,10 +428,13 @@
                         <li>🏔️ Dune systems & landforms</li>
                         <li>⭐ Astronomical navigation aids</li>
                     </ul>
-                    <button class="print-button" onclick="event.stopPropagation(); printMap('sahara-desert')">🖨️ Print Sahara Map</button>
+                    <div class="map-actions">
+                        <button class="interactive-button" onclick="event.stopPropagation(); openInteractiveMap('sahara-investigation-map.html')">🗺️ Interactive Map</button>
+                        <button class="print-button" onclick="event.stopPropagation(); printMap('sahara-desert')">🖨️ Print Version</button>
+                    </div>
                 </div>
                 
-                <div class="map-card" onclick="printMap('himalayas-mountains')">
+                <div class="map-card" onclick="openInteractiveMap('himalayas-investigation-map.html')">
                     <div class="case-badge">Case #3: Himalayas</div>
                     <div class="map-icon">🏔️</div>
                     <h3 class="map-title">Himalayas Cultural Geography Map</h3>
@@ -398,7 +446,10 @@
                         <li>❄️ Vertical climate zones</li>
                         <li>🌸 Cultural region boundaries</li>
                     </ul>
-                    <button class="print-button" onclick="event.stopPropagation(); printMap('himalayas-mountains')">🖨️ Print Himalayas Map</button>
+                    <div class="map-actions">
+                        <button class="interactive-button" onclick="event.stopPropagation(); openInteractiveMap('himalayas-investigation-map.html')">🗺️ Interactive Map</button>
+                        <button class="print-button" onclick="event.stopPropagation(); printMap('himalayas-mountains')">🖨️ Print Version</button>
+                    </div>
                 </div>
                 
                 <div class="map-card" onclick="printMap('amazon-river-basin')">
@@ -506,6 +557,11 @@
     </div>
     
     <script>
+        function openInteractiveMap(mapFile) {
+            // Open interactive map in new tab
+            window.open(`/detective-academy/maps/${mapFile}`, '_blank');
+        }
+        
         function printMap(mapType) {
             // Open print-friendly version of specific map
             window.open(`/maps/${mapType}?print=true`, '_blank');
