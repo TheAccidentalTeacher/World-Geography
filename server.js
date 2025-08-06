@@ -315,7 +315,211 @@ app.get('/simulation/student-dashboard', (req, res) => {
 });
 
 app.get('/simulation/student-materials', (req, res) => {
-  res.send('<h1>Student Materials</h1><p>Under construction</p><a href="/simulation">Back to Hub</a>');
+  res.sendFile(path.join(__dirname, 'public', 'detective-academy', 'student-materials.html'));
+});
+
+// Student Materials Routes - Serve individual handouts and worksheets
+app.get('/student-materials/:materialId', (req, res) => {
+  const { materialId } = req.params;
+  const { print } = req.query;
+  
+  try {
+    let filePath = '';
+    let fileName = '';
+    
+    // Map material IDs to actual files
+    switch (materialId) {
+      case 'setup-day-handout':
+        fileName = 'Setup_Day_Student_Handout.md';
+        break;
+      case 'day-1-handout':
+        fileName = 'Day_1_Student_Handout.md';
+        break;
+      case 'day-2-handout':
+        fileName = 'Day_2_Student_Handout.md';
+        break;
+      case 'day-3-handout':
+        fileName = 'Day_3_Student_Handout.md';
+        break;
+      case 'day-5-handout':
+        fileName = 'Day_5_Student_Handout.md';
+        break;
+      case 'amazon-evidence-analysis':
+        fileName = 'Amazon_Evidence_Analysis_Advanced.md';
+        break;
+      case 'investigation-journal':
+        fileName = 'Investigation_Journal_Complete.md';
+        break;
+      case 'geographic-skills-rubrics':
+        fileName = 'Assessment_Rubrics_DOK_3_4.md';
+        break;
+      // Add placeholder responses for materials that need to be created
+      case 'detective-skills-assessment':
+      case 'amazon-river-mapping':
+      case 'day-4-handout':
+      case 'desert-landforms-guide':
+      case 'desert-survival-assessment':
+      case 'day-6-handout':
+      case 'elevation-impact-analysis':
+      case 'cultural-artifact-investigation':
+      case 'day-7-handout':
+      case 'day-8-handout':
+      case 'watershed-analysis-project':
+      case 'river-pollution-investigation':
+      case 'day-9-handout':
+      case 'day-10-handout':
+      case 'urban-planning-challenge':
+      case 'metropolitan-mystery-mapping':
+      case 'day-11-handout':
+      case 'day-12-handout':
+      case 'boundary-dispute-simulation':
+      case 'political-geography-case-study':
+      case 'case-portfolio-template':
+      case 'final-detective-certification':
+      case 'geographic-reference-guide':
+        return res.send(`
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>Student Material - Geographic Detective Academy</title>
+              <style>
+                  body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+                  .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; }
+                  .header { text-align: center; margin-bottom: 30px; }
+                  .placeholder { background: #fff3cd; border: 1px solid #ffeaa7; padding: 20px; border-radius: 5px; margin: 20px 0; }
+                  .back-link { display: inline-block; margin-top: 20px; padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 5px; }
+                  @media print { .back-link { display: none; } }
+              </style>
+          </head>
+          <body>
+              <div class="container">
+                  <div class="header">
+                      <h1>🕵️ Geographic Detective Academy</h1>
+                      <h2>Student Material: ${materialId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</h2>
+                  </div>
+                  <div class="placeholder">
+                      <h3>📝 Material Under Development</h3>
+                      <p><strong>Material Type:</strong> ${materialId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</p>
+                      <p><strong>Status:</strong> This material is currently being developed and will be available soon.</p>
+                      <p><strong>Description:</strong> This worksheet/handout will provide DOK 3-4 level activities to support deep geographic learning and investigation skills.</p>
+                      <p><strong>Academic Focus:</strong> Advanced geographic thinking, evidence analysis, and critical reasoning skills appropriate for middle school students.</p>
+                      <h4>🎯 Placeholder Content Structure:</h4>
+                      <ul>
+                          <li><strong>Case Context:</strong> Detailed scenario and geographic setting</li>
+                          <li><strong>Investigation Framework:</strong> Structured analysis and evidence collection</li>
+                          <li><strong>Critical Thinking Questions:</strong> DOK 3-4 level analytical challenges</li>
+                          <li><strong>Geographic Skills Practice:</strong> Hands-on application exercises</li>
+                          <li><strong>Assessment Integration:</strong> Performance indicators and reflection prompts</li>
+                      </ul>
+                      <p><em>📍 Note: Map placeholders and visual elements will be added for materials requiring geographic imagery.</em></p>
+                  </div>
+                  <a href="/simulation/student-materials" class="back-link">← Back to Student Materials</a>
+              </div>
+          </body>
+          </html>
+        `);
+      default:
+        return res.status(404).json({ error: 'Material not found' });
+    }
+    
+    filePath = path.join(__dirname, 'public', 'Curriculum', 'World Geography', 'Geographic_Detective_Academy_Curriculum', 'Student_Handouts', fileName);
+    
+    if (fs.existsSync(filePath)) {
+      const content = fs.readFileSync(filePath, 'utf8');
+      
+      if (print === 'true') {
+        // Return print-friendly HTML version
+        const htmlContent = `
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>Print: ${materialId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</title>
+              <style>
+                  body { font-family: 'Times New Roman', serif; font-size: 12pt; line-height: 1.5; margin: 0.5in; }
+                  h1, h2, h3 { color: #000; margin-top: 20pt; margin-bottom: 10pt; }
+                  h1 { font-size: 18pt; text-align: center; border-bottom: 2pt solid #000; padding-bottom: 10pt; }
+                  h2 { font-size: 16pt; }
+                  h3 { font-size: 14pt; }
+                  table { width: 100%; border-collapse: collapse; margin: 10pt 0; }
+                  table, th, td { border: 1pt solid #000; }
+                  th, td { padding: 8pt; text-align: left; }
+                  th { background-color: #f0f0f0; font-weight: bold; }
+                  .drawing-space { border: 1pt solid #000; height: 150pt; margin: 10pt 0; text-align: center; padding-top: 60pt; background-color: #f9f9f9; }
+                  .fill-line { border-bottom: 1pt solid #000; min-height: 20pt; margin: 5pt 0; }
+                  pre { background-color: #f5f5f5; padding: 10pt; border: 1pt solid #ccc; white-space: pre-wrap; }
+                  @page { margin: 0.5in; }
+                  @media print { 
+                      body { -webkit-print-color-adjust: exact; }
+                      .no-print { display: none; }
+                  }
+              </style>
+          </head>
+          <body>
+              ${content.replace(/# /g, '<h1>').replace(/## /g, '</h1><h2>').replace(/### /g, '</h2><h3>').replace(/\n/g, '</h3>\n').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\[(.*?)\]/g, '<div class="drawing-space">$1</div>').replace(/_+/g, '<span class="fill-line"></span>')}
+          </body>
+          </html>
+        `;
+        res.send(htmlContent);
+      } else {
+        // Return regular HTML version for viewing
+        const htmlContent = `
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>${materialId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())} - Geographic Detective Academy</title>
+              <style>
+                  body { font-family: 'Roboto', sans-serif; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); color: #fff; margin: 0; padding: 20px; }
+                  .container { max-width: 900px; margin: 0 auto; background: rgba(255,255,255,0.1); padding: 30px; border-radius: 15px; backdrop-filter: blur(10px); }
+                  .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #ffd700; padding-bottom: 20px; }
+                  h1 { color: #ffd700; font-family: 'Courier Prime', monospace; font-size: 2.5rem; margin-bottom: 10px; }
+                  h2 { color: #ffd700; font-family: 'Courier Prime', monospace; font-size: 1.8rem; margin-top: 30px; margin-bottom: 15px; }
+                  h3 { color: #ffd700; font-family: 'Courier Prime', monospace; font-size: 1.4rem; margin-top: 25px; margin-bottom: 10px; }
+                  table { width: 100%; border-collapse: collapse; margin: 20px 0; background: rgba(255,255,255,0.05); }
+                  table, th, td { border: 1px solid #ffd700; }
+                  th, td { padding: 12px; text-align: left; }
+                  th { background: rgba(255,215,0,0.2); color: #ffd700; font-weight: bold; }
+                  .drawing-space { border: 2px dashed #ffd700; height: 200px; margin: 20px 0; text-align: center; padding-top: 80px; background: rgba(255,255,255,0.05); border-radius: 10px; }
+                  .back-link { display: inline-block; margin-top: 30px; padding: 12px 24px; background: rgba(255,215,0,0.2); color: #ffd700; text-decoration: none; border-radius: 25px; border: 2px solid #ffd700; font-family: 'Courier Prime', monospace; font-weight: 700; transition: all 0.3s ease; }
+                  .back-link:hover { background: #ffd700; color: #1a1a2e; }
+                  .print-link { display: inline-block; margin-top: 10px; margin-left: 20px; padding: 12px 24px; background: rgba(0,123,255,0.2); color: #007bff; text-decoration: none; border-radius: 25px; border: 2px solid #007bff; font-family: 'Courier Prime', monospace; font-weight: 700; transition: all 0.3s ease; }
+                  .print-link:hover { background: #007bff; color: white; }
+                  pre { background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px; border: 1px solid #ffd700; white-space: pre-wrap; overflow-x: auto; }
+                  strong { color: #ffd700; }
+                  code { background: rgba(255,215,0,0.2); color: #ffd700; padding: 2px 6px; border-radius: 4px; }
+              </style>
+          </head>
+          <body>
+              <div class="container">
+                  <div class="header">
+                      <h1>🕵️ Geographic Detective Academy</h1>
+                      <h2>${materialId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</h2>
+                  </div>
+                  <div class="content">
+                      <pre>${content}</pre>
+                  </div>
+                  <div class="navigation">
+                      <a href="/simulation/student-materials" class="back-link">← Back to Student Materials</a>
+                      <a href="/student-materials/${materialId}?print=true" class="print-link" target="_blank">🖨️ Print Version</a>
+                  </div>
+              </div>
+          </body>
+          </html>
+        `;
+        res.send(htmlContent);
+      }
+    } else {
+      res.status(404).json({ error: 'Material file not found', filename: fileName });
+    }
+  } catch (error) {
+    console.error('Error serving student material:', error);
+    res.status(500).json({ error: error.message });
+  }
 });
 
 app.get('/simulation/maps', (req, res) => {

@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Materials - Geographic Detective Academy</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Roboto:wght@300;400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        
+        .detective-header {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px 0;
+            border-bottom: 3px solid #ffd700;
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+        }
+        
+        .back-button {
+            background: rgba(255, 215, 0, 0.2);
+            border: 2px solid #ffd700;
+            color: #ffd700;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-family: 'Courier Prime', monospace;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+        
+        .back-button:hover {
+            background: #ffd700;
+            color: #1a1a2e;
+            transform: translateY(-2px);
+        }
+        
+        .header-title {
+            color: #ffd700;
+            font-family: 'Courier Prime', monospace;
+            font-size: 24px;
+            text-align: center;
+            flex-grow: 1;
+        }
+        
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .page-title {
+            text-align: center;
+            font-size: 2.5rem;
+            color: #ffd700;
+            margin-bottom: 20px;
+            font-family: 'Courier Prime', monospace;
+        }
+        
+        .materials-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+        }
+        
+        .materials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .material-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .material-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #ffd700;
+            transform: translateY(-2px);
+        }
+        
+        .material-title {
+            color: #ffd700;
+            font-family: 'Courier Prime', monospace;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .material-description {
+            color: #e0e0e0;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+        
+        .download-link {
+            background: rgba(255, 215, 0, 0.2);
+            border: 2px solid #ffd700;
+            color: #ffd700;
+            padding: 8px 16px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-family: 'Courier Prime', monospace;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            display: inline-block;
+            margin-right: 10px;
+            margin-bottom: 5px;
+        }
+        
+        .download-link:hover {
+            background: #ffd700;
+            color: #1a1a2e;
+        }
+        
+        .case-header {
+            color: #ffd700;
+            font-family: 'Courier Prime', monospace;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            text-align: center;
+            border-bottom: 2px solid #ffd700;
+            padding-bottom: 10px;
+        }
+        
+        .print-friendly-note {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid #ffd700;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 30px;
+            color: #ffd700;
+            text-align: center;
+            font-family: 'Courier Prime', monospace;
+        }
+        
+        .materials-overview {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .materials-overview h2 {
+            color: #ffd700;
+            margin-bottom: 15px;
+            font-family: 'Courier Prime', monospace;
+        }
+        
+        .materials-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .stat-card {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid #ffd700;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            color: #ffd700;
+            font-family: 'Courier Prime', monospace;
+            font-weight: 700;
+        }
+        
+        .stat-label {
+            color: #e0e0e0;
+            font-size: 0.9rem;
+        }
+        
+        /* Print styles */
+        @media print {
+            body {
+                background: white !important;
+                color: black !important;
+            }
+            
+            .detective-header,
+            .back-button,
+            .print-friendly-note {
+                display: none !important;
+            }
+            
+            .materials-section {
+                background: white !important;
+                border: 1px solid #000 !important;
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+            
+            .material-card {
+                background: white !important;
+                border: 1px solid #000 !important;
+            }
+            
+            .case-header,
+            .material-title,
+            .page-title {
+                color: #000 !important;
+            }
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .page-title {
+                font-size: 2rem;
+            }
+            
+            .materials-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="detective-header">
+        <div class="header-content">
+            <a href="/simulation" class="back-button">← Back to Hub</a>
+            <h1 class="header-title">🕵️ GEOGRAPHIC DETECTIVE ACADEMY</h1>
+            <div></div>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <h1 class="page-title">📚 Student Materials</h1>
+        
+        <div class="print-friendly-note">
+            💡 All materials below are optimized for printing. Click "Print Materials" for printer-friendly versions.
+        </div>
+        
+        <div class="materials-overview">
+            <h2>Complete Investigation Toolkit</h2>
+            <p>Comprehensive student worksheets and materials designed to support DOK 3-4 level learning through all six detective cases.</p>
+            
+            <div class="materials-stats">
+                <div class="stat-card">
+                    <div class="stat-number">25+</div>
+                    <div class="stat-label">Printable Worksheets</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">6</div>
+                    <div class="stat-label">Case Investigation Packets</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">12</div>
+                    <div class="stat-label">Assessment Rubrics</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">13</div>
+                    <div class="stat-label">Days of Materials</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Setup Day Materials -->
+        <section class="materials-section">
+            <h2 class="case-header">🎯 SETUP DAY MATERIALS</h2>
+            <div class="materials-grid">
+                <div class="material-card">
+                    <h3 class="material-title">Detective Academy Welcome Packet</h3>
+                    <p class="material-description">Complete orientation materials including pledge, toolkit introduction, and investigation process overview.</p>
+                    <a href="/student-materials/setup-day-handout" class="download-link">View Handout</a>
+                    <a href="/student-materials/setup-day-handout?print=true" class="download-link">Print Version</a>
+                </div>
+                <div class="material-card">
+                    <h3 class="material-title">Detective Skills Assessment</h3>
+                    <p class="material-description">Pre-assessment to gauge student geographic knowledge and analytical skills before training begins.</p>
+                    <a href="/student-materials/detective-skills-assessment" class="download-link">View Assessment</a>
+                    <a href="/student-materials/detective-skills-assessment?print=true" class="download-link">Print Version</a>
+                </div>
+                <div class="material-card">
+                    <h3 class="material-title">Investigation Journal Template</h3>
+                    <p class="material-description">Structured journal template for students to track observations, evidence, and conclusions across all cases.</p>
+                    <a href="/student-materials/investigation-journal" class="download-link">View Journal</a>
+                    <a href="/student-materials/investigation-journal?print=true" class="download-link">Print Version</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Case 1: Amazon -->
+        <section class="materials-section">
+            <h2 class="case-header">🌿 CASE #1: MYSTERY IN THE AMAZON (Days 1-2)</h2>
+            <div class="materials-grid">
+                <div class="material-card">
+                    <h3 class="material-title">Day 1: Physical Geography Investigation</h3>
+                    <p class="material-description">Amazon rainforest analysis worksheet focusing on physical geography features and their impact on navigation.</p>
+                    <a href="/student-materials/day-1-handout" class="download-link">View Handout</a>
+                    <a href="/student-materials/day-1-handout?print=true" class="download-link">Print Version</a>
+                </div>
+                <div class="material-card">
+                    <h3 class="material-title">Day 2: Climate and Vegetation Analysis</h3>
+                    <p class="material-description">Advanced analysis of Amazon climate patterns and vegetation zones with missing person investigation.</p>
+                    <a href="/student-materials/day-2-handout" class="download-link">View Handout</a>
+                    <a href="/student-materials/day-2-handout?print=true" class="download-link">Print Version</a>
+                </div>
+                <div class="material-card">
+                    <h3 class="material-title">Amazon Evidence Analysis Worksheet</h3>
+                    <p class="material-description">DOK 3-4 critical thinking worksheet for synthesizing evidence and formulating hypotheses.</p>
+                    <a href="/student-materials/amazon-evidence-analysis" class="download-link">View Worksheet</a>
+                    <a href="/student-materials/amazon-evidence-analysis?print=true" class="download-link">Print Version</a>
+                </div>
+                <div class="material-card">
+                    <h3 class="material-title">River Systems Mapping Activity</h3>
+                    <p class="material-description">Interactive mapping exercise to identify "meeting of waters" locations and analyze river confluence patterns.</p>
+                    <a href="/student-materials/amazon-river-mapping" class="download-link">View Activity</a>
+                    <a href="/student-materials/amazon-river-mapping?print=true" class="download-link">Print Version</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Case 2: Sahara -->
+        <section class="materials-section">
+            <h2 class="case-header">🏜️ CASE #2: MYSTERY IN THE SAHARA (Days 3-4)</h2>
+            <div class="materials-grid">
+                <div class="material-card">
+                    <h3 class="material-title">Day 3: Desert Climate Investigation</h3>
+                    <p class="material-description">Comprehensive analysis of Sahara Desert climate patterns and their impact on human activities.</p>
+                    <a href="/student-materials/day-3-handout" class="download-link">View Handout</a>
+                    <a href="/student-materials/day-3-handout?print=true" class="download-link">Print Version</a>
+                </div>
+                <div class="material-card">
+                    <h3 class="material-title">Day 4: Caravan Route Analysis</h3>
+                    <p class="material-description">Advanced investigation of historical and modern caravan routes with navigation challenges.</p>
+                    <a href="/student-materials/day-4-handout" class="download-link">View Handout</a>
+                    <a href="/student-materials/day-4-handout?print=true" class="download-link">Print Version</a>
+                </div>
+                <div class="material-card">
+                    <h3 class="material-title">Desert Landforms Identification Guide</h3>
+                    <p class="material-description">Field guide for identifying and understanding desert landform formation processes.</p>
+                    <a href="/student-materials/desert-landforms-guide" class="download-link">View Guide</a>
+                    <a href="/student-materials/desert-landforms-guide?print=true" class="download-link">Print Version</a>
+                </div>
+                <div class="material-card">
+                    <h3 class="material-title">Survival Geography Assessment</h3>
+                    <p class="material-description">Critical thinking exercise applying geographic knowledge to desert survival scenarios.</p>
+                    <a href="/student-materials/desert-survival-assessment" class="download-link">View Assessment</a>
+                    <a href="/student-materials/desert-survival-assessment?print=true" class="download-link">Print Version</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Case 3: Himalayas -->
+        <section class="materials-section">
+            <h2 class="case-header">🏔️ CASE #3: MYSTERY IN THE HIMALAYAS (Days 5-6)</h2>
+            <div class="materials-grid">
+                <div class="material-card">
+                    <h3 class="material-title">Day 5: Mountain Formation Analysis</h3>
+                    <p class="material-description">Investigation of Himalayan mountain formation processes and their impact on cultural development.</p>
+                    <a href="/student-materials/day-5-handout" class="download-link">View Handout</a>
+                    <a href="/student-materials/day-5-handout?print=true" class="download-link">Print Version</a>
+                </div>
+                <div class="material-card">
+                    <h3 class="material-title">Day 6: Cultural Geography Investigation</h3>
+                    <p class="material-description">Advanced analysis of how physical geography influences cultural practices in mountain communities.</p>
+                    <a href="/student-materials/day-6-handout" class="download-link">View Handout</a>
+                    <a href="/student-materials/day-6-handout?print=true" class="download-link">Print Version</a>
+                </div>
+                <div class="material-card">
+                    <h3 class="material-title">Elevation Impact Analysis</h3>
+                    <p class="material-description">Scientific analysis worksheet examining how elevation affects climate, vegetation, and human adaptation.</p>
+                    <a href="/student-materials/elevation-impact-analysis" class="download-link">View Analysis</a>
+                    <a href="/student-materials/elevation-impact-analysis?print=true" class="download-link">Print Version</a>
+                </div>
+                <div class="material-card">
+                    <h3 class="material-title">Cultural Artifact Investigation</h3>
+                    <p class="material-description">DOK 4 investigation connecting physical geography to cultural artifact preservation and significance.</p>
+                    <a href="/student-materials/cultural-artifact-investigation" class="download-link">View Investigation</a>
+                    <a href="/student-materials/cultural-artifact-investigation?print=true" class="download-link">Print Version</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Case 4: Amazon River -->
+        <section class="materials-section">
+            <h2 class="case-header">🌊 CASE #4: MYSTERY OF THE AMAZON RIVER (Days 7-8)</h2>
+            <div class="materials-grid">
+                <div class="material-card">
+                    <h3 class="material-title">Day 7: Hydrology Investigation</h3>
+                    <p class="material-description">Advanced study of Amazon River systems, water cycle, and environmental interactions.</p>
+                    <a href="/student-materials/day-7-handout" class="download-link">View Handout</a>
+                    <a href="/student-materials/day-7-handout?print=true" class="download-link">Print Version</a>
+                </div>
+                <div class="material-card">
+                    <h3 class="material-title">Day 8: Environmental Impact Analysis</h3>
+                    <p class="material-description">Critical analysis of human impact on river systems and environmental conservation challenges.</p>
+                    <a href="/student-materials/day-8-handout" class="download-link">View Handout</a>
+                    <a href="/student-materials/day-8-handout?print=true" class="download-link">Print Version</a>
+                </div>
+                <div class="material-card">
+                    <h3 class="material-title">Watershed Analysis Project</h3>
+                    <p class="material-description">Comprehensive watershed mapping and analysis project with environmental impact assessment.</p>
+                    <a href="/student-materials/watershed-analysis-project" class="download-link">View Project</a>
+                    <a href="/student-materials/watershed-analysis-project?print=true" class="download-link">Print Version</a>
+                </div>
+                <div class="material-card">
+                    <h3 class="material-title">River Pollution Investigation</h3>
+                    <p class="material-description">Environmental detective work analyzing pollution sources and impacts on river ecosystems.</p>
+                    <a href="/student-materials/river-pollution-investigation" class="download-link">View Investigation</a>
+                    <a href="/student-materials/river-pollution-investigation?print=true" class="download-link">Print Version</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Case 5: Metropolis -->
+        <section class="materials-section">
+            <h2 class="case-header">🏙️ CASE #5: MYSTERY IN THE METROPOLIS (Days 9-10)</h2>
+            <div class="materials-grid">
+                <div class="material-card">
+                    <h3 class="material-title">Day 9: Urban Geography Analysis</h3>
+                    <p class="material-description">Investigation of urban development patterns, land use, and metropolitan growth dynamics.</p>
+                    <a href="/student-materials/day-9-handout" class="download-link">View Handout</a>
+                    <a href="/student-materials/day-9-handout?print=true" class="download-link">Print Version</a>
+                </div>
+                <div class="material-card">
+                    <h3 class="material-title">Day 10: Population and Migration Patterns</h3>
+                    <p class="material-description">Advanced analysis of population distribution, migration patterns, and urban demographic changes.</p>
+                    <a href="/student-materials/day-10-handout" class="download-link">View Handout</a>
+                    <a href="/student-materials/day-10-handout?print=true" class="download-link">Print Version</a>
+                </div>
+                <div class="material-card">
+                    <h3 class="material-title">Urban Planning Challenge</h3>
+                    <p class="material-description">DOK 4 urban planning simulation requiring synthesis of geographic knowledge and creative problem-solving.</p>
+                    <a href="/student-materials/urban-planning-challenge" class="download-link">View Challenge</a>
+                    <a href="/student-materials/urban-planning-challenge?print=true" class="download-link">Print Version</a>
+                </div>
+                <div class="material-card">
+                    <h3 class="material-title">Metropolitan Mystery Mapping</h3>
+                    <p class="material-description">Advanced GIS-style mapping activity using urban geography clues to solve metropolitan mystery.</p>
+                    <a href="/student-materials/metropolitan-mystery-mapping" class="download-link">View Activity</a>
+                    <a href="/student-materials/metropolitan-mystery-mapping?print=true" class="download-link">Print Version</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Case 6: Political Geography -->
+        <section class="materials-section">
+            <h2 class="case-header">⚖️ CASE #6: JURISDICTIONAL CRISIS (Days 11-12)</h2>
+            <div class="materials-grid">
+                <div class="material-card">
+                    <h3 class="material-title">Day 11: Political Geography Investigation</h3>
+                    <p class="material-description">Analysis of political boundaries, sovereignty issues, and territorial disputes using geographic evidence.</p>
+                    <a href="/student-materials/day-11-handout" class="download-link">View Handout</a>
+                    <a href="/student-materials/day-11-handout?print=true" class="download-link">Print Version</a>
+                </div>
+                <div class="material-card">
+                    <h3 class="material-title">Day 12: International Law and Geography</h3>
+                    <p class="material-description">Advanced investigation of how geographic factors influence international law and boundary determination.</p>
+                    <a href="/student-materials/day-12-handout" class="download-link">View Handout</a>
+                    <a href="/student-materials/day-12-handout?print=true" class="download-link">Print Version</a>
+                </div>
+                <div class="material-card">
+                    <h3 class="material-title">Boundary Dispute Simulation</h3>
+                    <p class="material-description">DOK 4 diplomatic simulation requiring students to argue territorial claims using geographic evidence.</p>
+                    <a href="/student-materials/boundary-dispute-simulation" class="download-link">View Simulation</a>
+                    <a href="/student-materials/boundary-dispute-simulation?print=true" class="download-link">Print Version</a>
+                </div>
+                <div class="material-card">
+                    <h3 class="material-title">Political Geography Case Study</h3>
+                    <p class="material-description">Comprehensive case study analysis applying all geographic concepts to resolve international dispute.</p>
+                    <a href="/student-materials/political-geography-case-study" class="download-link">View Case Study</a>
+                    <a href="/student-materials/political-geography-case-study?print=true" class="download-link">Print Version</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Assessment and Support Materials -->
+        <section class="materials-section">
+            <h2 class="case-header">📊 ASSESSMENT & SUPPORT MATERIALS</h2>
+            <div class="materials-grid">
+                <div class="material-card">
+                    <h3 class="material-title">Complete Case Portfolio Template</h3>
+                    <p class="material-description">Comprehensive portfolio template for students to compile all investigations and reflections.</p>
+                    <a href="/student-materials/case-portfolio-template" class="download-link">View Template</a>
+                    <a href="/student-materials/case-portfolio-template?print=true" class="download-link">Print Version</a>
+                </div>
+                <div class="material-card">
+                    <h3 class="material-title">Geographic Skills Rubrics</h3>
+                    <p class="material-description">Detailed rubrics for assessing DOK 3-4 level geographic thinking and investigation skills.</p>
+                    <a href="/student-materials/geographic-skills-rubrics" class="download-link">View Rubrics</a>
+                    <a href="/student-materials/geographic-skills-rubrics?print=true" class="download-link">Print Version</a>
+                </div>
+                <div class="material-card">
+                    <h3 class="material-title">Final Detective Certification</h3>
+                    <p class="material-description">Culminating assessment requiring synthesis of all geographic concepts and investigation skills.</p>
+                    <a href="/student-materials/final-detective-certification" class="download-link">View Certification</a>
+                    <a href="/student-materials/final-detective-certification?print=true" class="download-link">Print Version</a>
+                </div>
+                <div class="material-card">
+                    <h3 class="material-title">Geographic Reference Guide</h3>
+                    <p class="material-description">Student reference guide with key geographic concepts, formulas, and investigation strategies.</p>
+                    <a href="/student-materials/geographic-reference-guide" class="download-link">View Guide</a>
+                    <a href="/student-materials/geographic-reference-guide?print=true" class="download-link">Print Version</a>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+</html>
