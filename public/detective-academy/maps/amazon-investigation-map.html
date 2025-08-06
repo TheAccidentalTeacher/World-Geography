@@ -104,6 +104,11 @@
             box-shadow: 0 8px 25px rgba(0,0,0,0.3);
         }
         
+        .detective-btn.active {
+            background: linear-gradient(45deg, var(--success-color), var(--amazon-green));
+            box-shadow: 0 0 20px rgba(46, 204, 113, 0.5);
+        }
+        
         .evidence-counter {
             background: var(--success-color);
             color: white;
@@ -146,6 +151,53 @@
             margin-bottom: 20px;
             border-bottom: 2px solid var(--accent-color);
             padding-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .close-btn {
+            background: rgba(231, 76, 60, 0.1);
+            color: #e74c3c;
+            border: 2px solid #e74c3c;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .close-btn:hover {
+            background: #e74c3c;
+            color: white;
+            transform: scale(1.1);
+        }
+        
+        .evidence-item {
+            background: rgba(46, 204, 113, 0.1);
+            border-left: 4px solid var(--amazon-green);
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .evidence-item:hover {
+            background: rgba(46, 204, 113, 0.2);
+            transform: translateX(5px);
+        }
+        
+        .evidence-title {
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            color: var(--amazon-green);
+            margin-bottom: 8px;
+            font-size: 1.1em;
         }
         
         .evidence-item {
@@ -274,7 +326,10 @@
     </div>
     
     <div class="investigation-panel" id="investigationPanel">
-        <div class="panel-header">🕵️ Investigation Log</div>
+        <div class="panel-header">
+            🕵️ Investigation Log
+            <button class="close-btn" onclick="togglePanel()" title="Close Investigation Log">✕</button>
+        </div>
         <div id="evidenceLog">
             <p style="color: #666; font-style: italic;">Click on evidence markers to record your findings...</p>
         </div>
@@ -482,7 +537,7 @@
                 const marker = L.marker(evidence.coords, { icon: evidenceIcon }).addTo(layers.evidence);
                 
                 marker.on('click', function() {
-                    discoverEvidence(index, evidence);
+                    recordEvidence(index);
                 });
                 
                 marker.bindPopup(`
@@ -491,7 +546,7 @@
                         <p style="background: #f8f9fa; padding: 10px; border-radius: 5px; margin-bottom: 10px;">${evidence.content}</p>
                         <p><strong>Evidence Type:</strong> ${evidence.type}</p>
                         <p><strong>Difficulty:</strong> <span style="color: ${getDifficultyColor(evidence.difficulty)}">${evidence.difficulty}</span></p>
-                        <button onclick="discoverEvidence(${index}, ${JSON.stringify(evidence).replace(/"/g, '&quot;')})" 
+                        <button onclick="recordEvidence(${index})" 
                                 style="background: #2ecc71; color: white; border: none; padding: 8px 15px; border-radius: 5px; margin-top: 10px; cursor: pointer;">
                             📝 Record Evidence
                         </button>
@@ -501,7 +556,17 @@
         }
         
         // Evidence discovery function
-        function discoverEvidence(index, evidence) {
+        let discoveredEvidence = new Set(); // Track which evidence has been found
+        
+        function recordEvidence(index) {
+            // Prevent duplicate discoveries
+            if (discoveredEvidence.has(index)) {
+                alert('You have already recorded this evidence!');
+                return;
+            }
+            
+            const evidence = evidenceData[index];
+            discoveredEvidence.add(index);
             evidenceFound++;
             document.getElementById('evidenceCount').textContent = evidenceFound;
             
@@ -515,6 +580,7 @@
                     <strong>Type:</strong> ${evidence.type} | 
                     <strong>Difficulty:</strong> ${evidence.difficulty}
                 </p>
+                <hr style="margin: 10px 0; border: 1px solid #eee;">
             `;
             
             if (evidenceLog.children.length === 1 && evidenceLog.children[0].tagName === 'P') {
@@ -522,6 +588,28 @@
             }
             
             evidenceLog.appendChild(evidenceItem);
+            
+            // Show investigation panel if not open
+            const panel = document.getElementById('investigationPanel');
+            if (!panel.classList.contains('open')) {
+                panel.classList.add('open');
+            }
+            
+            // Change marker appearance to show it's been discovered
+            const marker = layers.evidence.getLayers().find(layer => 
+                layer.getLatLng().lat === evidence.coords[0] && 
+                layer.getLatLng().lng === evidence.coords[1]
+            );
+            
+            if (marker) {
+                const newIcon = L.divIcon({
+                    className: 'evidence-marker-found',
+                    html: `<div style="background: #2ecc71; border: 3px solid white; border-radius: 50%; width: 25px; height: 25px; display: flex; align-items: center; justify-content: center; font-size: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.3); cursor: pointer;">✓</div>`,
+                    iconSize: [25, 25],
+                    iconAnchor: [12.5, 12.5]
+                });
+                marker.setIcon(newIcon);
+            }
             
             // Check if all evidence found
             if (evidenceFound === totalEvidence) {
@@ -542,12 +630,16 @@
             }
         }
         
-        // Layer toggle functions
+        // Layer toggle functions with visual feedback
         function toggleLayer(layerName) {
+            const button = event.target; // Get the button that was clicked
+            
             if (amazonMap.hasLayer(layers[layerName])) {
                 amazonMap.removeLayer(layers[layerName]);
+                button.classList.remove('active');
             } else {
                 amazonMap.addLayer(layers[layerName]);
+                button.classList.add('active');
             }
         }
         
@@ -568,9 +660,16 @@
             addStations();
             addEvidence();
             
-            // Add all layers by default
+            // Add all layers by default and mark buttons as active
             Object.values(layers).forEach(layer => {
                 amazonMap.addLayer(layer);
+            });
+            
+            // Mark all layer buttons as active initially
+            document.querySelectorAll('.detective-btn').forEach(btn => {
+                if (btn.onclick && btn.onclick.toString().includes('toggleLayer')) {
+                    btn.classList.add('active');
+                }
             });
             
             // Add scale
