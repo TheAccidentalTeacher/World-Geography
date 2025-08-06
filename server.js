@@ -28,13 +28,13 @@ let slidesBucket;
 app.use(cors());
 app.use(express.json());
 
-// Add Content Security Policy headers - Enhanced for font loading
+// Add Content Security Policy headers - Enhanced for font loading and Leaflet maps
 app.use((req, res, next) => {
   res.setHeader('Content-Security-Policy', 
     "default-src 'self'; " +
-    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com; " +
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com https://cdn.jsdelivr.net; " +
     "font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com data: blob:; " +
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://cdn.jsdelivr.net; " +
     "img-src 'self' data: https: blob:; " +
     "connect-src 'self' https: wss:; " +
     "frame-src 'self'; " +
