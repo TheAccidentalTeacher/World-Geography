@@ -293,7 +293,6 @@
             <button class="detective-btn" onclick="toggleLayer('evidence')">🔍 Evidence</button>
         </div>
         <div class="control-group">
-            <button class="detective-btn" onclick="toggleLayer('boundaries')">🗺️ Countries</button>
             <button class="detective-btn" onclick="toggleLayer('cities')">🏙️ Cities</button>
             <button class="detective-btn" onclick="toggleLayer('indigenous')">🏕️ Indigenous</button>
             <button class="detective-btn" onclick="toggleLayer('deforestation')">🪵 Deforestation</button>
@@ -330,10 +329,6 @@
             <span>Last Known Position</span>
         </div>
         <div class="legend-item">
-            <div class="legend-color" style="background: #34495e; border: 2px dashed #fff;"></div>
-            <span>Country Boundaries</span>
-        </div>
-        <div class="legend-item">
             <div class="legend-color" style="background: #e67e22;"></div>
             <span>Major Cities</span>
         </div>
@@ -365,35 +360,62 @@
         // Initialize the map centered on Amazon region
         const amazonMap = L.map('amazonMap').setView([-3.4653, -62.2159], 6);
         
-        // Add multiple base layers for educational variety
+        // Add multiple professional base layers like Google Maps
         const baseLayers = {
             'Satellite': L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
                 attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
             }),
-            'Terrain': L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-                attribution: 'Map data: &copy; OpenStreetMap contributors, SRTM | Map style: &copy; OpenTopoMap (CC-BY-SA)'
-            }),
             'Street Map': L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; OpenStreetMap contributors'
+            }),
+            'Countries & Boundaries': L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }),
+            'Terrain & Elevation': L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+                attribution: 'Map data: &copy; OpenStreetMap contributors, SRTM | Map style: &copy; OpenTopoMap (CC-BY-SA)'
+            }),
+            'Dark Mode': L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
+            }),
+            'Physical Features': L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Physical_Map/MapServer/tile/{z}/{y}/{x}', {
+                attribution: 'Tiles &copy; Esri &mdash; Source: US National Park Service'
             })
         };
         
         // Start with satellite view for better Amazon visualization
         baseLayers['Satellite'].addTo(amazonMap);
         
-        // Add layer control
-        L.control.layers(baseLayers).addTo(amazonMap);
+        // Create enhanced layer control with base maps and overlays separate
+        const layerControl = L.control.layers(baseLayers, {}, {
+            position: 'topright',
+            collapsed: false
+        }).addTo(amazonMap);
         
-        // Layer groups for different map elements
+        // Layer groups for different map elements (overlays only)
+        const overlayLayers = {
+            '🌊 Amazon Rivers': L.layerGroup(),
+            '🌳 Vegetation Zones': L.layerGroup(), 
+            '🏢 Research Stations': L.layerGroup(),
+            '🔍 Evidence Locations': L.layerGroup(),
+            '🏙️ Major Cities': L.layerGroup(),
+            '🏘️ Indigenous Territories': L.layerGroup(),
+            '🔥 Deforestation Zones': L.layerGroup()
+        };
+        
+        // Add overlay layers to the control
+        Object.entries(overlayLayers).forEach(([name, layer]) => {
+            layerControl.addOverlay(layer, name);
+        });
+        
+        // Keep internal reference for easy access
         const layers = {
-            rivers: L.layerGroup(),
-            vegetation: L.layerGroup(),
-            stations: L.layerGroup(),
-            evidence: L.layerGroup(),
-            boundaries: L.layerGroup(),
-            cities: L.layerGroup(),
-            indigenous: L.layerGroup(),
-            deforestation: L.layerGroup()
+            rivers: overlayLayers['🌊 Amazon Rivers'],
+            vegetation: overlayLayers['🌳 Vegetation Zones'],
+            stations: overlayLayers['🏢 Research Stations'], 
+            evidence: overlayLayers['🔍 Evidence Locations'],
+            cities: overlayLayers['🏙️ Major Cities'],
+            indigenous: overlayLayers['🏘️ Indigenous Territories'],
+            deforestation: overlayLayers['🔥 Deforestation Zones']
         };
         
         // Evidence tracking
@@ -507,31 +529,6 @@
             }
         ];
         
-        // Country boundaries data
-        const boundaryData = [
-            {
-                country: "Brazil",
-                coords: [
-                    [[-5.2, -75.0], [-5.2, -34.8], [5.3, -34.8], [5.3, -75.0], [-5.2, -75.0]]
-                ],
-                color: "#34495e"
-            },
-            {
-                country: "Peru", 
-                coords: [
-                    [[-18.3, -81.3], [-18.3, -68.7], [0.0, -68.7], [0.0, -81.3], [-18.3, -81.3]]
-                ],
-                color: "#34495e"
-            },
-            {
-                country: "Colombia",
-                coords: [
-                    [[12.4, -81.7], [12.4, -66.9], [-4.2, -66.9], [-4.2, -81.7], [12.4, -81.7]]
-                ],
-                color: "#34495e"
-            }
-        ];
-        
         // Major cities data
         const cityData = [
             { name: "Manaus", coords: [-3.1190, -60.0217], population: "2.2M", country: "Brazil" },
@@ -642,28 +639,6 @@
                                 style="background: #2ecc71; color: white; border: none; padding: 8px 15px; border-radius: 5px; margin-top: 10px; cursor: pointer;">
                             📝 Record Evidence
                         </button>
-                    </div>
-                `);
-            });
-        }
-        
-        // Add country boundaries
-        function addBoundaries() {
-            boundaryData.forEach(boundary => {
-                const polygon = L.polygon(boundary.coords, {
-                    color: boundary.color,
-                    weight: 3,
-                    opacity: 0.8,
-                    fillOpacity: 0,
-                    dashArray: '10, 10'
-                }).addTo(layers.boundaries);
-                
-                polygon.bindPopup(`
-                    <div style="font-family: 'Roboto', sans-serif;">
-                        <h3 style="color: #34495e; margin-bottom: 10px;">🗺️ ${boundary.country}</h3>
-                        <p><strong>Type:</strong> National Boundary</p>
-                        <p><strong>Amazon Coverage:</strong> Significant portion</p>
-                        <p><strong>Investigation Status:</strong> Cross-border coordination required</p>
                     </div>
                 `);
             });
@@ -844,7 +819,6 @@
             addRivers();
             addStations();
             addEvidence();
-            addBoundaries();
             addCities();
             addIndigenous();
             addDeforestation();
