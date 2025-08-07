@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏙️ Metropolitan Urban Planning Map - Case #5</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- Leaflet Plugins -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-draw@1.0.4/dist/leaflet.draw.css"/>
+    
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #9b59b6;
+            --accent-color: #f39c12;
+            --success-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --urban-blue: #3498db;
+            --development-orange: #f39c12;
+            --green-space: #27ae60;
+        }
+        
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+        }
+        
+        body { 
+            font-family: 'Roboto', sans-serif; 
+            background: linear-gradient(135deg, #3498db 0%, #9b59b6 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .detective-header {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 4px solid var(--accent-color);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        .case-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: var(--urban-blue);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 8px;
+        }
+        
+        .case-subtitle {
+            font-size: 1.2rem;
+            color: #666;
+            font-weight: 500;
+            margin-bottom: 15px;
+        }
+        
+        .mission-brief {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-left: 5px solid var(--urban-blue);
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1.05rem;
+            line-height: 1.6;
+            margin: 0 auto;
+            max-width: 800px;
+        }
+        
+        #urbanMap {
+            height: calc(100vh - 300px);
+            width: 100%;
+            border: 3px solid var(--urban-blue);
+            border-radius: 0 0 15px 15px;
+        }
+        
+        .map-controls {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            padding: 15px;
+            background: rgba(255,255,255,0.9);
+            border-bottom: 2px solid var(--urban-blue);
+        }
+        
+        .control-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        
+        .detective-btn {
+            background: linear-gradient(135deg, var(--urban-blue) 0%, var(--secondary-color) 100%);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 20px;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        
+        .detective-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52,152,219,0.4);
+        }
+        
+        .detective-btn.active {
+            background: linear-gradient(135deg, var(--accent-color) 0%, #e67e22 100%);
+            color: #333;
+            text-shadow: none;
+        }
+        
+        .evidence-counter {
+            background: var(--success-color);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+        
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: var(--danger-color);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            cursor: pointer;
+            z-index: 1002;
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+        
+        .legend {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(255,255,255,0.9);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+        
+        .legend-title {
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--urban-blue);
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 10px;
+            border: 2px solid #333;
+        }
+        
+        .investigation-panel {
+            position: fixed;
+            right: -400px;
+            top: 0;
+            width: 400px;
+            height: 100vh;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            box-shadow: -5px 0 20px rgba(0,0,0,0.2);
+            transition: right 0.3s ease;
+            z-index: 1001;
+            overflow-y: auto;
+        }
+        
+        .investigation-panel.open {
+            right: 0;
+        }
+        
+        .panel-header {
+            background: var(--urban-blue);
+            color: white;
+            padding: 20px;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px;
+        }
+        
+        #evidenceLog {
+            padding: 20px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        @media print {
+            .detective-header, .map-controls, .investigation-panel, .back-btn { display: none; }
+            #urbanMap { height: 100vh; border: none; }
+        }
+    </style>
+</head>
+<body>
+    <button class="back-btn" onclick="window.history.back()">← Back to Maps Central</button>
+    
+    <div class="detective-header">
+        <h1 class="case-title">🏙️ CASE #5: MYSTERY IN THE METROPOLIS</h1>
+        <p class="case-subtitle">Urban Planning Investigation - Vanishing Green Spaces</p>
+        <div class="mission-brief">
+            <strong>MISSION:</strong> The growing city of Urbanopolis (population 2 million) has experienced rapid development over the past 5 years. 
+            Community groups report that green spaces - parks, community gardens, and natural areas - are mysteriously disappearing despite 
+            the city's official plan calling for a 20% increase in green space. Investigate the development patterns and identify who is 
+            responsible for the vanishing green spaces.
+        </div>
+    </div>
+    
+    <div class="map-controls">
+        <div class="control-group">
+            <button class="detective-btn" onclick="toggleLayer('zoning')">🏗️ Zoning</button>
+            <button class="detective-btn" onclick="toggleLayer('transportation')">🚇 Transport</button>
+            <button class="detective-btn" onclick="toggleLayer('greenspaces')">🌳 Green Spaces</button>
+            <button class="detective-btn" onclick="toggleLayer('development')">📈 Development</button>
+        </div>
+        <div class="control-group">
+            <button class="detective-btn" onclick="toggleLayer('population')">🏘️ Population</button>
+            <button class="detective-btn" onclick="toggleLayer('evidence')">🔍 Evidence</button>
+        </div>
+        <div class="control-group">
+            <div class="evidence-counter">Evidence Found: <span id="evidenceCount">0</span>/8</div>
+            <button class="detective-btn" onclick="togglePanel()">📋 Investigation Notes</button>
+            <button class="detective-btn" onclick="printMap()">🖨️ Print Map</button>
+        </div>
+    </div>
+    
+    <div id="urbanMap"></div>
+    
+    <div class="legend">
+        <div class="legend-title">Map Legend</div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #3498db;"></div>
+            <span>Residential Zones</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #9b59b6;"></div>
+            <span>Commercial Areas</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #f39c12;"></div>
+            <span>Transportation</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #27ae60;"></div>
+            <span>Green Spaces</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #e74c3c;"></div>
+            <span>Evidence Locations</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #2ecc71;"></div>
+            <span>Population Density</span>
+        </div>
+    </div>
+    
+    <div class="investigation-panel" id="investigationPanel">
+        <div class="panel-header">
+            🕵️ Urban Planning Investigation
+            <button class="close-btn" onclick="togglePanel()" title="Close Investigation Log">✕</button>
+        </div>
+        <div id="evidenceLog">
+            <p style="color: #666; font-style: italic;">Click on evidence markers to record your urban development findings...</p>
+        </div>
+    </div>
+    
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
+    
+    <script>
+        // Initialize the map centered on Urbanopolis metropolitan area
+        const urbanMap = L.map('urbanMap').setView([41.8781, -87.6298], 11);
+        
+        // Base map layers
+        const baseLayers = {
+            'Standard': L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }),
+            'Urban Planning': L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+                attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ'
+            }),
+            'Satellite': L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DigitalGlobe, GeoEye, Earthstar Geographics'
+            }),
+            'Transportation': L.tileLayer('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap France | &copy; OpenStreetMap contributors'
+            })
+        };
+        
+        // Start with urban planning view
+        baseLayers['Urban Planning'].addTo(urbanMap);
+        
+        // Create enhanced layer control
+        const layerControl = L.control.layers(baseLayers, {}, {
+            position: 'topright',
+            collapsed: false
+        }).addTo(urbanMap);
+        
+        // Layer groups for different map elements
+        const overlayLayers = {
+            '🏗️ Zoning & Land Use': L.layerGroup(),
+            '🚇 Transportation Networks': L.layerGroup(), 
+            '🌳 Green Space Distribution': L.layerGroup(),
+            '📈 Development Timeline': L.layerGroup(),
+            '🏘️ Population Density': L.layerGroup(),
+            '🔍 Evidence Locations': L.layerGroup()
+        };
+        
+        // Add overlay layers to the control
+        Object.entries(overlayLayers).forEach(([name, layer]) => {
+            layerControl.addOverlay(layer, name);
+        });
+        
+        // Keep internal reference for easy access
+        const layers = {
+            zoning: overlayLayers['🏗️ Zoning & Land Use'],
+            transportation: overlayLayers['🚇 Transportation Networks'],
+            greenspaces: overlayLayers['🌳 Green Space Distribution'], 
+            development: overlayLayers['📈 Development Timeline'],
+            population: overlayLayers['🏘️ Population Density'],
+            evidence: overlayLayers['🔍 Evidence Locations']
+        };
+        
+        // Evidence tracking
+        let evidenceFound = 0;
+        const totalEvidence = 8;
+        let discoveredEvidence = new Set();
+        
+        function updateEvidenceCounter() {
+            document.getElementById('evidenceCount').textContent = evidenceFound;
+            
+            if (evidenceFound >= totalEvidence) {
+                alert('🎉 Investigation Complete! You have uncovered the coordinated scheme between Metropolis Development Corporation and city officials that is systematically converting green spaces to profitable developments.');
+            }
+        }
+        
+        function logEvidence(evidence) {
+            const logDiv = document.getElementById('evidenceLog');
+            const evidenceEntry = document.createElement('div');
+            evidenceEntry.style.marginBottom = '15px';
+            evidenceEntry.style.padding = '10px';
+            evidenceEntry.style.background = '#f8f9fa';
+            evidenceEntry.style.borderRadius = '5px';
+            evidenceEntry.style.borderLeft = '4px solid #e74c3c';
+            
+            evidenceEntry.innerHTML = `
+                <strong>${evidence.name}</strong><br>
+                <small style="color: #666;">Discovered: ${new Date().toLocaleTimeString()}</small><br>
+                ${evidence.description}
+            `;
+            
+            logDiv.appendChild(evidenceEntry);
+        }
+        
+        // Layer toggle functions
+        function toggleLayer(layerName) {
+            const button = event.target;
+            
+            if (urbanMap.hasLayer(layers[layerName])) {
+                urbanMap.removeLayer(layers[layerName]);
+                button.classList.remove('active');
+            } else {
+                urbanMap.addLayer(layers[layerName]);
+                button.classList.add('active');
+            }
+        }
+        
+        // Investigation panel toggle
+        function togglePanel() {
+            const panel = document.getElementById('investigationPanel');
+            panel.classList.toggle('open');
+        }
+        
+        // Print function
+        function printMap() {
+            window.print();
+        }
+        
+        // Initialize map with all layers
+        function initializeMap() {
+            addZoning();
+            addTransportation();
+            addGreenSpaces();
+            addDevelopment();
+            addPopulation();
+            addEvidence();
+            
+            // Add core layers by default (zoning, transportation, greenspaces, evidence)
+            urbanMap.addLayer(layers.zoning);
+            urbanMap.addLayer(layers.transportation);
+            urbanMap.addLayer(layers.greenspaces);
+            urbanMap.addLayer(layers.evidence);
+            
+            // Mark core layer buttons as active initially
+            document.querySelectorAll('.detective-btn').forEach(btn => {
+                const btnText = btn.textContent.trim();
+                if (btnText.includes('Zoning') || btnText.includes('Transport') || 
+                    btnText.includes('Green Spaces') || btnText.includes('Evidence')) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // Add scale control
+            L.control.scale().addTo(urbanMap);
+            
+            // Add coordinates display on click (for development)
+            urbanMap.on('click', function(e) {
+                console.log(`Clicked at: ${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)}`);
+            });
+        }
+        
+        // Initialize the map when page loads
+        document.addEventListener('DOMContentLoaded', initializeMap);
+        
+        // Urbanopolis zoning and land use data
+        const zoningData = [
+            {
+                name: "Downtown Core Business District",
+                coords: [
+                    [41.8820, -87.6400], [41.8820, -87.6200], [41.8750, -87.6200], 
+                    [41.8750, -87.6400], [41.8820, -87.6400]
+                ],
+                type: "Commercial High-Rise",
+                zoning_code: "C-5",
+                building_height: "40+ stories",
+                density: "Ultra High",
+                green_space_req: "5% minimum",
+                current_green: "2.3%",
+                status: "Green space deficit"
+            },
+            {
+                name: "River North Mixed-Use District",
+                coords: [
+                    [41.8900, -87.6400], [41.8900, -87.6100], [41.8820, -87.6100], 
+                    [41.8820, -87.6400], [41.8900, -87.6400]
+                ],
+                type: "Mixed-Use Development",
+                zoning_code: "M-1",
+                building_height: "15-25 stories",
+                density: "High",
+                green_space_req: "12% minimum",
+                current_green: "8.7%",
+                status: "Below requirement"
+            },
+            {
+                name: "Lincoln Park Residential",
+                coords: [
+                    [41.9200, -87.6600], [41.9200, -87.6300], [41.9000, -87.6300], 
+                    [41.9000, -87.6600], [41.9200, -87.6600]
+                ],
+                type: "High-Density Residential",
+                zoning_code: "R-5",
+                building_height: "6-12 stories",
+                density: "High",
+                green_space_req: "20% minimum",
+                current_green: "15.2%",
+                status: "Recent green space loss"
+            },
+            {
+                name: "Suburban Sprawl Zone East",
+                coords: [
+                    [41.8500, -87.5800], [41.8500, -87.5400], [41.8200, -87.5400], 
+                    [41.8200, -87.5800], [41.8500, -87.5800]
+                ],
+                type: "Low-Density Residential",
+                zoning_code: "R-1",
+                building_height: "2-3 stories",
+                density: "Low",
+                green_space_req: "30% minimum",
+                current_green: "28.9%",
+                status: "Meeting requirements"
+            },
+            {
+                name: "Industrial Corridor South",
+                coords: [
+                    [41.8200, -87.6800], [41.8200, -87.6400], [41.7900, -87.6400], 
+                    [41.7900, -87.6800], [41.8200, -87.6800]
+                ],
+                type: "Heavy Industrial",
+                zoning_code: "I-3",
+                building_height: "Industrial structures",
+                density: "Low",
+                green_space_req: "8% minimum",
+                current_green: "3.1%",
+                status: "Critical green space shortage"
+            },
+            {
+                name: "Westside Commercial Strip",
+                coords: [
+                    [41.8800, -87.7200], [41.8800, -87.6800], [41.8600, -87.6800], 
+                    [41.8600, -87.7200], [41.8800, -87.7200]
+                ],
+                type: "Commercial Strip Development",
+                zoning_code: "C-2",
+                building_height: "2-6 stories",
+                density: "Medium",
+                green_space_req: "15% minimum",
+                current_green: "6.8%",
+                status: "Major green space violations"
+            }
+        ];
+        
+        // Transportation network data
+        const transportationData = [
+            {
+                name: "Red Line Metro",
+                coords: [
+                    [41.9500, -87.6550], [41.9200, -87.6550], [41.8900, -87.6550], 
+                    [41.8600, -87.6550], [41.8300, -87.6550], [41.8000, -87.6550]
+                ],
+                type: "Heavy Rail Transit",
+                color: "#e74c3c",
+                weight: 6,
+                ridership: "275,000 daily",
+                stations: 12,
+                impact: "High property value increases along corridor"
+            },
+            {
+                name: "Blue Line Metro",
+                coords: [
+                    [41.8800, -87.7500], [41.8800, -87.7000], [41.8800, -87.6500], 
+                    [41.8800, -87.6000], [41.8800, -87.5500]
+                ],
+                type: "Heavy Rail Transit",
+                color: "#3498db",
+                weight: 6,
+                ridership: "190,000 daily",
+                stations: 9,
+                impact: "Moderate development pressure"
+            },
+            {
+                name: "Interstate 94 Corridor",
+                coords: [
+                    [41.9300, -87.7800], [41.9100, -87.7200], [41.8900, -87.6600], 
+                    [41.8700, -87.6000], [41.8500, -87.5400]
+                ],
+                type: "Interstate Highway",
+                color: "#95a5a6",
+                weight: 8,
+                ridership: "180,000 vehicles daily",
+                stations: 0,
+                impact: "Major pollution and noise issues"
+            },
+            {
+                name: "State Street Bus Rapid Transit",
+                coords: [
+                    [41.9000, -87.6278], [41.8800, -87.6278], [41.8600, -87.6278], 
+                    [41.8400, -87.6278], [41.8200, -87.6278]
+                ],
+                type: "Bus Rapid Transit",
+                color: "#f39c12",
+                weight: 4,
+                ridership: "85,000 daily",
+                stations: 15,
+                impact: "Moderate accessibility improvement"
+            },
+            {
+                name: "Lakefront Bike Trail",
+                coords: [
+                    [41.9500, -87.6100], [41.9200, -87.6150], [41.8900, -87.6200], 
+                    [41.8600, -87.6250], [41.8300, -87.6300]
+                ],
+                type: "Bicycle Infrastructure",
+                color: "#2ecc71",
+                weight: 3,
+                ridership: "12,000 daily cyclists",
+                stations: 8,
+                impact: "Recreation and green space connectivity"
+            }
+        ];
+        
+        // Green spaces data - current and disappeared
+        const greenSpacesData = [
+            {
+                name: "Millennium Park",
+                coords: [41.8827, -87.6233],
+                type: "Major Urban Park",
+                size: "24.5 acres",
+                status: "Existing",
+                condition: "Well-maintained",
+                usage: "High - tourist destination",
+                threat_level: "Low",
+                established: "2004"
+            },
+            {
+                name: "Lincoln Park",
+                coords: [41.9250, -87.6350],
+                type: "Large Community Park",
+                size: "1,208 acres",
+                status: "Existing - Reduced",
+                condition: "Good but shrinking",
+                usage: "Very High - residential area",
+                threat_level: "Medium",
+                established: "1860",
+                recent_loss: "15 acres to development (2019-2023)"
+            },
+            {
+                name: "DISAPPEARED: Westside Community Garden",
+                coords: [41.8750, -87.7050],
+                type: "Community Garden",
+                size: "3.2 acres",
+                status: "REMOVED 2022",
+                condition: "Converted to apartment complex",
+                usage: "Served 150 families",
+                threat_level: "Lost",
+                established: "1995",
+                developer: "Metropolis Development Corporation"
+            },
+            {
+                name: "DISAPPEARED: River North Pocket Park",
+                coords: [41.8910, -87.6280],
+                type: "Pocket Park",
+                size: "0.8 acres",
+                status: "REMOVED 2021",
+                condition: "Converted to commercial building",
+                usage: "Local office workers",
+                threat_level: "Lost",
+                established: "2008",
+                developer: "Metropolis Development Corporation"
+            },
+            {
+                name: "THREATENED: Southside Nature Preserve",
+                coords: [41.8150, -87.6550],
+                type: "Natural Area",
+                size: "45 acres",
+                status: "Under Threat",
+                condition: "Zoning variance filed",
+                usage: "Wildlife habitat, education",
+                threat_level: "Critical",
+                established: "1987",
+                threat_source: "Mixed-use development proposal"
+            },
+            {
+                name: "DISAPPEARED: Downtown Green Plaza",
+                coords: [41.8795, -87.6305],
+                type: "Urban Plaza",
+                size: "1.5 acres",
+                status: "REMOVED 2020",
+                condition: "Converted to parking structure",
+                usage: "Lunch area for workers",
+                threat_level: "Lost",
+                established: "2010",
+                developer: "City parking authority"
+            },
+            {
+                name: "THREATENED: Neighborhood Tot Lot",
+                coords: [41.8650, -87.6750],
+                type: "Playground",
+                size: "0.5 acres",
+                status: "Pending Removal",
+                condition: "Scheduled for 'redevelopment'",
+                usage: "Children's playground",
+                threat_level: "High",
+                established: "1998",
+                threat_source: "Administrative boundary adjustment"
+            }
+        ];
+        
+        // Development timeline data showing patterns
+        const developmentData = [
+            {
+                name: "Metro Towers Complex",
+                coords: [41.8750, -87.7050],
+                year: 2022,
+                type: "High-Rise Residential",
+                developer: "Metropolis Development Corporation",
+                stories: 35,
+                units: 450,
+                replaced: "Westside Community Garden",
+                approval_process: "Administrative variance",
+                city_official: "Planning Director James Mitchell",
+                campaign_contributions: "$15,000 from Metropolis Dev Corp"
+            },
+            {
+                name: "RiverPoint Office Complex",
+                coords: [41.8910, -87.6280],
+                year: 2021,
+                type: "Commercial Office",
+                developer: "Metropolis Development Corporation",
+                stories: 18,
+                units: "850,000 sq ft office",
+                replaced: "River North Pocket Park",
+                approval_process: "Emergency development permit",
+                city_official: "Councilwoman Sarah Chen",
+                campaign_contributions: "$12,500 from Metropolis Dev Corp"
+            },
+            {
+                name: "Central Parking Structure",
+                coords: [41.8795, -87.6305],
+                year: 2020,
+                type: "Parking Facility",
+                developer: "City Parking Authority",
+                stories: 8,
+                units: "1,200 parking spaces",
+                replaced: "Downtown Green Plaza",
+                approval_process: "Administrative decision",
+                city_official: "Transportation Director Mike Rodriguez",
+                campaign_contributions: "Contract awarded without bid"
+            },
+            {
+                name: "PROPOSED: Southside Mall",
+                coords: [41.8150, -87.6550],
+                year: "2024 (Proposed)",
+                type: "Shopping Center",
+                developer: "Metropolis Development Corporation",
+                stories: 3,
+                units: "2.2 million sq ft retail",
+                replaced: "Southside Nature Preserve (if approved)",
+                approval_process: "Zoning variance pending",
+                city_official: "Mayor's Office",
+                campaign_contributions: "$25,000 to mayor's campaign"
+            }
+        ];
+        
+        // Population density data by district
+        const populationData = [
+            {
+                name: "Downtown Core",
+                coords: [
+                    [41.8820, -87.6400], [41.8820, -87.6200], [41.8750, -87.6200], 
+                    [41.8750, -87.6400], [41.8820, -87.6400]
+                ],
+                density: "15,000 per sq mile",
+                population: "45,000",
+                income_median: "$85,000",
+                green_access: "0.2 acres per 1,000 residents",
+                demographics: "75% professionals, 15% students, 10% retirees"
+            },
+            {
+                name: "Lincoln Park Residential",
+                coords: [
+                    [41.9200, -87.6600], [41.9200, -87.6300], [41.9000, -87.6300], 
+                    [41.9000, -87.6600], [41.9200, -87.6600]
+                ],
+                density: "8,500 per sq mile",
+                population: "68,000",
+                income_median: "$72,000",
+                green_access: "2.1 acres per 1,000 residents",
+                demographics: "60% families, 25% young professionals, 15% seniors"
+            },
+            {
+                name: "Westside Working Class",
+                coords: [
+                    [41.8800, -87.7200], [41.8800, -87.6800], [41.8600, -87.6800], 
+                    [41.8600, -87.7200], [41.8800, -87.7200]
+                ],
+                density: "12,000 per sq mile",
+                population: "95,000",
+                income_median: "$35,000",
+                green_access: "0.6 acres per 1,000 residents",
+                demographics: "55% working families, 30% seniors, 15% students"
+            },
+            {
+                name: "Industrial South",
+                coords: [
+                    [41.8200, -87.6800], [41.8200, -87.6400], [41.7900, -87.6400], 
+                    [41.7900, -87.6800], [41.8200, -87.6800]
+                ],
+                density: "3,200 per sq mile",
+                population: "18,000",
+                income_median: "$28,000",
+                green_access: "0.1 acres per 1,000 residents",
+                demographics: "70% industrial workers, 20% low-income families, 10% unemployed"
+            }
+        ];
+        
+        // Evidence locations for investigation
+        const evidenceData = [
+            {
+                id: "EVIDENCE-Alpha",
+                name: "Campaign Finance Records",
+                coords: [41.8781, -87.6320],
+                type: "Financial Evidence",
+                description: "City Hall records showing $67,500 in campaign contributions from Metropolis Development Corporation to key decision-makers over 3 years.",
+                significance: "Establishes financial connections between developer and officials",
+                discovery_location: "Public records request",
+                related_developments: "All recent green space conversions"
+            },
+            {
+                id: "EVIDENCE-Beta",
+                name: "Administrative Variance Documents",
+                coords: [41.8750, -87.7050],
+                type: "Legal Evidence",
+                description: "Internal memos showing how normal public hearing requirements were bypassed using administrative variances for green space developments.",
+                significance: "Shows systematic circumvention of public input processes",
+                discovery_location: "Planning Department files",
+                related_developments: "Metro Towers, RiverPoint Office"
+            },
+            {
+                id: "EVIDENCE-Gamma",
+                name: "Zoning Map Alterations",
+                coords: [41.8795, -87.6305],
+                type: "Geographic Evidence",
+                description: "Before and after zoning maps showing how green space boundaries were administratively reduced without public notice.",
+                significance: "Visual proof of systematic green space reduction",
+                discovery_location: "GIS database comparison",
+                related_developments: "All disappeared green spaces"
+            },
+            {
+                id: "EVIDENCE-Delta",
+                name: "Community Impact Studies",
+                coords: [41.8650, -87.6750],
+                type: "Social Evidence",
+                description: "Suppressed studies showing negative health and social impacts of green space loss on low-income communities.",
+                significance: "Proves officials knew consequences but proceeded anyway",
+                discovery_location: "Environmental health department",
+                related_developments: "Westside and Southside projects"
+            },
+            {
+                id: "EVIDENCE-Echo",
+                name: "Metropolis Corp Internal Emails",
+                coords: [41.8910, -87.6280],
+                type: "Communication Evidence",
+                description: "Leaked emails discussing strategy to acquire green space properties and influence city officials through campaign contributions.",
+                significance: "Shows coordinated scheme and intent",
+                discovery_location: "Whistleblower leak",
+                related_developments: "Company-wide development strategy"
+            },
+            {
+                id: "EVIDENCE-Foxtrot",
+                name: "Property Acquisition Timeline",
+                coords: [41.8150, -87.6550],
+                type: "Pattern Evidence",
+                description: "Real estate records showing Metropolis Corp systematically purchased properties adjacent to green spaces months before development approvals.",
+                significance: "Indicates advance knowledge of zoning changes",
+                discovery_location: "County property records",
+                related_developments: "All threatened locations"
+            },
+            {
+                id: "EVIDENCE-Golf",
+                name: "City Council Meeting Recordings",
+                coords: [41.8800, -87.6500],
+                type: "Audio Evidence",
+                description: "Closed-session recordings revealing discussions about 'managing public opposition' to green space developments.",
+                significance: "Shows deliberate deception of public",
+                discovery_location: "Freedom of Information Act request",
+                related_developments: "Policy coordination across projects"
+            },
+            {
+                id: "EVIDENCE-Hotel",
+                name: "Environmental Impact Assessments",
+                coords: [41.9100, -87.6400],
+                type: "Scientific Evidence",
+                description: "Hidden studies showing significant environmental damage from green space conversion but marked 'confidential' to avoid public scrutiny.",
+                significance: "Proves environmental cover-up",
+                discovery_location: "University research partnership",
+                related_developments: "All major development projects"
+            }
+        ];
+        
+        // Add zoning and land use to map
+        function addZoning() {
+            zoningData.forEach(zone => {
+                const zonePolygon = L.polygon(zone.coords, {
+                    color: getZoningColor(zone.type),
+                    weight: 2,
+                    opacity: 0.8,
+                    fillColor: getZoningColor(zone.type),
+                    fillOpacity: 0.3
+                }).addTo(layers.zoning);
+                
+                zonePolygon.bindPopup(`
+                    <div style="font-family: 'Roboto', sans-serif; min-width: 320px;">
+                        <h3 style="color: ${getZoningColor(zone.type)}; margin-bottom: 10px;">🏗️ ${zone.name}</h3>
+                        <p><strong>Zoning:</strong> ${zone.type} (${zone.zoning_code})</p>
+                        <p><strong>Density:</strong> ${zone.density}</p>
+                        <p><strong>Height Limit:</strong> ${zone.building_height}</p>
+                        <p><strong>Green Space Requirement:</strong> ${zone.green_space_req}</p>
+                        <p><strong>Current Green Space:</strong> <span style="color: ${getStatusColor(zone.status)}; font-weight: bold;">${zone.current_green}</span></p>
+                        <p style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 5px;">
+                            <strong>Status:</strong> ${zone.status}
+                        </p>
+                    </div>
+                `);
+            });
+        }
+        
+        // Add transportation networks to map
+        function addTransportation() {
+            transportationData.forEach(route => {
+                const routeLine = L.polyline(route.coords, {
+                    color: route.color,
+                    weight: route.weight,
+                    opacity: 0.9
+                }).addTo(layers.transportation);
+                
+                routeLine.bindPopup(`
+                    <div style="font-family: 'Roboto', sans-serif; min-width: 300px;">
+                        <h3 style="color: ${route.color}; margin-bottom: 10px;">🚇 ${route.name}</h3>
+                        <p><strong>Type:</strong> ${route.type}</p>
+                        <p><strong>Daily Ridership:</strong> ${route.ridership}</p>
+                        <p><strong>Stations:</strong> ${route.stations}</p>
+                        <p style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 5px;">
+                            <strong>Development Impact:</strong> ${route.impact}
+                        </p>
+                    </div>
+                `);
+            });
+        }
+        
+        // Add green spaces to map
+        function addGreenSpaces() {
+            greenSpacesData.forEach(space => {
+                const isDisappeared = space.name.includes('DISAPPEARED');
+                const isThreatened = space.name.includes('THREATENED');
+                
+                const spaceIcon = L.divIcon({
+                    className: 'green-space-marker',
+                    html: getGreenSpaceIcon(space.status),
+                    iconSize: [30, 30],
+                    iconAnchor: [15, 15]
+                });
+                
+                const spaceMarker = L.marker(space.coords, { icon: spaceIcon })
+                    .addTo(layers.greenspaces);
+                
+                spaceMarker.bindPopup(`
+                    <div style="font-family: 'Roboto', sans-serif; min-width: 320px;">
+                        <h3 style="color: ${getGreenSpaceColor(space.status)}; margin-bottom: 10px;">🌳 ${space.name}</h3>
+                        <p><strong>Type:</strong> ${space.type}</p>
+                        <p><strong>Size:</strong> ${space.size}</p>
+                        <p><strong>Established:</strong> ${space.established}</p>
+                        <p><strong>Status:</strong> <span style="color: ${getGreenSpaceColor(space.status)}; font-weight: bold;">${space.status}</span></p>
+                        <p><strong>Usage:</strong> ${space.usage}</p>
+                        ${space.developer ? `<p><strong>Developer:</strong> ${space.developer}</p>` : ''}
+                        ${space.recent_loss ? `<p><strong>Recent Loss:</strong> ${space.recent_loss}</p>` : ''}
+                        <p style="margin-top: 10px; padding: 10px; background: ${isDisappeared ? '#ffebee' : isThreatened ? '#fff3e0' : '#f1f8e9'}; border-radius: 5px;">
+                            <strong>Investigation Note:</strong> ${getGreenSpaceNote(space.status)}
+                        </p>
+                    </div>
+                `);
+            });
+        }
+        
+        // Add development timeline to map
+        function addDevelopment() {
+            developmentData.forEach(project => {
+                const developmentIcon = L.divIcon({
+                    className: 'development-marker',
+                    html: getDevelopmentIcon(project.year),
+                    iconSize: [35, 35],
+                    iconAnchor: [17, 17]
+                });
+                
+                const developmentMarker = L.marker(project.coords, { icon: developmentIcon })
+                    .addTo(layers.development);
+                
+                developmentMarker.bindPopup(`
+                    <div style="font-family: 'Roboto', sans-serif; min-width: 350px;">
+                        <h3 style="color: #f39c12; margin-bottom: 10px;">📈 ${project.name}</h3>
+                        <p><strong>Year:</strong> ${project.year}</p>
+                        <p><strong>Type:</strong> ${project.type}</p>
+                        <p><strong>Developer:</strong> ${project.developer}</p>
+                        <p><strong>Size:</strong> ${project.stories} stories, ${project.units}</p>
+                        <p><strong>Replaced:</strong> <span style="color: #e74c3c; font-weight: bold;">${project.replaced}</span></p>
+                        <p><strong>Approval Process:</strong> ${project.approval_process}</p>
+                        <p><strong>Key Official:</strong> ${project.city_official}</p>
+                        <p style="margin-top: 10px; padding: 10px; background: #fff3cd; border-radius: 5px;">
+                            <strong>Financial Connection:</strong> ${project.campaign_contributions}
+                        </p>
+                    </div>
+                `);
+            });
+        }
+        
+        // Add population density to map
+        function addPopulation() {
+            populationData.forEach(district => {
+                const populationPolygon = L.polygon(district.coords, {
+                    color: '#2ecc71',
+                    weight: 2,
+                    opacity: 0.6,
+                    fillColor: getPopulationDensityColor(district.density),
+                    fillOpacity: 0.4
+                }).addTo(layers.population);
+                
+                populationPolygon.bindPopup(`
+                    <div style="font-family: 'Roboto', sans-serif; min-width: 300px;">
+                        <h3 style="color: #2ecc71; margin-bottom: 10px;">🏘️ ${district.name}</h3>
+                        <p><strong>Population:</strong> ${district.population}</p>
+                        <p><strong>Density:</strong> ${district.density}</p>
+                        <p><strong>Median Income:</strong> ${district.income_median}</p>
+                        <p><strong>Green Space Access:</strong> ${district.green_access}</p>
+                        <p style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 5px;">
+                            <strong>Demographics:</strong> ${district.demographics}
+                        </p>
+                    </div>
+                `);
+            });
+        }
+        
+        // Add evidence locations to map
+        function addEvidence() {
+            evidenceData.forEach(evidence => {
+                const evidenceIcon = L.divIcon({
+                    className: 'evidence-marker',
+                    html: '<div style="background: #e74c3c; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; border: 3px solid white; box-shadow: 0 2px 10px rgba(0,0,0,0.3);">🔍</div>',
+                    iconSize: [30, 30],
+                    iconAnchor: [15, 15]
+                });
+                
+                const evidenceMarker = L.marker(evidence.coords, { icon: evidenceIcon })
+                    .addTo(layers.evidence);
+                
+                evidenceMarker.bindPopup(`
+                    <div style="font-family: 'Roboto', sans-serif; min-width: 350px;">
+                        <h3 style="color: #e74c3c; margin-bottom: 10px;">🔍 ${evidence.name}</h3>
+                        <p><strong>Evidence ID:</strong> ${evidence.id}</p>
+                        <p><strong>Type:</strong> ${evidence.type}</p>
+                        <p><strong>Discovery Location:</strong> ${evidence.discovery_location}</p>
+                        <p><strong>Description:</strong> ${evidence.description}</p>
+                        <p><strong>Related Developments:</strong> ${evidence.related_developments}</p>
+                        <p style="margin-top: 10px; padding: 10px; background: #fff3cd; border-radius: 5px; border-left: 4px solid #ffc107;">
+                            <strong>Significance:</strong> ${evidence.significance}
+                        </p>
+                    </div>
+                `);
+                
+                // Track evidence discovery
+                evidenceMarker.on('click', function() {
+                    if (!discoveredEvidence.has(evidence.id)) {
+                        discoveredEvidence.add(evidence.id);
+                        evidenceFound++;
+                        updateEvidenceCounter();
+                        logEvidence(evidence);
+                    }
+                });
+            });
+        }
+        
+        // Utility functions for styling
+        function getZoningColor(type) {
+            switch(type) {
+                case 'Commercial High-Rise': return '#9b59b6';
+                case 'Mixed-Use Development': return '#3498db';
+                case 'High-Density Residential': return '#2ecc71';
+                case 'Low-Density Residential': return '#95a5a6';
+                case 'Heavy Industrial': return '#e67e22';
+                case 'Commercial Strip Development': return '#f39c12';
+                default: return '#34495e';
+            }
+        }
+        
+        function getStatusColor(status) {
+            if (status.includes('deficit') || status.includes('violations') || status.includes('shortage')) return '#e74c3c';
+            if (status.includes('Below') || status.includes('loss')) return '#f39c12';
+            if (status.includes('Meeting')) return '#2ecc71';
+            return '#95a5a6';
+        }
+        
+        function getGreenSpaceColor(status) {
+            if (status.includes('REMOVED')) return '#e74c3c';
+            if (status.includes('THREATENED') || status.includes('Under Threat') || status.includes('Pending')) return '#f39c12';
+            if (status.includes('Existing')) return '#27ae60';
+            return '#95a5a6';
+        }
+        
+        function getGreenSpaceIcon(status) {
+            if (status.includes('REMOVED')) {
+                return '<div style="background: #e74c3c; border-radius: 3px; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">❌</div>';
+            } else if (status.includes('THREATENED') || status.includes('Under Threat') || status.includes('Pending')) {
+                return '<div style="background: #f39c12; border-radius: 3px; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">⚠️</div>';
+            } else {
+                return '<div style="background: #27ae60; border-radius: 3px; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">🌳</div>';
+            }
+        }
+        
+        function getGreenSpaceNote(status) {
+            if (status.includes('REMOVED')) return 'Green space lost to development - investigate developer connections';
+            if (status.includes('THREATENED')) return 'Currently at risk - monitor approval processes';
+            if (status.includes('Existing')) return 'Currently protected but monitor for threats';
+            return 'Status requires investigation';
+        }
+        
+        function getDevelopmentIcon(year) {
+            if (year.toString().includes('Proposed')) {
+                return '<div style="background: #f39c12; border: 3px dashed #e67e22; border-radius: 3px; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">📋</div>';
+            } else {
+                return '<div style="background: #e67e22; border-radius: 3px; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">🏢</div>';
+            }
+        }
+        
+        function getPopulationDensityColor(density) {
+            const numericDensity = parseInt(density.replace(/,/g, ''));
+            if (numericDensity > 12000) return '#e74c3c';
+            if (numericDensity > 8000) return '#f39c12';
+            if (numericDensity > 5000) return '#f1c40f';
+            return '#2ecc71';
+        }
+        
+        // Evidence tracking and UI update functions
+        function updateEvidenceCounter() {
+            const counter = document.getElementById('evidence-count');
+            if (counter) {
+                counter.textContent = `Evidence Found: ${evidenceFound}/8`;
+                
+                if (evidenceFound >= 6) {
+                    counter.style.color = '#27ae60';
+                    counter.innerHTML += ' <strong>- Case Building Strong! 📊</strong>';
+                } else if (evidenceFound >= 3) {
+                    counter.style.color = '#f39c12';
+                    counter.innerHTML += ' <strong>- Progress Made 🔍</strong>';
+                }
+            }
+        }
+        
+        function logEvidence(evidence) {
+            console.log(`EVIDENCE DISCOVERED: ${evidence.name} - ${evidence.type}`);
+            console.log(`Description: ${evidence.description}`);
+            console.log(`Significance: ${evidence.significance}`);
+            console.log(`Progress: ${evidenceFound}/8 Evidence Items Found`);
+            
+            // Visual feedback
+            showNotification(`Evidence Found: ${evidence.name}`, evidence.type);
+        }
+        
+        function showNotification(title, type) {
+            const notification = document.createElement('div');
+            notification.innerHTML = `
+                <div style="position: fixed; top: 20px; right: 20px; background: #2c3e50; color: white; padding: 15px 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 2000; max-width: 300px;">
+                    <h4 style="margin: 0 0 5px 0; color: #3498db;">🔍 Detective Update</h4>
+                    <p style="margin: 0; font-size: 14px;"><strong>${title}</strong></p>
+                    <p style="margin: 5px 0 0 0; font-size: 12px; opacity: 0.8;">${type}</p>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.transition = 'opacity 0.5s';
+                notification.style.opacity = '0';
+                setTimeout(() => notification.remove(), 500);
+            }, 3000);
+        }
+        
+        // Initialize the map and load all layers
+        function initializeUrbanMap() {
+            // Initialize all layer functions
+            addZoning();
+            addTransportation();
+            addGreenSpaces();
+            addDevelopment();
+            addPopulation();
+            addEvidence();
+            
+            // Set default view with some layers visible
+            layers.zoning.addTo(map);
+            layers.green_spaces.addTo(map);
+            layers.evidence.addTo(map);
+            
+            console.log('🏙️ Metropolitan Urban Planning Map Initialized');
+            console.log('🔍 Case #5: Mystery in the Metropolis - Green Space Investigation');
+            console.log('📊 Target: Uncover corruption in urban development approval process');
+            console.log('🌳 Focus: Investigate vanishing green spaces in Urbanopolis');
+        }
+        
+        // Start the investigation
+        initializeUrbanMap();
+
+    </script>
+</body>
+</html>
