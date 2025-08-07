@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 8: Water System Cleanup - Geographic Detective Academy</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Roboto:wght@300;400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #ffffff;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        @media print {
+            body { 
+                background: white; 
+                font-size: 12pt;
+            }
+            .no-print { display: none; }
+            .page-break { page-break-before: always; }
+        }
+        
+        .handout-header {
+            background: linear-gradient(135deg, #0c4a6e, #0284c7);
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        
+        .detective-badge {
+            background: #ffd700;
+            color: #0c4a6e;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 0.5rem;
+        }
+        
+        .back-button {
+            background: #0284c7;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+        
+        .back-button:hover {
+            background: #0c4a6e;
+        }
+        
+        .section {
+            background: #f9f9f9;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+            border-left: 4px solid #0284c7;
+        }
+        
+        .question-box {
+            background: white;
+            border: 2px solid #0284c7;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+        }
+        
+        .answer-space {
+            min-height: 60px;
+            border-bottom: 1px solid #ddd;
+            margin: 0.5rem 0;
+        }
+        
+        .cleanup-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        
+        .cleanup-table th,
+        .cleanup-table td {
+            border: 1px solid #ddd;
+            padding: 0.5rem;
+            text-align: left;
+        }
+        
+        .cleanup-table th {
+            background: #0284c7;
+            color: white;
+        }
+        
+        .map-reference {
+            background: rgba(12, 74, 110, 0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border: 2px dashed #0284c7;
+        }
+        
+        .success-alert {
+            background: #d1fae5;
+            border: 2px solid #10b981;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .technology-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .tech-card {
+            background: #f0f9ff;
+            border: 2px solid #0ea5e9;
+            padding: 1rem;
+            border-radius: 8px;
+        }
+        
+        .cost-analysis {
+            background: #fef3c7;
+            border: 2px solid #f59e0b;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .effectiveness-meter {
+            width: 100%;
+            height: 20px;
+            background: #e5e7eb;
+            border-radius: 10px;
+            margin: 0.5rem 0;
+            position: relative;
+        }
+        
+        .effectiveness-fill {
+            height: 100%;
+            border-radius: 10px;
+            background: linear-gradient(to right, #dc2626, #f59e0b, #10b981);
+        }
+    </style>
+</head>
+<body>
+    <div class="no-print">
+        <a href="../teacher-guide-enhanced.html" class="back-button">← Back to Teacher Guide</a>
+        <a href="../student-materials.html" class="back-button">📚 All Student Materials</a>
+        <button onclick="window.print()" class="back-button">🖨️ Print This Handout</button>
+    </div>
+    
+    <div class="handout-header">
+        <div class="detective-badge">🛠️ CASE #4: DISASTER AT SEA</div>
+        <h1>Day 8: Water System Cleanup (Part 2)</h1>
+        <p><strong>Detective Name:</strong> _________________________ <strong>Date:</strong> _________</p>
+    </div>
+    
+    <div class="success-alert">
+        <h2>🚀 CLEANUP OPERATION ACTIVATED</h2>
+        <p><strong>RESPONSE UPDATE:</strong> Your watershed analysis has been crucial in coordinating the international cleanup effort! Eight countries are now working together to contain the oil spill using your contamination spread predictions. Now you must evaluate different cleanup technologies and design the most effective response strategy to restore the Amazon River system.</p>
+        
+        <p><strong>Current Operation Status:</strong></p>
+        <ul>
+            <li>🛠️ <strong>Cleanup Technologies:</strong> 5 different methods being deployed</li>
+            <li>🌍 <strong>International Teams:</strong> 8 countries coordinating response</li>
+            <li>💰 <strong>Cleanup Budget:</strong> $500 million emergency funding</li>
+            <li>⏱️ <strong>Progress Timeline:</strong> 30-day emergency response window</li>
+        </ul>
+    </div>
+    
+    <div class="section">
+        <h3>🛠️ Cleanup Technology Analysis</h3>
+        <p>Compare different oil spill cleanup methods and their effectiveness in river systems:</p>
+        
+        <table class="cleanup-table">
+            <thead>
+                <tr>
+                    <th>Cleanup Method</th>
+                    <th>How It Works</th>
+                    <th>Best Environment</th>
+                    <th>Cost per Mile</th>
+                    <th>Effectiveness %</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Containment Booms</td>
+                    <td>Floating barriers prevent oil spread</td>
+                    <td>Calm water, slow current</td>
+                    <td>$50,000</td>
+                    <td>85%</td>
+                </tr>
+                <tr>
+                    <td>Skimmer Boats</td>
+                    <td>Vacuum oil from water surface</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Chemical Dispersants</td>
+                    <td>Break oil into smaller droplets</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Bioremediation</td>
+                    <td>Bacteria eat oil naturally</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Manual Collection</td>
+                    <td>Workers collect oil by hand</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="technology-grid">
+        <div class="tech-card">
+            <h4>🚤 Containment Booms</h4>
+            <div class="effectiveness-meter">
+                <div class="effectiveness-fill" style="width: 85%;"></div>
+            </div>
+            <p><strong>Best For:</strong> Preventing spread in calm water</p>
+            <p><strong>Limitations:</strong> Ineffective in strong currents</p>
+            <p><strong>Amazon River Use:</strong> Limited to tributary mouths and calm zones</p>
+        </div>
+        
+        <div class="tech-card">
+            <h4>🛥️ Skimmer Boats</h4>
+            <div class="effectiveness-meter">
+                <div class="effectiveness-fill" style="width: 70%;"></div>
+            </div>
+            <p><strong>Best For:</strong> Removing oil from surface</p>
+            <p><strong>Limitations:</strong> Can't reach shallow areas</p>
+            <p><strong>Amazon River Use:</strong> Main channel cleanup</p>
+        </div>
+        
+        <div class="tech-card">
+            <h4>⚗️ Chemical Dispersants</h4>
+            <div class="effectiveness-meter">
+                <div class="effectiveness-fill" style="width: 60%;"></div>
+            </div>
+            <p><strong>Best For:</strong> Breaking up oil slicks</p>
+            <p><strong>Limitations:</strong> May harm aquatic life</p>
+            <p><strong>Amazon River Use:</strong> Controversial due to ecosystem impact</p>
+        </div>
+        
+        <div class="tech-card">
+            <h4>🦠 Bioremediation</h4>
+            <div class="effectiveness-meter">
+                <div class="effectiveness-fill" style="width: 90%;"></div>
+            </div>
+            <p><strong>Best For:</strong> Long-term natural cleanup</p>
+            <p><strong>Limitations:</strong> Slow process, 6+ months</p>
+            <p><strong>Amazon River Use:</strong> Perfect for wetland restoration</p>
+        </div>
+    </div>
+    
+    <div class="map-reference">
+        <h3>🗺️ Cleanup Deployment Strategy Map</h3>
+        <ol>
+            <li>Open the <strong>Amazon Watershed Map</strong> and identify the oil spill zones from Day 7</li>
+            <li>Mark areas where containment booms would be most effective (calm water)</li>
+            <li>Identify main channel areas where skimmer boats can operate</li>
+            <li>Locate sensitive wetland zones that need bioremediation</li>
+            <li>Find staging areas for equipment and personnel deployment</li>
+            <li>Plan supply routes for bringing cleanup equipment to remote areas</li>
+        </ol>
+        
+        <p><strong>Strategic Planning Questions:</strong></p>
+        <ul>
+            <li>Which cleanup methods work best in fast-flowing river sections?</li>
+            <li>Where should you deploy the most expensive technologies first?</li>
+            <li>How can you coordinate cleanup across multiple countries?</li>
+        </ul>
+    </div>
+    
+    <div class="question-box">
+        <h3>💰 Cost-Benefit Analysis</h3>
+        
+        <p><strong>You have a $500 million budget. Plan your cleanup deployment:</strong></p>
+        
+        <table class="cleanup-table">
+            <thead>
+                <tr>
+                    <th>Technology</th>
+                    <th>Cost per Mile</th>
+                    <th>Miles to Clean</th>
+                    <th>Total Cost</th>
+                    <th>Priority Rank</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Containment Booms</td>
+                    <td>$50,000</td>
+                    <td>______</td>
+                    <td>$_______</td>
+                    <td>_____</td>
+                </tr>
+                <tr>
+                    <td>Skimmer Boats</td>
+                    <td>$75,000</td>
+                    <td>______</td>
+                    <td>$_______</td>
+                    <td>_____</td>
+                </tr>
+                <tr>
+                    <td>Chemical Dispersants</td>
+                    <td>$25,000</td>
+                    <td>______</td>
+                    <td>$_______</td>
+                    <td>_____</td>
+                </tr>
+                <tr>
+                    <td>Bioremediation</td>
+                    <td>$30,000</td>
+                    <td>______</td>
+                    <td>$_______</td>
+                    <td>_____</td>
+                </tr>
+                <tr>
+                    <td>Manual Collection</td>
+                    <td>$100,000</td>
+                    <td>______</td>
+                    <td>$_______</td>
+                    <td>_____</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <p><strong>Budget Planning:</strong> Total Budget Used: $_______ / $500,000,000</p>
+        <div class="answer-space"></div>
+    </div>
+    
+    <div class="page-break"></div>
+    
+    <div class="cost-analysis">
+        <h3>🌍 International Coordination Challenge</h3>
+        
+        <p><strong>The Amazon watershed spans 8 countries. Research and solve these coordination problems:</strong></p>
+        
+        <p><strong>1. Jurisdiction Issues:</strong> Who has legal authority to make cleanup decisions in international waters?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+        
+        <p><strong>2. Cost Sharing:</strong> How should cleanup costs be divided among the 8 countries?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+        
+        <p><strong>3. Technology Transfer:</strong> Some countries have better cleanup technology than others. How do you share resources fairly?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+        
+        <p><strong>4. Communication Barriers:</strong> The countries speak Portuguese, Spanish, English, French, and indigenous languages. How do you coordinate operations?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+    </div>
+    
+    <div class="section">
+        <h3>📊 Environmental Impact Assessment</h3>
+        
+        <p><strong>Compare environmental effects of different cleanup methods:</strong></p>
+        
+        <table class="cleanup-table">
+            <thead>
+                <tr>
+                    <th>Cleanup Method</th>
+                    <th>Impact on Fish</th>
+                    <th>Impact on Water Quality</th>
+                    <th>Impact on Plant Life</th>
+                    <th>Recovery Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Containment Booms</td>
+                    <td>Low impact</td>
+                    <td>Positive - prevents spread</td>
+                    <td>Minimal</td>
+                    <td>Immediate</td>
+                </tr>
+                <tr>
+                    <td>Skimmer Boats</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Chemical Dispersants</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Bioremediation</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Manual Collection</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="section">
+        <h3>🔬 Monitoring and Evaluation</h3>
+        
+        <p><strong>How do you measure cleanup success? Design monitoring systems:</strong></p>
+        
+        <p><strong>1. Water Quality Testing:</strong> What chemicals should you test for to measure contamination levels?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+        
+        <p><strong>2. Wildlife Monitoring:</strong> How do you track the health of fish populations and aquatic ecosystems?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+        
+        <p><strong>3. Human Health Tracking:</strong> How do you monitor the health of communities that depend on river water?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+    </div>
+    
+    <div class="section">
+        <h3>📚 Water Cleanup Vocabulary</h3>
+        
+        <p><strong>Bioremediation:</strong></p>
+        <div class="answer-space"></div>
+        
+        <p><strong>Containment Boom:</strong></p>
+        <div class="answer-space"></div>
+        
+        <p><strong>Chemical Dispersant:</strong></p>
+        <div class="answer-space"></div>
+        
+        <p><strong>Skimming:</strong></p>
+        <div class="answer-space"></div>
+        
+        <p><strong>Environmental Remediation:</strong></p>
+        <div class="answer-space"></div>
+    </div>
+    
+    <div class="success-alert">
+        <h3>🎉 Mission Status: WATERSHED CRISIS RESOLVED!</h3>
+        <p><strong>Investigation Complete:</strong> Your strategic cleanup plan has successfully contained the oil spill and restored the Amazon River system! The international coordination framework you designed is now being used as a model for future water emergencies worldwide.</p>
+        
+        <p><strong>Key Achievements:</strong></p>
+        <ul>
+            <li>✅ Prevented contamination spread to all 8 countries</li>
+            <li>✅ Restored water safety for 25 million people</li>
+            <li>✅ Coordinated the largest international river cleanup in history</li>
+            <li>✅ Developed new technologies for watershed protection</li>
+        </ul>
+        
+        <p><strong>Tomorrow:</strong> Your next case moves to urban environments - investigating metropolitan planning challenges and infrastructure systems. Get ready for Case #5!</p>
+        <div class="answer-space"></div>
+    </div>
+</body>
+</html>

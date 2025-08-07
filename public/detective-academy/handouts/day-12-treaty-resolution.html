@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 12: Treaty Resolution - Geographic Detective Academy</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Roboto:wght@300;400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #ffffff;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        @media print {
+            body { 
+                background: white; 
+                font-size: 12pt;
+            }
+            .no-print { display: none; }
+            .page-break { page-break-before: always; }
+        }
+        
+        .handout-header {
+            background: linear-gradient(135deg, #1e40af, #7c3aed);
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        
+        .detective-badge {
+            background: #ffd700;
+            color: #1e40af;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 0.5rem;
+        }
+        
+        .back-button {
+            background: #7c3aed;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+        
+        .back-button:hover {
+            background: #1e40af;
+        }
+        
+        .section {
+            background: #f9f9f9;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+            border-left: 4px solid #7c3aed;
+        }
+        
+        .question-box {
+            background: white;
+            border: 2px solid #7c3aed;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+        }
+        
+        .answer-space {
+            min-height: 60px;
+            border-bottom: 1px solid #ddd;
+            margin: 0.5rem 0;
+        }
+        
+        .treaty-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        
+        .treaty-table th,
+        .treaty-table td {
+            border: 1px solid #ddd;
+            padding: 0.5rem;
+            text-align: left;
+        }
+        
+        .treaty-table th {
+            background: #7c3aed;
+            color: white;
+        }
+        
+        .negotiation-success {
+            background: #f0fdf4;
+            border: 2px solid #22c55e;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .treaty-framework {
+            background: rgba(124, 58, 237, 0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border: 2px dashed #7c3aed;
+        }
+        
+        .resolution-options {
+            background: #fff7ed;
+            border: 2px solid #f97316;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .compromise-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .compromise-option {
+            background: #f3f4f6;
+            border: 2px solid #6b7280;
+            padding: 1rem;
+            border-radius: 8px;
+            position: relative;
+        }
+        
+        .environmental-protection {
+            background: #ecfdf5;
+            border: 2px solid #10b981;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .graduation-ceremony {
+            background: #eff6ff;
+            border: 2px solid #3b82f6;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .final-evaluation {
+            background: #faf5ff;
+            border: 2px solid #8b5cf6;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .academy-achievement {
+            background: #fff1f2;
+            border: 2px solid #f43f5e;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .success-metrics {
+            background: #f0f9ff;
+            border: 2px solid #0ea5e9;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .option-selector {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: #7c3aed;
+            color: white;
+            border: none;
+            padding: 0.5rem;
+            border-radius: 50%;
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+        }
+        
+        .compromise-rating {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin: 0.25rem;
+        }
+        
+        .rating-excellent {
+            background: #bbf7d0;
+            color: #166534;
+        }
+        
+        .rating-good {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .rating-fair {
+            background: #fed7aa;
+            color: #9a3412;
+        }
+        
+        .rating-poor {
+            background: #fecaca;
+            color: #991b1b;
+        }
+        
+        .signature-box {
+            border: 2px solid #7c3aed;
+            padding: 2rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .certificate-border {
+            border: 5px double #ffd700;
+            padding: 2rem;
+            margin: 1rem 0;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #fef7cd, #fef3c7);
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="no-print">
+        <a href="../teacher-guide-enhanced.html" class="back-button">← Back to Teacher Guide</a>
+        <a href="../student-materials.html" class="back-button">📚 All Student Materials</a>
+        <button onclick="window.print()" class="back-button">🖨️ Print This Handout</button>
+    </div>
+    
+    <div class="handout-header">
+        <div class="detective-badge">🏆 CASE #6: JURISDICTIONAL CRISIS</div>
+        <h1>Day 12: Arctic Treaty Resolution (Part 2)</h1>
+        <p><strong>Detective Name:</strong> _________________________ <strong>Date:</strong> _________</p>
+    </div>
+    
+    <div class="negotiation-success">
+        <h2>🤝 FINAL TREATY NEGOTIATION</h2>
+        <p><strong>DIPLOMATIC BREAKTHROUGH NEEDED:</strong> After intense negotiations, your detective team must design the final Arctic Treaty that resolves the 5-nation territorial dispute. This treaty will set precedent for future international conflicts and determine the fate of 30 billion barrels of oil, Arctic wildlife, and indigenous peoples' rights. The world is watching your decisions.</p>
+        
+        <p><strong>Final Challenge Requirements:</strong></p>
+        <ul>
+            <li>⚖️ <strong>Legal Framework:</strong> Create binding international agreements</li>
+            <li>🌍 <strong>Environmental Protection:</strong> Preserve Arctic ecosystem</li>
+            <li>👥 <strong>Indigenous Rights:</strong> Respect traditional territorial use</li>
+            <li>💰 <strong>Economic Benefits:</strong> Fair distribution of oil revenues</li>
+            <li>🕊️ <strong>Peaceful Resolution:</strong> Prevent military conflict</li>
+        </ul>
+    </div>
+    
+    <div class="section">
+        <h3>📋 Treaty Design Challenge</h3>
+        <p><strong>Design your comprehensive Arctic Sovereignty Treaty:</strong></p>
+        
+        <p><strong>ARTICLE 1: TERRITORIAL BOUNDARIES</strong></p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+        
+        <p><strong>ARTICLE 2: RESOURCE EXTRACTION RIGHTS</strong></p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+        
+        <p><strong>ARTICLE 3: ENVIRONMENTAL PROTECTION STANDARDS</strong></p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+        
+        <p><strong>ARTICLE 4: INDIGENOUS PEOPLES' RIGHTS</strong></p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+        
+        <p><strong>ARTICLE 5: REVENUE SHARING MECHANISM</strong></p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+    </div>
+    
+    <div class="resolution-options">
+        <h3>⚖️ Compromise Solution Selection</h3>
+        <p><strong>Choose the best compromise solution for the Arctic dispute:</strong></p>
+        
+        <div class="compromise-grid">
+            <div class="compromise-option">
+                <button class="option-selector">A</button>
+                <h4>🌐 International Zone Solution</h4>
+                <p><strong>Proposal:</strong> Disputed area becomes international territory managed by UN</p>
+                <p><strong>Benefits:</strong> No single country dominates, shared revenues</p>
+                <p><strong>Challenges:</strong> Complex management, enforcement issues</p>
+                <span class="compromise-rating rating-good">MODERATE SUCCESS</span>
+            </div>
+            
+            <div class="compromise-option">
+                <button class="option-selector">B</button>
+                <h4>🔄 Rotating Management</h4>
+                <p><strong>Proposal:</strong> Each country manages area for 10-year periods</p>
+                <p><strong>Benefits:</strong> All countries get access, shared responsibility</p>
+                <p><strong>Challenges:</strong> Discontinuous policies, transition disputes</p>
+                <span class="compromise-rating rating-fair">LIMITED SUCCESS</span>
+            </div>
+            
+            <div class="compromise-option">
+                <button class="option-selector">C</button>
+                <h4>🗺️ Geographic Division</h4>
+                <p><strong>Proposal:</strong> Split territory into 5 equal sections</p>
+                <p><strong>Benefits:</strong> Clear boundaries, each country gets territory</p>
+                <p><strong>Challenges:</strong> Unequal oil distribution, arbitrary divisions</p>
+                <span class="compromise-rating rating-fair">LIMITED SUCCESS</span>
+            </div>
+            
+            <div class="compromise-option">
+                <button class="option-selector">D</button>
+                <h4>🏢 Joint Development Corporation</h4>
+                <p><strong>Proposal:</strong> Create 5-nation company to develop resources</p>
+                <p><strong>Benefits:</strong> Shared costs/profits, unified management</p>
+                <p><strong>Challenges:</strong> Complex governance, profit disputes</p>
+                <span class="compromise-rating rating-excellent">HIGH SUCCESS</span>
+            </div>
+            
+            <div class="compromise-option">
+                <button class="option-selector">E</button>
+                <h4>🧊 Environmental Moratorium</h4>
+                <p><strong>Proposal:</strong> 25-year ban on drilling, focus on research</p>
+                <p><strong>Benefits:</strong> Protects environment, time for better technology</p>
+                <p><strong>Challenges:</strong> Economic pressure, future disputes</p>
+                <span class="compromise-rating rating-good">MODERATE SUCCESS</span>
+            </div>
+            
+            <div class="compromise-option">
+                <button class="option-selector">F</button>
+                <h4>🏔️ Indigenous-Led Management</h4>
+                <p><strong>Proposal:</strong> Inuit peoples manage territory with revenue sharing</p>
+                <p><strong>Benefits:</strong> Respects traditional rights, environmental focus</p>
+                <p><strong>Challenges:</strong> Limited technical capacity, political resistance</p>
+                <span class="compromise-rating rating-good">MODERATE SUCCESS</span>
+            </div>
+        </div>
+        
+        <p><strong>Your chosen solution:</strong> Option _____ </p>
+        <p><strong>Justification:</strong></p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+    </div>
+    
+    <div class="treaty-framework">
+        <h3>📜 Treaty Implementation Plan</h3>
+        <p><strong>Design the implementation timeline for your Arctic Treaty:</strong></p>
+        
+        <table class="treaty-table">
+            <thead>
+                <tr>
+                    <th>Phase</th>
+                    <th>Timeline</th>
+                    <th>Key Actions</th>
+                    <th>Success Metrics</th>
+                    <th>Responsible Party</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Treaty Ratification</td>
+                    <td>Months 1-6</td>
+                    <td>Parliamentary approval in all 5 countries</td>
+                    <td>100% ratification achieved</td>
+                    <td>National governments</td>
+                </tr>
+                <tr>
+                    <td>Boundary Demarcation</td>
+                    <td>Months 7-18</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Environmental Assessment</td>
+                    <td>Months 6-24</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Indigenous Consultation</td>
+                    <td>Months 1-12</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Resource Development</td>
+                    <td>Years 3-10</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="environmental-protection">
+        <h3>🌿 Environmental Safeguards</h3>
+        <p><strong>Design environmental protection measures for your treaty:</strong></p>
+        
+        <p><strong>1. Drilling Restrictions:</strong></p>
+        <ul>
+            <li>Prohibited seasons: ________________________________</li>
+            <li>Protected species areas: ___________________________</li>
+            <li>Technology requirements: ____________________________</li>
+            <li>Spill response plan: ________________________________</li>
+        </ul>
+        
+        <p><strong>2. Climate Impact Assessment:</strong></p>
+        <ul>
+            <li>Carbon emission limits: _____________________________</li>
+            <li>Renewable energy requirements: _______________________</li>
+            <li>Ice habitat preservation: ____________________________</li>
+            <li>Marine ecosystem monitoring: __________________________</li>
+        </ul>
+        
+        <p><strong>3. Long-term Sustainability:</strong></p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+    </div>
+    
+    <div class="page-break"></div>
+    
+    <div class="question-box">
+        <h3>🎓 Final Geographic Detective Assessment</h3>
+        
+        <p><strong>Reflect on your 12-day journey through the Geographic Detective Academy:</strong></p>
+        
+        <p><strong>1. Most Challenging Case:</strong> Which investigation was most difficult and why?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+        
+        <p><strong>2. Geographic Skills Developed:</strong> What geographic concepts did you master?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+        
+        <p><strong>3. Real-World Applications:</strong> How will you use these skills in the future?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+        
+        <p><strong>4. Global Citizenship:</strong> How has studying geography changed your view of the world?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+    </div>
+    
+    <div class="success-metrics">
+        <h3>📊 Academy Performance Evaluation</h3>
+        <p><strong>Rate your performance in each geographic investigation area (1-10):</strong></p>
+        
+        <table class="treaty-table">
+            <thead>
+                <tr>
+                    <th>Geographic Skill Area</th>
+                    <th>Cases Used</th>
+                    <th>Self-Rating (1-10)</th>
+                    <th>Evidence of Learning</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Physical Geography (Biomes, Climate)</td>
+                    <td>Amazon, Sahara, Himalayas</td>
+                    <td>____/10</td>
+                    <td>_____________________</td>
+                </tr>
+                <tr>
+                    <td>Environmental Analysis</td>
+                    <td>All cases with ecosystem focus</td>
+                    <td>____/10</td>
+                    <td>_____________________</td>
+                </tr>
+                <tr>
+                    <td>Cultural Geography</td>
+                    <td>Indigenous peoples, global connections</td>
+                    <td>____/10</td>
+                    <td>_____________________</td>
+                </tr>
+                <tr>
+                    <td>Urban Geography</td>
+                    <td>São Paulo megacity crisis</td>
+                    <td>____/10</td>
+                    <td>_____________________</td>
+                </tr>
+                <tr>
+                    <td>Political Geography</td>
+                    <td>Arctic territorial disputes</td>
+                    <td>____/10</td>
+                    <td>_____________________</td>
+                </tr>
+                <tr>
+                    <td>International Relations</td>
+                    <td>All multi-country coordination</td>
+                    <td>____/10</td>
+                    <td>_____________________</td>
+                </tr>
+                <tr>
+                    <td>Problem Solving</td>
+                    <td>All detective challenges</td>
+                    <td>____/10</td>
+                    <td>_____________________</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <p><strong>Overall Academy Performance:</strong> ______/70 points</p>
+    </div>
+    
+    <div class="signature-box">
+        <h3>✍️ Treaty Signing Ceremony</h3>
+        <p><strong>Sign your completed Arctic Sovereignty Treaty:</strong></p>
+        
+        <div style="margin: 2rem 0;">
+            <p><strong>Chief Detective:</strong> _________________________________ <strong>Date:</strong> _________</p>
+            <br>
+            <p><strong>Investigation Team:</strong> _________________________________________________</p>
+            <br>
+            <p><strong>Academy Supervisor:</strong> _______________________________ <strong>Date:</strong> _________</p>
+        </div>
+    </div>
+    
+    <div class="certificate-border">
+        <h2>🏆 GEOGRAPHIC DETECTIVE ACADEMY</h2>
+        <h3>CERTIFICATE OF COMPLETION</h3>
+        
+        <p style="margin: 1rem 0; font-size: 1.2rem;">This certifies that</p>
+        <p style="font-size: 1.5rem; font-weight: bold; color: #7c3aed; margin: 1rem 0;">
+            ________________________________________
+        </p>
+        <p style="margin: 1rem 0;">has successfully completed the intensive 12-day</p>
+        <p style="font-weight: bold; margin: 1rem 0;">GEOGRAPHIC DETECTIVE ACADEMY</p>
+        
+        <p>demonstrating mastery of:</p>
+        <ul style="text-align: left; display: inline-block; margin: 1rem 0;">
+            <li>Physical and Environmental Geography</li>
+            <li>Cultural and Urban Geography</li>
+            <li>Political Geography and International Relations</li>
+            <li>Problem-Solving and Critical Analysis</li>
+            <li>Global Citizenship and Environmental Stewardship</li>
+        </ul>
+        
+        <p style="margin: 2rem 0;">Awarded this _____ day of _____________, 2025</p>
+        
+        <div style="display: flex; justify-content: space-between; margin-top: 2rem;">
+            <div>
+                <p>_______________________________</p>
+                <p><small>Academy Director</small></p>
+            </div>
+            <div>
+                <p>_______________________________</p>
+                <p><small>Teacher Supervisor</small></p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="graduation-ceremony">
+        <h3>🎉 Congratulations, Geographic Detective!</h3>
+        
+        <p><strong>Academy Mission Complete:</strong> You've successfully completed 12 challenging geographic investigations, from Amazon rainforest mysteries to Arctic territorial disputes. You've learned to think like a geographic detective, analyzing complex global issues through the lens of physical geography, cultural patterns, and international relations.</p>
+        
+        <p><strong>Your Geographic Detective Skills:</strong></p>
+        <ul>
+            <li>🌍 <strong>Global Perspective:</strong> Understanding how geography shapes world events</li>
+            <li>🔍 <strong>Analytical Thinking:</strong> Using evidence to solve complex problems</li>
+            <li>🤝 <strong>Cultural Competency:</strong> Respecting diverse global communities</li>
+            <li>🌿 <strong>Environmental Awareness:</strong> Protecting ecosystems and resources</li>
+            <li>⚖️ <strong>Diplomatic Solutions:</strong> Resolving conflicts through negotiation</li>
+            <li>🏙️ <strong>Urban Planning:</strong> Understanding megacity challenges</li>
+        </ul>
+        
+        <p><strong>Next Steps:</strong> Take your geographic detective skills into the real world! Use them to understand current events, make informed decisions about environmental issues, and develop global citizenship skills.</p>
+        
+        <p><strong>Remember:</strong> Every geographic challenge has multiple perspectives, cultural considerations, and environmental impacts. Keep investigating, keep questioning, and keep exploring our amazing planet!</p>
+    </div>
+</body>
+</html>

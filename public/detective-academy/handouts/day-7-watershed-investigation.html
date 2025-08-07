@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 7: Watershed Investigation - Geographic Detective Academy</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Roboto:wght@300;400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #ffffff;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        @media print {
+            body { 
+                background: white; 
+                font-size: 12pt;
+            }
+            .no-print { display: none; }
+            .page-break { page-break-before: always; }
+        }
+        
+        .handout-header {
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        
+        .detective-badge {
+            background: #ffd700;
+            color: #1e3a8a;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 0.5rem;
+        }
+        
+        .back-button {
+            background: #3b82f6;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+        
+        .back-button:hover {
+            background: #1e3a8a;
+        }
+        
+        .section {
+            background: #f9f9f9;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+            border-left: 4px solid #3b82f6;
+        }
+        
+        .question-box {
+            background: white;
+            border: 2px solid #3b82f6;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+        }
+        
+        .answer-space {
+            min-height: 60px;
+            border-bottom: 1px solid #ddd;
+            margin: 0.5rem 0;
+        }
+        
+        .water-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        
+        .water-table th,
+        .water-table td {
+            border: 1px solid #ddd;
+            padding: 0.5rem;
+            text-align: left;
+        }
+        
+        .water-table th {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .map-reference {
+            background: rgba(30, 58, 138, 0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border: 2px dashed #3b82f6;
+        }
+        
+        .emergency-alert {
+            background: #fee2e2;
+            border: 2px solid #dc2626;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .water-cycle {
+            background: #e0f2fe;
+            border: 2px solid #0284c7;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .contamination-alert {
+            background: #fff3cd;
+            border: 2px solid #f59e0b;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .flow-diagram {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .flow-step {
+            background: #f0f9ff;
+            border: 2px solid #0284c7;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .flow-step::after {
+            content: "→";
+            position: absolute;
+            right: -1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5rem;
+            color: #0284c7;
+        }
+        
+        .flow-step:last-child::after {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="no-print">
+        <a href="../teacher-guide-enhanced.html" class="back-button">← Back to Teacher Guide</a>
+        <a href="../student-materials.html" class="back-button">📚 All Student Materials</a>
+        <button onclick="window.print()" class="back-button">🖨️ Print This Handout</button>
+    </div>
+    
+    <div class="handout-header">
+        <div class="detective-badge">🌊 CASE #4: DISASTER AT SEA</div>
+        <h1>Day 7: Watershed Investigation (Part 1)</h1>
+        <p><strong>Detective Name:</strong> _________________________ <strong>Date:</strong> _________</p>
+    </div>
+    
+    <div class="emergency-alert">
+        <h2>🚨 URGENT WATER CRISIS</h2>
+        <p><strong>BREAKING NEWS:</strong> A massive oil tanker has run aground near the mouth of the Amazon River, spilling 50,000 gallons of crude oil into the world's largest river system. The spill threatens drinking water for millions of people, destroys fish populations, and could contaminate the entire watershed. Your detective team must understand how water systems work to predict the spread of contamination and coordinate emergency response efforts.</p>
+        
+        <p><strong>Critical Impact Zone:</strong></p>
+        <ul>
+            <li>🏘️ <strong>Affected Population:</strong> 25 million people depend on Amazon River water</li>
+            <li>🐟 <strong>Ecosystem Threat:</strong> 3,000+ fish species at risk</li>
+            <li>🌎 <strong>Global Impact:</strong> Amazon supplies 20% of world's freshwater to oceans</li>
+            <li>⏰ <strong>Response Time:</strong> Oil spreads 10 miles per day downstream</li>
+        </ul>
+    </div>
+    
+    <div class="section">
+        <h3>💧 Watershed System Analysis</h3>
+        <p>A watershed is all the land area that drains water into a specific river or ocean. Complete this analysis of the Amazon watershed:</p>
+        
+        <table class="water-table">
+            <thead>
+                <tr>
+                    <th>Watershed Component</th>
+                    <th>Size/Length</th>
+                    <th>Function</th>
+                    <th>Contamination Risk</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Amazon River (main channel)</td>
+                    <td>6,400 km (4,000 miles)</td>
+                    <td>Primary water transport</td>
+                    <td>Highest - direct contamination</td>
+                </tr>
+                <tr>
+                    <td>Major Tributaries</td>
+                    <td>Over 1,000 tributaries</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Watershed Basin Area</td>
+                    <td>7 million km² (40% of South America)</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Wetlands & Floodplains</td>
+                    <td>100,000+ km² seasonal flooding</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Groundwater Systems</td>
+                    <td>Extends under 8 countries</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="map-reference">
+        <h3>🗺️ Amazon Watershed Investigation Map</h3>
+        <ol>
+            <li>Open the <strong>Amazon Watershed Map</strong> and locate the oil spill site near the river mouth</li>
+            <li>Trace the main Amazon River channel from the spill location upstream</li>
+            <li>Identify major tributaries that feed into the Amazon River</li>
+            <li>Find cities and towns along the river that depend on the water</li>
+            <li>Locate sensitive ecosystems (wetlands, fish spawning areas)</li>
+            <li>Mark international borders - the watershed spans 8 countries</li>
+        </ol>
+        
+        <p><strong>Critical Investigation Questions:</strong></p>
+        <ul>
+            <li>How far upstream could the oil contamination travel with changing tides?</li>
+            <li>Which tributaries are most at risk of contamination?</li>
+            <li>What major cities depend on Amazon River water for drinking?</li>
+        </ul>
+    </div>
+    
+    <div class="water-cycle">
+        <h3>🔄 Water Flow and Contamination Spread</h3>
+        <p><strong>Map the path of contamination through the watershed system:</strong></p>
+        
+        <div class="flow-diagram">
+            <div class="flow-step">
+                <strong>Oil Spill Site</strong><br>
+                <small>Tanker accident location</small><br>
+                Day 0: 50,000 gallons
+            </div>
+            <div class="flow-step">
+                <strong>River Current</strong><br>
+                <small>Downstream flow</small><br>
+                Day 1: _____ miles spread
+            </div>
+            <div class="flow-step">
+                <strong>Tributary Mixing</strong><br>
+                <small>Side rivers join main channel</small><br>
+                Day 3: _____ tributaries affected
+            </div>
+            <div class="flow-step">
+                <strong>Floodplain Seepage</strong><br>
+                <small>Oil spreads to wetlands</small><br>
+                Day 7: _____ km² contaminated
+            </div>
+            <div class="flow-step">
+                <strong>Ocean Discharge</strong><br>
+                <small>River meets Atlantic Ocean</small><br>
+                Day 14: Marine impact begins
+            </div>
+        </div>
+        
+        <p><strong>Calculate Contamination Speed:</strong> If oil travels 10 miles per day downstream, how long until it reaches:</p>
+        <ul>
+            <li>Manaus (1,000 miles upstream): _________ days</li>
+            <li>Iquitos, Peru (2,300 miles upstream): _________ days</li>
+            <li>Atlantic Ocean (200 miles downstream): _________ days</li>
+        </ul>
+    </div>
+    
+    <div class="question-box">
+        <h3>🌍 International Water Crisis Management</h3>
+        
+        <p><strong>The Amazon watershed spans 8 countries. Research and answer:</strong></p>
+        
+        <p><strong>1. Water Rights:</strong> Which countries share the Amazon River system and who has authority over cleanup efforts?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+        
+        <p><strong>2. Downstream Impact:</strong> How does contamination in one country affect water supplies in neighboring countries?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+        
+        <p><strong>3. Coordination Challenges:</strong> What international organizations coordinate river contamination cleanup?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+    </div>
+    
+    <div class="page-break"></div>
+    
+    <div class="contamination-alert">
+        <h3>☠️ Water Contamination Science</h3>
+        
+        <p><strong>Oil contamination affects water in multiple ways. Research and explain each impact:</strong></p>
+        
+        <p><strong>1. Physical Contamination:</strong> How does oil physically change water quality?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+        
+        <p><strong>2. Chemical Effects:</strong> What toxic chemicals from oil harm aquatic life?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+        
+        <p><strong>3. Biological Impact:</strong> How does oil contamination affect fish, plants, and microorganisms?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+        
+        <p><strong>4. Long-term Effects:</strong> How long can oil contamination persist in a river system?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+    </div>
+    
+    <div class="section">
+        <h3>🏘️ Human Impact Assessment</h3>
+        
+        <p><strong>Calculate the human cost of water contamination:</strong></p>
+        
+        <table class="water-table">
+            <thead>
+                <tr>
+                    <th>Affected Population</th>
+                    <th>Number of People</th>
+                    <th>Primary Water Use</th>
+                    <th>Alternative Water Sources</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Rural riverside communities</td>
+                    <td>5 million</td>
+                    <td>Direct river access</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Urban centers (Manaus, Belém)</td>
+                    <td>3 million</td>
+                    <td>Treated river water</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Indigenous communities</td>
+                    <td>400,000</td>
+                    <td>Traditional fishing/water use</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Commercial fishing industry</td>
+                    <td>800,000 workers</td>
+                    <td>Fish harvest</td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <p><strong>Emergency Questions:</strong></p>
+        <ul>
+            <li>Which population groups are most vulnerable to water contamination?</li>
+            <li>What emergency water supplies would be needed for 8.2 million people?</li>
+            <li>How long could emergency water supplies realistically last?</li>
+        </ul>
+    </div>
+    
+    <div class="section">
+        <h3>📚 Watershed Vocabulary</h3>
+        
+        <p><strong>Watershed:</strong></p>
+        <div class="answer-space"></div>
+        
+        <p><strong>Tributary:</strong></p>
+        <div class="answer-space"></div>
+        
+        <p><strong>Floodplain:</strong></p>
+        <div class="answer-space"></div>
+        
+        <p><strong>Water Table:</strong></p>
+        <div class="answer-space"></div>
+        
+        <p><strong>Runoff:</strong></p>
+        <div class="answer-space"></div>
+    </div>
+    
+    <div class="contamination-alert">
+        <h3>⏰ Mission Status: Day 7 Complete</h3>
+        <p><strong>Investigation Progress:</strong> You've analyzed how watershed systems work and predicted the spread of contamination. Tomorrow you'll learn about cleanup technologies and coordinate international response efforts to contain the disaster.</p>
+        
+        <p><strong>Tonight's Homework:</strong> Research one real water contamination disaster (like the Exxon Valdez oil spill) and identify what cleanup methods were most effective.</p>
+        <div class="answer-space"></div>
+    </div>
+</body>
+</html>

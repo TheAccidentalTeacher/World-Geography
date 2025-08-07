@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 11: Jurisdictional Crisis - Geographic Detective Academy</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Roboto:wght@300;400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #ffffff;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        @media print {
+            body { 
+                background: white; 
+                font-size: 12pt;
+            }
+            .no-print { display: none; }
+            .page-break { page-break-before: always; }
+        }
+        
+        .handout-header {
+            background: linear-gradient(135deg, #7c2d12, #ea580c);
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        
+        .detective-badge {
+            background: #ffd700;
+            color: #7c2d12;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 0.5rem;
+        }
+        
+        .back-button {
+            background: #ea580c;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+        
+        .back-button:hover {
+            background: #7c2d12;
+        }
+        
+        .section {
+            background: #f9f9f9;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+            border-left: 4px solid #ea580c;
+        }
+        
+        .question-box {
+            background: white;
+            border: 2px solid #ea580c;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+        }
+        
+        .answer-space {
+            min-height: 60px;
+            border-bottom: 1px solid #ddd;
+            margin: 0.5rem 0;
+        }
+        
+        .jurisdiction-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        
+        .jurisdiction-table th,
+        .jurisdiction-table td {
+            border: 1px solid #ddd;
+            padding: 0.5rem;
+            text-align: left;
+        }
+        
+        .jurisdiction-table th {
+            background: #ea580c;
+            color: white;
+        }
+        
+        .crisis-alert {
+            background: #fef2f2;
+            border: 2px solid #ef4444;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .border-dispute {
+            background: rgba(234, 88, 12, 0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border: 2px dashed #ea580c;
+        }
+        
+        .diplomacy-challenge {
+            background: #fff7ed;
+            border: 2px solid #f97316;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .country-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .country-card {
+            background: #f3f4f6;
+            border: 2px solid #6b7280;
+            padding: 1rem;
+            border-radius: 8px;
+        }
+        
+        .disputed-territory {
+            background: #fef3f2;
+            border: 3px solid #ef4444;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .legal-framework {
+            background: #ecfdf5;
+            border: 2px solid #10b981;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .un-resolution {
+            background: #eff6ff;
+            border: 2px solid #3b82f6;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .treaty-negotiation {
+            background: #faf5ff;
+            border: 2px solid #8b5cf6;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .sovereignty-claim {
+            background: #fff1f2;
+            border: 2px solid #f43f5e;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .flag-icon {
+            width: 30px;
+            height: 20px;
+            display: inline-block;
+            margin-right: 0.5rem;
+            vertical-align: middle;
+        }
+        
+        .conflict-level {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin: 0.25rem;
+        }
+        
+        .conflict-critical {
+            background: #fecaca;
+            color: #991b1b;
+        }
+        
+        .conflict-high {
+            background: #fed7aa;
+            color: #9a3412;
+        }
+        
+        .conflict-medium {
+            background: #fef3c7;
+            color: #92400e;
+        }
+    </style>
+</head>
+<body>
+    <div class="no-print">
+        <a href="../teacher-guide-enhanced.html" class="back-button">← Back to Teacher Guide</a>
+        <a href="../student-materials.html" class="back-button">📚 All Student Materials</a>
+        <button onclick="window.print()" class="back-button">🖨️ Print This Handout</button>
+    </div>
+    
+    <div class="handout-header">
+        <div class="detective-badge">🌍 CASE #6: JURISDICTIONAL CRISIS</div>
+        <h1>Day 11: Border Conflict Resolution (Part 1)</h1>
+        <p><strong>Detective Name:</strong> _________________________ <strong>Date:</strong> _________</p>
+    </div>
+    
+    <div class="crisis-alert">
+        <h2>⚡ INTERNATIONAL BORDER CRISIS</h2>
+        <p><strong>URGENT DIPLOMATIC SITUATION:</strong> A massive oil discovery in the Arctic Ocean has triggered the most complex territorial dispute in modern history. Five countries are claiming sovereignty over the same region, leading to military tensions and environmental threats. Your detective team must analyze international law, geographic evidence, and historical claims to prevent potential conflict.</p>
+        
+        <p><strong>Crisis Details:</strong></p>
+        <ul>
+            <li>🛢️ <strong>Discovery:</strong> 30 billion barrels of oil found beneath Arctic ice</li>
+            <li>🏴 <strong>Territorial Claims:</strong> 5 countries claiming the same 50,000 km² area</li>
+            <li>⚓ <strong>Military Presence:</strong> Naval vessels from multiple nations converging</li>
+            <li>🧊 <strong>Environmental Risk:</strong> Fragile Arctic ecosystem threatened by drilling</li>
+            <li>🕐 <strong>Time Pressure:</strong> International Court of Justice hearing in 30 days</li>
+        </ul>
+    </div>
+    
+    <div class="section">
+        <h3>🗺️ Territorial Claims Analysis</h3>
+        <p>Analyze each country's claim to the disputed Arctic territory:</p>
+        
+        <table class="jurisdiction-table">
+            <thead>
+                <tr>
+                    <th>Country</th>
+                    <th>Type of Claim</th>
+                    <th>Geographic Evidence</th>
+                    <th>Legal Basis</th>
+                    <th>Claim Strength (1-10)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>🇺🇸 United States (Alaska)</td>
+                    <td>Continental Shelf Extension</td>
+                    <td>Underwater mountain ridge connects to Alaska coast</td>
+                    <td>UN Convention on Law of the Sea (UNCLOS)</td>
+                    <td>_____/10</td>
+                </tr>
+                <tr>
+                    <td>🇨🇦 Canada</td>
+                    <td>Arctic Archipelago Rights</td>
+                    <td>Historic use by Inuit peoples, proximity to islands</td>
+                    <td></td>
+                    <td>_____/10</td>
+                </tr>
+                <tr>
+                    <td>🇷🇺 Russia</td>
+                    <td>Lomonosov Ridge Extension</td>
+                    <td>Underwater ridge extends from Siberian coast</td>
+                    <td></td>
+                    <td>_____/10</td>
+                </tr>
+                <tr>
+                    <td>🇳🇴 Norway</td>
+                    <td>Svalbard Treaty Rights</td>
+                    <td>Historical presence in Arctic, fishing rights</td>
+                    <td></td>
+                    <td>_____/10</td>
+                </tr>
+                <tr>
+                    <td>🇩🇰 Denmark (Greenland)</td>
+                    <td>Greenland Continental Shelf</td>
+                    <td>Geological connection to Greenland</td>
+                    <td></td>
+                    <td>_____/10</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="border-dispute">
+        <h3>📏 Understanding Maritime Boundaries</h3>
+        <p><strong>Learn how international maritime law defines territorial waters:</strong></p>
+        
+        <ol>
+            <li><strong>Territorial Sea:</strong> 12 nautical miles from coastline - full sovereignty</li>
+            <li><strong>Contiguous Zone:</strong> 24 nautical miles - limited jurisdiction</li>
+            <li><strong>Exclusive Economic Zone (EEZ):</strong> 200 nautical miles - resource rights</li>
+            <li><strong>Continental Shelf:</strong> Extended seabed - mineral and oil rights</li>
+        </ol>
+        
+        <p><strong>Apply these rules to the Arctic dispute:</strong></p>
+        <ul>
+            <li>Which countries can claim a 200-mile EEZ in the disputed area? ____________________</li>
+            <li>How do overlapping EEZs get resolved? ___________________________________</li>
+            <li>What evidence proves continental shelf extension? _____________________________</li>
+            <li>Who has the strongest geographic claim based on proximity? ____________________</li>
+        </ul>
+    </div>
+    
+    <div class="diplomacy-challenge">
+        <h3>🤝 Diplomatic Position Analysis</h3>
+        <p><strong>Each country has different motivations for claiming the territory:</strong></p>
+        
+        <div class="country-grid">
+            <div class="country-card">
+                <h4>🇺🇸 United States Strategy</h4>
+                <p><strong>Motivation:</strong> Energy independence, Arctic trade routes</p>
+                <p><strong>Allies:</strong> NATO partners, especially Canada</p>
+                <p><strong>Negotiation Style:</strong> ________________</p>
+                <p><strong>Likely Compromise:</strong> ________________</p>
+                <span class="conflict-level conflict-medium">MODERATE TENSION</span>
+            </div>
+            
+            <div class="country-card">
+                <h4>🇨🇦 Canada Strategy</h4>
+                <p><strong>Motivation:</strong> Arctic sovereignty, indigenous rights</p>
+                <p><strong>Allies:</strong> USA, Denmark (both NATO)</p>
+                <p><strong>Negotiation Style:</strong> ________________</p>
+                <p><strong>Likely Compromise:</strong> ________________</p>
+                <span class="conflict-level conflict-medium">MODERATE TENSION</span>
+            </div>
+            
+            <div class="country-card">
+                <h4>🇷🇺 Russia Strategy</h4>
+                <p><strong>Motivation:</strong> Economic development, strategic control</p>
+                <p><strong>Allies:</strong> Limited - mostly isolated on this issue</p>
+                <p><strong>Negotiation Style:</strong> ________________</p>
+                <p><strong>Likely Compromise:</strong> ________________</p>
+                <span class="conflict-level conflict-high">HIGH TENSION</span>
+            </div>
+            
+            <div class="country-card">
+                <h4>🇳🇴 Norway Strategy</h4>
+                <p><strong>Motivation:</strong> Oil expertise, Arctic experience</p>
+                <p><strong>Allies:</strong> NATO, especially Denmark</p>
+                <p><strong>Negotiation Style:</strong> ________________</p>
+                <p><strong>Likely Compromise:</strong> ________________</p>
+                <span class="conflict-level conflict-medium">MODERATE TENSION</span>
+            </div>
+            
+            <div class="country-card">
+                <h4>🇩🇰 Denmark Strategy</h4>
+                <p><strong>Motivation:</strong> Greenland autonomy, economic development</p>
+                <p><strong>Allies:</strong> NATO partners, indigenous groups</p>
+                <p><strong>Negotiation Style:</strong> ________________</p>
+                <p><strong>Likely Compromise:</strong> ________________</p>
+                <span class="conflict-level conflict-medium">MODERATE TENSION</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="disputed-territory">
+        <h3>⚖️ International Law Research</h3>
+        <p><strong>Research historical precedents for similar territorial disputes:</strong></p>
+        
+        <p><strong>1. South China Sea Dispute (2016):</strong> How did the international court rule on competing territorial claims?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+        
+        <p><strong>2. Spratly Islands (Multiple Claims):</strong> What factors did courts consider when multiple countries claimed the same territory?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+        
+        <p><strong>3. Antarctic Treaty (1959):</strong> How did the world handle conflicting territorial claims in Antarctica?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+        
+        <p><strong>Apply these lessons to the Arctic crisis:</strong> What legal principles should guide the resolution?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+    </div>
+    
+    <div class="legal-framework">
+        <h3>📜 UN Convention on the Law of the Sea (UNCLOS)</h3>
+        <p><strong>Analyze how international maritime law applies to this dispute:</strong></p>
+        
+        <p><strong>Key UNCLOS Principles:</strong></p>
+        <ul>
+            <li>Continental shelf extends to 200 nautical miles OR to the edge of continental margin</li>
+            <li>Countries can claim extended shelf beyond 200 miles with scientific evidence</li>
+            <li>Overlapping claims must be resolved through negotiation or arbitration</li>
+            <li>Environmental protection is required in all maritime zones</li>
+        </ul>
+        
+        <p><strong>Evidence Requirements for Extended Continental Shelf Claims:</strong></p>
+        <ol>
+            <li><strong>Geological Evidence:</strong> Prove underwater landforms connect to your coast</li>
+            <li><strong>Scientific Surveys:</strong> Map the seafloor with detailed bathymetric data</li>
+            <li><strong>Sediment Analysis:</strong> Show sediment originates from your landmass</li>
+            <li><strong>Expert Review:</strong> UN Commission on Limits of Continental Shelf approval</li>
+        </ol>
+        
+        <p><strong>Which country has the strongest scientific evidence?</strong> ________________________</p>
+        <p><strong>Why?</strong> _________________________________________________________________</p>
+    </div>
+    
+    <div class="page-break"></div>
+    
+    <div class="sovereignty-claim">
+        <h3>🏔️ Geographic Evidence Analysis</h3>
+        <p><strong>Examine the scientific evidence each country has presented:</strong></p>
+        
+        <table class="jurisdiction-table">
+            <thead>
+                <tr>
+                    <th>Type of Evidence</th>
+                    <th>USA</th>
+                    <th>Canada</th>
+                    <th>Russia</th>
+                    <th>Norway</th>
+                    <th>Denmark</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Underwater Ridge Connection</td>
+                    <td>Strong - Mendeleev Ridge</td>
+                    <td>Moderate - Alpha Ridge</td>
+                    <td>Strong - Lomonosov Ridge</td>
+                    <td>Weak - distance</td>
+                    <td>Strong - Lomonosov Ridge</td>
+                </tr>
+                <tr>
+                    <td>Sediment Composition</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Historical Use/Presence</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Indigenous Peoples' Rights</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Proximity to Coastline</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="question-box">
+        <h3>🌍 Environmental and Indigenous Considerations</h3>
+        
+        <p><strong>This dispute affects more than just oil rights:</strong></p>
+        
+        <p><strong>1. Arctic Ecosystem Impact:</strong> How would oil drilling affect polar bears, seals, and Arctic marine life?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+        
+        <p><strong>2. Indigenous Rights:</strong> Inuit peoples from Canada, Greenland, and Alaska have hunted in this area for centuries. How should their traditional rights be protected?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+        
+        <p><strong>3. Climate Change:</strong> Melting ice is making Arctic resources more accessible. Should this influence territorial claims?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+        
+        <p><strong>4. Global Energy Security:</strong> How should the world balance energy needs with environmental protection?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+    </div>
+    
+    <div class="un-resolution">
+        <h3>🏛️ Conflict Resolution Mechanisms</h3>
+        <p><strong>What international institutions can help resolve this dispute?</strong></p>
+        
+        <ol>
+            <li><strong>International Court of Justice (ICJ):</strong> ________________________________</li>
+            <li><strong>International Tribunal for Law of the Sea:</strong> ________________________</li>
+            <li><strong>Arctic Council:</strong> _________________________________________________</li>
+            <li><strong>United Nations Security Council:</strong> _______________________________</li>
+            <li><strong>Bilateral Negotiation:</strong> ________________________________________</li>
+        </ol>
+        
+        <p><strong>Which approach would be most effective for this specific dispute?</strong></p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+    </div>
+    
+    <div class="section">
+        <h3>📚 Political Geography Vocabulary</h3>
+        
+        <p><strong>Sovereignty:</strong></p>
+        <div class="answer-space"></div>
+        
+        <p><strong>Territorial Waters:</strong></p>
+        <div class="answer-space"></div>
+        
+        <p><strong>Exclusive Economic Zone (EEZ):</strong></p>
+        <div class="answer-space"></div>
+        
+        <p><strong>Continental Shelf:</strong></p>
+        <div class="answer-space"></div>
+        
+        <p><strong>Maritime Boundary:</strong></p>
+        <div class="answer-space"></div>
+        
+        <p><strong>International Arbitration:</strong></p>
+        <div class="answer-space"></div>
+    </div>
+    
+    <div class="treaty-negotiation">
+        <h3>⏰ Mission Status: Day 11 Complete</h3>
+        <p><strong>Investigation Progress:</strong> You've analyzed one of the most complex territorial disputes in modern history, examining each country's legal claims, scientific evidence, and diplomatic positions. You've learned how geography, international law, and political tensions intersect in real-world conflicts.</p>
+        
+        <p><strong>Tomorrow's Challenge:</strong> You'll design a comprehensive resolution that balances competing national interests, protects indigenous rights, and preserves the Arctic environment. Can you broker a deal that prevents international conflict?</p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 6: Himalayan Rescue Operations - Geographic Detective Academy</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Roboto:wght@300;400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #ffffff;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        @media print {
+            body { 
+                background: white; 
+                font-size: 12pt;
+            }
+            .no-print { display: none; }
+            .page-break { page-break-before: always; }
+        }
+        
+        .handout-header {
+            background: linear-gradient(135deg, #2C5F2D, #4A90E2);
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        
+        .detective-badge {
+            background: #ffd700;
+            color: #2C5F2D;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 0.5rem;
+        }
+        
+        .back-button {
+            background: #4A90E2;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+        
+        .back-button:hover {
+            background: #2C5F2D;
+        }
+        
+        .section {
+            background: #f9f9f9;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+            border-left: 4px solid #4A90E2;
+        }
+        
+        .question-box {
+            background: white;
+            border: 2px solid #4A90E2;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+        }
+        
+        .answer-space {
+            min-height: 60px;
+            border-bottom: 1px solid #ddd;
+            margin: 0.5rem 0;
+        }
+        
+        .rescue-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        
+        .rescue-table th,
+        .rescue-table td {
+            border: 1px solid #ddd;
+            padding: 0.5rem;
+            text-align: center;
+        }
+        
+        .rescue-table th {
+            background: #4A90E2;
+            color: white;
+        }
+        
+        .map-reference {
+            background: rgba(44, 95, 45, 0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border: 2px dashed #4A90E2;
+        }
+        
+        .emergency-update {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .rescue-strategy {
+            background: #d1ecf1;
+            border: 2px solid #17a2b8;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .success-box {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .equipment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .equipment-item {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 0.75rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="no-print">
+        <a href="../teacher-guide-enhanced.html" class="back-button">← Back to Teacher Guide</a>
+        <a href="../student-materials.html" class="back-button">📚 All Student Materials</a>
+        <button onclick="window.print()" class="back-button">🖨️ Print This Handout</button>
+    </div>
+    
+    <div class="handout-header">
+        <div class="detective-badge">🚁 CASE #3: MYSTERY IN THE HIMALAYAS</div>
+        <h1>Day 6: Rescue Operations (Part 2)</h1>
+        <p><strong>Detective Name:</strong> _________________________ <strong>Date:</strong> _________</p>
+    </div>
+    
+    <div class="emergency-update">
+        <h2>🚨 RESCUE UPDATE - 36 HOURS LATER</h2>
+        <p><strong>BREAKTHROUGH:</strong> Your team's analysis of high-altitude survival factors has helped locate the missing researchers! A helicopter spotted their emergency shelter at 4,200 meters, but weather conditions are worsening. Now you must plan the most effective rescue strategy while the window of opportunity remains open.</p>
+        
+        <p><strong>Current Status:</strong></p>
+        <ul>
+            <li>🎯 <strong>Location Confirmed:</strong> 4,200m elevation in protected valley</li>
+            <li>⛈️ <strong>Weather:</strong> Storm approaching in 6 hours</li>
+            <li>🚁 <strong>Rescue Assets:</strong> Helicopter and ground teams available</li>
+            <li>⏰ <strong>Critical Timeline:</strong> Must extract before storm hits</li>
+        </ul>
+    </div>
+    
+    <div class="section">
+        <h3>🚁 Rescue Strategy Planning</h3>
+        <p>Compare different rescue methods and choose the best approach:</p>
+        
+        <table class="rescue-table">
+            <thead>
+                <tr>
+                    <th>Rescue Method</th>
+                    <th>Time Required</th>
+                    <th>Weather Dependency</th>
+                    <th>Risk Level</th>
+                    <th>Success Rate</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Helicopter Extraction</td>
+                    <td>2 hours</td>
+                    <td>High</td>
+                    <td>Medium</td>
+                    <td>85%</td>
+                </tr>
+                <tr>
+                    <td>Ground Team Ascent</td>
+                    <td>12 hours</td>
+                    <td>Medium</td>
+                    <td>High</td>
+                    <td>60%</td>
+                </tr>
+                <tr>
+                    <td>Combined Operation</td>
+                    <td>4 hours</td>
+                    <td>Medium</td>
+                    <td>Low</td>
+                    <td>95%</td>
+                </tr>
+                <tr>
+                    <td>Wait for Weather</td>
+                    <td>48+ hours</td>
+                    <td>Low</td>
+                    <td>Very High</td>
+                    <td>30%</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <p><strong>Your Recommendation:</strong> Which rescue method do you choose and why?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+    </div>
+    
+    <div class="map-reference">
+        <h3>🗺️ Rescue Coordination Map Analysis</h3>
+        <ol>
+            <li>Open the <strong>Himalayan Investigation Map</strong> and locate the rescue site at 4,200m</li>
+            <li>Identify the closest helicopter landing zones (flat areas above 4,000m)</li>
+            <li>Find potential ground team routes with gentler slopes</li>
+            <li>Check weather radar for storm movement patterns</li>
+            <li>Locate emergency medical facilities and evacuation routes</li>
+            <li>Mark communication relay points for rescue coordination</li>
+        </ol>
+        
+        <p><strong>Critical Map Questions:</strong></p>
+        <ul>
+            <li>What natural features could shelter the helicopter during extraction?</li>
+            <li>Which valleys provide the safest ground team approach?</li>
+            <li>How quickly can the rescue team reach medical facilities?</li>
+        </ul>
+    </div>
+    
+    <div class="rescue-strategy">
+        <h3>⚡ Emergency Equipment Analysis</h3>
+        <p><strong>Your rescue team has limited space. Rank these items 1-12 in order of importance for the rescue operation:</strong></p>
+        
+        <div class="equipment-grid">
+            <div class="equipment-item">
+                <strong>Medical Kit</strong><br>
+                Rank: ____<br>
+                <small>Emergency medical supplies</small>
+            </div>
+            <div class="equipment-item">
+                <strong>Oxygen Tanks</strong><br>
+                Rank: ____<br>
+                <small>For altitude sickness</small>
+            </div>
+            <div class="equipment-item">
+                <strong>Thermal Blankets</strong><br>
+                Rank: ____<br>
+                <small>Prevent hypothermia</small>
+            </div>
+            <div class="equipment-item">
+                <strong>GPS Devices</strong><br>
+                Rank: ____<br>
+                <small>Navigation and location</small>
+            </div>
+            <div class="equipment-item">
+                <strong>Radio Equipment</strong><br>
+                Rank: ____<br>
+                <small>Communication</small>
+            </div>
+            <div class="equipment-item">
+                <strong>Climbing Gear</strong><br>
+                Rank: ____<br>
+                <small>Ropes and anchors</small>
+            </div>
+            <div class="equipment-item">
+                <strong>Emergency Food</strong><br>
+                Rank: ____<br>
+                <small>High-energy rations</small>
+            </div>
+            <div class="equipment-item">
+                <strong>Weather Monitor</strong><br>
+                Rank: ____<br>
+                <small>Track storm approach</small>
+            </div>
+            <div class="equipment-item">
+                <strong>Stretchers</strong><br>
+                Rank: ____<br>
+                <small>Transport injured</small>
+            </div>
+            <div class="equipment-item">
+                <strong>Flares/Signals</strong><br>
+                Rank: ____<br>
+                <small>Visual communication</small>
+            </div>
+            <div class="equipment-item">
+                <strong>Survival Shelter</strong><br>
+                Rank: ____<br>
+                <small>Emergency backup</small>
+            </div>
+            <div class="equipment-item">
+                <strong>Power Generator</strong><br>
+                Rank: ____<br>
+                <small>Equipment operation</small>
+            </div>
+        </div>
+    </div>
+    
+    <div class="question-box">
+        <h3>🧭 International Rescue Protocols</h3>
+        
+        <p><strong>Research and answer these coordination questions:</strong></p>
+        
+        <p><strong>1. Multi-Country Operations:</strong> The rescue involves teams from Nepal, India, and international organizations. How do rescue teams coordinate across different countries?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+        
+        <p><strong>2. Communication Challenges:</strong> At 4,200m elevation, normal radio communications may fail. What backup communication methods could rescue teams use?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+        
+        <p><strong>3. Medical Evacuations:</strong> What are the closest hospitals equipped to treat severe altitude sickness and hypothermia?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+    </div>
+    
+    <div class="page-break"></div>
+    
+    <div class="section">
+        <h3>🌐 Global Mountain Rescue Comparison</h3>
+        
+        <p><strong>Compare rescue challenges in different mountain ranges:</strong></p>
+        
+        <table class="rescue-table">
+            <thead>
+                <tr>
+                    <th>Mountain Range</th>
+                    <th>Highest Rescue Altitude</th>
+                    <th>Main Challenges</th>
+                    <th>Rescue Response Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Himalayas (Nepal/Tibet)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Rocky Mountains (USA)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Alps (Europe)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Andes (South America)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="section">
+        <h3>🔬 Climate Research Impact</h3>
+        
+        <p><strong>The missing team was studying glacier retreat. Research and explain:</strong></p>
+        
+        <p><strong>1. Glacier Monitoring:</strong> Why is it important to study glacier changes in the Himalayas?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+        
+        <p><strong>2. Water Security:</strong> How do Himalayan glaciers affect water supplies for billions of people?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+        
+        <p><strong>3. Climate Change Indicators:</strong> What do glacier changes tell us about global climate patterns?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+    </div>
+    
+    <div class="section">
+        <h3>📚 Mountain Rescue Vocabulary</h3>
+        
+        <p><strong>Helicopter Extraction:</strong></p>
+        <div class="answer-space"></div>
+        
+        <p><strong>Ground Support Team:</strong></p>
+        <div class="answer-space"></div>
+        
+        <p><strong>Emergency Evacuation:</strong></p>
+        <div class="answer-space"></div>
+        
+        <p><strong>Weather Window:</strong></p>
+        <div class="answer-space"></div>
+        
+        <p><strong>Coordination Protocol:</strong></p>
+        <div class="answer-space"></div>
+    </div>
+    
+    <div class="success-box">
+        <h3>🎉 Mission Status: RESCUE SUCCESSFUL!</h3>
+        <p><strong>Investigation Complete:</strong> Thanks to your strategic planning, all researchers were successfully rescued! Your understanding of mountain geography, weather patterns, and international rescue coordination made the difference between life and death.</p>
+        
+        <p><strong>Key Learnings:</strong></p>
+        <ul>
+            <li>✅ High-altitude survival requires immediate response</li>
+            <li>✅ Weather conditions dominate all rescue decisions</li>
+            <li>✅ International cooperation is essential for mountain rescues</li>
+            <li>✅ Geographic knowledge saves lives in emergency situations</li>
+        </ul>
+        
+        <p><strong>Tomorrow:</strong> Your next case takes you to a completely different environment - investigating watershed systems and water disasters. Get ready for Case #4!</p>
+        <div class="answer-space"></div>
+    </div>
+</body>
+</html>

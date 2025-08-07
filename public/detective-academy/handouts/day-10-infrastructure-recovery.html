@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 10: Infrastructure Recovery - Geographic Detective Academy</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Roboto:wght@300;400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #ffffff;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        @media print {
+            body { 
+                background: white; 
+                font-size: 12pt;
+            }
+            .no-print { display: none; }
+            .page-break { page-break-before: always; }
+        }
+        
+        .handout-header {
+            background: linear-gradient(135deg, #0f766e, #0891b2);
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        
+        .detective-badge {
+            background: #ffd700;
+            color: #0f766e;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 0.5rem;
+        }
+        
+        .back-button {
+            background: #0891b2;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+        
+        .back-button:hover {
+            background: #0f766e;
+        }
+        
+        .section {
+            background: #f9f9f9;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+            border-left: 4px solid #0891b2;
+        }
+        
+        .question-box {
+            background: white;
+            border: 2px solid #0891b2;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+        }
+        
+        .answer-space {
+            min-height: 60px;
+            border-bottom: 1px solid #ddd;
+            margin: 0.5rem 0;
+        }
+        
+        .infrastructure-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        
+        .infrastructure-table th,
+        .infrastructure-table td {
+            border: 1px solid #ddd;
+            padding: 0.5rem;
+            text-align: left;
+        }
+        
+        .infrastructure-table th {
+            background: #0891b2;
+            color: white;
+        }
+        
+        .recovery-phase {
+            background: rgba(15, 118, 110, 0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border: 2px dashed #0891b2;
+        }
+        
+        .cost-calculator {
+            background: #fef3f2;
+            border: 2px solid #ef4444;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .aid-coordination {
+            background: #fff7ed;
+            border: 2px solid #f97316;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .timeline-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .timeline-item {
+            background: #f3f4f6;
+            border: 2px solid #6b7280;
+            padding: 1rem;
+            border-radius: 8px;
+        }
+        
+        .priority-high {
+            border-left: 5px solid #ef4444;
+        }
+        
+        .priority-medium {
+            border-left: 5px solid #f97316;
+        }
+        
+        .priority-low {
+            border-left: 5px solid #10b981;
+        }
+        
+        .budget-allocation {
+            background: #ecfdf5;
+            border: 2px solid #10b981;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .international-aid {
+            background: #eff6ff;
+            border: 2px solid #3b82f6;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .logistics-challenge {
+            background: #faf5ff;
+            border: 2px solid #8b5cf6;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .engineering-solution {
+            background: #f0f9ff;
+            border: 2px solid #0ea5e9;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="no-print">
+        <a href="../teacher-guide-enhanced.html" class="back-button">← Back to Teacher Guide</a>
+        <a href="../student-materials.html" class="back-button">📚 All Student Materials</a>
+        <button onclick="window.print()" class="back-button">🖨️ Print This Handout</button>
+    </div>
+    
+    <div class="handout-header">
+        <div class="detective-badge">🏗️ CASE #5: URBAN EMERGENCY</div>
+        <h1>Day 10: Infrastructure Recovery (Part 2)</h1>
+        <p><strong>Detective Name:</strong> _________________________ <strong>Date:</strong> _________</p>
+    </div>
+    
+    <div class="recovery-phase">
+        <h2>🏗️ RECOVERY COORDINATION COMMAND</h2>
+        <p><strong>SITUATION UPDATE:</strong> 72 hours after the São Paulo earthquake, immediate rescue operations are complete. Now your detective team must coordinate the massive reconstruction effort for 22 million people. This involves rebuilding critical infrastructure, managing international aid from 15 countries, and planning for long-term urban resilience.</p>
+        
+        <p><strong>Current Status:</strong></p>
+        <ul>
+            <li>🏥 <strong>Emergency Phase:</strong> Complete - injured treated, survivors evacuated</li>
+            <li>🏗️ <strong>Recovery Phase:</strong> Beginning - infrastructure reconstruction needed</li>
+            <li>🌍 <strong>International Aid:</strong> $2.8 billion pledged from 15 countries</li>
+            <li>⚡ <strong>Power Restoration:</strong> 40% of grid operational, full restoration needed</li>
+            <li>🚇 <strong>Transportation:</strong> Major rebuilding of metro system and highways required</li>
+        </ul>
+    </div>
+    
+    <div class="section">
+        <h3>🚧 Infrastructure Damage Assessment</h3>
+        <p>Analyze the damage to São Paulo's critical infrastructure systems:</p>
+        
+        <table class="infrastructure-table">
+            <thead>
+                <tr>
+                    <th>Infrastructure System</th>
+                    <th>Pre-Earthquake Capacity</th>
+                    <th>Current Operational %</th>
+                    <th>Repair Cost (USD)</th>
+                    <th>Rebuild Timeline</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Metro/Subway System</td>
+                    <td>4.7 million daily riders</td>
+                    <td>25% operational</td>
+                    <td>$1.2 billion</td>
+                    <td>18 months</td>
+                </tr>
+                <tr>
+                    <td>Electrical Power Grid</td>
+                    <td>20,000 MW capacity</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Water Treatment Plants</td>
+                    <td>38 million liters/day</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Highway System</td>
+                    <td>1,000 km of major roads</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Hospital Network</td>
+                    <td>250 hospitals</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Airport Complex</td>
+                    <td>40 million passengers/year</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Telecommunications</td>
+                    <td>18 million mobile users</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="cost-calculator">
+        <h3>💰 Reconstruction Budget Calculator</h3>
+        <p><strong>You have $2.8 billion in international aid. Allocate funds strategically:</strong></p>
+        
+        <table class="infrastructure-table">
+            <thead>
+                <tr>
+                    <th>Priority Level</th>
+                    <th>Infrastructure Type</th>
+                    <th>Estimated Cost</th>
+                    <th>Your Allocation</th>
+                    <th>Justification</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="priority-high">
+                    <td>CRITICAL</td>
+                    <td>Emergency Services (hospitals, fire, police)</td>
+                    <td>$400 million</td>
+                    <td>$__________ million</td>
+                    <td>_________________</td>
+                </tr>
+                <tr class="priority-high">
+                    <td>CRITICAL</td>
+                    <td>Water & Sanitation Systems</td>
+                    <td>$350 million</td>
+                    <td>$__________ million</td>
+                    <td>_________________</td>
+                </tr>
+                <tr class="priority-high">
+                    <td>CRITICAL</td>
+                    <td>Electrical Power Grid</td>
+                    <td>$500 million</td>
+                    <td>$__________ million</td>
+                    <td>_________________</td>
+                </tr>
+                <tr class="priority-medium">
+                    <td>HIGH</td>
+                    <td>Transportation (metro, highways)</td>
+                    <td>$800 million</td>
+                    <td>$__________ million</td>
+                    <td>_________________</td>
+                </tr>
+                <tr class="priority-medium">
+                    <td>HIGH</td>
+                    <td>Housing Reconstruction</td>
+                    <td>$600 million</td>
+                    <td>$__________ million</td>
+                    <td>_________________</td>
+                </tr>
+                <tr class="priority-low">
+                    <td>MEDIUM</td>
+                    <td>Schools & Universities</td>
+                    <td>$200 million</td>
+                    <td>$__________ million</td>
+                    <td>_________________</td>
+                </tr>
+                <tr class="priority-low">
+                    <td>MEDIUM</td>
+                    <td>Commercial & Office Buildings</td>
+                    <td>$300 million</td>
+                    <td>$__________ million</td>
+                    <td>_________________</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <p><strong>Total Allocated:</strong> $__________ million <strong>(Must equal $2,800 million)</strong></p>
+    </div>
+    
+    <div class="aid-coordination">
+        <h3>🌍 International Aid Coordination</h3>
+        <p><strong>15 countries have offered assistance. Match each type of aid to São Paulo's needs:</strong></p>
+        
+        <div class="timeline-grid">
+            <div class="timeline-item">
+                <h4>🇺🇸 United States</h4>
+                <p><strong>Offers:</strong> Urban search & rescue teams, field hospitals, construction equipment</p>
+                <p><strong>Assign to:</strong> ___________________________</p>
+                <p><strong>Why:</strong> ___________________________</p>
+            </div>
+            
+            <div class="timeline-item">
+                <h4>🇩🇪 Germany</h4>
+                <p><strong>Offers:</strong> Advanced engineering teams, solar power systems, water purification</p>
+                <p><strong>Assign to:</strong> ___________________________</p>
+                <p><strong>Why:</strong> ___________________________</p>
+            </div>
+            
+            <div class="timeline-item">
+                <h4>🇯🇵 Japan</h4>
+                <p><strong>Offers:</strong> Earthquake engineering expertise, emergency shelters, tech equipment</p>
+                <p><strong>Assign to:</strong> ___________________________</p>
+                <p><strong>Why:</strong> ___________________________</p>
+            </div>
+            
+            <div class="timeline-item">
+                <h4>🇨🇳 China</h4>
+                <p><strong>Offers:</strong> Large construction crews, building materials, heavy machinery</p>
+                <p><strong>Assign to:</strong> ___________________________</p>
+                <p><strong>Why:</strong> ___________________________</p>
+            </div>
+            
+            <div class="timeline-item">
+                <h4>🇫🇷 France</h4>
+                <p><strong>Offers:</strong> Medical teams, urban planning experts, transportation systems</p>
+                <p><strong>Assign to:</strong> ___________________________</p>
+                <p><strong>Why:</strong> ___________________________</p>
+            </div>
+            
+            <div class="timeline-item">
+                <h4>🇦🇷 Argentina</h4>
+                <p><strong>Offers:</strong> Food supplies, temporary housing, regional coordination</p>
+                <p><strong>Assign to:</strong> ___________________________</p>
+                <p><strong>Why:</strong> ___________________________</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="logistics-challenge">
+        <h3>📦 Supply Chain Logistics</h3>
+        <p><strong>Plan the delivery of emergency supplies to 22 million people:</strong></p>
+        
+        <p><strong>Daily Needs Calculation:</strong></p>
+        <ul>
+            <li>Water: 22 million people × 3 liters/day = _____________ liters daily</li>
+            <li>Food: 22 million people × 2,000 calories/day = _____________ calories daily</li>
+            <li>Medical supplies: 100,000 injured × medicine/day = _____________ doses</li>
+            <li>Construction materials: 500,000 damaged homes = _____________ tons</li>
+        </ul>
+        
+        <p><strong>Distribution Challenges:</strong></p>
+        <ol>
+            <li><strong>Airport Capacity:</strong> Only 2 of 4 runways operational - how many cargo flights can land per day? _________</li>
+            <li><strong>Road Access:</strong> 40% of highways damaged - which routes are safest for supply trucks? _____________</li>
+            <li><strong>Storage Facilities:</strong> Most warehouses damaged - where can supplies be temporarily stored? _____________</li>
+            <li><strong>Last Mile Delivery:</strong> How do supplies reach favela communities with no vehicle access? _____________</li>
+        </ol>
+    </div>
+    
+    <div class="engineering-solution">
+        <h3>🔧 Smart Reconstruction Solutions</h3>
+        <p><strong>Design earthquake-resilient infrastructure for São Paulo's future:</strong></p>
+        
+        <p><strong>1. Smart Building Codes:</strong> What new construction standards should São Paulo adopt?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+        
+        <p><strong>2. Redundant Systems:</strong> How can critical infrastructure have backup systems?</p>
+        <ul>
+            <li>Power Grid: Multiple sources including ________________________</li>
+            <li>Water Supply: Alternative systems like ________________________</li>
+            <li>Transportation: Backup routes including ______________________</li>
+            <li>Communications: Redundant networks using ____________________</li>
+        </ul>
+        
+        <p><strong>3. Early Warning Systems:</strong> What technology can detect future earthquakes?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+        
+        <p><strong>4. Community Preparedness:</strong> How can neighborhoods be better prepared?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+    </div>
+    
+    <div class="page-break"></div>
+    
+    <div class="question-box">
+        <h3>🌏 Global Megacity Lessons</h3>
+        
+        <p><strong>Compare São Paulo's reconstruction to other major disaster recoveries:</strong></p>
+        
+        <p><strong>1. Kobe, Japan (1995 Earthquake):</strong> Kobe rebuilt in 10 years with advanced earthquake-resistant technology. What could São Paulo learn?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+        
+        <p><strong>2. New Orleans, USA (2005 Hurricane Katrina):</strong> Recovery took over a decade and was uneven across different neighborhoods. What mistakes should São Paulo avoid?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+        
+        <p><strong>3. Christchurch, New Zealand (2011 Earthquake):</strong> The city redesigned its entire downtown with resilient architecture. How could São Paulo apply similar innovations?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+    </div>
+    
+    <div class="international-aid">
+        <h3>🤝 Long-term Development Planning</h3>
+        
+        <p><strong>Plan São Paulo's recovery phases over the next 5 years:</strong></p>
+        
+        <table class="infrastructure-table">
+            <thead>
+                <tr>
+                    <th>Phase</th>
+                    <th>Timeline</th>
+                    <th>Focus Areas</th>
+                    <th>Key Milestones</th>
+                    <th>Success Metrics</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Emergency Stabilization</td>
+                    <td>Months 1-6</td>
+                    <td>Basic services, temporary housing</td>
+                    <td>Power restored, water flowing</td>
+                    <td>90% population with basic needs</td>
+                </tr>
+                <tr>
+                    <td>Infrastructure Rebuilding</td>
+                    <td>Months 7-24</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Economic Recovery</td>
+                    <td>Years 2-3</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Resilience Building</td>
+                    <td>Years 3-5</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="section">
+        <h3>📚 Infrastructure Vocabulary</h3>
+        
+        <p><strong>Resilient Infrastructure:</strong></p>
+        <div class="answer-space"></div>
+        
+        <p><strong>Redundant Systems:</strong></p>
+        <div class="answer-space"></div>
+        
+        <p><strong>Supply Chain Logistics:</strong></p>
+        <div class="answer-space"></div>
+        
+        <p><strong>International Aid Coordination:</strong></p>
+        <div class="answer-space"></div>
+        
+        <p><strong>Seismic Engineering:</strong></p>
+        <div class="answer-space"></div>
+    </div>
+    
+    <div class="recovery-phase">
+        <h3>✅ Mission Status: Day 10 Complete</h3>
+        <p><strong>Investigation Progress:</strong> You've designed a comprehensive reconstruction plan for São Paulo, coordinated international aid from 15 countries, and allocated $2.8 billion in disaster recovery funds. Your team has learned how geography, engineering, and international cooperation combine to rebuild megacities after disasters.</p>
+        
+        <p><strong>Next Challenge:</strong> Tomorrow you'll investigate political boundaries and jurisdictional crises - when disasters cross international borders and require complex diplomatic solutions.</p>
+    </div>
+</body>
+</html>
