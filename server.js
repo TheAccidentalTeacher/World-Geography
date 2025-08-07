@@ -203,6 +203,78 @@ app.get('/detective-academy/js/:filename', (req, res) => {
   }
 });
 
+// FALLBACK ROUTES for shorter URLs - handle /handouts/filename and /maps/filename
+app.get('/handouts/:filename', (req, res) => {
+  const filename = req.params.filename;
+  const filePath = path.join(__dirname, 'public', 'detective-academy', 'handouts', filename);
+  
+  if (fs.existsSync(filePath)) {
+    res.sendFile(filePath);
+  } else {
+    res.status(404).send('Handout not found');
+  }
+});
+
+app.get('/maps/:filename', (req, res) => {
+  const filename = req.params.filename;
+  const filePath = path.join(__dirname, 'public', 'detective-academy', 'maps', filename);
+  
+  if (fs.existsSync(filePath)) {
+    res.sendFile(filePath);
+  } else {
+    res.status(404).send('Map not found');
+  }
+});
+
+// EXPLICIT ROUTES for individual handouts for direct access
+app.get('/day-1-amazon-investigation.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'detective-academy', 'handouts', 'day-1-amazon-investigation.html'));
+});
+
+app.get('/day-2-amazon-climate.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'detective-academy', 'handouts', 'day-2-amazon-climate.html'));
+});
+
+app.get('/day-3-sahara-investigation.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'detective-academy', 'handouts', 'day-3-sahara-investigation.html'));
+});
+
+app.get('/day-4-sahara-navigation.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'detective-academy', 'handouts', 'day-4-sahara-navigation.html'));
+});
+
+app.get('/day-5-himalayan-investigation.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'detective-academy', 'handouts', 'day-5-himalayan-investigation.html'));
+});
+
+app.get('/day-6-himalayan-rescue.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'detective-academy', 'handouts', 'day-6-himalayan-rescue.html'));
+});
+
+app.get('/day-7-watershed-investigation.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'detective-academy', 'handouts', 'day-7-watershed-investigation.html'));
+});
+
+app.get('/day-8-water-cleanup.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'detective-academy', 'handouts', 'day-8-water-cleanup.html'));
+});
+
+app.get('/day-9-metropolitan-crisis.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'detective-academy', 'handouts', 'day-9-metropolitan-crisis.html'));
+});
+
+app.get('/day-10-infrastructure-recovery.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'detective-academy', 'handouts', 'day-10-infrastructure-recovery.html'));
+});
+
+app.get('/day-11-jurisdictional-crisis.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'detective-academy', 'handouts', 'day-11-jurisdictional-crisis.html'));
+});
+
+app.get('/day-12-treaty-resolution.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'detective-academy', 'handouts', 'day-12-treaty-resolution.html'));
+});
+
 // SUPER SIMPLE health check for Railway
 app.get('/health', (req, res) => {
   const dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
@@ -409,6 +481,18 @@ app.get('/detective-academy/maps/sahara-investigation-map.html', (req, res) => {
 
 app.get('/detective-academy/maps/himalayas-investigation-map.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'detective-academy', 'maps', 'himalayas-investigation-map.html'));
+});
+
+app.get('/detective-academy/maps/amazon-watershed-map.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'detective-academy', 'maps', 'amazon-watershed-map.html'));
+});
+
+app.get('/detective-academy/maps/metropolitan-urban-map.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'detective-academy', 'maps', 'metropolitan-urban-map.html'));
+});
+
+app.get('/detective-academy/maps/political-boundaries-map.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'detective-academy', 'maps', 'political-boundaries-map.html'));
 });
 
 // Maps Central Route
