@@ -277,6 +277,44 @@
             color: var(--detective-deep-blue);
         }
 
+        .quick-link {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--detective-gold), #ffd700);
+            color: var(--detective-deep-blue);
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .quick-link:hover {
+            background: linear-gradient(135deg, #ffd700, var(--detective-gold));
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+            border-color: var(--detective-deep-blue);
+        }
+
+        .action-link {
+            background: rgba(212, 175, 55, 0.2);
+            color: var(--detective-gold);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.8rem;
+            margin-left: 0.5rem;
+            border: 1px solid var(--detective-gold);
+            transition: all 0.2s ease;
+        }
+
+        .action-link:hover {
+            background: var(--detective-gold);
+            color: var(--detective-deep-blue);
+            transform: translateY(-1px);
+        }
+
         .guide-content {
             line-height: 1.8;
         }
@@ -586,28 +624,49 @@
         <main class="content-area">
             <div class="welcome-screen" id="welcomeScreen">
                 <h2>Welcome to the Teacher's Guide</h2>
-                <p>Your comprehensive resource for conducting the Geographic Detective Academy simulation. Navigate through daily lesson plans, access materials lists, and print individual days or the complete simulation guide.</p>
+                <p><strong>NEW:</strong> All print buttons now connect directly to interactive maps and working student handouts! This guide is designed for easy use by regular teachers, substitute teachers, and independent student work.</p>
+                
+                <div style="background: #d4edda; border: 2px solid #28a745; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
+                    <h3>🚀 Quick Start for Teachers</h3>
+                    <ol>
+                        <li><strong>Select a Day:</strong> Click any day in the left sidebar</li>
+                        <li><strong>Print Real Maps:</strong> Use "🗺️ Print Interactive Map" to print actual working maps</li>
+                        <li><strong>Get Student Handouts:</strong> Click "📄 Print Student Handouts" for ready-to-use worksheets</li>
+                        <li><strong>Access All Resources:</strong> Use the Quick Access Links section for instant access</li>
+                    </ol>
+                </div>
+                
+                <div style="background: #fff3cd; border: 2px solid #ffc107; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
+                    <h3>👥 For Substitute Teachers</h3>
+                    <p><strong>Everything you need is clickable and self-contained:</strong></p>
+                    <ul>
+                        <li>Each day includes complete lesson plans with timing</li>
+                        <li>All action items are clickable links to actual resources</li>
+                        <li>Student handouts work independently - students can complete them without teacher guidance</li>
+                        <li>Print buttons connect to real maps and materials, not generic checklists</li>
+                    </ul>
+                </div>
                 
                 <div class="feature-grid">
                     <div class="feature-card">
-                        <div class="feature-icon">📖</div>
-                        <h3>Daily Lesson Plans</h3>
-                        <p>Detailed guides for each day with scripts, activities, and timing</p>
+                        <div class="feature-icon">�️</div>
+                        <h3>Interactive Maps</h3>
+                        <p>Print buttons now connect to actual working maps with evidence markers</p>
                     </div>
                     <div class="feature-card">
-                        <div class="feature-icon">📋</div>
-                        <h3>Materials Checklists</h3>
-                        <p>Complete lists of required materials and setup instructions</p>
+                        <div class="feature-icon">�</div>
+                        <h3>Working Handouts</h3>
+                        <p>Student materials with clear instructions and self-contained activities</p>
                     </div>
                     <div class="feature-card">
-                        <div class="feature-icon">🖨️</div>
-                        <h3>Print Ready</h3>
-                        <p>Print individual days or the complete simulation guide</p>
+                        <div class="feature-icon">�</div>
+                        <h3>Clickable Actions</h3>
+                        <p>All actions in lesson plans are now clickable links to resources</p>
                     </div>
                     <div class="feature-card">
-                        <div class="feature-icon">🔍</div>
-                        <h3>Quick Search</h3>
-                        <p>Find specific content across all days instantly</p>
+                        <div class="feature-icon">�️</div>
+                        <h3>Smart Printing</h3>
+                        <p>Print what you actually need - maps, handouts, or teacher guides</p>
                     </div>
                 </div>
             </div>
@@ -892,13 +951,27 @@
                 // Calculate total timing
                 const totalTime = guide.scenes.reduce((total, scene) => total + (scene.timing || 0), 0);
                 
+                // Get map and materials links for this day
+                const dayLinks = this.getDayLinks(this.currentDay);
+                
                 content.innerHTML = `
                     <div class="content-header">
                         <h1 class="content-title">${guide.title}</h1>
                         <div class="print-controls">
-                            <button class="print-btn" onclick="teacherGuide.printCurrentDay()">🖨️ Print This Day</button>
-                            <button class="print-btn" onclick="teacherGuide.exportDay()">📄 Export MD</button>
-                            <button class="print-btn" onclick="teacherGuide.showMaterials()">📦 Materials</button>
+                            <button class="print-btn" onclick="teacherGuide.printActualMap()">�️ Print Interactive Map</button>
+                            <button class="print-btn" onclick="teacherGuide.openMapInNewTab()">🌐 Open Map</button>
+                            <button class="print-btn" onclick="teacherGuide.printStudentHandouts()">📄 Print Student Handouts</button>
+                            <button class="print-btn" onclick="teacherGuide.printCurrentDay()">📋 Print Teacher Guide</button>
+                        </div>
+                    </div>
+
+                    <div class="quick-access-section" style="background: #f0f8ff; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                        <h3>🚀 Quick Access Links</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.5rem;">
+                            ${dayLinks.mapLink ? `<a href="${dayLinks.mapLink}" target="_blank" class="quick-link">�️ Interactive Map</a>` : ''}
+                            ${dayLinks.slideLink ? `<a href="${dayLinks.slideLink}" target="_blank" class="quick-link">🎯 Presentation Slides</a>` : ''}
+                            ${dayLinks.studentMaterialsLink ? `<a href="${dayLinks.studentMaterialsLink}" target="_blank" class="quick-link">📚 Student Handouts</a>` : ''}
+                            <a href="../maps-central.html" target="_blank" class="quick-link">🎯 All Maps Hub</a>
                         </div>
                     </div>
 
@@ -925,9 +998,10 @@
                                 </div>
                             `).join('')}
                         </div>
-                        <button class="print-btn" onclick="teacherGuide.printMaterialsChecklist()" style="margin-top: 1rem;">
-                            📋 Print Checklist
-                        </button>
+                        <div style="margin-top: 1rem;">
+                            <button class="print-btn" onclick="teacherGuide.printMaterialsChecklist()">📋 Print Checklist</button>
+                            ${dayLinks.studentMaterialsLink ? `<button class="print-btn" onclick="window.open('${dayLinks.studentMaterialsLink}', '_blank')">📚 Get Student Materials</button>` : ''}
+                        </div>
                     </div>
 
                     <div class="materials-section">
@@ -963,7 +1037,7 @@
                                     <div class="activity-box">
                                         <h5>📋 Actions:</h5>
                                         <ol>
-                                            ${scene.actions.map(action => `<li>${action}</li>`).join('')}
+                                            ${scene.actions.map(action => `<li>${this.makeActionClickable(action)}</li>`).join('')}
                                         </ol>
                                     </div>
                                 ` : ''}
@@ -1098,6 +1172,167 @@
                 setTimeout(() => {
                     document.body.classList.remove('printing');
                 }, 1000);
+            }
+
+            // NEW METHODS FOR ACTUAL MAP AND MATERIALS PRINTING
+            getDayLinks(dayId) {
+                const links = {
+                    mapLink: null,
+                    slideLink: null,
+                    studentMaterialsLink: null
+                };
+
+                // Map Day IDs to actual file paths
+                const dayMappings = {
+                    'day1': { 
+                        mapLink: '../maps/amazon-investigation-map.html',
+                        slideLink: '../presentation.html#slide-amazon-intro',
+                        studentMaterialsLink: '../handouts/day-1-amazon-investigation.html'
+                    },
+                    'day2': { 
+                        mapLink: '../maps/amazon-investigation-map.html',
+                        slideLink: '../presentation.html#slide-amazon-analysis',
+                        studentMaterialsLink: '../handouts/day-2-amazon-climate.html'
+                    },
+                    'day3': { 
+                        mapLink: '../maps/sahara-investigation-map.html',
+                        slideLink: '../presentation.html#slide-sahara-intro',
+                        studentMaterialsLink: '../student-materials.html#case2-sahara'
+                    },
+                    'day4': { 
+                        mapLink: '../maps/sahara-investigation-map.html',
+                        slideLink: '../presentation.html#slide-sahara-analysis',
+                        studentMaterialsLink: '../student-materials.html#case2-sahara'
+                    },
+                    'day5': { 
+                        mapLink: '../maps/himalayan-investigation-map.html',
+                        slideLink: '../presentation.html#slide-himalayan-intro',
+                        studentMaterialsLink: '../student-materials.html#case3-himalayas'
+                    },
+                    'day6': { 
+                        mapLink: '../maps/himalayan-investigation-map.html',
+                        slideLink: '../presentation.html#slide-himalayan-analysis',
+                        studentMaterialsLink: '../student-materials.html#case3-himalayas'
+                    },
+                    'day7': { 
+                        mapLink: '../maps/amazon-watershed-map.html',
+                        slideLink: '../presentation.html#slide-watershed-intro',
+                        studentMaterialsLink: '../student-materials.html#case4-watershed'
+                    },
+                    'day8': { 
+                        mapLink: '../maps/amazon-watershed-map.html',
+                        slideLink: '../presentation.html#slide-watershed-analysis',
+                        studentMaterialsLink: '../student-materials.html#case4-watershed'
+                    },
+                    'day9': { 
+                        mapLink: '../maps/urban-planning-map.html',
+                        slideLink: '../presentation.html#slide-urban-intro',
+                        studentMaterialsLink: '../student-materials.html#case5-urban'
+                    },
+                    'day10': { 
+                        mapLink: '../maps/urban-planning-map.html',
+                        slideLink: '../presentation.html#slide-urban-analysis',
+                        studentMaterialsLink: '../student-materials.html#case5-urban'
+                    },
+                    'day11': { 
+                        mapLink: '../maps/political-boundaries-map.html',
+                        slideLink: '../presentation.html#slide-political-intro',
+                        studentMaterialsLink: '../student-materials.html#case6-political'
+                    },
+                    'day12': { 
+                        mapLink: '../maps/political-boundaries-map.html',
+                        slideLink: '../presentation.html#slide-political-analysis',
+                        studentMaterialsLink: '../student-materials.html#case6-political'
+                    }
+                };
+
+                return dayMappings[dayId] || links;
+            }
+
+            makeActionClickable(action) {
+                // Convert action text into clickable links where appropriate
+                const links = this.getDayLinks(this.currentDay);
+                
+                if (action.toLowerCase().includes('present') && action.toLowerCase().includes('slide')) {
+                    return links.slideLink ? 
+                        `${action} - <a href="${links.slideLink}" target="_blank" class="action-link">🎯 Open Slides</a>` : 
+                        action;
+                }
+                
+                if (action.toLowerCase().includes('distribute') && action.toLowerCase().includes('map')) {
+                    return links.mapLink ? 
+                        `${action} - <a href="${links.mapLink}" target="_blank" class="action-link">🗺️ Open Map</a>` : 
+                        action;
+                }
+                
+                if (action.toLowerCase().includes('handout') || action.toLowerCase().includes('worksheet')) {
+                    return links.studentMaterialsLink ? 
+                        `${action} - <a href="${links.studentMaterialsLink}" target="_blank" class="action-link">📚 Get Materials</a>` : 
+                        action;
+                }
+                
+                if (action.toLowerCase().includes('case file') || action.toLowerCase().includes('evidence')) {
+                    return links.mapLink ? 
+                        `${action} - <a href="${links.mapLink}" target="_blank" class="action-link">🔍 View Evidence</a>` : 
+                        action;
+                }
+                
+                // Return original action if no special handling needed
+                return action;
+            }
+
+            printActualMap() {
+                if (!this.currentDay) {
+                    alert('Please select a day first.');
+                    return;
+                }
+                
+                const links = this.getDayLinks(this.currentDay);
+                if (links.mapLink) {
+                    // Open map in new window and trigger print
+                    const mapWindow = window.open(links.mapLink, '_blank');
+                    mapWindow.onload = function() {
+                        setTimeout(() => {
+                            mapWindow.print();
+                        }, 1000);
+                    };
+                } else {
+                    alert('No map available for this day.');
+                }
+            }
+
+            openMapInNewTab() {
+                if (!this.currentDay) {
+                    alert('Please select a day first.');
+                    return;
+                }
+                
+                const links = this.getDayLinks(this.currentDay);
+                if (links.mapLink) {
+                    window.open(links.mapLink, '_blank');
+                } else {
+                    alert('No map available for this day.');
+                }
+            }
+
+            printStudentHandouts() {
+                if (!this.currentDay) {
+                    alert('Please select a day first.');
+                    return;
+                }
+                
+                const links = this.getDayLinks(this.currentDay);
+                if (links.studentMaterialsLink) {
+                    // Open student materials in new window and trigger print
+                    const materialsWindow = window.open(links.studentMaterialsLink, '_blank');
+                    materialsWindow.onload = function() {
+                        setTimeout(() => {
+                            materialsWindow.print();
+                        }, 1000);
+                    };
+                } else {
+                    alert('No student materials available for this day.');
+                }
             }
 
             printFullSimulation() {

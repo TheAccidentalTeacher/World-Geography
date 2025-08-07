@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 2: Amazon Climate Analysis - Geographic Detective Academy</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Roboto:wght@300;400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #ffffff;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        @media print {
+            body { 
+                background: white; 
+                font-size: 12pt;
+            }
+            .no-print { display: none; }
+            .page-break { page-break-before: always; }
+        }
+        
+        .handout-header {
+            background: linear-gradient(135deg, #1e3a14, #4a7c59);
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        
+        .detective-badge {
+            background: #ffd700;
+            color: #1e3a14;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 0.5rem;
+        }
+        
+        .back-button {
+            background: #4a7c59;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+        
+        .back-button:hover {
+            background: #1e3a14;
+        }
+        
+        .section {
+            background: #f9f9f9;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+            border-left: 4px solid #4a7c59;
+        }
+        
+        .question-box {
+            background: white;
+            border: 2px solid #4a7c59;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+        }
+        
+        .answer-space {
+            min-height: 60px;
+            border-bottom: 1px solid #ddd;
+            margin: 0.5rem 0;
+        }
+        
+        .climate-data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        
+        .climate-data-table th,
+        .climate-data-table td {
+            border: 1px solid #ddd;
+            padding: 0.5rem;
+            text-align: center;
+        }
+        
+        .climate-data-table th {
+            background: #4a7c59;
+            color: white;
+        }
+        
+        .map-reference {
+            background: rgba(30, 58, 20, 0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border: 2px dashed #4a7c59;
+        }
+        
+        .critical-thinking {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .breakthrough {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="no-print">
+        <a href="../teacher-guide-enhanced.html" class="back-button">← Back to Teacher Guide</a>
+        <a href="../student-materials.html" class="back-button">📚 All Student Materials</a>
+        <button onclick="window.print()" class="back-button">🖨️ Print This Handout</button>
+    </div>
+    
+    <div class="handout-header">
+        <div class="detective-badge">🌿 CASE #1: AMAZON INVESTIGATION</div>
+        <h1>Day 2: Climate and Vegetation Analysis</h1>
+        <p><strong>Detective Name:</strong> _________________________ <strong>Date:</strong> _________</p>
+    </div>
+    
+    <div class="breakthrough">
+        <h2>🚨 CASE UPDATE!</h2>
+        <p><strong>New Evidence Found:</strong> Dr. Rivera's research equipment has been discovered near a weather monitoring station. Climate data suggests unusual weather patterns in the days before her disappearance. Your mission: analyze the climate and vegetation data to determine what conditions Dr. Rivera encountered.</p>
+    </div>
+    
+    <div class="section">
+        <h3>📊 Climate Data Analysis</h3>
+        <p>Use the weather data below and your map investigation to complete the analysis:</p>
+        
+        <table class="climate-data-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Temperature (°C)</th>
+                    <th>Humidity (%)</th>
+                    <th>Rainfall (mm)</th>
+                    <th>Wind Speed (km/h)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>March 15</td>
+                    <td>28°C</td>
+                    <td>85%</td>
+                    <td>12mm</td>
+                    <td>8 km/h</td>
+                </tr>
+                <tr>
+                    <td>March 16</td>
+                    <td>31°C</td>
+                    <td>90%</td>
+                    <td>45mm</td>
+                    <td>15 km/h</td>
+                </tr>
+                <tr>
+                    <td>March 17 (Last Contact)</td>
+                    <td>26°C</td>
+                    <td>95%</td>
+                    <td>78mm</td>
+                    <td>22 km/h</td>
+                </tr>
+                <tr>
+                    <td>March 18</td>
+                    <td>24°C</td>
+                    <td>98%</td>
+                    <td>125mm</td>
+                    <td>35 km/h</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="question-box">
+        <h3>🔍 Climate Investigation Questions</h3>
+        
+        <p><strong>1. Weather Pattern Analysis</strong></p>
+        <p>What weather trends do you notice in the days leading up to Dr. Rivera's disappearance?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+        
+        <p><strong>2. Impact on Navigation</strong></p>
+        <p>How would the weather conditions on March 17-18 affect someone traveling through the rainforest?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+        
+        <p><strong>3. Vegetation Response</strong></p>
+        <p>How might heavy rainfall affect the rainforest vegetation and visibility?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+    </div>
+    
+    <div class="map-reference">
+        <h3>🗺️ Advanced Map Investigation</h3>
+        <p><strong>Today's Focus:</strong> Use the vegetation layers on your Amazon map to complete these tasks:</p>
+        <ol>
+            <li>Identify different vegetation zones (primary forest, secondary forest, clearings)</li>
+            <li>Locate weather monitoring stations near Dr. Rivera's last known position</li>
+            <li>Examine satellite imagery for any changes before/after the storm</li>
+            <li>Use the ruler tool to measure distances between research sites</li>
+        </ol>
+        
+        <p><strong>Key Question:</strong> Which vegetation zones would provide the best shelter during a storm?</p>
+        <div class="answer-space"></div>
+    </div>
+    
+    <div class="critical-thinking">
+        <h3>💭 Detective Reasoning Challenge</h3>
+        
+        <p><strong>Evidence Synthesis:</strong></p>
+        <p>Combining yesterday's geographic analysis with today's climate data, what new theories do you have about Dr. Rivera's location?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+        
+        <p><strong>Search Priority Update:</strong></p>
+        <p>Based on the weather patterns, which areas should the search team prioritize first? Explain your reasoning using specific climate data.</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+        
+        <p><strong>Risk Assessment:</strong></p>
+        <p>What are the biggest climate-related risks for Dr. Rivera's survival? How long could she survive in these conditions?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+    </div>
+    
+    <div class="section">
+        <h3>🌡️ Climate Science Connection</h3>
+        <p><strong>Research Extension:</strong> Amazon climate patterns affect global weather. Research one way that Amazon climate impacts your local area:</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+        
+        <p><strong>Climate Change Impact:</strong> How might changing climate patterns affect future research expeditions in the Amazon?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+    </div>
+    
+    <div class="page-break"></div>
+    
+    <div class="section">
+        <h3>📚 Advanced Vocabulary</h3>
+        <p>Define these climate terms based on your investigation:</p>
+        
+        <p><strong>Microclimate:</strong></p>
+        <div class="answer-space"></div>
+        
+        <p><strong>Precipitation:</strong></p>
+        <div class="answer-space"></div>
+        
+        <p><strong>Humidity:</strong></p>
+        <div class="answer-space"></div>
+        
+        <p><strong>Convection:</strong></p>
+        <div class="answer-space"></div>
+    </div>
+    
+    <div class="breakthrough">
+        <h3>🔬 Tomorrow's Mission Preview</h3>
+        <p><strong>Case #2 Assignment:</strong> Your team's success in the Amazon investigation has earned you a promotion! Tomorrow you'll investigate a mysterious disappearance in the Sahara Desert. Start thinking about how desert climate differs from rainforest climate.</p>
+        
+        <p><strong>Preparation Question:</strong> What climate challenges do you expect in the desert compared to the rainforest?</p>
+        <div class="answer-space"></div>
+    </div>
+</body>
+</html>
