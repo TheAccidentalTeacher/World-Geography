@@ -470,7 +470,7 @@
                     </div>
                 </div>
                 
-                <div class="map-card" onclick="printMap('metropolitan-urban')">
+                <div class="map-card" onclick="openInteractiveMap('metropolitan-urban-map.html')">
                     <div class="case-badge">Case #5: Metropolis</div>
                     <div class="map-icon">🏙️</div>
                     <h3 class="map-title">Metropolitan Urban Planning Map</h3>
@@ -482,7 +482,7 @@
                         <li>📈 Development timeline overlay</li>
                         <li>🏘️ Population density zones</li>
                     </ul>
-                    <button class="print-button" onclick="event.stopPropagation(); printMap('metropolitan-urban')">🖨️ Print Urban Map</button>
+                    <button class="print-button" onclick="event.stopPropagation(); window.open('/detective-academy/maps/metropolitan-urban-map.html?print=true', '_blank')">🖨️ Print Urban Map</button>
                 </div>
                 
                 <div class="map-card" onclick="printMap('political-boundaries')">
