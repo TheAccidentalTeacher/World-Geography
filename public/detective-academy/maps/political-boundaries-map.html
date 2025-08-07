@@ -424,20 +424,36 @@
         // Initialize the map centered on South China Sea
         const map = L.map('investigationMap').setView([15.0, 113.0], 6);
 
-        // Add satellite tile layer for better territorial visualization
-        const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-            attribution: '&copy; Esri &copy; Geographic Detective Academy',
-            maxZoom: 18
-        });
+        // Add multiple professional base layers like Google Maps
+        const baseLayers = {
+            'Satellite': L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+            }),
+            'Street Map': L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }),
+            'Countries & Boundaries': L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }),
+            'Terrain & Elevation': L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+                attribution: 'Map data: &copy; OpenStreetMap contributors, SRTM | Map style: &copy; OpenTopoMap (CC-BY-SA)'
+            }),
+            'Dark Mode': L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
+            }),
+            'Physical Features': L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Physical_Map/MapServer/tile/{z}/{y}/{x}', {
+                attribution: 'Tiles &copy; Esri &mdash; Source: US National Park Service'
+            })
+        };
 
-        // Add street map layer as alternative
-        const streetLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; OpenStreetMap contributors &copy; Geographic Detective Academy',
-            maxZoom: 18
-        });
+        // Start with satellite view for better territorial visualization
+        baseLayers['Satellite'].addTo(map);
 
-        // Start with satellite view for better geographic context
-        satelliteLayer.addTo(map);
+        // Create enhanced layer control with base maps and overlays separate
+        const layerControl = L.control.layers(baseLayers, {}, {
+            position: 'topright',
+            collapsed: false
+        }).addTo(map);
 
         // Layer groups for different investigation elements
         const eezGroup = L.layerGroup();
@@ -447,7 +463,22 @@
         const militaryBasesGroup = L.layerGroup();
         const evidenceGroup = L.layerGroup();
 
-        // Add all layers to map initially
+        // Layer groups for different investigation elements (overlays only)
+        const overlayLayers = {
+            '🌊 Exclusive Economic Zones': eezGroup,
+            '⚓ Territorial Waters': territorialWatersGroup,
+            '⚡ Disputed Territories': disputedAreasGroup,
+            '🚢 International Shipping': shippingLanesGroup,
+            '🏛️ Military Installations': militaryBasesGroup,
+            '🔍 Investigation Evidence': evidenceGroup
+        };
+
+        // Add overlay layers to the layer control
+        Object.keys(overlayLayers).forEach(name => {
+            layerControl.addOverlay(overlayLayers[name], name);
+        });
+
+        // All layers start visible
         eezGroup.addTo(map);
         territorialWatersGroup.addTo(map);
         disputedAreasGroup.addTo(map);
@@ -739,24 +770,6 @@
             `).addTo(militaryBasesGroup);
         });
 
-        // Layer control functionality
-        function toggleLayer(layerId, group) {
-            const checkbox = document.getElementById(layerId);
-            if (checkbox.checked) {
-                group.addTo(map);
-            } else {
-                map.removeLayer(group);
-            }
-        }
-
-        // Add event listeners for layer controls
-        document.getElementById('eezLayer').addEventListener('change', () => toggleLayer('eezLayer', eezGroup));
-        document.getElementById('territorialWatersLayer').addEventListener('change', () => toggleLayer('territorialWatersLayer', territorialWatersGroup));
-        document.getElementById('disputedAreasLayer').addEventListener('change', () => toggleLayer('disputedAreasLayer', disputedAreasGroup));
-        document.getElementById('shippingLanesLayer').addEventListener('change', () => toggleLayer('shippingLanesLayer', shippingLanesGroup));
-        document.getElementById('militaryBasesLayer').addEventListener('change', () => toggleLayer('militaryBasesLayer', militaryBasesGroup));
-        document.getElementById('evidenceLayer').addEventListener('change', () => toggleLayer('evidenceLayer', evidenceGroup));
-
         // Evidence tracking functions
         function markEvidenceFound(evidenceId, evidenceNum) {
             const evidenceElement = document.getElementById(`evidence${evidenceNum}`);
@@ -802,14 +815,6 @@
                 statusText.style.color = '#3498db';
             }
         }
-
-        // Add base map layer control
-        const baseMaps = {
-            "Satellite View": satelliteLayer,
-            "Street Map": streetLayer
-        };
-
-        L.control.layers(baseMaps).addTo(map);
 
         // Add scale control
         L.control.scale().addTo(map);
