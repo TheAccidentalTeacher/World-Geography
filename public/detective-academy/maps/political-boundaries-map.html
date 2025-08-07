@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚖️ South China Sea Jurisdictional Crisis Map - Case #6</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- Leaflet Plugins -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-draw@1.0.4/dist/leaflet.draw.css"/>
+    
+    <style>
+        :root {
+            --primary-color: #ff6b35;
+            --secondary-color: #4ecdc4;
+            --accent-color: #ffd700;
+            --success-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --political-red: #c0392b;
+            --diplomatic-blue: #3498db;
+            --territorial-green: #27ae60;
+            --dispute-orange: #e67e22;
+        }
+        
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+        }
+        
+        body { 
+            font-family: 'Roboto', sans-serif; 
+            background: linear-gradient(135deg, #1a252f 0%, #2c3e50 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .detective-header {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 4px solid var(--accent-color);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        
+        .case-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--political-red);
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .case-subtitle {
+            font-size: 1.2rem;
+            color: var(--diplomatic-blue);
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+        
+        .investigation-brief {
+            background: rgba(192, 57, 43, 0.1);
+            border-left: 4px solid var(--political-red);
+            padding: 15px;
+            margin: 20px auto;
+            max-width: 800px;
+            border-radius: 5px;
+        }
+        
+        .map-container {
+            position: relative;
+            height: 600px;
+            margin: 20px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border: 3px solid var(--accent-color);
+        }
+        
+        #investigationMap {
+            height: 100%;
+            width: 100%;
+        }
+        
+        .control-panel {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            border: 2px solid var(--accent-color);
+            z-index: 1000;
+            min-width: 280px;
+        }
+        
+        .control-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.2rem;
+            color: var(--political-red);
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: 700;
+        }
+        
+        .layer-control {
+            margin-bottom: 15px;
+        }
+        
+        .layer-control label {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .layer-control input[type="checkbox"] {
+            margin-right: 10px;
+            transform: scale(1.2);
+        }
+        
+        .legend {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            padding: 20px;
+            margin: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            border: 2px solid var(--accent-color);
+        }
+        
+        .legend-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.3rem;
+            color: var(--political-red);
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: 700;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 8px;
+            border-radius: 5px;
+            background: rgba(255,255,255,0.5);
+        }
+        
+        .legend-symbol {
+            width: 20px;
+            height: 20px;
+            margin-right: 15px;
+            border-radius: 3px;
+            border: 2px solid #333;
+        }
+        
+        .evidence-tracker {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            padding: 20px;
+            margin: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            border: 2px solid var(--success-color);
+        }
+        
+        .evidence-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.3rem;
+            color: var(--success-color);
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: 700;
+        }
+        
+        .evidence-item {
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 5px;
+            border-left: 4px solid var(--success-color);
+            background: rgba(39, 174, 96, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .evidence-item:hover {
+            background: rgba(39, 174, 96, 0.2);
+            transform: translateX(5px);
+        }
+        
+        .evidence-item.found {
+            background: rgba(39, 174, 96, 0.3);
+            border-left-color: var(--success-color);
+        }
+        
+        .evidence-counter {
+            text-align: center;
+            font-weight: bold;
+            color: var(--success-color);
+            margin-top: 15px;
+            font-size: 1.1rem;
+        }
+        
+        .investigation-status {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            padding: 15px 25px;
+            border-radius: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            border: 2px solid var(--accent-color);
+            z-index: 1000;
+        }
+        
+        .status-text {
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            color: var(--political-red);
+        }
+        
+        .custom-popup {
+            border-radius: 10px !important;
+        }
+        
+        .popup-content {
+            padding: 15px;
+            max-width: 300px;
+        }
+        
+        .popup-title {
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            color: var(--political-red);
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .popup-description {
+            color: #333;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+        
+        .popup-evidence {
+            background: rgba(39, 174, 96, 0.1);
+            padding: 8px;
+            border-radius: 5px;
+            border-left: 3px solid var(--success-color);
+            font-weight: 500;
+            color: var(--success-color);
+        }
+        
+        @media (max-width: 768px) {
+            .control-panel {
+                position: relative;
+                top: 0;
+                right: 0;
+                margin: 20px;
+                width: calc(100% - 40px);
+            }
+            
+            .map-container {
+                height: 400px;
+                margin: 10px;
+            }
+            
+            .case-title {
+                font-size: 2rem;
+            }
+        }
+        
+        /* Custom marker styles */
+        .territory-marker {
+            background-color: var(--dispute-orange);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        
+        .naval-marker {
+            background-color: var(--diplomatic-blue);
+            width: 25px;
+            height: 25px;
+            border-radius: 3px;
+            border: 2px solid white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        
+        .shipping-marker {
+            background-color: var(--territorial-green);
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="detective-header">
+        <h1 class="case-title">⚖️ CASE #6: JURISDICTIONAL CRISIS</h1>
+        <p class="case-subtitle">South China Sea Territorial Disputes Investigation</p>
+        <div class="investigation-brief">
+            <strong>🚨 URGENT DIPLOMATIC INVESTIGATION</strong><br>
+            Multiple nations claim overlapping territorial rights in the South China Sea. As lead geographic detective, you must analyze the complex web of international boundaries, exclusive economic zones, and disputed territories to help resolve this critical jurisdictional crisis.
+        </div>
+    </div>
+
+    <div class="map-container">
+        <div id="investigationMap"></div>
+        
+        <div class="control-panel">
+            <h3 class="control-title">Investigation Tools</h3>
+            
+            <div class="layer-control">
+                <label>
+                    <input type="checkbox" id="eezLayer" checked>
+                    🌊 Exclusive Economic Zones
+                </label>
+                <label>
+                    <input type="checkbox" id="territorialWatersLayer" checked>
+                    ⚓ Territorial Waters (12nm)
+                </label>
+                <label>
+                    <input type="checkbox" id="disputedAreasLayer" checked>
+                    ⚡ Disputed Territories
+                </label>
+                <label>
+                    <input type="checkbox" id="shippingLanesLayer" checked>
+                    🚢 International Shipping Routes
+                </label>
+                <label>
+                    <input type="checkbox" id="militaryBasesLayer" checked>
+                    🏛️ Naval/Military Installations
+                </label>
+                <label>
+                    <input type="checkbox" id="evidenceLayer" checked>
+                    🔍 Investigation Evidence
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div class="legend">
+        <h3 class="legend-title">Political Geography Legend</h3>
+        <div class="legend-item">
+            <div class="legend-symbol" style="background-color: rgba(52, 152, 219, 0.3); border-color: #3498db;"></div>
+            <span><strong>Exclusive Economic Zones (EEZ)</strong> - 200 nautical mile zones</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-symbol" style="background-color: rgba(192, 57, 43, 0.4); border-color: #c0392b;"></div>
+            <span><strong>Territorial Waters</strong> - 12 nautical mile sovereign zones</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-symbol" style="background-color: rgba(230, 126, 34, 0.5); border-color: #e67e22;"></div>
+            <span><strong>Disputed Areas</strong> - Overlapping territorial claims</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-symbol" style="background-color: rgba(39, 174, 96, 0.3); border-color: #27ae60;"></div>
+            <span><strong>International Shipping</strong> - Major trade routes</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-symbol" style="background-color: rgba(155, 89, 182, 0.4); border-color: #9b59b6;"></div>
+            <span><strong>Military Zones</strong> - Naval bases and installations</span>
+        </div>
+    </div>
+
+    <div class="evidence-tracker">
+        <h3 class="evidence-title">🔍 Investigation Evidence</h3>
+        <div class="evidence-item" id="evidence1" onclick="highlightEvidence('paracel')">
+            <strong>Evidence #1:</strong> Paracel Islands Territorial Claims
+        </div>
+        <div class="evidence-item" id="evidence2" onclick="highlightEvidence('spratly')">
+            <strong>Evidence #2:</strong> Spratly Islands Sovereignty Disputes
+        </div>
+        <div class="evidence-item" id="evidence3" onclick="highlightEvidence('scarborough')">
+            <strong>Evidence #3:</strong> Scarborough Shoal Maritime Incident
+        </div>
+        <div class="evidence-item" id="evidence4" onclick="highlightEvidence('nine-dash')">
+            <strong>Evidence #4:</strong> Nine-Dash Line Historical Claims
+        </div>
+        <div class="evidence-item" id="evidence5" onclick="highlightEvidence('unclos')">
+            <strong>Evidence #5:</strong> UNCLOS Maritime Boundary Law
+        </div>
+        <div class="evidence-item" id="evidence6" onclick="highlightEvidence('shipping')">
+            <strong>Evidence #6:</strong> International Trade Route Analysis
+        </div>
+        <div class="evidence-item" id="evidence7" onclick="highlightEvidence('resources')">
+            <strong>Evidence #7:</strong> Underwater Resource Distribution
+        </div>
+        <div class="evidence-item" id="evidence8" onclick="highlightEvidence('arbitration')">
+            <strong>Evidence #8:</strong> 2016 Arbitration Tribunal Decision
+        </div>
+        <div class="evidence-counter">
+            Evidence Found: <span id="evidenceCount">0</span>/8
+        </div>
+    </div>
+
+    <div class="investigation-status">
+        <div class="status-text">🕵️ ACTIVE INVESTIGATION</div>
+    </div>
+
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- Leaflet Plugins -->
+    <script src="https://cdn.jsdelivr.net/npm/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
+
+    <script>
+        // Initialize the map centered on South China Sea
+        const map = L.map('investigationMap').setView([15.0, 113.0], 6);
+
+        // Add satellite tile layer for better territorial visualization
+        const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: '&copy; Esri &copy; Geographic Detective Academy',
+            maxZoom: 18
+        });
+
+        // Add street map layer as alternative
+        const streetLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors &copy; Geographic Detective Academy',
+            maxZoom: 18
+        });
+
+        // Start with satellite view for better geographic context
+        satelliteLayer.addTo(map);
+
+        // Layer groups for different investigation elements
+        const eezGroup = L.layerGroup();
+        const territorialWatersGroup = L.layerGroup();
+        const disputedAreasGroup = L.layerGroup();
+        const shippingLanesGroup = L.layerGroup();
+        const militaryBasesGroup = L.layerGroup();
+        const evidenceGroup = L.layerGroup();
+
+        // Add all layers to map initially
+        eezGroup.addTo(map);
+        territorialWatersGroup.addTo(map);
+        disputedAreasGroup.addTo(map);
+        shippingLanesGroup.addTo(map);
+        militaryBasesGroup.addTo(map);
+        evidenceGroup.addTo(map);
+
+        // Investigation tracking
+        let evidenceFound = 0;
+        const evidenceMarkers = {};
+
+        // Exclusive Economic Zones (simplified representations)
+        const chinaEEZ = [
+            [20.0, 108.0], [18.0, 110.0], [16.0, 112.0], [14.0, 114.0], 
+            [12.0, 116.0], [10.0, 117.0], [8.0, 115.0], [6.0, 112.0], 
+            [8.0, 108.0], [12.0, 106.0], [16.0, 107.0], [20.0, 108.0]
+        ];
+
+        const vietnamEEZ = [
+            [21.0, 106.0], [19.0, 107.0], [16.0, 108.0], [12.0, 109.0], 
+            [9.0, 110.0], [8.0, 108.0], [10.0, 106.0], [14.0, 105.0], 
+            [18.0, 105.5], [21.0, 106.0]
+        ];
+
+        const philippinesEEZ = [
+            [19.0, 120.0], [17.0, 122.0], [14.0, 124.0], [11.0, 125.0], 
+            [8.0, 126.0], [6.0, 125.0], [7.0, 122.0], [9.0, 119.0], 
+            [12.0, 118.0], [15.0, 119.0], [19.0, 120.0]
+        ];
+
+        const malaysiaEEZ = [
+            [7.0, 113.0], [5.0, 115.0], [3.0, 117.0], [1.0, 118.0], 
+            [2.0, 115.0], [4.0, 112.0], [6.0, 110.0], [7.0, 113.0]
+        ];
+
+        // Create EEZ polygons
+        L.polygon(chinaEEZ, {
+            color: '#e74c3c',
+            fillColor: '#e74c3c',
+            fillOpacity: 0.2,
+            weight: 2
+        }).bindPopup(`
+            <div class="popup-content">
+                <div class="popup-title">China's EEZ Claim</div>
+                <div class="popup-description">
+                    China claims extensive maritime rights based on historical presence and the Nine-Dash Line. 
+                    This includes areas far beyond the standard 200 nautical mile EEZ.
+                </div>
+                <div class="popup-evidence">Evidence: Nine-Dash Line Historical Claims</div>
+            </div>
+        `).addTo(eezGroup);
+
+        L.polygon(vietnamEEZ, {
+            color: '#f39c12',
+            fillColor: '#f39c12',
+            fillOpacity: 0.2,
+            weight: 2
+        }).bindPopup(`
+            <div class="popup-content">
+                <div class="popup-title">Vietnam's EEZ Claim</div>
+                <div class="popup-description">
+                    Vietnam claims maritime rights based on UNCLOS and its extensive coastline along the South China Sea.
+                </div>
+                <div class="popup-evidence">Evidence: UNCLOS Maritime Boundary Law</div>
+            </div>
+        `).addTo(eezGroup);
+
+        L.polygon(philippinesEEZ, {
+            color: '#3498db',
+            fillColor: '#3498db',
+            fillOpacity: 0.2,
+            weight: 2
+        }).bindPopup(`
+            <div class="popup-content">
+                <div class="popup-title">Philippines' EEZ Claim</div>
+                <div class="popup-description">
+                    The Philippines bases its claims on UNCLOS and the 2016 Arbitration Tribunal decision that invalidated parts of China's claims.
+                </div>
+                <div class="popup-evidence">Evidence: 2016 Arbitration Tribunal Decision</div>
+            </div>
+        `).addTo(eezGroup);
+
+        L.polygon(malaysiaEEZ, {
+            color: '#27ae60',
+            fillColor: '#27ae60',
+            fillOpacity: 0.2,
+            weight: 2
+        }).bindPopup(`
+            <div class="popup-content">
+                <div class="popup-title">Malaysia's EEZ Claim</div>
+                <div class="popup-description">
+                    Malaysia claims maritime rights in the southern portion of the South China Sea based on UNCLOS principles.
+                </div>
+                <div class="popup-evidence">Evidence: UNCLOS Maritime Boundary Law</div>
+            </div>
+        `).addTo(eezGroup);
+
+        // Disputed territorial areas
+        const paracelsArea = [
+            [16.8, 111.8], [16.2, 112.4], [15.6, 112.0], [16.0, 111.4], [16.8, 111.8]
+        ];
+
+        const spratlysArea = [
+            [11.5, 114.0], [10.0, 116.0], [8.5, 115.5], [7.0, 113.5], 
+            [8.0, 112.0], [10.0, 112.5], [11.5, 114.0]
+        ];
+
+        L.polygon(paracelsArea, {
+            color: '#e67e22',
+            fillColor: '#e67e22',
+            fillOpacity: 0.4,
+            weight: 3,
+            dashArray: '10, 10'
+        }).bindPopup(`
+            <div class="popup-content">
+                <div class="popup-title">Paracel Islands Dispute</div>
+                <div class="popup-description">
+                    Contested by China, Vietnam, and Taiwan. Currently controlled by China since 1974, but Vietnam maintains its claim based on historical evidence.
+                </div>
+                <div class="popup-evidence">Evidence: Paracel Islands Territorial Claims</div>
+            </div>
+        `).addTo(disputedAreasGroup);
+
+        L.polygon(spratlysArea, {
+            color: '#e67e22',
+            fillColor: '#e67e22',
+            fillOpacity: 0.4,
+            weight: 3,
+            dashArray: '10, 10'
+        }).bindPopup(`
+            <div class="popup-content">
+                <div class="popup-title">Spratly Islands Dispute</div>
+                <div class="popup-description">
+                    Most complex territorial dispute involving China, Taiwan, Vietnam, Philippines, Malaysia, and Brunei. Multiple overlapping claims and occupied features.
+                </div>
+                <div class="popup-evidence">Evidence: Spratly Islands Sovereignty Disputes</div>
+            </div>
+        `).addTo(disputedAreasGroup);
+
+        // Major shipping lanes
+        const shippingRoute1 = [
+            [21.0, 110.0], [18.0, 112.0], [15.0, 114.0], [12.0, 116.0], 
+            [9.0, 117.0], [6.0, 118.0], [3.0, 119.0], [1.0, 120.0]
+        ];
+
+        const shippingRoute2 = [
+            [20.0, 108.0], [17.0, 110.0], [14.0, 112.0], [11.0, 114.0], 
+            [8.0, 115.0], [5.0, 116.0], [2.0, 117.0]
+        ];
+
+        L.polyline(shippingRoute1, {
+            color: '#27ae60',
+            weight: 4,
+            opacity: 0.8,
+            dashArray: '15, 5'
+        }).bindPopup(`
+            <div class="popup-content">
+                <div class="popup-title">Major Shipping Lane - Route A</div>
+                <div class="popup-description">
+                    One of the world's busiest shipping routes. Over $3 trillion in trade passes through the South China Sea annually.
+                </div>
+                <div class="popup-evidence">Evidence: International Trade Route Analysis</div>
+            </div>
+        `).addTo(shippingLanesGroup);
+
+        L.polyline(shippingRoute2, {
+            color: '#27ae60',
+            weight: 4,
+            opacity: 0.8,
+            dashArray: '15, 5'
+        }).bindPopup(`
+            <div class="popup-content">
+                <div class="popup-title">Major Shipping Lane - Route B</div>
+                <div class="popup-description">
+                    Critical alternative route connecting Southeast Asia with East Asia and beyond.
+                </div>
+                <div class="popup-evidence">Evidence: International Trade Route Analysis</div>
+            </div>
+        `).addTo(shippingLanesGroup);
+
+        // Investigation evidence markers
+        const evidenceLocations = [
+            {
+                id: 'paracel',
+                coords: [16.4, 112.0],
+                title: 'Paracel Islands Investigation',
+                description: 'Key evidence of competing historical claims and current control patterns.',
+                evidenceNum: 1
+            },
+            {
+                id: 'spratly',
+                coords: [9.5, 114.0],
+                title: 'Spratly Islands Complex',
+                description: 'Multiple nations have built installations on various features in this disputed area.',
+                evidenceNum: 2
+            },
+            {
+                id: 'scarborough',
+                coords: [15.2, 117.8],
+                title: 'Scarborough Shoal Incident',
+                description: 'Site of significant maritime confrontation between Philippines and China in 2012.',
+                evidenceNum: 3
+            },
+            {
+                id: 'nine-dash',
+                coords: [12.0, 115.0],
+                title: 'Nine-Dash Line Center',
+                description: 'Geographic center of China\'s controversial historical claim line.',
+                evidenceNum: 4
+            },
+            {
+                id: 'unclos',
+                coords: [10.0, 118.0],
+                title: 'UNCLOS Boundary Reference',
+                description: 'Key location for understanding international maritime law applications.',
+                evidenceNum: 5
+            },
+            {
+                id: 'shipping',
+                coords: [7.0, 115.0],
+                title: 'Shipping Route Chokepoint',
+                description: 'Critical maritime passage for international trade.',
+                evidenceNum: 6
+            },
+            {
+                id: 'resources',
+                coords: [14.0, 113.0],
+                title: 'Resource Survey Site',
+                description: 'Location of disputed underwater oil and gas reserves.',
+                evidenceNum: 7
+            },
+            {
+                id: 'arbitration',
+                coords: [11.0, 116.5],
+                title: 'Arbitration Case Reference Point',
+                description: 'Geographic focus of the 2016 international arbitration case.',
+                evidenceNum: 8
+            }
+        ];
+
+        // Create evidence markers
+        evidenceLocations.forEach(evidence => {
+            const marker = L.circleMarker(evidence.coords, {
+                radius: 12,
+                fillColor: '#f39c12',
+                color: '#d35400',
+                weight: 3,
+                opacity: 1,
+                fillOpacity: 0.8
+            }).bindPopup(`
+                <div class="popup-content">
+                    <div class="popup-title">${evidence.title}</div>
+                    <div class="popup-description">${evidence.description}</div>
+                    <div class="popup-evidence">Click to mark as evidence found!</div>
+                </div>
+            `).on('click', function() {
+                markEvidenceFound(evidence.id, evidence.evidenceNum);
+            });
+
+            evidenceMarkers[evidence.id] = marker;
+            marker.addTo(evidenceGroup);
+        });
+
+        // Military/Naval installations
+        const militaryBases = [
+            {coords: [18.3, 109.5], name: 'Hainan Naval Base', country: 'China'},
+            {coords: [16.0, 107.8], name: 'Cam Ranh Bay', country: 'Vietnam'},
+            {coords: [14.6, 120.9], name: 'Subic Bay', country: 'Philippines'},
+            {coords: [22.3, 114.2], name: 'Hong Kong Naval Facility', country: 'China'},
+            {coords: [1.3, 103.8], name: 'Singapore Naval Base', country: 'Singapore'}
+        ];
+
+        militaryBases.forEach(base => {
+            L.marker(base.coords, {
+                icon: L.divIcon({
+                    className: 'naval-marker',
+                    html: '🏛️',
+                    iconSize: [25, 25],
+                    iconAnchor: [12, 12]
+                })
+            }).bindPopup(`
+                <div class="popup-content">
+                    <div class="popup-title">${base.name}</div>
+                    <div class="popup-description">
+                        Military/Naval installation - ${base.country}<br>
+                        Strategic importance in regional security balance.
+                    </div>
+                </div>
+            `).addTo(militaryBasesGroup);
+        });
+
+        // Layer control functionality
+        function toggleLayer(layerId, group) {
+            const checkbox = document.getElementById(layerId);
+            if (checkbox.checked) {
+                group.addTo(map);
+            } else {
+                map.removeLayer(group);
+            }
+        }
+
+        // Add event listeners for layer controls
+        document.getElementById('eezLayer').addEventListener('change', () => toggleLayer('eezLayer', eezGroup));
+        document.getElementById('territorialWatersLayer').addEventListener('change', () => toggleLayer('territorialWatersLayer', territorialWatersGroup));
+        document.getElementById('disputedAreasLayer').addEventListener('change', () => toggleLayer('disputedAreasLayer', disputedAreasGroup));
+        document.getElementById('shippingLanesLayer').addEventListener('change', () => toggleLayer('shippingLanesLayer', shippingLanesGroup));
+        document.getElementById('militaryBasesLayer').addEventListener('change', () => toggleLayer('militaryBasesLayer', militaryBasesGroup));
+        document.getElementById('evidenceLayer').addEventListener('change', () => toggleLayer('evidenceLayer', evidenceGroup));
+
+        // Evidence tracking functions
+        function markEvidenceFound(evidenceId, evidenceNum) {
+            const evidenceElement = document.getElementById(`evidence${evidenceNum}`);
+            if (!evidenceElement.classList.contains('found')) {
+                evidenceElement.classList.add('found');
+                evidenceFound++;
+                updateEvidenceCounter();
+                
+                // Change marker appearance
+                const marker = evidenceMarkers[evidenceId];
+                marker.setStyle({
+                    fillColor: '#27ae60',
+                    color: '#1e8449'
+                });
+                
+                // Update investigation status
+                updateInvestigationStatus();
+            }
+        }
+
+        function highlightEvidence(evidenceId) {
+            const marker = evidenceMarkers[evidenceId];
+            if (marker) {
+                map.setView(marker.getLatLng(), 8);
+                marker.openPopup();
+            }
+        }
+
+        function updateEvidenceCounter() {
+            document.getElementById('evidenceCount').textContent = evidenceFound;
+        }
+
+        function updateInvestigationStatus() {
+            const statusText = document.querySelector('.status-text');
+            if (evidenceFound === 8) {
+                statusText.innerHTML = '🎯 CASE SOLVED!';
+                statusText.style.color = '#27ae60';
+            } else if (evidenceFound >= 6) {
+                statusText.innerHTML = '🔍 NEARING SOLUTION';
+                statusText.style.color = '#f39c12';
+            } else if (evidenceFound >= 3) {
+                statusText.innerHTML = '📋 GOOD PROGRESS';
+                statusText.style.color = '#3498db';
+            }
+        }
+
+        // Add base map layer control
+        const baseMaps = {
+            "Satellite View": satelliteLayer,
+            "Street Map": streetLayer
+        };
+
+        L.control.layers(baseMaps).addTo(map);
+
+        // Add scale control
+        L.control.scale().addTo(map);
+
+        console.log('🕵️ Case #6: Jurisdictional Crisis Investigation System Initialized');
+        console.log('🌊 South China Sea territorial dispute map loaded successfully');
+        console.log('⚖️ Ready for international boundary investigation');
+    </script>
+</body>
+</html>
