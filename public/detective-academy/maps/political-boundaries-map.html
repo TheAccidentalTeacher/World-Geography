@@ -74,8 +74,9 @@
         
         .map-container {
             position: relative;
-            height: 600px;
-            margin: 20px;
+            height: 70vh;
+            margin: 20px auto;
+            max-width: 1200px;
             border-radius: 15px;
             overflow: hidden;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
@@ -90,15 +91,21 @@
         .control-panel {
             position: absolute;
             top: 20px;
-            right: 20px;
+            left: 20px;
             background: rgba(255,255,255,0.95);
             backdrop-filter: blur(20px);
             padding: 20px;
             border-radius: 15px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.2);
             border: 2px solid var(--accent-color);
-            z-index: 1000;
+            z-index: 999;
             min-width: 280px;
+            cursor: move;
+            user-select: none;
+        }
+        
+        .control-panel:hover {
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
         }
         
         .control-title {
@@ -132,7 +139,8 @@
             background: rgba(255,255,255,0.95);
             backdrop-filter: blur(20px);
             padding: 20px;
-            margin: 20px;
+            margin: 20px auto;
+            max-width: 1200px;
             border-radius: 15px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.2);
             border: 2px solid var(--accent-color);
@@ -168,7 +176,8 @@
             background: rgba(255,255,255,0.95);
             backdrop-filter: blur(20px);
             padding: 20px;
-            margin: 20px;
+            margin: 20px auto;
+            max-width: 1200px;
             border-radius: 15px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.2);
             border: 2px solid var(--success-color);
@@ -324,7 +333,7 @@
         <div id="investigationMap"></div>
         
         <div class="control-panel">
-            <h3 class="control-title">Investigation Tools</h3>
+            <h3 class="control-title">🕵️ Investigation Tools (Drag to Move)</h3>
             
             <div class="layer-control">
                 <label>
@@ -818,6 +827,56 @@
 
         // Add scale control
         L.control.scale().addTo(map);
+
+        // Make control panel draggable
+        function makeDraggable(element) {
+            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            
+            element.onmousedown = dragMouseDown;
+            
+            function dragMouseDown(e) {
+                e = e || window.event;
+                e.preventDefault();
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                document.onmouseup = closeDragElement;
+                document.onmousemove = elementDrag;
+            }
+            
+            function elementDrag(e) {
+                e = e || window.event;
+                e.preventDefault();
+                pos1 = pos3 - e.clientX;
+                pos2 = pos4 - e.clientY;
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                
+                let newTop = element.offsetTop - pos2;
+                let newLeft = element.offsetLeft - pos1;
+                
+                // Keep panel within viewport
+                const rect = element.getBoundingClientRect();
+                const viewportWidth = window.innerWidth;
+                const viewportHeight = window.innerHeight;
+                
+                if (newTop < 0) newTop = 0;
+                if (newLeft < 0) newLeft = 0;
+                if (newTop + rect.height > viewportHeight) newTop = viewportHeight - rect.height;
+                if (newLeft + rect.width > viewportWidth) newLeft = viewportWidth - rect.width;
+                
+                element.style.top = newTop + "px";
+                element.style.left = newLeft + "px";
+            }
+            
+            function closeDragElement() {
+                document.onmouseup = null;
+                document.onmousemove = null;
+            }
+        }
+
+        // Make the control panel draggable
+        const controlPanel = document.querySelector('.control-panel');
+        makeDraggable(controlPanel);
 
         console.log('🕵️ Case #6: Jurisdictional Crisis Investigation System Initialized');
         console.log('🌊 South China Sea territorial dispute map loaded successfully');
