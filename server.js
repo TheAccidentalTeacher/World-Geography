@@ -123,6 +123,76 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'new-lesson-companion.html'));
 });
 
+// Explicit routes for Detective Academy files - Railway static file fix
+app.get('/detective-academy', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'detective-academy', 'index.html'));
+});
+
+app.get('/detective-academy/teacher-guide-enhanced.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'detective-academy', 'teacher-guide-enhanced.html'));
+});
+
+app.get('/detective-academy/student-materials.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'detective-academy', 'student-materials.html'));
+});
+
+app.get('/detective-academy/presentation.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'detective-academy', 'presentation.html'));
+});
+
+app.get('/detective-academy/overview.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'detective-academy', 'overview.html'));
+});
+
+// Serve handouts with explicit routes
+app.get('/detective-academy/handouts/:filename', (req, res) => {
+  const filename = req.params.filename;
+  const filePath = path.join(__dirname, 'public', 'detective-academy', 'handouts', filename);
+  
+  // Check if file exists
+  if (fs.existsSync(filePath)) {
+    res.sendFile(filePath);
+  } else {
+    res.status(404).send('Handout not found');
+  }
+});
+
+// Explicit routes for all detective academy maps
+app.get('/detective-academy/maps/:filename', (req, res) => {
+  const filename = req.params.filename;
+  const filePath = path.join(__dirname, 'public', 'detective-academy', 'maps', filename);
+  
+  // Check if file exists
+  if (fs.existsSync(filePath)) {
+    res.sendFile(filePath);
+  } else {
+    res.status(404).send('Map not found');
+  }
+});
+
+// Route for CSS and JS files
+app.get('/detective-academy/css/:filename', (req, res) => {
+  const filename = req.params.filename;
+  const filePath = path.join(__dirname, 'public', 'detective-academy', 'css', filename);
+  
+  if (fs.existsSync(filePath)) {
+    res.sendFile(filePath);
+  } else {
+    res.status(404).send('CSS file not found');
+  }
+});
+
+app.get('/detective-academy/js/:filename', (req, res) => {
+  const filename = req.params.filename;
+  const filePath = path.join(__dirname, 'public', 'detective-academy', 'js', filename);
+  
+  if (fs.existsSync(filePath)) {
+    res.sendFile(filePath);
+  } else {
+    res.status(404).send('JS file not found');
+  }
+});
+
 // SUPER SIMPLE health check for Railway
 app.get('/health', (req, res) => {
   const dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';

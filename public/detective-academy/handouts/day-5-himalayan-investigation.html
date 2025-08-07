@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 5: Himalayan High Altitude Investigation - Geographic Detective Academy</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Roboto:wght@300;400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #ffffff;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        @media print {
+            body { 
+                background: white; 
+                font-size: 12pt;
+            }
+            .no-print { display: none; }
+            .page-break { page-break-before: always; }
+        }
+        
+        .handout-header {
+            background: linear-gradient(135deg, #2C5F2D, #4A90E2);
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        
+        .detective-badge {
+            background: #ffd700;
+            color: #2C5F2D;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 0.5rem;
+        }
+        
+        .back-button {
+            background: #4A90E2;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+        
+        .back-button:hover {
+            background: #2C5F2D;
+        }
+        
+        .section {
+            background: #f9f9f9;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+            border-left: 4px solid #4A90E2;
+        }
+        
+        .question-box {
+            background: white;
+            border: 2px solid #4A90E2;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+        }
+        
+        .answer-space {
+            min-height: 60px;
+            border-bottom: 1px solid #ddd;
+            margin: 0.5rem 0;
+        }
+        
+        .altitude-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        
+        .altitude-table th,
+        .altitude-table td {
+            border: 1px solid #ddd;
+            padding: 0.5rem;
+            text-align: center;
+        }
+        
+        .altitude-table th {
+            background: #4A90E2;
+            color: white;
+        }
+        
+        .map-reference {
+            background: rgba(44, 95, 45, 0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border: 2px dashed #4A90E2;
+        }
+        
+        .emergency-alert {
+            background: #ffe6e6;
+            border: 2px solid #ff6b6b;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .altitude-effects {
+            background: #e6f3ff;
+            border: 2px solid #007bff;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .weather-data {
+            background: #f0f8ff;
+            border: 2px solid #87ceeb;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="no-print">
+        <a href="../teacher-guide-enhanced.html" class="back-button">← Back to Teacher Guide</a>
+        <a href="../student-materials.html" class="back-button">📚 All Student Materials</a>
+        <button onclick="window.print()" class="back-button">🖨️ Print This Handout</button>
+    </div>
+    
+    <div class="handout-header">
+        <div class="detective-badge">⛰️ CASE #3: MYSTERY IN THE HIMALAYAS</div>
+        <h1>Day 5: High Altitude Investigation (Part 1)</h1>
+        <p><strong>Detective Name:</strong> _________________________ <strong>Date:</strong> _________</p>
+    </div>
+    
+    <div class="emergency-alert">
+        <h2>🚨 HIGH PRIORITY CASE</h2>
+        <p><strong>EMERGENCY:</strong> A team of international climate researchers has gone missing at 4,500 meters elevation while studying glacier retreat on Mount Annapurna. Their last communication mentioned severe weather moving in and equipment malfunctions. Your detective team must understand the extreme challenges of high-altitude survival to locate them before it's too late.</p>
+        
+        <p><strong>Critical Timeline:</strong> Survival at extreme altitude is measured in hours, not days. Every minute counts!</p>
+    </div>
+    
+    <div class="section">
+        <h3>📊 Altitude Effects on Human Body</h3>
+        <p>Complete the altitude sickness chart based on research and map investigation:</p>
+        
+        <table class="altitude-table">
+            <thead>
+                <tr>
+                    <th>Elevation</th>
+                    <th>Oxygen Level</th>
+                    <th>Physical Effects</th>
+                    <th>Survival Time</th>
+                    <th>Location Example</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Sea Level - 1,500m</td>
+                    <td>100%</td>
+                    <td>Normal function</td>
+                    <td>Indefinite</td>
+                    <td>Kathmandu (1,400m)</td>
+                </tr>
+                <tr>
+                    <td>1,500m - 3,500m</td>
+                    <td>85%</td>
+                    <td>Mild symptoms</td>
+                    <td></td>
+                    <td>Base Camp approach</td>
+                </tr>
+                <tr>
+                    <td>3,500m - 5,500m</td>
+                    <td>60%</td>
+                    <td>Moderate altitude sickness</td>
+                    <td></td>
+                    <td>Missing team location</td>
+                </tr>
+                <tr>
+                    <td>5,500m - 8,000m</td>
+                    <td>50%</td>
+                    <td>Severe symptoms</td>
+                    <td></td>
+                    <td>Death Zone begins</td>
+                </tr>
+                <tr>
+                    <td>Above 8,000m</td>
+                    <td>33%</td>
+                    <td>Death Zone</td>
+                    <td>24-48 hours max</td>
+                    <td>Everest Summit</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="map-reference">
+        <h3>🗺️ Himalayan Investigation Map Analysis</h3>
+        <ol>
+            <li>Open the <strong>Himalayan Investigation Map</strong> and switch to topographic view</li>
+            <li>Locate Mount Annapurna and identify the 4,500m elevation zone</li>
+            <li>Find potential shelter locations (rock overhangs, huts, valleys)</li>
+            <li>Examine glacier locations and recent retreat patterns</li>
+            <li>Look for evidence markers showing the research team's planned route</li>
+            <li>Check weather data layers for current and forecasted conditions</li>
+        </ol>
+        
+        <p><strong>Key Investigation Questions:</strong></p>
+        <ul>
+            <li>What natural shelters are available at the team's last known location?</li>
+            <li>How quickly can weather change at this altitude?</li>
+            <li>What are the safest descent routes in emergency conditions?</li>
+        </ul>
+    </div>
+    
+    <div class="weather-data">
+        <h3>🌨️ Extreme Weather Analysis</h3>
+        <p><strong>Current Conditions at 4,500m elevation:</strong></p>
+        <ul>
+            <li>Temperature: -15°C (daytime), -25°C (nighttime)</li>
+            <li>Wind speed: 40 km/h with gusts to 70 km/h</li>
+            <li>Visibility: 50 meters due to snow/clouds</li>
+            <li>Precipitation: Heavy snow expected for next 48 hours</li>
+            <li>Wind chill: Feels like -35°C</li>
+        </ul>
+        
+        <p><strong>Weather Impact Questions:</strong></p>
+        
+        <p><strong>1. Hypothermia Risk:</strong> How long could the research team survive in these temperatures without proper shelter?</p>
+        <div class="answer-space"></div>
+        
+        <p><strong>2. Navigation Challenges:</strong> How does limited visibility affect rescue operations?</p>
+        <div class="answer-space"></div>
+        
+        <p><strong>3. Equipment Failures:</strong> What electronic equipment might malfunction in these conditions?</p>
+        <div class="answer-space"></div>
+    </div>
+    
+    <div class="altitude-effects">
+        <h3>🫁 Altitude Sickness Investigation</h3>
+        
+        <p><strong>Research the symptoms of altitude sickness and explain how each would affect the missing research team:</strong></p>
+        
+        <p><strong>Mild Symptoms (Acute Mountain Sickness):</strong></p>
+        <ul>
+            <li>Headache: How would this affect decision-making? ________________</li>
+            <li>Nausea: Impact on nutrition and hydration? ________________</li>
+            <li>Fatigue: Effect on movement and survival tasks? ________________</li>
+            <li>Dizziness: Safety implications? ________________</li>
+        </ul>
+        
+        <p><strong>Severe Symptoms (High Altitude Cerebral/Pulmonary Edema):</strong></p>
+        <ul>
+            <li>Confusion: ________________</li>
+            <li>Difficulty breathing: ________________</li>
+            <li>Loss of coordination: ________________</li>
+            <li>Unconsciousness: ________________</li>
+        </ul>
+        
+        <p><strong>Emergency Treatment:</strong> What is the ONLY effective treatment for severe altitude sickness?</p>
+        <div class="answer-space"></div>
+    </div>
+    
+    <div class="question-box">
+        <h3>🔍 Survival Priority Analysis</h3>
+        
+        <p><strong>If you were the missing research team, rank these survival priorities 1-8 (1 = most important):</strong></p>
+        
+        <p>_____ Find immediate shelter from wind and snow</p>
+        <p>_____ Conserve body heat and prevent hypothermia</p>
+        <p>_____ Signal for rescue (radio, flares, mirrors)</p>
+        <p>_____ Descend to lower altitude to reduce altitude sickness</p>
+        <p>_____ Find or melt snow for drinking water</p>
+        <p>_____ Ration food supplies</p>
+        <p>_____ Stay together as a team</p>
+        <p>_____ Navigate back to planned route</p>
+        
+        <p><strong>Explain your top 3 priorities:</strong></p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+    </div>
+    
+    <div class="page-break"></div>
+    
+    <div class="section">
+        <h3>🏔️ Himalayan Geography & Culture</h3>
+        
+        <p><strong>Research the Sherpa people and their mountain expertise:</strong></p>
+        
+        <p><strong>1. High Altitude Adaptations:</strong> How are Sherpa people physically adapted to high altitude living?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+        
+        <p><strong>2. Traditional Knowledge:</strong> What survival techniques do Sherpas use that could help the missing team?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+        
+        <p><strong>3. Weather Reading:</strong> How do local mountain peoples predict weather changes?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+    </div>
+    
+    <div class="section">
+        <h3>🌡️ Climate vs. Extreme Environments Comparison</h3>
+        
+        <p><strong>Compare survival challenges across the three environments you've studied:</strong></p>
+        
+        <table class="altitude-table">
+            <thead>
+                <tr>
+                    <th>Factor</th>
+                    <th>Amazon Rainforest</th>
+                    <th>Sahara Desert</th>
+                    <th>Himalayas (4,500m)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Primary Threat</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Temperature Range</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Water Availability</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Survival Time</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="section">
+        <h3>📚 High Altitude Vocabulary</h3>
+        
+        <p><strong>Altitude Sickness:</strong></p>
+        <div class="answer-space"></div>
+        
+        <p><strong>Hypothermia:</strong></p>
+        <div class="answer-space"></div>
+        
+        <p><strong>Acclimatization:</strong></p>
+        <div class="answer-space"></div>
+        
+        <p><strong>Glacier Retreat:</strong></p>
+        <div class="answer-space"></div>
+        
+        <p><strong>Wind Chill:</strong></p>
+        <div class="answer-space"></div>
+    </div>
+    
+    <div class="emergency-alert">
+        <h3>⏰ Mission Status: Day 5 Complete</h3>
+        <p><strong>Investigation Progress:</strong> You've analyzed the extreme challenges facing the missing research team. Tomorrow you'll learn about rescue operations and continue the search using advanced mountain survival techniques.</p>
+        
+        <p><strong>Tonight's Homework:</strong> Research one real-life mountain rescue story and identify what survival techniques were used successfully.</p>
+        <div class="answer-space"></div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 4: Desert Navigation & Survival - Geographic Detective Academy</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Roboto:wght@300;400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #ffffff;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        @media print {
+            body { 
+                background: white; 
+                font-size: 12pt;
+            }
+            .no-print { display: none; }
+            .page-break { page-break-before: always; }
+        }
+        
+        .handout-header {
+            background: linear-gradient(135deg, #8B4513, #D2691E);
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        
+        .detective-badge {
+            background: #ffd700;
+            color: #8B4513;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 0.5rem;
+        }
+        
+        .back-button {
+            background: #D2691E;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+        
+        .back-button:hover {
+            background: #8B4513;
+        }
+        
+        .section {
+            background: #f9f9f9;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+            border-left: 4px solid #D2691E;
+        }
+        
+        .question-box {
+            background: white;
+            border: 2px solid #D2691E;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+        }
+        
+        .answer-space {
+            min-height: 60px;
+            border-bottom: 1px solid #ddd;
+            margin: 0.5rem 0;
+        }
+        
+        .navigation-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        
+        .navigation-table th,
+        .navigation-table td {
+            border: 1px solid #ddd;
+            padding: 0.5rem;
+            text-align: left;
+        }
+        
+        .navigation-table th {
+            background: #D2691E;
+            color: white;
+        }
+        
+        .map-reference {
+            background: rgba(139, 69, 19, 0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border: 2px dashed #D2691E;
+        }
+        
+        .breakthrough {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .cultural-connection {
+            background: #e6f3ff;
+            border: 2px solid #007bff;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .compass-exercise {
+            background: #fff5e6;
+            border: 2px solid #ff8c00;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="no-print">
+        <a href="../teacher-guide-enhanced.html" class="back-button">← Back to Teacher Guide</a>
+        <a href="../student-materials.html" class="back-button">📚 All Student Materials</a>
+        <button onclick="window.print()" class="back-button">🖨️ Print This Handout</button>
+    </div>
+    
+    <div class="handout-header">
+        <div class="detective-badge">🏜️ CASE #2: DESERT DILEMMA</div>
+        <h1>Day 4: Caravan Routes & Navigation Analysis</h1>
+        <p><strong>Detective Name:</strong> _________________________ <strong>Date:</strong> _________</p>
+    </div>
+    
+    <div class="breakthrough">
+        <h2>🚨 MAJOR DISCOVERY!</h2>
+        <p><strong>Breaking News:</strong> Satellite imagery has revealed tire tracks leading from the geological team's last known position toward an ancient caravan route. Local Tuareg guides report that the abandoned route leads to a hidden underground water source. Your investigation now focuses on traditional desert navigation methods and caravan survival strategies.</p>
+    </div>
+    
+    <div class="section">
+        <h3>📊 Traditional vs. Modern Navigation</h3>
+        <p>Research how different groups navigate the Sahara Desert:</p>
+        
+        <table class="navigation-table">
+            <thead>
+                <tr>
+                    <th>Navigation Method</th>
+                    <th>Tools Used</th>
+                    <th>Advantages</th>
+                    <th>Disadvantages</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Traditional Tuareg</td>
+                    <td>Stars, landmarks, wind patterns</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Modern GPS</td>
+                    <td>Satellites, digital maps</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Compass & Map</td>
+                    <td>Magnetic compass, paper maps</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Natural Signs</td>
+                    <td>Sun position, plant growth, animal tracks</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="map-reference">
+        <h3>🗺️ Advanced Sahara Map Analysis</h3>
+        <p><strong>Today's Focus:</strong> Caravan routes and navigation landmarks</p>
+        <ol>
+            <li>Locate historical caravan routes on your Sahara map</li>
+            <li>Identify key landmarks (rock formations, oases, mountains) along routes</li>
+            <li>Trace the path from the team's last GPS coordinates to caravan routes</li>
+            <li>Look for evidence of underground water sources or wells</li>
+            <li>Examine how routes avoid dangerous terrain (sand seas, rocky areas)</li>
+        </ol>
+        
+        <p><strong>Key Question:</strong> Why would the missing team follow a caravan route instead of their planned geological path?</p>
+        <div class="answer-space"></div>
+    </div>
+    
+    <div class="compass-exercise">
+        <h3>🧭 Navigation Challenge</h3>
+        <p><strong>Scenario:</strong> You're part of the search team and your GPS has failed. Using the map and the information below, plan your route to find the missing geological team.</p>
+        
+        <p><strong>Current Information:</strong></p>
+        <ul>
+            <li>Your position: 25°15'N, 5°25'E</li>
+            <li>Target: Ancient well on caravan route (25°08'N, 5°35'E)</li>
+            <li>Sun rises in the east (090°), sets in the west (270°)</li>
+            <li>Time: 2:00 PM (sun is southwest)</li>
+            <li>Visible landmark: Rocky hill to the southeast</li>
+        </ul>
+        
+        <p><strong>Your Navigation Plan:</strong></p>
+        <p>1. What direction should you travel? ________________</p>
+        <p>2. How will you maintain this direction without GPS?</p>
+        <div class="answer-space"></div>
+        
+        <p>3. What landmarks will you use as checkpoints?</p>
+        <div class="answer-space"></div>
+        
+        <p>4. How will you navigate at night?</p>
+        <div class="answer-space"></div>
+    </div>
+    
+    <div class="cultural-connection">
+        <h3>🐪 Desert Peoples and Survival Wisdom</h3>
+        
+        <p><strong>Research the Tuareg people and their desert survival techniques. Answer these questions:</strong></p>
+        
+        <p><strong>1. Water Conservation:</strong> What methods do the Tuareg use to find and conserve water in the desert?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+        
+        <p><strong>2. Clothing and Shelter:</strong> How does traditional Tuareg clothing help them survive in the desert?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+        
+        <p><strong>3. Navigation Secrets:</strong> What traditional navigation methods could help the missing geological team?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+        
+        <p><strong>4. Cultural Adaptation:</strong> How have desert peoples adapted their lifestyle to thrive in harsh conditions?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+    </div>
+    
+    <div class="question-box">
+        <h3>🔍 Case Analysis Update</h3>
+        
+        <p><strong>Evidence Summary:</strong> Based on two days of investigation, what do you now know about the missing team?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+        
+        <p><strong>Survival Assessment:</strong> How long could the team survive if they:</p>
+        <p>a) Stayed with their vehicle: _______ days</p>
+        <p>b) Followed the caravan route: _______ days</p>
+        <p>c) Found the underground water source: _______ days</p>
+        
+        <p><strong>Explain your reasoning:</strong></p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+        
+        <p><strong>Next Search Strategy:</strong> Where should the rescue team focus their efforts tomorrow?</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+    </div>
+    
+    <div class="page-break"></div>
+    
+    <div class="section">
+        <h3>🌟 Star Navigation Exercise</h3>
+        <p><strong>The Tuareg use stars for nighttime navigation. Learn the basics:</strong></p>
+        
+        <p><strong>North Star (Polaris):</strong> Always points north in the Northern Hemisphere</p>
+        <p>How to find it: Locate the Big Dipper, follow the "pointer stars" to Polaris</p>
+        
+        <p><strong>Your Task:</strong> If you were lost in the Sahara at night, explain how you would use the North Star to navigate toward the nearest settlement.</p>
+        <div class="answer-space"></div>
+        <div class="answer-space"></div>
+        
+        <p><strong>Backup Plan:</strong> What would you do if clouds covered the North Star?</p>
+        <div class="answer-space"></div>
+    </div>
+    
+    <div class="section">
+        <h3>📚 Advanced Vocabulary</h3>
+        
+        <p><strong>Caravan:</strong></p>
+        <div class="answer-space"></div>
+        
+        <p><strong>Tuareg:</strong></p>
+        <div class="answer-space"></div>
+        
+        <p><strong>Magnetic Declination:</strong></p>
+        <div class="answer-space"></div>
+        
+        <p><strong>Celestial Navigation:</strong></p>
+        <div class="answer-space"></div>
+        
+        <p><strong>Aquifer:</strong></p>
+        <div class="answer-space"></div>
+    </div>
+    
+    <div class="breakthrough">
+        <h3>🔬 Tomorrow's Mission: Himalayan Challenge</h3>
+        <p><strong>Case Transition:</strong> Your excellent detective work in the Sahara has earned your team a promotion! Tomorrow you'll investigate a high-altitude emergency in the Himalayas. Start thinking about how mountain survival differs from desert survival.</p>
+        
+        <p><strong>Preparation Question:</strong> What new challenges do you expect when investigating at high altitude?</p>
+        <div class="answer-space"></div>
+        
+        <p><strong>Climate Prediction:</strong> How will the weather challenges in the mountains compare to the desert?</p>
+        <div class="answer-space"></div>
+    </div>
+</body>
+</html>
