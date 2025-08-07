@@ -172,8 +172,110 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(145deg, #ecf0f1 0%, #bdc3c7 50%, #95a5a6 100%);
+            background: linear-gradient(145deg, #87CEEB 0%, #98FB98 30%, #F0E68C 60%, #DEB887 100%);
             z-index: 1;
+        }
+        
+        /* City infrastructure overlay */
+        .city-infrastructure {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+        }
+        
+        /* Roads and streets */
+        .main-road {
+            position: absolute;
+            background: #444444;
+            z-index: 3;
+        }
+        
+        .main-road.horizontal {
+            height: 6px;
+            width: 100%;
+            box-shadow: inset 0 0 0 1px #666666;
+        }
+        
+        .main-road.vertical {
+            width: 6px;
+            height: 100%;
+            box-shadow: inset 0 0 0 1px #666666;
+        }
+        
+        .street {
+            position: absolute;
+            background: #666666;
+            z-index: 3;
+        }
+        
+        .street.horizontal {
+            height: 3px;
+            box-shadow: inset 0 0 0 1px #888888;
+        }
+        
+        .street.vertical {
+            width: 3px;
+            box-shadow: inset 0 0 0 1px #888888;
+        }
+        
+        /* River */
+        .river {
+            position: absolute;
+            background: linear-gradient(90deg, #4682B4 0%, #87CEEB 50%, #4682B4 100%);
+            border-radius: 20px;
+            z-index: 2;
+            box-shadow: 0 2px 8px rgba(70, 130, 180, 0.3);
+        }
+        
+        /* Buildings and landmarks */
+        .building {
+            position: absolute;
+            background: #8B8B8B;
+            border: 1px solid #696969;
+            z-index: 4;
+            border-radius: 2px;
+        }
+        
+        .building.tower {
+            background: linear-gradient(to top, #2F4F4F 0%, #708090 100%);
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+        }
+        
+        .building.commercial {
+            background: linear-gradient(to top, #8B4513 0%, #CD853F 100%);
+        }
+        
+        .building.residential {
+            background: linear-gradient(to top, #556B2F 0%, #9ACD32 100%);
+        }
+        
+        .building.industrial {
+            background: linear-gradient(to top, #2F2F2F 0%, #696969 100%);
+        }
+        
+        /* Parks and green spaces */
+        .park {
+            position: absolute;
+            background: radial-gradient(circle, #228B22 0%, #32CD32 50%, #90EE90 100%);
+            border-radius: 10px;
+            z-index: 3;
+            border: 2px solid #006400;
+        }
+        
+        .park.removed {
+            background: radial-gradient(circle, #8B4513 0%, #D2691E 50%, #F4A460 100%);
+            border: 2px solid #A0522D;
+        }
+        
+        /* Water features */
+        .water {
+            position: absolute;
+            background: radial-gradient(circle, #4169E1 0%, #87CEEB 100%);
+            border-radius: 50%;
+            z-index: 2;
         }
         
         /* Grid overlay for city blocks */
@@ -184,10 +286,10 @@
             width: 100%;
             height: 100%;
             background-image: 
-                linear-gradient(to right, rgba(0,0,0,0.1) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(0,0,0,0.1) 1px, transparent 1px);
-            background-size: 50px 50px;
-            z-index: 2;
+                linear-gradient(to right, rgba(0,0,0,0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0,0,0,0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: 5;
         }
         
         /* District overlay elements */
@@ -265,6 +367,67 @@
         <div id="urbanMap">
             <!-- Fictional city background -->
             <div class="fictional-city-canvas">
+                <!-- City infrastructure -->
+                <div class="city-infrastructure">
+                    <!-- River -->
+                    <div class="river" style="left: 20px; top: 80px; width: 200px; height: 40px; transform: rotate(-10deg);"></div>
+                    
+                    <!-- Main roads -->
+                    <div class="main-road horizontal" style="top: 200px;"></div>
+                    <div class="main-road horizontal" style="top: 350px;"></div>
+                    <div class="main-road vertical" style="left: 180px;"></div>
+                    <div class="main-road vertical" style="left: 380px;"></div>
+                    
+                    <!-- Streets -->
+                    <div class="street horizontal" style="top: 120px; left: 200px; width: 400px;"></div>
+                    <div class="street horizontal" style="top: 280px; left: 100px; width: 500px;"></div>
+                    <div class="street horizontal" style="top: 420px; left: 150px; width: 350px;"></div>
+                    <div class="street vertical" style="left: 280px; top: 50px; height: 400px;"></div>
+                    <div class="street vertical" style="left: 480px; top: 100px; height: 350px;"></div>
+                    
+                    <!-- Downtown buildings -->
+                    <div class="building tower" style="left: 190px; top: 140px; width: 25px; height: 50px;"></div>
+                    <div class="building tower" style="left: 220px; top: 130px; width: 30px; height: 60px;"></div>
+                    <div class="building tower" style="left: 255px; top: 135px; width: 35px; height: 55px;"></div>
+                    <div class="building tower" style="left: 295px; top: 125px; width: 40px; height: 65px;"></div>
+                    
+                    <!-- Commercial buildings -->
+                    <div class="building commercial" style="left: 160px; top: 360px; width: 80px; height: 30px;"></div>
+                    <div class="building commercial" style="left: 250px; top: 355px; width: 100px; height: 35px;"></div>
+                    <div class="building commercial" style="left: 360px; top: 365px; width: 70px; height: 25px;"></div>
+                    
+                    <!-- Residential areas -->
+                    <div class="building residential" style="left: 410px; top: 60px; width: 60px; height: 40px;"></div>
+                    <div class="building residential" style="left: 480px; top: 70px; width: 80px; height: 35px;"></div>
+                    <div class="building residential" style="left: 420px; top: 110px; width: 70px; height: 30px;"></div>
+                    <div class="building residential" style="left: 500px; top: 115px; width: 65px; height: 32px;"></div>
+                    
+                    <!-- West end suburbs -->
+                    <div class="building residential" style="left: 90px; top: 260px; width: 50px; height: 20px;"></div>
+                    <div class="building residential" style="left: 150px; top: 270px; width: 45px; height: 18px;"></div>
+                    <div class="building residential" style="left: 200px; top: 250px; width: 55px; height: 22px;"></div>
+                    <div class="building residential" style="left: 120px; top: 310px; width: 60px; height: 25px;"></div>
+                    
+                    <!-- Industrial zone -->
+                    <div class="building industrial" style="left: 360px; top: 310px; width: 90px; height: 40px;"></div>
+                    <div class="building industrial" style="left: 460px; top: 320px; width: 80px; height: 35px;"></div>
+                    <div class="building industrial" style="left: 380px; top: 360px; width: 70px; height: 45px;"></div>
+                    <div class="building industrial" style="left: 460px; top: 365px; width: 85px; height: 40px;"></div>
+                    
+                    <!-- Parks (existing) -->
+                    <div class="park" style="left: 450px; top: 340px; width: 60px; height: 40px;" title="City Park - Protected"></div>
+                    <div class="park" style="left: 25px; top: 140px; width: 40px; height: 30px;" title="Waterfront Trail - Existing"></div>
+                    
+                    <!-- Parks (removed - now buildings/construction) -->
+                    <div class="park removed" style="left: 235px; top: 160px; width: 50px; height: 35px;" title="Central Park - REMOVED 2022 for Metropolis Tower"></div>
+                    <div class="park removed" style="left: 85px; top: 120px; width: 45px; height: 30px;" title="Riverside Gardens - REMOVED 2023 for Luxury Condos"></div>
+                    <div class="park removed" style="left: 415px; top: 175px; width: 35px; height: 25px;" title="Heritage Square - REMOVED 2024 for Office Complex"></div>
+                    
+                    <!-- Water features -->
+                    <div class="water" style="left: 30px; top: 160px; width: 20px; height: 20px;" title="River Point"></div>
+                    <div class="water" style="left: 45px; top: 190px; width: 15px; height: 15px;" title="Pond"></div>
+                </div>
+                
                 <!-- City grid overlay -->
                 <div class="city-grid"></div>
                 
