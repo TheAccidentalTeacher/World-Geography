@@ -140,6 +140,16 @@ app.get('/detective-academy/presentation.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'detective-academy', 'presentation.html'));
 });
 
+// Handle presentation.html with slide parameters
+app.get('/presentation.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'detective-academy', 'presentation.html'));
+});
+
+// Handle student-materials.html with direct access
+app.get('/student-materials.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'detective-academy', 'student-materials.html'));
+});
+
 app.get('/detective-academy/overview.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'detective-academy', 'overview.html'));
 });
