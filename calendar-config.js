@@ -48,8 +48,8 @@ const schoolCalendar = {
     // Labor Day
     { name: 'Labor Day', date: new Date('2025-09-01') },
     
-    // Fall Break (October 12-15)
-    { name: 'Fall Break', start: new Date('2025-10-12'), end: new Date('2025-10-15') },
+    // Fall Break (September 12-15)
+    { name: 'Fall Break', start: new Date('2025-09-12'), end: new Date('2025-09-15') },
     
     // Parent/Teacher Conferences (no school)
     { name: 'Parent/Teacher Conferences', date: new Date('2025-10-21') },
@@ -86,6 +86,7 @@ const schoolCalendar = {
   earlyReleaseDays: [
     new Date('2025-08-29'), // End of first week
     new Date('2025-10-17'), // October early release 
+    new Date('2025-10-31'), // October 31 early release
     new Date('2025-12-19'), // Before winter break
     new Date('2026-02-13'), // February early release
     new Date('2026-05-16')  // Before last day

@@ -1931,7 +1931,7 @@
             // Official holidays from PDF
             holidays: [
                 '2025-09-01', // Labor Day
-                '2025-10-12', '2025-10-13', '2025-10-14', '2025-10-15', // Fall Break (Oct 12-15)
+                '2025-09-12', '2025-09-13', '2025-09-14', '2025-09-15', // Fall Break (Sep 12-15)
                 '2025-10-21', // Parent/Teacher Conferences
                 '2025-11-27', '2025-11-28', // Thanksgiving Break
                 '2025-12-22', '2025-12-23', '2025-12-24', '2025-12-25', '2025-12-26',
@@ -1952,6 +1952,7 @@
             earlyRelease: [
                 '2025-08-29', // End of first week
                 '2025-10-17', // October early release
+                '2025-10-31', // October 31 early release 
                 '2025-12-19', // Before winter break
                 '2026-02-13', // February early release
                 '2026-05-16'  // Before last day
@@ -1960,8 +1961,8 @@
         
         // Quarter system for simulation day planning (aligned with actual school calendar)
         const quarters = {
-            q1: { start: new Date('2025-09-02'), end: new Date('2025-10-11') }, // Before Fall Break (Oct 12-15)
-            q2: { start: new Date('2025-10-16'), end: new Date('2025-12-19') }, // After Fall Break to Winter Break
+            q1: { start: new Date('2025-09-02'), end: new Date('2025-09-11') }, // Before Fall Break (Sep 12-15)
+            q2: { start: new Date('2025-09-16'), end: new Date('2025-12-19') }, // After Fall Break to Winter Break
             q3: { start: new Date('2026-01-06'), end: new Date('2026-03-07') }, // After Winter Break to Spring Break  
             q4: { start: new Date('2026-03-17'), end: new Date('2026-05-09') }  // After Spring Break, before graduation activities
         };
