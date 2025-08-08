@@ -2055,7 +2055,7 @@ app.get('/api/openai-key-status', (req, res) => {
 
 app.post('/api/generate-lesson-plan', async (req, res) => {
   try {
-    const { prompt, model = 'gpt-4-turbo', temperature = 0.7, max_tokens = 4000 } = req.body;
+    const { prompt, model = 'gpt-5', temperature = 0.7, max_tokens = 4000 } = req.body;
     
     if (!process.env.OPENAI_API_KEY) {
       return res.status(503).json({ error: 'OpenAI API key not configured on server' });
