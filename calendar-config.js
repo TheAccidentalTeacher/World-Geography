@@ -49,12 +49,12 @@ const schoolCalendar = {
     }
   },
   
-  // Holidays and breaks (no school days) from official calendar
+  // Holidays and breaks (no school days) from official CRSD calendar
   holidays: [
     // Labor Day
     { name: 'Labor Day', date: new Date('2025-09-01') },
     
-    // Fall Break (September 12-15)
+    // Fall Break (September 12-15) - September 11 IS a school day
     { name: 'Fall Break', start: new Date('2025-09-12'), end: new Date('2025-09-15') },
     
     // Parent/Teacher Conferences (no school)
@@ -63,14 +63,14 @@ const schoolCalendar = {
     // Thanksgiving Break
     { name: 'Thanksgiving Break', start: new Date('2025-11-27'), end: new Date('2025-11-28') },
     
-    // Winter Break (12/22 - 1/2)
+    // Winter Break (12/22 - 1/2) + New Year's Day
     { name: 'Winter Break', start: new Date('2025-12-22'), end: new Date('2026-01-02') },
+    
+    // Parent/Teacher Conferences (January)
+    { name: 'Parent/Teacher Conferences', date: new Date('2026-01-12') },
     
     // Martin Luther King Jr. Day 
     { name: 'Martin Luther King Jr. Day', date: new Date('2026-01-20') },
-    
-    // Parent/Teacher Conferences
-    { name: 'Parent/Teacher Conferences', date: new Date('2026-01-12') },
     
     // Presidents Day
     { name: 'Presidents Day', date: new Date('2026-02-17') },
@@ -78,7 +78,7 @@ const schoolCalendar = {
     // Spring Break
     { name: 'Spring Break', start: new Date('2026-03-09'), end: new Date('2026-03-13') },
     
-    // Parent/Teacher Conferences  
+    // Parent/Teacher Conferences (April)
     { name: 'Parent/Teacher Conferences', date: new Date('2026-04-01') },
     
     // End of year activities (various locations)
