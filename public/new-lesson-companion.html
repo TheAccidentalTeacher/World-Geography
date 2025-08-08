@@ -2193,7 +2193,16 @@
             dayContent.className = 'day-content';
             
             // Determine day type and styling
-            if (!isSchoolDay(date)) {
+            const isSchool = isSchoolDay(date);
+            
+            // DEBUG: Log September 11 specifically in calendar rendering
+            if (dateStr === '2025-09-11') {
+                console.log('📅 CALENDAR RENDERING September 11, 2025:');
+                console.log('isSchoolDay result:', isSchool);
+                console.log('Will add holiday class?', !isSchool);
+            }
+            
+            if (!isSchool) {
                 dayElement.classList.add('holiday');
                 dayContent.textContent = 'No School';
             } else if (!isLessonDay(date)) {
