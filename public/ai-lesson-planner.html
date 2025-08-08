@@ -632,21 +632,70 @@
         function extractTeacherContent(lessonData) {
             let content = '';
             
-            if (lessonData.objectives && lessonData.objectives.length > 0) {
-                content += '<h4>Learning Objectives:</h4><ul>';
-                lessonData.objectives.forEach(obj => {
+            // Handle both direct properties and nested teacherContent structure
+            const teacherData = lessonData.teacherContent || lessonData;
+            
+            // Learning Objectives
+            if (teacherData.objectives && teacherData.objectives.length > 0) {
+                content += '<h4>📋 Learning Objectives:</h4><ul>';
+                teacherData.objectives.forEach(obj => {
                     content += `<li>${obj}</li>`;
                 });
                 content += '</ul>';
             }
 
-            if (lessonData.materials && lessonData.materials.length > 0) {
-                content += '<h4>Materials Needed:</h4><ul>';
-                lessonData.materials.forEach(material => {
+            // Materials Needed
+            if (teacherData.materials && teacherData.materials.length > 0) {
+                content += '<h4>📦 Materials Needed:</h4><ul>';
+                teacherData.materials.forEach(material => {
                     content += `<li>${material}</li>`;
                 });
                 content += '</ul>';
             }
+
+            // Lesson Procedures
+            if (teacherData.procedures && teacherData.procedures.length > 0) {
+                content += '<h4>📝 Lesson Procedures:</h4><ol>';
+                teacherData.procedures.forEach(procedure => {
+                    content += `<li>${procedure}</li>`;
+                });
+                content += '</ol>';
+            }
+
+            // Assessment Methods
+            if (teacherData.assessments && teacherData.assessments.length > 0) {
+                content += '<h4>📊 Assessment Methods:</h4><ul>';
+                teacherData.assessments.forEach(assessment => {
+                    content += `<li>${assessment}</li>`;
+                });
+                content += '</ul>';
+            }
+
+            // Big Idea (if available)
+            if (teacherData.bigIdea) {
+                content += `<h4>💡 The Big Idea:</h4><p>${teacherData.bigIdea}</p>`;
+            }
+
+            // Essential Questions (if available)
+            if (teacherData.essentialQuestions && teacherData.essentialQuestions.length > 0) {
+                content += '<h4>❓ Essential Questions:</h4><ul>';
+                teacherData.essentialQuestions.forEach(question => {
+                    content += `<li>${question}</li>`;
+                });
+                content += '</ul>';
+            }
+
+            // Vocabulary Terms
+            if (teacherData.vocabulary && teacherData.vocabulary.length > 0) {
+                content += '<h4>📚 Key Vocabulary:</h4><div class="vocabulary-list">';
+                teacherData.vocabulary.forEach(term => {
+                    content += `<div class="vocab-item"><strong>${term.term}:</strong> ${term.definition}</div>`;
+                });
+                content += '</div>';
+            }
+
+            return content || '<p>No detailed teacher content available</p>';
+        }
 
             if (lessonData.procedures && lessonData.procedures.length > 0) {
                 content += '<h4>Teaching Procedures:</h4><ol>';
@@ -671,8 +720,37 @@
         function extractStudentContent(lessonData) {
             let content = '';
 
+            // Use the main lesson content
             if (lessonData.content) {
-                // Clean up HTML and extract readable text
+                content += `<h4>📖 Lesson Content:</h4><div class="lesson-content">${lessonData.content}</div>`;
+            }
+
+            // Add Big Idea if available
+            const teacherData = lessonData.teacherContent || lessonData;
+            if (teacherData.bigIdea) {
+                content += `<h4>💡 The Big Idea:</h4><p class="big-idea">${teacherData.bigIdea}</p>`;
+            }
+
+            // Add Essential Questions as student prompts
+            if (teacherData.essentialQuestions && teacherData.essentialQuestions.length > 0) {
+                content += '<h4>🤔 Think About These Questions:</h4><ul class="essential-questions">';
+                teacherData.essentialQuestions.forEach(question => {
+                    content += `<li>${question}</li>`;
+                });
+                content += '</ul>';
+            }
+
+            // Add vocabulary for student reference
+            if (teacherData.vocabulary && teacherData.vocabulary.length > 0) {
+                content += '<h4>📚 Key Terms to Know:</h4><div class="vocabulary-list">';
+                teacherData.vocabulary.forEach(term => {
+                    content += `<div class="vocab-item"><strong>${term.term}:</strong> ${term.definition}</div>`;
+                });
+                content += '</div>';
+            }
+
+            // If still no content, try to extract from any HTML structure
+            if (!content && lessonData.content) {
                 const tempDiv = document.createElement('div');
                 tempDiv.innerHTML = lessonData.content;
                 
@@ -694,7 +772,7 @@
 
                 // If no specific sections found, use the whole content
                 if (!content) {
-                    content = tempDiv.textContent.substring(0, 1000) + '...';
+                    content = tempDiv.textContent.substring(0, 1000) + (tempDiv.textContent.length > 1000 ? '...' : '');
                 }
             }
 
