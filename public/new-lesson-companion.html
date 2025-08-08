@@ -1961,10 +1961,10 @@
         
         // Quarter system for simulation day planning (aligned with actual school calendar)
         const quarters = {
-            q1: { start: new Date('2025-09-02'), end: new Date('2025-10-20') }, // Q1: Sept 2 - Oct 20
+            q1: { start: new Date('2025-09-02'), end: new Date('2025-10-20') }, // Q1: Sept 2 - Oct 20 (Sept 11 = school day)
             q2: { start: new Date('2025-10-22'), end: new Date('2026-01-09') }, // Q2: Oct 22 - Jan 9 (after winter break)
-            q3: { start: new Date('2026-01-12'), end: new Date('2026-03-06') }, // Q3: Jan 12 - Mar 6 (before spring break)  
-            q4: { start: new Date('2026-03-16'), end: new Date('2026-05-14') }  // Q4: Mar 16 - May 14 (curriculum end)
+            q3: { start: new Date('2026-01-13'), end: new Date('2026-03-07') }, // Q3: Jan 13 - Mar 7 (after conferences)  
+            q4: { start: new Date('2026-03-17'), end: new Date('2026-05-14') }  // Q4: Mar 17 - May 14 (curriculum end)
         };
         
         // Get current quarter for simulation planning

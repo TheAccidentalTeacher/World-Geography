@@ -20,27 +20,29 @@ const schoolCalendar = {
   curriculumEnd: new Date('2026-05-14'),
   
   // Quarter dates based on official Copper River School District calendar
+  // September 11 is a REGULAR SCHOOL DAY (Q1 continues)
+  // Fall Break is September 12-15, then Q1 resumes September 16
   quarters: {
     q1: {
       start: new Date('2025-09-02'), // After Labor Day, first curriculum day
-      end: new Date('2025-10-20'),   // Q1 ends October 20th
+      end: new Date('2025-10-20'),   // Q1 ends October 20th (confirmed by user)
       instructionalDaysNeeded: 35,
       simulationDays: 10
     },
     q2: {
-      start: new Date('2025-10-22'), // Q2 starts October 22nd
+      start: new Date('2025-10-22'), // Q2 starts October 22nd (after Parent/Teacher Conferences)
       end: new Date('2026-01-09'),   // Q2 ends after winter break
       instructionalDaysNeeded: 35,
       simulationDays: 10  
     },
     q3: {
-      start: new Date('2026-01-12'), // Q3 starts January 12th (after conferences)
-      end: new Date('2026-03-06'),   // Q3 ends before spring break
+      start: new Date('2026-01-13'), // Q3 starts January 13th (after conferences on 12th)
+      end: new Date('2026-03-07'),   // Q3 ends before spring break
       instructionalDaysNeeded: 35,
       simulationDays: 10
     },
     q4: {
-      start: new Date('2026-03-16'), // Q4 starts after spring break
+      start: new Date('2026-03-17'), // Q4 starts after spring break  
       end: new Date('2026-05-14'),   // Q4 ends when curriculum ends
       instructionalDaysNeeded: 30,   // Shorter quarter
       simulationDays: 10
@@ -86,13 +88,30 @@ const schoolCalendar = {
     { name: 'Glennallen Activities', date: new Date('2026-05-15') }
   ],
   
-  // Early Release Days (shortened instruction) - from official calendar
+  // Early Release Days (shortened instruction) - from official calendar images
   earlyReleaseDays: [
     new Date('2025-08-29'), // End of first week
     new Date('2025-10-17'), // October early release 
     new Date('2025-10-31'), // October 31 early release
+    new Date('2025-11-08'), // November early release
+    new Date('2025-11-22'), // November early release
+    new Date('2025-12-05'), // December early release
+    new Date('2025-12-12'), // December early release
     new Date('2025-12-19'), // Before winter break
+    new Date('2026-01-10'), // January early release
+    new Date('2026-01-17'), // January early release
+    new Date('2026-01-24'), // January early release
+    new Date('2026-01-31'), // January early release
     new Date('2026-02-13'), // February early release
+    new Date('2026-02-27'), // February early release
+    new Date('2026-03-20'), // March early release
+    new Date('2026-03-27'), // March early release
+    new Date('2026-04-03'), // April early release
+    new Date('2026-04-10'), // April early release
+    new Date('2026-04-17'), // April early release
+    new Date('2026-04-24'), // April early release
+    new Date('2026-05-08'), // May early release
+    new Date('2026-05-15'), // May early release
     new Date('2026-05-16')  // Before last day
   ],
   
