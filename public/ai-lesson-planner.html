@@ -511,9 +511,31 @@
                 const lessonNum = urlParams.get('lesson');
 
                 if (moduleNum && lessonNum) {
-                    console.log(`🔍 Loading lesson data for Module ${moduleNum}, Lesson ${lessonNum}`);
+                    // Validate and clean the parameters
+                    const cleanModuleNum = parseInt(moduleNum);
+                    let cleanLessonNum = lessonNum;
+                    
+                    // Check if lessonNum looks like a MongoDB ObjectId (24 hex characters)
+                    if (/^[0-9a-fA-F]{24}$/.test(lessonNum)) {
+                        console.log(`⚠️ Detected ObjectId-like lesson parameter: ${lessonNum}`);
+                        console.log('� Converting to sequential lesson number based on module');
+                        
+                        // For now, default to lesson 1 since we don't have a mapping
+                        cleanLessonNum = 1;
+                        console.log(`📝 Using lesson number: ${cleanLessonNum}`);
+                    } else {
+                        cleanLessonNum = parseInt(lessonNum) || 1;
+                    }
+                    
+                    if (isNaN(cleanModuleNum) || cleanModuleNum <= 0) {
+                        console.error(`❌ Invalid module number: ${moduleNum}`);
+                        displayErrorData();
+                        return;
+                    }
+                    
+                    console.log(`�🔍 Loading lesson data for Module ${cleanModuleNum}, Lesson ${cleanLessonNum}`);
                     // Fetch lesson data from the main system
-                    fetchLessonData(moduleNum, lessonNum);
+                    fetchLessonData(cleanModuleNum, cleanLessonNum);
                 } else {
                     // Fall back to localStorage or default
                     const savedLesson = localStorage.getItem('currentAILessonData');
@@ -548,7 +570,22 @@
                     localStorage.setItem('currentAILessonData', JSON.stringify(currentLessonData));
                 } else {
                     console.error(`❌ Failed to fetch lesson data: ${response.status} - ${response.statusText}`);
-                    throw new Error(`Failed to fetch lesson data: ${response.status}`);
+                    
+                    // Try to get error details from response
+                    let errorMessage = `Failed to fetch lesson data: ${response.status}`;
+                    try {
+                        const errorData = await response.json();
+                        if (errorData.message) {
+                            errorMessage = errorData.message;
+                        }
+                        if (errorData.suggestion) {
+                            errorMessage += `\n\n💡 ${errorData.suggestion}`;
+                        }
+                    } catch (parseError) {
+                        // Ignore JSON parse errors
+                    }
+                    
+                    throw new Error(errorMessage);
                 }
             } catch (error) {
                 console.error('❌ Error fetching lesson data:', error);
@@ -561,7 +598,8 @@
                     displayLessonData();
                     updateAPIStatus('warning', '⚠️ Using cached lesson data - some content may be outdated');
                 } else {
-                    displayErrorData();
+                    // Show a helpful error message to the user
+                    displayErrorData(error.message);
                 }
             }
         }
@@ -677,8 +715,26 @@
         }
 
         // Display error data
-        function displayErrorData() {
-            updateAPIStatus('error', '❌ Error loading lesson data. Please try again.');
+        function displayErrorData(customMessage = null) {
+            const errorMessage = customMessage || 'Error loading lesson data. Please try again.';
+            
+            document.getElementById('lesson-module').textContent = 'Error';
+            document.getElementById('lesson-title').textContent = 'Failed to Load Lesson';
+            document.getElementById('teacher-content').innerHTML = 
+                `<div style="color: #dc3545; padding: 15px; background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 5px;">
+                    <h4>❌ Error Loading Lesson Data</h4>
+                    <p>${errorMessage}</p>
+                    <p style="margin-top: 10px; font-size: 0.9em;">
+                        <strong>Suggestions:</strong><br>
+                        • Try going back and selecting a different lesson<br>
+                        • Use Module 1, Lesson 1 or Module 2, Lesson 1 which have sample data<br>
+                        • Contact your administrator if this problem persists
+                    </p>
+                </div>`;
+            document.getElementById('student-content').innerHTML = 
+                '<p style="color: #6c757d;">Student content not available due to loading error.</p>';
+            
+            updateAPIStatus('error', `❌ ${errorMessage}`);
             document.getElementById('generate-btn').disabled = true;
         }
 

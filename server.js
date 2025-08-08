@@ -1958,15 +1958,35 @@ app.get('/api/modules/:moduleNumber/lessons/:lessonNumber', async (req, res) => 
   try {
     const { moduleNumber, lessonNumber } = req.params;
     
+    // Validate parameters
+    const moduleNum = parseInt(moduleNumber);
+    let lessonNum = parseInt(lessonNumber);
+    
+    if (isNaN(moduleNum) || moduleNum <= 0) {
+      return res.status(400).json({ 
+        error: `Invalid module number: ${moduleNumber}`,
+        message: 'Module number must be a positive integer'
+      });
+    }
+    
+    // Handle cases where lessonNumber might be an ObjectId or invalid
+    if (isNaN(lessonNum) || lessonNum <= 0) {
+      console.log(`⚠️ Invalid lesson number: ${lessonNumber}, defaulting to lesson 1`);
+      lessonNum = 1;
+    }
+    
+    console.log(`🔍 Looking for Module ${moduleNum}, Lesson ${lessonNum}`);
+    
     // First try to find from database
-    const module = await Module.findOne({ moduleNumber: parseInt(moduleNumber) });
+    const module = await Module.findOne({ moduleNumber: moduleNum });
     if (module) {
       const lesson = await Lesson.findOne({ 
         module: module._id, 
-        lessonNumber: parseInt(lessonNumber) 
+        lessonNumber: lessonNum 
       }).populate('module').populate('curriculum');
       
       if (lesson) {
+        console.log(`✅ Found lesson in database: ${lesson.title}`);
         res.json(lesson);
         return;
       }
@@ -1982,19 +2002,21 @@ app.get('/api/modules/:moduleNumber/lessons/:lessonNumber', async (req, res) => 
     }
     
     if (fs.existsSync(mapPath)) {
+      console.log(`📁 Checking lesson map file: ${mapPath}`);
       const lessonMap = JSON.parse(fs.readFileSync(mapPath, 'utf8'));
       
       // Find the lesson in the map
       for (const [moduleKey, moduleData] of Object.entries(lessonMap)) {
-        if (moduleData.moduleNumber === parseInt(moduleNumber)) {
-          const lesson = moduleData.lessons.find(l => l.lessonNumber === parseInt(lessonNumber));
+        if (moduleData.moduleNumber === moduleNum) {
+          const lesson = moduleData.lessons.find(l => l.lessonNumber === lessonNum);
           if (lesson) {
+            console.log(`✅ Found lesson in map file: ${lesson.title}`);
             // Format lesson data for AI planner
             const formattedLesson = {
-              moduleNumber: parseInt(moduleNumber),
-              moduleName: moduleData.title || `Module ${moduleNumber}`,
-              lessonNumber: parseInt(lessonNumber),
-              title: lesson.title || `Lesson ${lessonNumber}`,
+              moduleNumber: moduleNum,
+              moduleName: moduleData.title || `Module ${moduleNum}`,
+              lessonNumber: lessonNum,
+              title: lesson.title || `Lesson ${lessonNum}`,
               content: lesson.content || '',
               objectives: lesson.teacherContent?.objectives || [],
               materials: lesson.teacherContent?.materials || [],
@@ -2009,10 +2031,16 @@ app.get('/api/modules/:moduleNumber/lessons/:lessonNumber', async (req, res) => 
           }
         }
       }
+      
+      console.log(`⚠️ Lesson not found in map file for Module ${moduleNum}, Lesson ${lessonNum}`);
     }
     
-    // If not found anywhere, return 404
-    res.status(404).json({ error: 'Lesson not found' });
+    // If not found anywhere, return a structured error with helpful information
+    res.status(404).json({ 
+      error: `Lesson not found: Module ${moduleNum}, Lesson ${lessonNum}`,
+      message: `Could not find lesson ${lessonNum} in module ${moduleNum}`,
+      suggestion: 'Try using Module 1 or 2 with Lesson 1 or 2, which have sample data available'
+    });
   } catch (error) {
     console.error('Error fetching lesson:', error);
     res.status(500).json({ error: error.message });
