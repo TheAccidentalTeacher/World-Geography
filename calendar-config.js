@@ -19,26 +19,30 @@ const schoolCalendar = {
   // Last week of May - no curriculum instruction  
   curriculumEnd: new Date('2026-05-14'),
   
-  // Quarter calculation (will be dynamically calculated based on instructional days)
+  // Quarter dates based on official Copper River School District calendar
   quarters: {
     q1: {
-      start: new Date('2025-09-02'),
-      instructionalDaysNeeded: 35, // Approximate, will calculate actual
+      start: new Date('2025-09-02'), // After Labor Day, first curriculum day
+      end: new Date('2025-10-20'),   // Q1 ends October 20th
+      instructionalDaysNeeded: 35,
       simulationDays: 10
     },
     q2: {
-      start: null, // Will be calculated after Q1
+      start: new Date('2025-10-22'), // Q2 starts October 22nd
+      end: new Date('2026-01-09'),   // Q2 ends after winter break
       instructionalDaysNeeded: 35,
       simulationDays: 10  
     },
     q3: {
-      start: null, // Will be calculated after Q2
+      start: new Date('2026-01-12'), // Q3 starts January 12th (after conferences)
+      end: new Date('2026-03-06'),   // Q3 ends before spring break
       instructionalDaysNeeded: 35,
       simulationDays: 10
     },
     q4: {
-      start: null, // Will be calculated after Q3
-      instructionalDaysNeeded: 30, // Shorter quarter
+      start: new Date('2026-03-16'), // Q4 starts after spring break
+      end: new Date('2026-05-14'),   // Q4 ends when curriculum ends
+      instructionalDaysNeeded: 30,   // Shorter quarter
       simulationDays: 10
     }
   },
