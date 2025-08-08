@@ -433,8 +433,8 @@
 
                             <div class="control-group">
                                 <label for="api-key">OpenAI API Key</label>
-                                <input type="password" id="api-key" placeholder="sk-..." 
-                                       value="" />
+                                <input type="password" id="api-key" name="api-key" placeholder="sk-..." 
+                                       value="" autocomplete="off" />
                                 <small style="color: #6c757d; font-size: 0.8rem; margin-top: 5px; display: block;">
                                     Your API key is stored locally and never sent to our servers
                                 </small>
@@ -511,21 +511,24 @@
                 const lessonNum = urlParams.get('lesson');
 
                 if (moduleNum && lessonNum) {
+                    console.log(`🔍 Loading lesson data for Module ${moduleNum}, Lesson ${lessonNum}`);
                     // Fetch lesson data from the main system
                     fetchLessonData(moduleNum, lessonNum);
                 } else {
                     // Fall back to localStorage or default
                     const savedLesson = localStorage.getItem('currentAILessonData');
                     if (savedLesson) {
+                        console.log('📱 Loading lesson data from localStorage');
                         currentLessonData = JSON.parse(savedLesson);
                         displayLessonData();
                     } else {
                         // Default placeholder data
+                        console.log('⚠️ No lesson data found, showing placeholder');
                         displayPlaceholderData();
                     }
                 }
             } catch (error) {
-                console.error('Error loading lesson data:', error);
+                console.error('❌ Error loading lesson data:', error);
                 displayPlaceholderData();
             }
         }
@@ -533,18 +536,33 @@
         // Fetch lesson data from the server
         async function fetchLessonData(moduleNum, lessonNum) {
             try {
+                console.log(`🌐 Fetching lesson data from: /api/modules/${moduleNum}/lessons/${lessonNum}`);
+                
                 const response = await fetch(`/api/modules/${moduleNum}/lessons/${lessonNum}`);
+                
                 if (response.ok) {
                     currentLessonData = await response.json();
+                    console.log('✅ Lesson data loaded successfully:', currentLessonData);
                     displayLessonData();
                     // Save for future use
                     localStorage.setItem('currentAILessonData', JSON.stringify(currentLessonData));
                 } else {
-                    throw new Error('Failed to fetch lesson data');
+                    console.error(`❌ Failed to fetch lesson data: ${response.status} - ${response.statusText}`);
+                    throw new Error(`Failed to fetch lesson data: ${response.status}`);
                 }
             } catch (error) {
-                console.error('Error fetching lesson data:', error);
-                displayErrorData();
+                console.error('❌ Error fetching lesson data:', error);
+                
+                // Try to use localStorage data as fallback
+                const savedLesson = localStorage.getItem('currentAILessonData');
+                if (savedLesson) {
+                    console.log('🔄 Using cached lesson data as fallback');
+                    currentLessonData = JSON.parse(savedLesson);
+                    displayLessonData();
+                    updateAPIStatus('warning', '⚠️ Using cached lesson data - some content may be outdated');
+                } else {
+                    displayErrorData();
+                }
             }
         }
 

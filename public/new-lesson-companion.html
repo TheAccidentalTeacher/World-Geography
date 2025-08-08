@@ -5794,11 +5794,13 @@
                 return;
             }
 
+            console.log(`🚀 Opening AI Lesson Planner for Module ${moduleSelect.value}, Lesson ${lessonSelect.value}`);
+
             // Prepare lesson data for the AI planner
             const currentLessonData = {
-                moduleNumber: moduleSelect.value,
+                moduleNumber: parseInt(moduleSelect.value),
                 moduleName: moduleSelect.options[moduleSelect.selectedIndex].text,
-                lessonNumber: lessonSelect.value,
+                lessonNumber: parseInt(lessonSelect.value),
                 title: lessonSelect.options[lessonSelect.selectedIndex].text,
                 teacherContent: extractTeacherContent(),
                 studentContent: extractStudentContent(),
@@ -5806,8 +5808,11 @@
                 materials: extractMaterials(),
                 procedures: extractProcedures(),
                 assessments: extractAssessments(),
-                vocabulary: extractVocabulary()
+                vocabulary: extractVocabulary(),
+                duration: '50 minutes'
             };
+
+            console.log('📦 Prepared lesson data:', currentLessonData);
 
             // Save lesson data for the AI planner to access
             localStorage.setItem('currentAILessonData', JSON.stringify(currentLessonData));

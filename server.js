@@ -1920,6 +1920,72 @@ app.get('/api/lessons/:id', async (req, res) => {
   }
 });
 
+// Get specific lesson by module and lesson number (for AI planner)
+app.get('/api/modules/:moduleNumber/lessons/:lessonNumber', async (req, res) => {
+  try {
+    const { moduleNumber, lessonNumber } = req.params;
+    
+    // First try to find from database
+    const module = await Module.findOne({ moduleNumber: parseInt(moduleNumber) });
+    if (module) {
+      const lesson = await Lesson.findOne({ 
+        module: module._id, 
+        lessonNumber: parseInt(lessonNumber) 
+      }).populate('module').populate('curriculum');
+      
+      if (lesson) {
+        res.json(lesson);
+        return;
+      }
+    }
+    
+    // Fallback: try to find from lesson map files
+    const enhancedMapPath = path.join(__dirname, 'lesson-calendar-map-enhanced.json');
+    const regularMapPath = path.join(__dirname, 'lesson-calendar-map.json');
+    
+    let mapPath = enhancedMapPath;
+    if (!fs.existsSync(enhancedMapPath)) {
+      mapPath = regularMapPath;
+    }
+    
+    if (fs.existsSync(mapPath)) {
+      const lessonMap = JSON.parse(fs.readFileSync(mapPath, 'utf8'));
+      
+      // Find the lesson in the map
+      for (const [moduleKey, moduleData] of Object.entries(lessonMap)) {
+        if (moduleData.moduleNumber === parseInt(moduleNumber)) {
+          const lesson = moduleData.lessons.find(l => l.lessonNumber === parseInt(lessonNumber));
+          if (lesson) {
+            // Format lesson data for AI planner
+            const formattedLesson = {
+              moduleNumber: parseInt(moduleNumber),
+              moduleName: moduleData.title || `Module ${moduleNumber}`,
+              lessonNumber: parseInt(lessonNumber),
+              title: lesson.title || `Lesson ${lessonNumber}`,
+              content: lesson.content || '',
+              objectives: lesson.teacherContent?.objectives || [],
+              materials: lesson.teacherContent?.materials || [],
+              procedures: lesson.teacherContent?.procedures || [],
+              assessments: lesson.teacherContent?.assessments || [],
+              vocabulary: lesson.teacherContent?.vocabulary || [],
+              duration: lesson.duration || '45 minutes'
+            };
+            
+            res.json(formattedLesson);
+            return;
+          }
+        }
+      }
+    }
+    
+    // If not found anywhere, return 404
+    res.status(404).json({ error: 'Lesson not found' });
+  } catch (error) {
+    console.error('Error fetching lesson:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Get lesson calendar map for browse page
 app.get('/api/lesson-calendar', async (req, res) => {
   try {
