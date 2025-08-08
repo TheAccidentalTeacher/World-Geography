@@ -1921,12 +1921,14 @@
         // Official Copper River School District Calendar 2025-2026 (from PDF)
         const schoolCalendar = {
             schoolYear: '2025-2026',
-            schoolOpens: new Date('2025-08-18'),
-            lastDay: new Date('2026-05-21'),
+            schoolOpens: new Date('2025-08-18'),  // School starts August 18th
+            lastDay: new Date('2026-05-21'),      // Last day of school
             
-            // First 2 weeks are orientation (no direct curriculum)
-            curriculumStart: new Date('2025-09-02'), // After Labor Day
-            curriculumEnd: new Date('2026-05-16'),   // Before graduation activities
+            // First 2 weeks are orientation (August 18 - August 29, then curriculum starts after Labor Day)
+            orientationStart: new Date('2025-08-18'), // First day of school
+            orientationEnd: new Date('2025-08-29'),   // End of first 2 weeks
+            curriculumStart: new Date('2025-09-02'),  // After Labor Day (September 2nd)
+            curriculumEnd: new Date('2026-05-16'),    // Before graduation activities
             
             // Official holidays from PDF
             holidays: [
@@ -1988,8 +1990,8 @@
             // Not a holiday
             if (schoolCalendar.holidays.includes(localDateStr)) return false;
             
-            // Must be within school year
-            const startDate = new Date(2025, 7, 26); // August 26, 2025
+            // Must be within school year (August 18, 2025 - May 21, 2026)
+            const startDate = new Date(2025, 7, 18); // August 18, 2025 (month is 0-indexed)
             const endDate = new Date(2026, 4, 21);   // May 21, 2026
             const currentDate = new Date(year, month, day);
             
@@ -2000,12 +2002,21 @@
         function isLessonDayLocal(year, month, day) {
             if (!isSchoolDayLocal(year, month, day)) return false;
             
-            // Orientation period check
-            const orientationStart = new Date(2025, 7, 26); // August 26, 2025
-            const orientationEnd = new Date(2025, 8, 5);    // September 5, 2025
+            // Orientation period check (August 18 - August 29, 2025)
+            const orientationStart = new Date(2025, 7, 18); // August 18, 2025
+            const orientationEnd = new Date(2025, 7, 29);   // August 29, 2025
             const currentDate = new Date(year, month, day);
             
-            return !(currentDate >= orientationStart && currentDate <= orientationEnd);
+            // During orientation period, not available for curriculum lessons
+            if (currentDate >= orientationStart && currentDate <= orientationEnd) {
+                return false;
+            }
+            
+            // Must be within curriculum period (September 2, 2025 - May 16, 2026)
+            const curriculumStart = new Date(2025, 8, 2);  // September 2, 2025
+            const curriculumEnd = new Date(2026, 4, 16);   // May 16, 2026
+            
+            return currentDate >= curriculumStart && currentDate <= curriculumEnd;
         }
 
         // Original timezone-based function for backward compatibility
@@ -2045,16 +2056,19 @@
         // Initialize calendar to current date or start of school year
         function initializeCalendar() {
             const today = new Date();
-            const schoolStart = schoolCalendar.curriculumStart;
+            const schoolStart = new Date('2025-08-18'); // School opens August 18th
+            const curriculumStart = new Date('2025-09-02'); // Curriculum starts September 2nd
             
             // If we're before August 2025, start at school beginning
-            // If we're in the school year, start at current week
             if (today < new Date('2025-08-01')) {
                 currentCalendarStart = getWeekStart(schoolStart);
-            } else if (today >= schoolStart && today <= schoolCalendar.curriculumEnd) {
+            } 
+            // If we're in the school year, start at current week
+            else if (today >= schoolStart && today <= schoolCalendar.lastDay) {
                 currentCalendarStart = getWeekStart(today);
-            } else {
-                // After school year or before, default to school start
+            } 
+            // Otherwise, default to school start
+            else {
                 currentCalendarStart = getWeekStart(schoolStart);
             }
             
@@ -2327,9 +2341,16 @@
                 dayContent.textContent = 'Available';
                 // Remove click functionality - manage through auto-assign tools
             } else {
-                // School day but not available for lessons (e.g., orientation)
+                // School day but not available for lessons (orientation or end-of-year)
                 const currentDate = new Date(year, month, day);
-                dayContent.textContent = currentDate < schoolCalendar.curriculumStart ? 'Orientation' : 'School Day';
+                const orientationStart = new Date(2025, 7, 18); // August 18, 2025
+                const orientationEnd = new Date(2025, 7, 29);   // August 29, 2025
+                
+                if (currentDate >= orientationStart && currentDate <= orientationEnd) {
+                    dayContent.textContent = 'Orientation';
+                } else {
+                    dayContent.textContent = 'School Day';
+                }
             }
             
             // Weekend styling
@@ -2431,7 +2452,8 @@
         // Find next available school day for lessons
         function findNextAvailableDay() {
             const today = new Date();
-            const current = new Date(Math.max(today, schoolCalendar.curriculumStart));
+            const curriculumStart = new Date('2025-09-02'); // Curriculum starts September 2nd
+            const current = new Date(Math.max(today, curriculumStart));
             
             for (let i = 0; i < 365; i++) { // Look ahead up to a year
                 const dateStr = current.toISOString().split('T')[0];
