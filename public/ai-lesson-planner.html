@@ -1258,189 +1258,325 @@
                 'technology': 'technology integration and digital tools'
             };
 
-            return `You are an expert geography teacher creating a detailed 50-minute lesson plan. 
+            return `# 🎯 SOPHISTICATED GEOGRAPHY LESSON PLAN GENERATOR
 
-LESSON CONTEXT:
-- Module: ${currentLessonData.moduleNumber}
-- Lesson: ${currentLessonData.title}
-- Class Size: ${classSize} students
-- Focus Style: ${focusDescriptions[lessonFocus]}
-${customInstructions ? `- Special Instructions: ${customInstructions}` : ''}
+You are an expert 7th-grade geography teacher tasked with creating a comprehensive, research-based lesson plan that fully leverages the rich source materials provided. This lesson plan must demonstrate educational sophistication while remaining practical and immediately usable.
 
-AVAILABLE CONTENT TO USE:
-${teacherContent}
+## 📚 SOURCE MATERIALS ANALYSIS
 
-${studentContent}
+**LESSON CONTEXT:** Module ${currentLessonData.moduleNumber} - ${currentLessonData.title}
+**CLASS SIZE:** ${classSize} students  
+**FOCUS STYLE:** ${focusDescriptions[lessonFocus]}
+${customInstructions ? `**SPECIAL INSTRUCTIONS:** ${customInstructions}` : ''}
 
----
+**STUDENT READING CONTENT:**
+${studentContent || 'No specific reading provided'}
 
-Create a PROFESSIONAL, CLEAN, and EASY-TO-FOLLOW 50-minute lesson plan that any teacher can implement successfully. Follow this EXACT format:
+**TEACHER GUIDE CONTENT:**
+${teacherContent || 'No teacher guide provided'}
 
-# 📚 ${currentLessonData.title}
-**Module ${currentLessonData.moduleNumber} | ${classSize} Students | 50 Minutes**
+**CORE VOCABULARY:** ${currentLessonData.vocabulary ? currentLessonData.vocabulary.map(v => v.term).join(', ') : 'None provided'}
 
 ---
 
-## ⏰ TIMING OVERVIEW
-| Time | Activity | Purpose |
-|------|----------|---------|
-| 0-5 min | Opening Hook | Engage & Activate |
-| 5-20 min | Main Instruction | Core Content |
-| 20-35 min | Student Activities | Practice & Apply |
-| 35-45 min | Assessment & Discussion | Check Understanding |
-| 45-50 min | Closure & Preview | Wrap Up |
+## 🎯 ENHANCED LESSON PLAN REQUIREMENTS
+
+### 1. CONTENT INTEGRATION MASTERY
+
+**READING MATERIAL UTILIZATION:**
+- Extract specific page/section references for each activity
+- Generate reading guides with paragraph numbers for student reference
+- Create text-dependent questions requiring specific evidence citation
+- Include reading strategies (chunking, annotation, graphic organizers)
+- Provide sentence frames for discussing complex concepts
+
+**VOCABULARY ENHANCEMENT:**
+- Tier vocabulary: Essential (8), Important (5-7), Extension (3-5)
+- Include pronunciation guides for difficult terms
+- Generate diverse vocabulary activities (word maps, analogies, context clues)
+- Create visual vocabulary cards with content connections
+- Add cognates for Spanish-speaking ELL students
+
+**GEOGRAPHIC LITERACY INTEGRATION:**
+- Generate detailed map activities from reading content
+- Include climate/resource comparison charts
+- Create cause-and-effect organizers linking geography to culture
+- Add modern country overlays connecting ancient to contemporary
+- Include elevation and climate data from reading
+
+### 2. ACTIVITY SOPHISTICATION
+
+**READING COMPREHENSION DEPTH:**
+- Generate close reading protocols for key passages
+- Create comparison matrices from content
+- Include timeline construction using specific dates
+- Add evidence-based writing prompts requiring citations
+- Generate discussion protocols for complex topics
+
+**DIFFERENTIATED READING SUPPORT:**
+- Create reading level alternatives for struggling readers
+- Generate graphic organizers for each major reading section
+- Provide background knowledge builders for unfamiliar concepts
+- Add visual supports for abstract concepts
+- Include audio script directions for accessibility
+
+### 3. ASSESSMENT ALIGNMENT
+
+**FORMATIVE ASSESSMENT INTEGRATION:**
+- Generate text-dependent questions for each major section
+- Create quick-check comprehension questions with paragraph references
+- Include peer discussion protocols with accountability
+- Add self-monitoring checklists for reading comprehension
+- Generate exit tickets requiring synthesis across sections
+
+**AUTHENTIC TASK CREATION:**
+- Generate document-based questions using reading information
+- Create role-playing scenarios based on content descriptions
+- Include artifact analysis activities using text descriptions
+- Add historical thinking prompts (cause/effect, change/continuity)
+- Generate creative applications based on content
+
+### 4. CULTURAL SENSITIVITY & ACCURACY
+
+**INDIGENOUS PERSPECTIVE INTEGRATION:**
+- Include contemporary connections to living communities
+- Add respectful language protocols for indigenous cultures
+- Generate activities connecting ancient and modern practices
+- Include diverse perspectives on historical events
+- Add resources for contemporary indigenous issues
+
+### 5. CROSS-CURRICULAR ENHANCEMENT
+
+**STEM CONNECTIONS:**
+- Generate math activities using systems from reading
+- Include astronomy connections with calendar/observatory information
+- Create science links to environmental factors
+- Add engineering challenges based on achievements
+- Include data analysis of adaptations
 
 ---
 
-## 🎯 LESSON ESSENTIALS
+## 📋 REQUIRED LESSON PLAN FORMAT
 
-### Learning Objectives
-Students will be able to:
-- [Create 3-4 specific, measurable objectives]
+# 📋 SOPHISTICATED LESSON PLAN: ${currentLessonData.title}
 
-### Key Vocabulary (5-8 terms)
-- **Term 1**: Definition
-- **Term 2**: Definition
-[etc.]
-
-### Essential Questions
-1. [3-4 questions that drive the lesson]
+**Module ${currentLessonData.moduleNumber} | ${classSize} Students | 50 Minutes**  
+**Grade Level:** 7th Grade Geography  
+**Focus:** Content-Rich Geographic Literacy
 
 ---
 
-## 📦 MATERIALS & SETUP
-**Required Materials:**
-- [ ] [List each item with checkbox]
-- [ ] 
-**Setup Time:** [X] minutes
-**Room Arrangement:** [Specific description]
+## 🎯 LESSON OVERVIEW
+
+### Learning Objectives (Specific & Measurable)
+By the end of this lesson, students will be able to:
+1. [Specific objective requiring textual evidence and geographic analysis]
+2. [Specific objective demonstrating cultural understanding]
+3. [Specific objective showing cause-and-effect geographic thinking]
+
+### Standards Alignment
+- **National Geography Standards:** [Specific standards from content]
+- **Common Core Reading:** [Informational text standards]
+- **Common Core Writing:** [Evidence-based writing standards]
+
+### Key Essential Questions
+1. [Geographic thinking question based on content]
+2. [Cultural understanding question requiring text evidence]
+3. [Cause-and-effect question connecting geography to human activity]
 
 ---
 
-## 🚀 DETAILED LESSON ACTIVITIES
+## 📚 SOPHISTICATED CONTENT UTILIZATION
 
-### OPENING HOOK (5 minutes)
-**Teacher Actions:**
-- [Specific steps and exact words to say]
-- [Materials to have ready]
+### Reading Material Integration
+**Primary Source Sections:** [List specific sections/paragraphs to focus on]
+**Key Passages for Close Reading:** [Quote 2-3 crucial passages with paragraph numbers]
+**Text-Dependent Questions:**
+1. [Question requiring specific evidence from paragraph X]
+2. [Question requiring synthesis across sections Y and Z]
+3. [Question requiring interpretation of specific content]
 
-**Student Expectations:**
-- [What students should be doing]
+### Advanced Vocabulary Strategy
+**ESSENTIAL TIER (8 terms):** [List with pronunciation guides and geographic significance]
+**IMPORTANT TIER (5-7 terms):** [List with context clues from reading]
+**EXTENSION TIER (3-5 terms):** [List with cognates and advanced applications]
 
-**Transition:** "[Exact phrase to move to next section]"
-
-### MAIN INSTRUCTION (15 minutes)
-**Teacher Actions:**
-- [Step-by-step instruction delivery]
-- [Key points to emphasize]
-- [Visual aids to use]
-
-**Student Engagement:**
-- [Specific questions to ask]
-- [Ways students participate]
-
-**Check for Understanding:**
-- [2-3 quick assessment strategies]
-
-### STUDENT ACTIVITIES (15 minutes)
-**Primary Activity:**
-- [Detailed instructions for main activity]
-- [Group formation strategy]
-- [Time warnings to give]
-
-**Backup Activity:**
-- [Alternative if technology fails or time runs short]
-
-**Teacher Circulation:**
-- [What to look for as you move around]
-- [Questions to ask individual students]
-
-### ASSESSMENT & DISCUSSION (10 minutes)
-**Formative Assessment:**
-- [Specific way to check learning]
-- [Success criteria]
-
-**Class Discussion:**
-- [Discussion questions]
-- [How to facilitate]
-
-### CLOSURE (5 minutes)
-**Wrap-Up Strategy:**
-- [How to summarize key points]
-- [Student reflection activity]
-
-**Preview Next Lesson:**
-- [How this connects to future learning]
+**Vocabulary Activities:**
+- [Text-based vocabulary strategy using specific content]
+- [Visual vocabulary connections to geographic concepts]
+- [Peer teaching protocol with academic language frames]
 
 ---
 
-## 📊 DIFFERENTIATION & SUPPORT
+## 🗺️ GEOGRAPHIC LITERACY FOCUS
 
-### ELL Support
-- [2-3 specific strategies]
+### Spatial Thinking Integration
+[Specific mapping activities using content from reading with exact geographic references]
 
-### Special Needs Accommodations  
-- [Modifications for different needs]
-
-### Advanced Learners
-- [Extension activities]
-
-### Multiple Learning Styles
-- **Visual:** [Specific supports]
-- **Auditory:** [Specific supports]
-- **Kinesthetic:** [Specific supports]
+### Geographic Analysis Framework
+**Cause & Effect Relationships:** [From reading content with specific examples]
+**Human-Environment Interaction:** [Specific examples from text with evidence requirements]
+**Movement & Trade Patterns:** [Based on reading descriptions with analysis tasks]
 
 ---
 
-## ✅ ASSESSMENT RUBRIC
-| Criteria | Excellent | Good | Needs Work |
-|----------|-----------|------|------------|
-| [Skill 1] | [Description] | [Description] | [Description] |
-| [Skill 2] | [Description] | [Description] | [Description] |
+## 🚀 SOPHISTICATED LESSON ACTIVITIES
 
-**Exit Ticket Question:** [One specific question to assess understanding]
+### CONTENT-RICH OPENING HOOK (8 minutes)
+**Geographic Thinking Activation:**
+[Engaging opener that connects directly to reading content with specific geographic concepts]
+
+**Background Knowledge Bridge:**
+[Strategy to connect prior geographic knowledge to today's complex reading]
+
+**Text Complexity Preview:**
+[How to orient students to sophisticated informational text structure]
+
+### GUIDED READING INSTRUCTION (20 minutes)
+**Multi-Layer Reading Protocol:**
+- **Geographic Survey Read:** [Purpose and mapping strategy]
+- **Evidence-Focused Read:** [Annotation strategy for geographic evidence]
+- **Analysis Read:** [Synthesis strategy for geographic patterns]
+
+**Text Chunking for Geographic Concepts:**
+[How to break down complex geographic information systematically]
+
+**Academic Annotation Guide:**
+[Specific symbols for geographic evidence, cause-effect, human-environment interaction]
+
+**Comprehension Monitoring:**
+[Self-assessment tools for understanding complex geographic relationships]
+
+### CONTENT-BASED ANALYSIS ACTIVITIES (15 minutes)
+**Primary Activity:** [Sophisticated geographic analysis task using specific reading content]
+
+**Evidence-Based Collaboration:** [How students cite sources in geographic discussions]
+
+**Geographic Reasoning Requirements:** [Specific spatial thinking and analysis expectations]
+
+**Cross-Cultural Analysis:** [How students analyze different cultural perspectives from text]
+
+### SYNTHESIS & AUTHENTIC ASSESSMENT (7 minutes)
+**Text-Dependent Geographic Discussion:** [Questions requiring reading evidence and spatial thinking]
+
+**Geographic Literacy Assessment:** [Formative check requiring text evidence and geographic reasoning]
+
+**Synthesis Exit Task:** [How students demonstrate understanding through geographic lens]
 
 ---
 
-## 🔗 CONNECTIONS & EXTENSIONS
+## 📊 SOPHISTICATED DIFFERENTIATION
 
-### Cross-Curricular Links
-- **Math:** [Specific connection]
-- **Reading/Writing:** [Specific connection]
-- **Science:** [If applicable]
+### Reading Complexity Support
+**Struggling Readers:**
+- [Content-specific graphic organizer with geographic framework]
+- [Tiered vocabulary with geographic context and visual supports]
+- [Strategic reading partnerships with role assignments]
 
-### Real-World Applications
-- [How this connects to current events or student lives]
+**English Language Learners:**
+- [Geographic cognates for Spanish speakers with cultural connections]
+- [Visual geographic supports for abstract concepts from reading]
+- [Academic sentence frames for geographic discussions and analysis]
 
-### Extension Activities
-- [For early finishers]
-- [For homework or projects]
+**Advanced Learners:**
+- [Geographic research extensions connecting to contemporary issues]
+- [Higher-order spatial analysis questions requiring synthesis]
+- [Independent geographic inquiry opportunities]
 
----
-
-## 📝 TEACHER NOTES & TIPS
-
-### Key Teaching Points (Cannot Skip)
-- [3-4 most important concepts]
-
-### Common Student Misconceptions
-- [What students often get wrong]
-- [How to address it]
-
-### Time Management Tips
-- [If running behind...]
-- [If ahead of schedule...]
-
-### Technology Troubleshooting
-- [Backup plans for tech issues]
+### Cultural Responsiveness
+[How lesson honors diverse geographic perspectives and connects to students' cultural geography]
 
 ---
 
-**Prep Time Needed:** [X] minutes  
-**Cleanup Time:** [X] minutes  
-**Substitute Teacher Summary:** [2-3 sentences explaining the lesson for a sub]
+## ✅ COMPREHENSIVE ASSESSMENT PLAN
 
-Make this lesson plan practical, specific, and immediately usable. Include exact timing, specific materials, and concrete activities rather than vague suggestions.`;
+### Geographic Literacy Assessment
+1. **Text Annotation Quality:** [Evidence of geographic thinking in annotations]
+2. **Spatial Reasoning:** [Quality of geographic analysis and evidence use]
+3. **Cultural Understanding:** [Respectful and accurate cultural geographic analysis]
+
+### Text-Dependent Geographic Questions
+1. [Question requiring specific paragraph citation and geographic analysis]
+2. [Question requiring synthesis across multiple sections with spatial thinking]
+3. [Question requiring geographic inference based on textual evidence]
+
+### Exit Synthesis (Geographic Literacy Focus)
+[Specific question requiring students to cite geographic evidence and demonstrate spatial thinking]
+
+---
+
+## 🔗 SOPHISTICATED CONNECTIONS
+
+### Cross-Curricular Geographic Integration
+**Mathematics:** [Specific mathematical geographic concepts from reading with data analysis]
+**Science:** [Environmental geography connections from text with inquiry tasks]
+**Language Arts:** [Academic writing opportunities using geographic evidence]
+
+### Contemporary Geographic Connections
+[How ancient geographic content connects to modern spatial patterns - specific examples]
+
+### Geographic Thinking Skills Development
+[How this lesson develops specific spatial reasoning and geographic analysis abilities]
+
+---
+
+## 📋 ADVANCED MATERIALS & HANDOUTS
+
+### Required Sophisticated Handouts
+1. **Geographic Reading Guide:** [Section-by-section analysis with spatial thinking organizers]
+2. **Tiered Vocabulary Handout:** [Geographic terms with pronunciation, context, and applications]
+3. **Spatial Analysis Sheet:** [Graphic organizer for geographic reasoning and evidence]
+4. **Text Evidence Tracker:** [Tool for recording geographic citations and spatial analysis]
+
+### Technology Integration for Geographic Literacy
+- [Specific digital geographic tools that enhance content comprehension]
+- [QR codes linking to relevant geographic multimedia and primary sources]
+- [Interactive maps and spatial analysis tools]
+
+---
+
+## 👨‍🏫 IMPLEMENTATION GUIDE FOR SOPHISTICATED CONTENT
+
+### Advanced Preparation (20 minutes)
+[Specific preparation steps for complex geographic content and materials]
+
+### During-Lesson Geographic Literacy Monitoring
+**Listen For:** [Specific geographic vocabulary and spatial reasoning in student responses]
+**Watch For:** [Visual evidence of geographic thinking and cultural understanding]
+**Intervention Strategies:** [If students struggle with complex geographic concepts]
+
+### Geographic Misconceptions from Content
+[Specific geographic misconceptions students often develop from this reading]
+
+### Time Management for Content Complexity
+**If Behind Schedule:** [Modifications that maintain geographic learning integrity]
+**If Ahead:** [Geographic extension activities that deepen spatial thinking]
+
+### Substitute Teacher Guide for Complex Content
+[Detailed explanation of sophisticated geographic work students are engaging in]
+
+---
+
+## 🎯 SOPHISTICATED SUCCESS CRITERIA
+
+### Geographic Literacy Evidence
+Students demonstrate mastery through:
+- [Accurate use of geographic vocabulary in context]
+- [Quality of text-dependent geographic responses]
+- [Sophistication of spatial analysis and reasoning]
+- [Cultural sensitivity in geographic discussions]
+
+### Lesson Sophistication Indicators
+- All students engaged with complex geographic text and concepts
+- Students citing specific evidence in spatial analysis
+- Geographic thinking skills demonstrated through content analysis
+- Academic geographic vocabulary used accurately and purposefully
+
+---
+
+**CONTENT SOPHISTICATION REQUIREMENT:** This lesson plan must demonstrate thorough analysis of the provided reading content and create activities that fully utilize its geographic educational potential. Every activity should connect directly to specific geographic information from the source materials, with paragraph references, spatial analysis requirements, and authentic geographic thinking tasks.
+
+Make this lesson plan sophisticated enough to match the complexity of the geographic source materials while remaining practical and immediately implementable. Focus on developing advanced geographic literacy, spatial thinking, and cultural understanding through rich, content-specific activities that honor the depth of the source materials.`;
         }
 
         // Call OpenAI API
