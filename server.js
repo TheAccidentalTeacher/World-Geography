@@ -2061,6 +2061,18 @@ app.post('/api/generate-lesson-plan', async (req, res) => {
       return res.status(503).json({ error: 'OpenAI API key not configured on server' });
     }
 
+    // Helper function to determine correct token parameter based on model
+    function getTokenParameter(model, maxTokens) {
+      // GPT-5 and GPT-4.1 series use max_completion_tokens
+      if (model.startsWith('gpt-5') || model.startsWith('gpt-4.1')) {
+        return { max_completion_tokens: maxTokens };
+      }
+      // Older models use max_tokens
+      return { max_tokens: maxTokens };
+    }
+
+    const tokenParams = getTokenParameter(model, max_tokens);
+
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -2080,7 +2092,7 @@ app.post('/api/generate-lesson-plan', async (req, res) => {
           }
         ],
         temperature: temperature,
-        max_tokens: max_tokens
+        ...tokenParams
       })
     });
 
