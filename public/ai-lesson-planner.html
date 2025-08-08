@@ -752,6 +752,12 @@
 
         // Format lesson data from your MongoDB format to the AI planner format
         function formatLessonForAI(module, lesson) {
+            // Debug: Log the actual lesson structure
+            console.log('🔍 Raw lesson data structure:', lesson);
+            console.log('🔍 Teacher content:', lesson.teacherContent);
+            console.log('🔍 Student content:', lesson.studentContent);
+            console.log('🔍 Vocabulary:', lesson.teacherContent?.vocabulary || lesson.vocabulary);
+            
             return {
                 moduleNumber: module.moduleNumber,
                 moduleName: module.title,
@@ -854,11 +860,35 @@
                 content += '</ul>';
             }
 
-            // Vocabulary Terms
+            // Vocabulary Terms - Handle multiple possible formats
             if (teacherData.vocabulary && teacherData.vocabulary.length > 0) {
                 content += '<h4>📚 Key Vocabulary:</h4><div class="vocabulary-list">';
                 teacherData.vocabulary.forEach(term => {
-                    content += `<div class="vocab-item"><strong>${term.term}:</strong> ${term.definition}</div>`;
+                    // Handle different vocabulary formats
+                    if (typeof term === 'string') {
+                        // Simple string format
+                        content += `<div class="vocab-item"><strong>${term}</strong></div>`;
+                    } else if (term && typeof term === 'object') {
+                        // Object format - check various property names
+                        const termName = term.term || term.word || term.name || term.title || '';
+                        const termDef = term.definition || term.def || term.meaning || term.description || '';
+                        
+                        if (termName && termDef) {
+                            content += `<div class="vocab-item"><strong>${termName}:</strong> ${termDef}</div>`;
+                        } else if (termName) {
+                            content += `<div class="vocab-item"><strong>${termName}</strong></div>`;
+                        } else {
+                            // If object has other properties, try to display them
+                            const keys = Object.keys(term);
+                            if (keys.length > 0) {
+                                const key = keys[0];
+                                const value = term[key];
+                                if (value && value !== 'undefined') {
+                                    content += `<div class="vocab-item"><strong>${key}:</strong> ${value}</div>`;
+                                }
+                            }
+                        }
+                    }
                 });
                 content += '</div>';
             }
@@ -870,31 +900,80 @@
         function extractStudentContent(lessonData) {
             let content = '';
 
-            // Use the main lesson content
-            if (lessonData.content) {
+            // Try multiple sources for student content
+            const studentData = lessonData.studentContent || {};
+            const teacherData = lessonData.teacherContent || lessonData;
+
+            // 1. Check for dedicated student content
+            if (studentData.content) {
+                content += `<h4>📖 Student Reading:</h4><div class="lesson-content">${studentData.content}</div>`;
+            }
+            
+            // 2. Use the main lesson content if no dedicated student content
+            else if (lessonData.content) {
                 content += `<h4>📖 Lesson Content:</h4><div class="lesson-content">${lessonData.content}</div>`;
             }
-
-            // Add Big Idea if available
-            const teacherData = lessonData.teacherContent || lessonData;
-            if (teacherData.bigIdea) {
-                content += `<h4>💡 The Big Idea:</h4><p class="big-idea">${teacherData.bigIdea}</p>`;
+            
+            // 3. Try to extract content from description
+            else if (lessonData.description) {
+                content += `<h4>📖 Lesson Overview:</h4><div class="lesson-content">${lessonData.description}</div>`;
             }
 
-            // Add Essential Questions as student prompts
-            if (teacherData.essentialQuestions && teacherData.essentialQuestions.length > 0) {
+            // Add Big Idea if available (check multiple sources)
+            const bigIdea = studentData.bigIdea || teacherData.bigIdea || lessonData.bigIdea;
+            if (bigIdea) {
+                content += `<h4>💡 The Big Idea:</h4><p class="big-idea">${bigIdea}</p>`;
+            }
+
+            // Add Essential Questions as student prompts (check multiple sources)
+            const essentialQuestions = studentData.essentialQuestions || teacherData.essentialQuestions || lessonData.essentialQuestions;
+            if (essentialQuestions && essentialQuestions.length > 0) {
                 content += '<h4>🤔 Think About These Questions:</h4><ul class="essential-questions">';
-                teacherData.essentialQuestions.forEach(question => {
+                essentialQuestions.forEach(question => {
                     content += `<li>${question}</li>`;
                 });
                 content += '</ul>';
             }
 
-            // Add vocabulary for student reference
+            // Check for student reading materials
+            if (studentData.reading) {
+                content += `<h4>📚 Reading Materials:</h4><div class="lesson-content">${studentData.reading}</div>`;
+            }
+
+            // Check for geographic focus
+            if (lessonData.geographicFocus) {
+                content += `<h4>🌍 Geographic Focus:</h4><p>${lessonData.geographicFocus}</p>`;
+            }
+
+            // Add vocabulary for student reference - Handle multiple formats
             if (teacherData.vocabulary && teacherData.vocabulary.length > 0) {
                 content += '<h4>📚 Key Terms to Know:</h4><div class="vocabulary-list">';
                 teacherData.vocabulary.forEach(term => {
-                    content += `<div class="vocab-item"><strong>${term.term}:</strong> ${term.definition}</div>`;
+                    // Handle different vocabulary formats
+                    if (typeof term === 'string') {
+                        // Simple string format
+                        content += `<div class="vocab-item"><strong>${term}</strong></div>`;
+                    } else if (term && typeof term === 'object') {
+                        // Object format - check various property names
+                        const termName = term.term || term.word || term.name || term.title || '';
+                        const termDef = term.definition || term.def || term.meaning || term.description || '';
+                        
+                        if (termName && termDef) {
+                            content += `<div class="vocab-item"><strong>${termName}:</strong> ${termDef}</div>`;
+                        } else if (termName) {
+                            content += `<div class="vocab-item"><strong>${termName}</strong></div>`;
+                        } else {
+                            // If object has other properties, try to display them
+                            const keys = Object.keys(term);
+                            if (keys.length > 0) {
+                                const key = keys[0];
+                                const value = term[key];
+                                if (value && value !== 'undefined') {
+                                    content += `<div class="vocab-item"><strong>${key}:</strong> ${value}</div>`;
+                                }
+                            }
+                        }
+                    }
                 });
                 content += '</div>';
             }
