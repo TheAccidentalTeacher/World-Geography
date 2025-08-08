@@ -884,16 +884,20 @@
                 content += '</div>';
             } else if (studentData.readings) {
                 // Extract vocabulary from student readings if no explicit vocabulary
-                const vocabMatches = studentData.readings.match(/\*\*([^*]+)\*\*/g);
-                if (vocabMatches && vocabMatches.length > 0) {
-                    content += '<h4>📚 Key Terms (from reading):</h4><div class="vocabulary-list">';
-                    vocabMatches.slice(0, 10).forEach(match => { // Limit to first 10 terms
-                        const term = match.replace(/\*\*/g, '');
-                        if (term.length > 2 && term.length < 50) { // Reasonable term length
-                            content += `<div class="vocab-item"><strong>${term}</strong></div>`;
-                        }
-                    });
-                    content += '</div>';
+                // Make sure readings is a string before calling .match()
+                const readingsText = typeof studentData.readings === 'string' ? studentData.readings : '';
+                if (readingsText) {
+                    const vocabMatches = readingsText.match(/\*\*([^*]+)\*\*/g);
+                    if (vocabMatches && vocabMatches.length > 0) {
+                        content += '<h4>📚 Key Terms (from reading):</h4><div class="vocabulary-list">';
+                        vocabMatches.slice(0, 10).forEach(match => { // Limit to first 10 terms
+                            const term = match.replace(/\*\*/g, '');
+                            if (term.length > 2 && term.length < 50) { // Reasonable term length
+                                content += `<div class="vocab-item"><strong>${term}</strong></div>`;
+                            }
+                        });
+                        content += '</div>';
+                    }
                 }
             }
 
@@ -910,7 +914,24 @@
 
             // 1. Check for student readings (THIS IS THE KEY FIELD!)
             if (studentData.readings) {
-                content += `<h4>📖 Student Reading:</h4><div class="lesson-content">${studentData.readings}</div>`;
+                // Handle different reading formats - could be string, object, or array
+                let readingContent = '';
+                
+                if (typeof studentData.readings === 'string') {
+                    readingContent = studentData.readings;
+                } else if (typeof studentData.readings === 'object') {
+                    // If it's an object, try to extract content from common properties
+                    readingContent = studentData.readings.content || 
+                                   studentData.readings.text || 
+                                   studentData.readings.reading || 
+                                   JSON.stringify(studentData.readings, null, 2);
+                } else {
+                    readingContent = String(studentData.readings);
+                }
+                
+                if (readingContent) {
+                    content += `<h4>📖 Student Reading:</h4><div class="lesson-content">${readingContent}</div>`;
+                }
             }
             
             // 2. Check for dedicated student content
