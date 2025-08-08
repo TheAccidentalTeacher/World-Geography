@@ -2182,12 +2182,27 @@
         // Create a single calendar day element
         function createCalendarDay(date) {
             const dateStr = date.toISOString().split('T')[0];
+            
+            // DEBUG: Track all calendar day creations around September 11
+            if (dateStr >= '2025-09-10' && dateStr <= '2025-09-12') {
+                console.log(`🗓️ Creating calendar day for ${dateStr} (day ${date.getDate()})`);
+            }
+            
             const dayElement = document.createElement('div');
             dayElement.className = 'calendar-day';
             
             const dayNumber = document.createElement('div');
             dayNumber.className = 'day-number';
             dayNumber.textContent = date.getDate();
+            
+            // DEBUG: Check if we're processing the wrong date
+            if (dateStr === '2025-09-11') {
+                console.log('🗓️ September 11 DATE CHECK:');
+                console.log('Input date object:', date);
+                console.log('Date string:', dateStr);
+                console.log('Day number being displayed:', date.getDate());
+                console.log('Actual date parts:', date.getFullYear(), date.getMonth() + 1, date.getDate());
+            }
             
             const dayContent = document.createElement('div');
             dayContent.className = 'day-content';
