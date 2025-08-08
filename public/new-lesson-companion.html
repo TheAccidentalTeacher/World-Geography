@@ -3122,6 +3122,45 @@
                             }
                             console.log(`✅ Extracted ${extractedTerms.length} terms from METHOD 2`);
                             return extractedTerms; // Return immediately after finding the first valid list
+                        } else if (nextElement.tagName === 'DIV') {
+                            // Check if this DIV contains vocabulary terms (bullet points with colons)
+                            const divText = nextElement.textContent;
+                            console.log(`📝 Found DIV with content: "${divText.substring(0, 200)}..."`);
+                            
+                            // Look for bullet points or list items in the DIV
+                            const bulletItems = nextElement.querySelectorAll('li');
+                            if (bulletItems.length > 0) {
+                                console.log(`📋 Found ${bulletItems.length} list items in DIV`);
+                                for (const item of bulletItems) {
+                                    const itemText = item.textContent.trim();
+                                    console.log(`📝 Processing DIV item: "${itemText}"`);
+                                    
+                                    if (itemText && 
+                                        itemText !== 'Write a short definition for each term.' &&
+                                        !itemText.toLowerCase().includes('write a') &&
+                                        !itemText.toLowerCase().includes('definition')) {
+                                        parseVocabularyTerm(itemText, extractedTerms);
+                                    }
+                                }
+                                console.log(`✅ Extracted ${extractedTerms.length} terms from DIV in METHOD 2`);
+                                return extractedTerms;
+                            } else {
+                                // Check if DIV contains text with bullet points or line breaks
+                                const lines = divText.split('\n').map(line => line.trim()).filter(line => line);
+                                console.log(`📝 Found ${lines.length} lines in DIV`);
+                                
+                                for (const line of lines) {
+                                    if (line.includes(':') && line.length > 10) {
+                                        console.log(`📝 Processing DIV line: "${line}"`);
+                                        parseVocabularyTerm(line, extractedTerms);
+                                    }
+                                }
+                                
+                                if (extractedTerms.length > 0) {
+                                    console.log(`✅ Extracted ${extractedTerms.length} terms from DIV text in METHOD 2`);
+                                    return extractedTerms;
+                                }
+                            }
                         }
                         nextElement = nextElement.nextElementSibling;
                     }
