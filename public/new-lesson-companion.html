@@ -2931,11 +2931,10 @@
             const activities = lesson.studentContent?.activities || lesson.activities || [];
             updateList('activities-list', activities, 'No activities listed');
 
-            // Update vocabulary (check both possible structures)
+            // Update vocabulary - extract from lesson content "Key Terms and Places" section
             const vocabulary = lesson.teacherContent?.vocabulary || lesson.vocabulary || [];
-            updateVocabulary(vocabulary);
-
-            // Display main lesson content (check multiple possible structures)
+            
+            // Display main lesson content first so we can extract vocabulary from it
             let studentContent = null;
             if (lesson.studentReading?.content) {
                 studentContent = { content: lesson.studentReading.content };
@@ -2946,6 +2945,18 @@
             }
             
             displayLessonReading(studentContent);
+            
+            // After content is displayed, extract vocabulary from the "Key Terms and Places" section
+            setTimeout(() => {
+                const extractedVocab = extractVocabularyFromContent();
+                if (extractedVocab.length > 0) {
+                    // Use extracted vocabulary from content
+                    updateVocabulary(extractedVocab);
+                } else {
+                    // Fallback to lesson data vocabulary if extraction fails
+                    updateVocabulary(vocabulary);
+                }
+            }, 100); // Small delay to ensure content is rendered
             
             // Generate cross-curricular content and show the section
             generateCrossCurricularContent(lesson);
