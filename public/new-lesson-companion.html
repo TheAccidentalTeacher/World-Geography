@@ -2273,9 +2273,9 @@
                 managementDiv.className = 'lesson-management';
                 managementDiv.style.cssText = `
                     display: flex;
-                    gap: 2px;
-                    margin-top: 4px;
-                    font-size: 0.6rem;
+                    gap: 4px;
+                    margin-top: 6px;
+                    justify-content: center;
                 `;
                 
                 // Load lesson button
@@ -2286,11 +2286,19 @@
                     background: #007bff;
                     color: white;
                     border: none;
-                    border-radius: 3px;
-                    padding: 2px 4px;
+                    border-radius: 6px;
+                    padding: 8px 10px;
                     cursor: pointer;
-                    font-size: 0.6rem;
+                    font-size: 1.2rem;
+                    min-width: 36px;
+                    min-height: 36px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    transition: all 0.2s ease;
                 `;
+                loadBtn.onmouseenter = () => loadBtn.style.transform = 'scale(1.1)';
+                loadBtn.onmouseleave = () => loadBtn.style.transform = 'scale(1)';
                 loadBtn.onclick = (e) => {
                     e.stopPropagation();
                     selectLessonFromCalendar(assignment.moduleNumber, assignment.lessonNumber);
@@ -2304,11 +2312,19 @@
                     background: #ffc107;
                     color: #212529;
                     border: none;
-                    border-radius: 3px;
-                    padding: 2px 4px;
+                    border-radius: 6px;
+                    padding: 8px 10px;
                     cursor: pointer;
-                    font-size: 0.6rem;
+                    font-size: 1.2rem;
+                    min-width: 36px;
+                    min-height: 36px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    transition: all 0.2s ease;
                 `;
+                pushBtn.onmouseenter = () => pushBtn.style.transform = 'scale(1.1)';
+                pushBtn.onmouseleave = () => pushBtn.style.transform = 'scale(1)';
                 pushBtn.onclick = (e) => {
                     e.stopPropagation();
                     pushLessonBack(localDateStr);
@@ -2322,11 +2338,19 @@
                     background: #dc3545;
                     color: white;
                     border: none;
-                    border-radius: 3px;
-                    padding: 2px 4px;
+                    border-radius: 6px;
+                    padding: 8px 10px;
                     cursor: pointer;
-                    font-size: 0.6rem;
+                    font-size: 1.2rem;
+                    min-width: 36px;
+                    min-height: 36px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    transition: all 0.2s ease;
                 `;
+                removeBtn.onmouseenter = () => removeBtn.style.transform = 'scale(1.1)';
+                removeBtn.onmouseleave = () => removeBtn.style.transform = 'scale(1)';
                 removeBtn.onclick = (e) => {
                     e.stopPropagation();
                     removeLessonAssignment(localDateStr);
