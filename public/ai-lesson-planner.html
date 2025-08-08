@@ -2145,6 +2145,19 @@ ${studentContent || 'No student content provided'}
 • **Provide substitute teacher instructions** covering both components
 • **Include extension/homework options** building on reading content
 
+### 11. PRINT-READY FORMATTING REQUIREMENTS
+• **Use clear section headers** with appropriate hierarchy (# ## ###)
+• **Include logical page breaks** between major sections:
+  - Student Reading should start on new page
+  - Lesson Plan should start on new page
+  - Student Handouts should start on new page
+  - Assessment Tools should start on new page
+• **Format timing guides as tables** with proper | column | formatting
+• **Structure content in paragraphs** avoiding overly long blocks
+• **Include paragraph numbers** for reading sections (Paragraph 1, Paragraph 2, etc.)
+• **Use consistent bullet point formatting** with • or - symbols
+• **Create clear sub-headings** to break up content visually
+
 ---
 
 ## 📋 REQUIRED INTEGRATED LESSON FORMAT
@@ -2346,47 +2359,99 @@ Generate a complete, print-ready lesson package that transforms curriculum depen
             document.getElementById('integrated-export-buttons').style.display = 'flex';
         }
 
-        // Format the integrated lesson with proper HTML structure
+        // Format the integrated lesson with proper HTML structure and page breaks
         function formatIntegratedLesson(lessonText) {
             let formatted = lessonText.replace(/\n/g, '<br>');
             
-            // Format headers with different levels
-            formatted = formatted.replace(/### (.*?)<br>/g, '<h3 style="color: #ff6b6b; margin: 20px 0 10px 0; font-size: 1.3rem; border-left: 4px solid #ff6b6b; padding-left: 10px;">$1</h3>');
-            formatted = formatted.replace(/## (.*?)<br>/g, '<h2 style="color: #495057; margin: 25px 0 15px 0; font-size: 1.5rem; border-bottom: 2px solid #e9ecef; padding-bottom: 5px;">$1</h2>');
-            formatted = formatted.replace(/# (.*?)<br>/g, '<h1 style="color: #ff6b6b; margin: 30px 0 20px 0; font-size: 1.8rem; text-align: center; border: 3px solid #ff6b6b; padding: 15px; border-radius: 10px; background: #fff5f5;">$1</h1>');
+            // Add page break classes for major sections
+            formatted = formatted.replace(/# 📖 (.*?)<br>/g, '<div class="section-break"><h1 class="lesson-title">📖 $1</h1></div>');
+            formatted = formatted.replace(/## 🚀 INTEGRATED LESSON PLAN<br>/g, '<div class="lesson-section"><h2>🚀 INTEGRATED LESSON PLAN</h2></div>');
+            formatted = formatted.replace(/## 📝 STUDENT HANDOUTS<br>/g, '<div class="handout-section"><h2>📝 STUDENT HANDOUTS</h2></div>');
+            formatted = formatted.replace(/## ✅ INTEGRATED ASSESSMENT TOOLS<br>/g, '<div class="page-break-before"><h2>✅ INTEGRATED ASSESSMENT TOOLS</h2></div>');
+            
+            // Format headers with different levels and page break controls
+            formatted = formatted.replace(/### (.*?)<br>/g, '<h3 class="page-break-avoid" style="color: #ff6b6b; margin: 20px 0 10px 0; font-size: 1.3rem; border-left: 4px solid #ff6b6b; padding-left: 10px;">$1</h3>');
+            formatted = formatted.replace(/## (.*?)<br>/g, '<h2 class="page-break-avoid" style="color: #495057; margin: 25px 0 15px 0; font-size: 1.5rem; border-bottom: 2px solid #e9ecef; padding-bottom: 5px;">$2</h2>');
+            formatted = formatted.replace(/# (.*?)<br>/g, '<h1 class="lesson-header page-break-avoid" style="color: #ff6b6b; margin: 30px 0 20px 0; font-size: 1.8rem; text-align: center; border: 3px solid #ff6b6b; padding: 15px; border-radius: 10px; background: #fff5f5;">$1</h1>');
+            
+            // Format paragraphs with proper spacing and orphan/widow control
+            formatted = formatted.replace(/Paragraph (\d+)<br>/g, '<div class="reading-paragraph"><strong>Paragraph $1</strong><br>');
+            formatted = formatted.replace(/(.*?<\/strong><br>.*?)<br><br>/g, '$1</div><br>');
+            
+            // Format lesson at a glance section
+            formatted = formatted.replace(/📋 LESSON AT A GLANCE<br>/g, '<div class="objectives-box"><h3>📋 LESSON AT A GLANCE</h3>');
+            formatted = formatted.replace(/### Integrated Learning Objectives<br>(.*?)### Standards Alignment/gs, '<div class="content-box"><h4>Integrated Learning Objectives</h4>$1</div><h4>Standards Alignment</h4>');
+            
+            // Format timing guide as a proper table
+            formatted = formatted.replace(/⏰ INTEGRATED TIMING GUIDE<br><br>\| Time \| Activity \| Reading Connection \|<br>\|------|----------|-------------------|<br>(.*?)<br><br>/gs, function(match, tableContent) {
+                let tableRows = tableContent.split('<br>').filter(row => row.trim() && row.includes('|'));
+                let tableHTML = '<div class="timing-table page-break-avoid"><h3>⏰ INTEGRATED TIMING GUIDE</h3><table><thead><tr><th>Time</th><th>Activity</th><th>Reading Connection</th></tr></thead><tbody>';
+                
+                tableRows.forEach(row => {
+                    let cells = row.split('|').map(cell => cell.trim()).filter(cell => cell);
+                    if (cells.length >= 3) {
+                        tableHTML += `<tr><td>${cells[0]}</td><td>${cells[1]}</td><td>${cells[2]}</td></tr>`;
+                    }
+                });
+                
+                tableHTML += '</tbody></table></div>';
+                return tableHTML;
+            });
+            
+            // Format rubric tables
+            formatted = formatted.replace(/\| Criteria \| Excellent \| Good \| Needs Work \|<br>\|----------|-----------|------|------------|<br>(.*?)<br><br>/gs, function(match, tableContent) {
+                let tableRows = tableContent.split('<br>').filter(row => row.trim() && row.includes('|'));
+                let tableHTML = '<div class="assessment-rubric page-break-avoid"><table><thead><tr><th>Criteria</th><th>Excellent</th><th>Good</th><th>Needs Work</th></tr></thead><tbody>';
+                
+                tableRows.forEach(row => {
+                    let cells = row.split('|').map(cell => cell.trim()).filter(cell => cell);
+                    if (cells.length >= 4) {
+                        tableHTML += `<tr><td>${cells[0]}</td><td>${cells[1]}</td><td>${cells[2]}</td><td>${cells[3]}</td></tr>`;
+                    }
+                });
+                
+                tableHTML += '</tbody></table></div>';
+                return tableHTML;
+            });
+            
+            // Format vocabulary sections
+            formatted = formatted.replace(/\*\*Key Terms from Reading:\*\* (.*?)<br>/g, '<div class="vocabulary-box"><strong>Key Terms from Reading:</strong> $1</div>');
+            
+            // Format implementation guides with page break avoidance
+            formatted = formatted.replace(/### (15-Minute Preparation Checklist|First-Time Teaching Notes|Troubleshooting Guide|Substitute Teacher Instructions)<br>/g, '<div class="content-box page-break-avoid"><h4>$1</h4>');
+            formatted = formatted.replace(/✅ QUALITY ASSURANCE VERIFICATION<br>/g, '<div class="page-break-avoid"><h3>✅ QUALITY ASSURANCE VERIFICATION</h3>');
             
             // Format bold text
             formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong style="color: #495057;">$1</strong>');
             
-            // Format tables
-            formatted = formatted.replace(/\|(.*?)\|/g, (match, content) => {
-                return `<span style="background: #f8f9fa; padding: 2px 8px; border: 1px solid #e9ecef; margin: 2px;">${content.trim()}</span>`;
-            });
-            
-            // Format bullet points
-            formatted = formatted.replace(/(^|\<br\>)• /g, '$1<span style="color: #ff6b6b;">•</span> ');
-            formatted = formatted.replace(/(^|\<br\>)- /g, '$1<span style="color: #ff6b6b;">•</span> ');
+            // Format bullet points with proper structure
+            formatted = formatted.replace(/(^|\<br\>)• /g, '$1<li style="margin: 4px 0;">');
+            formatted = formatted.replace(/(^|\<br\>)- /g, '$1<li style="margin: 4px 0;">');
             
             // Format numbered lists
-            formatted = formatted.replace(/(^|\<br\>)(\d+\.) /g, '$1<span style="color: #ff6b6b; font-weight: bold;">$2</span> ');
+            formatted = formatted.replace(/(^|\<br\>)(\d+\.) /g, '$1<div class="numbered-item"><span style="color: #ff6b6b; font-weight: bold;">$2</span> ');
             
             // Format checkboxes
-            formatted = formatted.replace(/- \[ \]/g, '<input type="checkbox" style="margin-right: 8px;">');
-            formatted = formatted.replace(/- \[x\]/g, '<input type="checkbox" checked style="margin-right: 8px;">');
+            formatted = formatted.replace(/- \[ \]/g, '<div class="checkbox-item"><input type="checkbox" style="margin-right: 8px;">');
+            formatted = formatted.replace(/- \[x\]/g, '<div class="checkbox-item"><input type="checkbox" checked style="margin-right: 8px;">');
             
-            // Wrap in proper structure
+            // Clean up and structure the content properly
+            formatted = formatted.replace(/<br><br>/g, '</p><p>');
+            formatted = formatted.replace(/^<br>|<br>$/g, '');
+            
+            // Wrap in proper structure with print-friendly classes
             return `
                 <div class="integrated-lesson-content" style="max-width: 900px; margin: 0 auto; line-height: 1.8; font-size: 1.1rem;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 3px solid #ff6b6b;">
+                    <div class="lesson-header no-print" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 3px solid #ff6b6b;">
                         <h2 style="color: #ff6b6b; margin: 0;">🎯 Complete Integrated Lesson Package</h2>
                         <span style="background: #fff5f5; padding: 8px 15px; border-radius: 20px; font-size: 0.9rem; color: #721c24; font-weight: bold; border: 2px solid #ff6b6b;">
                             Print-Ready • No Prep Required
                         </span>
                     </div>
-                    <div style="background: linear-gradient(135deg, #fff5f5, #ffffff); padding: 30px; border-radius: 15px; border: 1px solid #ff6b6b;">
+                    <div class="lesson-content" style="background: linear-gradient(135deg, #fff5f5, #ffffff); padding: 30px; border-radius: 15px; border: 1px solid #ff6b6b;">
                         ${formatted}
                     </div>
-                    <div style="margin-top: 20px; padding: 15px; background: #d1ecf1; border-left: 5px solid #bee5eb; border-radius: 5px;">
+                    <div class="no-print" style="margin-top: 20px; padding: 15px; background: #d1ecf1; border-left: 5px solid #bee5eb; border-radius: 5px;">
                         <h4 style="color: #0c5460; margin-bottom: 10px;">🖨️ Ready to Print Instructions:</h4>
                         <p style="color: #0c5460; margin: 0;">This complete lesson package is formatted for immediate classroom use. Simply print and teach - no additional preparation required!</p>
                     </div>
@@ -2403,11 +2468,257 @@ Generate a complete, print-ready lesson package that transforms curriculum depen
                 <head>
                     <title>Complete Integrated Lesson - ${currentLessonData.title}</title>
                     <style>
-                        body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }
-                        @media print { body { margin: 0.5in; } }
+                        /* Reset and Base Styles */
+                        * { 
+                            box-sizing: border-box; 
+                            margin: 0; 
+                            padding: 0; 
+                        }
+                        
+                        body { 
+                            font-family: 'Times New Roman', serif; 
+                            font-size: 12pt; 
+                            line-height: 1.5; 
+                            color: #000;
+                            background: white;
+                        }
+
+                        /* Print-Specific Layout */
+                        @media print {
+                            @page {
+                                size: 8.5in 11in;
+                                margin: 0.75in 0.75in 0.75in 0.75in;
+                            }
+                            
+                            body { 
+                                margin: 0; 
+                                padding: 0;
+                                font-size: 11pt;
+                                line-height: 1.4;
+                            }
+                            
+                            /* Page Break Controls */
+                            .page-break-before { page-break-before: always; }
+                            .page-break-after { page-break-after: always; }
+                            .page-break-avoid { page-break-inside: avoid; }
+                            
+                            /* Section Breaks */
+                            .section-break {
+                                page-break-before: always;
+                                margin-top: 0;
+                            }
+                            
+                            /* Header Styles */
+                            h1 { 
+                                font-size: 16pt; 
+                                font-weight: bold; 
+                                margin: 0 0 12pt 0;
+                                page-break-after: avoid;
+                                text-align: center;
+                                border-bottom: 2pt solid #000;
+                                padding-bottom: 6pt;
+                            }
+                            
+                            h2 { 
+                                font-size: 14pt; 
+                                font-weight: bold; 
+                                margin: 18pt 0 8pt 0;
+                                page-break-after: avoid;
+                                border-left: 4pt solid #666;
+                                padding-left: 8pt;
+                            }
+                            
+                            h3 { 
+                                font-size: 12pt; 
+                                font-weight: bold; 
+                                margin: 12pt 0 6pt 0;
+                                page-break-after: avoid;
+                            }
+                            
+                            h4 { 
+                                font-size: 11pt; 
+                                font-weight: bold; 
+                                margin: 8pt 0 4pt 0;
+                                page-break-after: avoid;
+                            }
+                            
+                            /* Paragraph Styles */
+                            p { 
+                                margin: 0 0 8pt 0; 
+                                text-align: justify;
+                                orphans: 3;
+                                widows: 3;
+                            }
+                            
+                            /* List Styles */
+                            ul, ol { 
+                                margin: 6pt 0 6pt 24pt; 
+                                page-break-inside: avoid;
+                            }
+                            
+                            li { 
+                                margin: 2pt 0; 
+                                page-break-inside: avoid;
+                            }
+                            
+                            /* Table Styles */
+                            table { 
+                                width: 100%; 
+                                border-collapse: collapse; 
+                                margin: 8pt 0;
+                                page-break-inside: avoid;
+                                font-size: 10pt;
+                            }
+                            
+                            th, td { 
+                                border: 1pt solid #000; 
+                                padding: 4pt 6pt; 
+                                text-align: left;
+                                vertical-align: top;
+                            }
+                            
+                            th { 
+                                background: #f0f0f0; 
+                                font-weight: bold;
+                                page-break-after: avoid;
+                            }
+                            
+                            /* Special Content Boxes */
+                            .content-box {
+                                border: 1pt solid #666;
+                                padding: 8pt;
+                                margin: 8pt 0;
+                                page-break-inside: avoid;
+                                background: #f9f9f9;
+                            }
+                            
+                            /* Reading Section */
+                            .reading-section {
+                                page-break-before: always;
+                                margin-top: 0;
+                            }
+                            
+                            .reading-paragraph {
+                                margin: 8pt 0;
+                                padding: 6pt 0;
+                                border-left: 2pt solid #ddd;
+                                padding-left: 8pt;
+                                page-break-inside: avoid;
+                            }
+                            
+                            /* Lesson Plan Section */
+                            .lesson-section {
+                                page-break-before: always;
+                                margin-top: 0;
+                            }
+                            
+                            /* Handout Section */
+                            .handout-section {
+                                page-break-before: always;
+                                margin-top: 0;
+                            }
+                            
+                            /* Timing Guide */
+                            .timing-table {
+                                page-break-inside: avoid;
+                                margin: 12pt 0;
+                            }
+                            
+                            /* Hide screen-only elements */
+                            .no-print { display: none !important; }
+                            
+                            /* Footer for each page */
+                            .page-footer {
+                                position: fixed;
+                                bottom: 0.5in;
+                                left: 0;
+                                right: 0;
+                                text-align: center;
+                                font-size: 9pt;
+                                color: #666;
+                                border-top: 1pt solid #ccc;
+                                padding-top: 4pt;
+                            }
+                        }
+                        
+                        /* Screen Styles */
+                        @media screen {
+                            body { 
+                                max-width: 8.5in;
+                                margin: 20px auto;
+                                padding: 20px;
+                                background: white;
+                                box-shadow: 0 0 20px rgba(0,0,0,0.1);
+                            }
+                            
+                            h1, h2, h3, h4 { color: #333; }
+                            
+                            .page-break-before { 
+                                border-top: 2px dashed #ccc;
+                                margin-top: 40px;
+                                padding-top: 20px;
+                            }
+                        }
+                        
+                        /* Content-specific styles */
+                        .lesson-header {
+                            text-align: center;
+                            margin-bottom: 20pt;
+                            page-break-after: avoid;
+                        }
+                        
+                        .lesson-title {
+                            font-size: 18pt;
+                            font-weight: bold;
+                            margin-bottom: 6pt;
+                        }
+                        
+                        .lesson-info {
+                            font-size: 10pt;
+                            color: #666;
+                            margin-bottom: 4pt;
+                        }
+                        
+                        .objectives-box {
+                            border: 2pt solid #000;
+                            padding: 12pt;
+                            margin: 12pt 0;
+                            page-break-inside: avoid;
+                        }
+                        
+                        .vocabulary-box {
+                            background: #f5f5f5;
+                            border: 1pt solid #ccc;
+                            padding: 8pt;
+                            margin: 8pt 0;
+                            page-break-inside: avoid;
+                        }
+                        
+                        .assessment-rubric {
+                            page-break-inside: avoid;
+                            margin: 12pt 0;
+                        }
+                        
+                        /* Remove background colors and gradients for print */
+                        @media print {
+                            * {
+                                background: transparent !important;
+                                color: black !important;
+                                box-shadow: none !important;
+                                text-shadow: none !important;
+                            }
+                            
+                            .content-box, .vocabulary-box {
+                                background: white !important;
+                                border: 1pt solid #666 !important;
+                            }
+                        }
                     </style>
                 </head>
                 <body>
+                    <div class="page-footer no-print">
+                        ${currentLessonData.title} - Complete Integrated Lesson Package
+                    </div>
                     ${content}
                 </body>
                 </html>
