@@ -353,6 +353,26 @@
                     📚 Lesson Content Analysis
                 </div>
 
+                <!-- Lesson Selector -->
+                <div class="lesson-info-card">
+                    <h3>🎯 Select Your Lesson</h3>
+                    <div class="control-group">
+                        <label for="module-selector">Choose Module (1-32):</label>
+                        <select id="module-selector">
+                            <option value="">Loading modules...</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label for="lesson-selector">Choose Lesson:</label>
+                        <select id="lesson-selector">
+                            <option value="">Select a module first</option>
+                        </select>
+                    </div>
+                    <button onclick="loadSelectedLesson()" class="generate-button" style="margin-top: 10px; padding: 10px 20px; font-size: 1rem;">
+                        📖 Load This Lesson
+                    </button>
+                </div>
+
                 <!-- Current Lesson Info -->
                 <div class="lesson-info-card">
                     <h3>📋 Current Lesson</h3>
@@ -500,7 +520,109 @@
             loadCurrentLessonData();
             loadUserSettings();
             checkAPIStatus();
+            loadAllModules(); // Load modules for the selector
         });
+
+        // Load all modules for the selector (like your main curriculum page does)
+        async function loadAllModules() {
+            try {
+                console.log('🔄 Loading all modules for selector...');
+                const response = await fetch('/api/modules');
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch modules: ${response.status}`);
+                }
+                
+                const modules = await response.json();
+                console.log(`📚 Loaded ${modules.length} modules`);
+                
+                const moduleSelector = document.getElementById('module-selector');
+                moduleSelector.innerHTML = '<option value="">Choose a module...</option>';
+                
+                // Sort modules by moduleNumber and populate selector
+                modules.sort((a, b) => a.moduleNumber - b.moduleNumber);
+                modules.forEach(module => {
+                    const option = document.createElement('option');
+                    option.value = module._id; // Use MongoDB _id
+                    option.dataset.moduleNumber = module.moduleNumber;
+                    option.textContent = `Module ${module.moduleNumber}: ${module.title}`;
+                    moduleSelector.appendChild(option);
+                });
+                
+                // Add event listener for module selection
+                moduleSelector.addEventListener('change', loadLessonsForSelectedModule);
+                
+            } catch (error) {
+                console.error('❌ Error loading modules:', error);
+                const moduleSelector = document.getElementById('module-selector');
+                moduleSelector.innerHTML = '<option value="">Error loading modules</option>';
+            }
+        }
+
+        // Load lessons when a module is selected
+        async function loadLessonsForSelectedModule() {
+            const moduleSelector = document.getElementById('module-selector');
+            const lessonSelector = document.getElementById('lesson-selector');
+            const moduleId = moduleSelector.value;
+            
+            if (!moduleId) {
+                lessonSelector.innerHTML = '<option value="">Select a module first</option>';
+                return;
+            }
+            
+            try {
+                console.log(`🔍 Loading lessons for module: ${moduleId}`);
+                const response = await fetch(`/api/modules/${moduleId}`);
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch lessons: ${response.status}`);
+                }
+                
+                const moduleData = await response.json();
+                const lessons = moduleData.lessons || [];
+                
+                lessonSelector.innerHTML = '<option value="">Choose a lesson...</option>';
+                
+                // Sort lessons by lessonNumber and populate selector
+                lessons.sort((a, b) => a.lessonNumber - b.lessonNumber);
+                lessons.forEach(lesson => {
+                    const option = document.createElement('option');
+                    option.value = lesson.lessonNumber;
+                    option.textContent = `Lesson ${lesson.lessonNumber}: ${lesson.title}`;
+                    lessonSelector.appendChild(option);
+                });
+                
+                console.log(`📖 Loaded ${lessons.length} lessons for this module`);
+                
+            } catch (error) {
+                console.error('❌ Error loading lessons:', error);
+                lessonSelector.innerHTML = '<option value="">Error loading lessons</option>';
+            }
+        }
+
+        // Load the selected lesson
+        function loadSelectedLesson() {
+            const moduleSelector = document.getElementById('module-selector');
+            const lessonSelector = document.getElementById('lesson-selector');
+            
+            const moduleId = moduleSelector.value;
+            const moduleNumber = parseInt(moduleSelector.options[moduleSelector.selectedIndex]?.dataset?.moduleNumber);
+            const lessonNumber = parseInt(lessonSelector.value);
+            
+            if (!moduleId || !moduleNumber || !lessonNumber) {
+                alert('Please select both a module and a lesson first.');
+                return;
+            }
+            
+            console.log(`🎯 Loading selected lesson: Module ${moduleNumber}, Lesson ${lessonNumber}`);
+            
+            // Update URL to reflect selection (optional)
+            const newUrl = new URL(window.location);
+            newUrl.searchParams.set('module', moduleNumber);
+            newUrl.searchParams.set('lesson', lessonNumber);
+            window.history.replaceState({}, '', newUrl);
+            
+            // Load the lesson data
+            fetchLessonData(moduleNumber, lessonNumber);
+        }
 
         // Load current lesson data from URL parameters or localStorage
         function loadCurrentLessonData() {
@@ -555,38 +677,62 @@
             }
         }
 
-        // Fetch lesson data from the server
+        // Fetch lesson data from the server using the SAME approach as your main curriculum system
         async function fetchLessonData(moduleNum, lessonNum) {
             try {
-                console.log(`🌐 Fetching lesson data from: /api/modules/${moduleNum}/lessons/${lessonNum}`);
+                console.log(`🌐 Fetching modules to find Module ${moduleNum}...`);
                 
-                const response = await fetch(`/api/modules/${moduleNum}/lessons/${lessonNum}`);
-                
-                if (response.ok) {
-                    currentLessonData = await response.json();
-                    console.log('✅ Lesson data loaded successfully:', currentLessonData);
-                    displayLessonData();
-                    // Save for future use
-                    localStorage.setItem('currentAILessonData', JSON.stringify(currentLessonData));
-                } else {
-                    console.error(`❌ Failed to fetch lesson data: ${response.status} - ${response.statusText}`);
-                    
-                    // Try to get error details from response
-                    let errorMessage = `Failed to fetch lesson data: ${response.status}`;
-                    try {
-                        const errorData = await response.json();
-                        if (errorData.message) {
-                            errorMessage = errorData.message;
-                        }
-                        if (errorData.suggestion) {
-                            errorMessage += `\n\n💡 ${errorData.suggestion}`;
-                        }
-                    } catch (parseError) {
-                        // Ignore JSON parse errors
-                    }
-                    
-                    throw new Error(errorMessage);
+                // Step 1: Get all modules (like your main curriculum-maps.html does)
+                const modulesResponse = await fetch('/api/modules');
+                if (!modulesResponse.ok) {
+                    throw new Error(`Failed to fetch modules: ${modulesResponse.status}`);
                 }
+                
+                const modules = await modulesResponse.json();
+                console.log(`📚 Found ${modules.length} modules in the system`);
+                
+                // Step 2: Find the specific module by moduleNumber
+                const targetModule = modules.find(m => m.moduleNumber === moduleNum);
+                if (!targetModule) {
+                    throw new Error(`Module ${moduleNum} not found. Available modules: ${modules.map(m => m.moduleNumber).join(', ')}`);
+                }
+                
+                console.log(`✅ Found Module ${moduleNum}: ${targetModule.title}`);
+                console.log(`🔍 Module ID: ${targetModule._id}`);
+                
+                // Step 3: Get lessons for this module using the MongoDB _id (like your main system)
+                const lessonsResponse = await fetch(`/api/modules/${targetModule._id}`);
+                if (!lessonsResponse.ok) {
+                    throw new Error(`Failed to fetch lessons for module: ${lessonsResponse.status}`);
+                }
+                
+                const moduleData = await lessonsResponse.json();
+                const lessons = moduleData.lessons || [];
+                
+                console.log(`📖 Found ${lessons.length} lessons in Module ${moduleNum}`);
+                
+                // Step 4: Find the specific lesson by lessonNumber
+                const targetLesson = lessons.find(l => l.lessonNumber === lessonNum);
+                if (!targetLesson) {
+                    // If specific lesson not found, use the first lesson as fallback
+                    const fallbackLesson = lessons[0];
+                    if (fallbackLesson) {
+                        console.log(`⚠️ Lesson ${lessonNum} not found, using Lesson ${fallbackLesson.lessonNumber} as fallback`);
+                        currentLessonData = formatLessonForAI(targetModule, fallbackLesson);
+                    } else {
+                        throw new Error(`No lessons found in Module ${moduleNum}`);
+                    }
+                } else {
+                    console.log(`✅ Found Lesson ${lessonNum}: ${targetLesson.title}`);
+                    currentLessonData = formatLessonForAI(targetModule, targetLesson);
+                }
+                
+                console.log('📝 Formatted lesson data for AI:', currentLessonData);
+                displayLessonData();
+                
+                // Save for future use
+                localStorage.setItem('currentAILessonData', JSON.stringify(currentLessonData));
+                
             } catch (error) {
                 console.error('❌ Error fetching lesson data:', error);
                 
@@ -602,6 +748,29 @@
                     displayErrorData(error.message);
                 }
             }
+        }
+
+        // Format lesson data from your MongoDB format to the AI planner format
+        function formatLessonForAI(module, lesson) {
+            return {
+                moduleNumber: module.moduleNumber,
+                moduleName: module.title,
+                lessonNumber: lesson.lessonNumber,
+                title: lesson.title,
+                content: lesson.content || lesson.description || '',
+                objectives: lesson.teacherContent?.objectives || lesson.objectives || [],
+                materials: lesson.teacherContent?.materials || lesson.materials || [],
+                procedures: lesson.teacherContent?.procedures || lesson.procedures || [],
+                assessments: lesson.teacherContent?.assessments || lesson.assessments || [],
+                vocabulary: lesson.teacherContent?.vocabulary || lesson.vocabulary || [],
+                duration: lesson.duration || lesson.teacherContent?.duration || '45 minutes',
+                // Include any additional content for richer AI generation
+                studentContent: lesson.studentContent || {},
+                teacherContent: lesson.teacherContent || {},
+                geographicFocus: lesson.geographicFocus || '',
+                standards: lesson.standards || [],
+                concepts: lesson.concepts || []
+            };
         }
 
         // Display lesson data in the interface
@@ -695,25 +864,6 @@
             }
 
             return content || '<p>No detailed teacher content available</p>';
-        }
-
-            if (lessonData.procedures && lessonData.procedures.length > 0) {
-                content += '<h4>Teaching Procedures:</h4><ol>';
-                lessonData.procedures.forEach(procedure => {
-                    content += `<li>${procedure}</li>`;
-                });
-                content += '</ol>';
-            }
-
-            if (lessonData.assessments && lessonData.assessments.length > 0) {
-                content += '<h4>Assessment Methods:</h4><ul>';
-                lessonData.assessments.forEach(assessment => {
-                    content += `<li>${assessment}</li>`;
-                });
-                content += '</ul>';
-            }
-
-            return content || '<p>No teacher guide content available</p>';
         }
 
         // Extract student reading content from lesson data
