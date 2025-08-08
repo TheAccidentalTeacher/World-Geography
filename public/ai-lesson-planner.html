@@ -337,12 +337,36 @@
             background: #007bff;
         }
 
+        .tab-button.active#integrated-lesson-tab {
+            background: #ff6b6b;
+        }
+
+        .tab-button.active#lesson-plan-tab {
+            background: #007bff;
+        }
+
+        .tab-button.active#condensed-reading-tab {
+            background: #28a745;
+        }
+
         .tab-button:not(.active) {
             background: #6c757d;
         }
 
         .tab-button:not(.active):hover {
             background: #5a6268;
+        }
+
+        .integrated-lesson-btn {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            padding: 18px;
+        }
+
+        .integrated-lesson-btn:hover {
+            background: linear-gradient(135deg, #ff5252, #ff6b6b);
+            transform: translateY(-2px);
         }
 
         .tab-content {
@@ -539,6 +563,18 @@
                         </div>
                     </div>
 
+                    <button onclick="generateIntegratedLesson()" class="generate-button integrated-lesson-btn" id="integrated-lesson-btn" 
+                            style="background: linear-gradient(135deg, #ff6b6b, #ff8e8e); margin-bottom: 15px; font-size: 1.1rem; padding: 18px;">
+                        🎯 Generate Complete Integrated Lesson
+                        <div style="font-size: 0.9rem; margin-top: 5px; opacity: 0.9;">
+                            Reading + Lesson Plan + Handouts (One-Click Solution)
+                        </div>
+                    </button>
+                    
+                    <div style="text-align: center; margin: 15px 0; color: #6c757d; font-weight: bold;">
+                        OR Generate Components Separately:
+                    </div>
+
                     <button onclick="generateLessonPlan()" class="generate-button" id="generate-btn">
                         🚀 Generate AI Lesson Plan
                     </button>
@@ -601,18 +637,62 @@
             <!-- Output Panel -->
             <div class="output-panel">
                 <div class="output-tabs" style="display: flex; border-bottom: 2px solid #e9ecef; margin-bottom: 20px;">
-                    <button class="tab-button active" onclick="switchTab('lesson-plan')" id="lesson-plan-tab" 
-                            style="flex: 1; padding: 12px; border: none; background: #007bff; color: white; cursor: pointer; border-radius: 8px 8px 0 0;">
-                        🎯 Lesson Plan
+                    <button class="tab-button active" onclick="switchTab('integrated-lesson')" id="integrated-lesson-tab" 
+                            style="flex: 1; padding: 12px; border: none; background: #ff6b6b; color: white; cursor: pointer; border-radius: 8px 8px 0 0;">
+                        🎯 Complete Lesson
+                    </button>
+                    <button class="tab-button" onclick="switchTab('lesson-plan')" id="lesson-plan-tab" 
+                            style="flex: 1; padding: 12px; border: none; background: #6c757d; color: white; cursor: pointer; border-radius: 8px 8px 0 0; margin-left: 2px;">
+                        📋 Lesson Plan Only
                     </button>
                     <button class="tab-button" onclick="switchTab('condensed-reading')" id="condensed-reading-tab"
                             style="flex: 1; padding: 12px; border: none; background: #6c757d; color: white; cursor: pointer; border-radius: 8px 8px 0 0; margin-left: 2px;">
-                        📚 Student Reading
+                        📚 Reading Only
                     </button>
                 </div>
 
+                <!-- Integrated Lesson Tab Content -->
+                <div class="tab-content active" id="integrated-lesson-content">
+                    <div class="panel-title">
+                        🎯 Complete Integrated Lesson Package
+                    </div>
+
+                    <div class="loading" id="integrated-loading" style="display: none;">
+                        <div class="loading-spinner"></div>
+                        <h3>🔧 AI is building your complete lesson package...</h3>
+                        <p>Generating reading materials, lesson plan, and handouts as one integrated document</p>
+                    </div>
+
+                    <div class="integrated-lesson-output" id="integrated-lesson-output">
+                        <div style="text-align: center; padding: 60px 20px; color: #6c757d;">
+                            <h3>🎯 Ready to Generate Complete Lesson</h3>
+                            <p>Click "Generate Complete Integrated Lesson" to create a print-ready, comprehensive lesson package.</p>
+                            
+                            <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 10px; text-align: left;">
+                                <h4 style="color: #495057; margin-bottom: 15px;">✨ Complete Package Includes:</h4>
+                                <ul style="color: #6c757d; line-height: 1.8;">
+                                    <li>📖 <strong>Condensed Student Reading</strong> with lesson-aligned annotations</li>
+                                    <li>📋 <strong>Integrated Lesson Plan</strong> with reading references throughout</li>
+                                    <li>📝 <strong>Student Handouts</strong> designed to work with the reading</li>
+                                    <li>🔗 <strong>Seamless Transitions</strong> from reading to activities</li>
+                                    <li>⏰ <strong>Unified Timing</strong> including reading time breakdown</li>
+                                    <li>🎯 <strong>Text-Dependent Activities</strong> requiring evidence from reading</li>
+                                    <li>📊 <strong>Integrated Assessment</strong> measuring both reading and content</li>
+                                    <li>🖨️ <strong>Print-Ready Format</strong> with professional layout</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="export-buttons" id="integrated-export-buttons" style="display: none;">
+                        <button onclick="printIntegratedLesson()" class="export-button print">🖨️ Print Complete Lesson</button>
+                        <button onclick="copyIntegratedLesson()" class="export-button copy">📋 Copy Complete Lesson</button>
+                        <button onclick="saveIntegratedLesson()" class="export-button">💾 Save Complete Lesson</button>
+                    </div>
+                </div>
+
                 <!-- Lesson Plan Tab Content -->
-                <div class="tab-content active" id="lesson-plan-content">
+                <div class="tab-content" id="lesson-plan-content" style="display: none;">
                     <div class="panel-title">
                         🎯 Generated Lesson Plan
                     </div>
@@ -688,6 +768,106 @@
                         <button onclick="printCondensedReading()" class="export-button print">🖨️ Print Reading</button>
                         <button onclick="copyCondensedReading()" class="export-button copy">📋 Copy Reading</button>
                         <button onclick="saveCondensedReading()" class="export-button">💾 Save Reading</button>
+                    </div>
+                </div>
+
+                <!-- Integrated Lesson Tab Content -->
+                <div class="tab-content" id="integrated-lesson-content" style="display: none;">
+                    <div class="panel-title">
+                        🎯 Complete Integrated Lesson Package
+                    </div>
+
+                    <div class="loading" id="integrated-loading" style="display: none;">
+                        <div class="loading-spinner"></div>
+                        <h3>🔧 AI is building your complete lesson...</h3>
+                        <p>Integrating reading materials + lesson plan + handouts into one comprehensive package</p>
+                        <div style="margin-top: 20px; padding: 15px; background: #fff5f5; border-radius: 10px; color: #721c24;">
+                            <h4>🎯 Creating Your ONE-CLICK Solution:</h4>
+                            <ul style="text-align: left; margin-top: 10px;">
+                                <li>📚 Condensed student reading (curriculum-independent)</li>
+                                <li>📝 Complete lesson plan (integrated with reading)</li>
+                                <li>📄 Student handouts (text-dependent activities)</li>
+                                <li>⏰ Unified timing guide (reading + activities)</li>
+                                <li>✅ Assessment tools (reading + content integration)</li>
+                                <li>🖨️ Print-ready format (no prep required)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="integrated-lesson-output" id="integrated-lesson-output">
+                        <div style="text-align: center; padding: 60px 20px; color: #6c757d;">
+                            <h3>🎯 Ready to Create Complete Lesson</h3>
+                            <p>Click "Generate Complete Integrated Lesson" to create a comprehensive, print-ready lesson package.</p>
+                            
+                            <div style="margin-top: 30px; padding: 25px; background: linear-gradient(135deg, #fff5f5, #ffffff); border: 2px solid #ff6b6b; border-radius: 15px; text-align: left;">
+                                <h4 style="color: #721c24; margin-bottom: 20px; text-align: center;">🎯 ONE-CLICK LESSON INTEGRATION</h4>
+                                
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                                    <div style="background: #ffffff; padding: 15px; border-radius: 10px; border: 1px solid #ff6b6b;">
+                                        <h5 style="color: #721c24; margin-bottom: 10px;">📚 Student Reading Section</h5>
+                                        <ul style="color: #6c757d; font-size: 0.9rem; line-height: 1.6;">
+                                            <li>Condensed, curriculum-independent content</li>
+                                            <li>Paragraph numbering for lesson references</li>
+                                            <li>Integrated vocabulary and supports</li>
+                                            <li>Text-dependent question preparation</li>
+                                        </ul>
+                                    </div>
+                                    <div style="background: #ffffff; padding: 15px; border-radius: 10px; border: 1px solid #ff6b6b;">
+                                        <h5 style="color: #721c24; margin-bottom: 10px;">📝 Lesson Plan Section</h5>
+                                        <ul style="color: #6c757d; font-size: 0.9rem; line-height: 1.6;">
+                                            <li>Activities reference specific reading paragraphs</li>
+                                            <li>Unified timing including reading time</li>
+                                            <li>Text-dependent questions throughout</li>
+                                            <li>Assessment aligned to reading + content</li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div style="background: #fff8e6; padding: 15px; border-radius: 10px; border: 1px solid #ffc107;">
+                                    <h5 style="color: #856404; margin-bottom: 10px;">📄 Complete Package Includes</h5>
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; font-size: 0.9rem;">
+                                        <div>
+                                            <strong style="color: #721c24;">📖 Reading Materials</strong>
+                                            <ul style="color: #6c757d; margin-top: 5px;">
+                                                <li>Student reading text</li>
+                                                <li>Vocabulary integration</li>
+                                                <li>Comprehension supports</li>
+                                            </ul>
+                                        </div>
+                                        <div>
+                                            <strong style="color: #721c24;">🚀 Lesson Components</strong>
+                                            <ul style="color: #6c757d; margin-top: 5px;">
+                                                <li>Hook activities</li>
+                                                <li>Reading discussion</li>
+                                                <li>Content activities</li>
+                                                <li>Assessment tools</li>
+                                            </ul>
+                                        </div>
+                                        <div>
+                                            <strong style="color: #721c24;">📋 Teacher Resources</strong>
+                                            <ul style="color: #6c757d; margin-top: 5px;">
+                                                <li>Student handouts</li>
+                                                <li>Answer keys</li>
+                                                <li>Implementation guide</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div style="text-align: center; margin-top: 20px; padding: 15px; background: #d4edda; border-radius: 10px; border: 1px solid #c3e6cb;">
+                                    <h4 style="color: #155724; margin-bottom: 10px;">🎯 CURRICULUM INDEPENDENCE ACHIEVED</h4>
+                                    <p style="color: #155724; margin: 0; font-weight: 500;">
+                                        Print and teach immediately • No textbook required • Complete content package • Professional formatting
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="export-buttons" id="integrated-export-buttons" style="display: none;">
+                        <button onclick="printIntegratedLesson()" class="export-button print">🖨️ Print Complete Lesson</button>
+                        <button onclick="copyIntegratedLesson()" class="export-button copy">📋 Copy Lesson Package</button>
+                        <button onclick="saveIntegratedLesson()" class="export-button">💾 Save Integrated Lesson</button>
                     </div>
                 </div>
             </div>
@@ -1318,6 +1498,7 @@
         function setGenerationButtonsEnabled(enabled) {
             document.getElementById('generate-btn').disabled = !enabled;
             document.getElementById('condensed-reading-btn').disabled = !enabled;
+            document.getElementById('integrated-lesson-btn').disabled = !enabled;
         }
 
         function checkLocalAPIKey() {
@@ -1381,11 +1562,17 @@
                 selectedContent.classList.add('active');
             }
 
-            // Activate selected tab button
+            // Activate selected tab button with appropriate color
             const selectedTab = document.getElementById(tabName + '-tab');
             if (selectedTab) {
                 selectedTab.classList.add('active');
-                selectedTab.style.background = '#007bff';
+                if (tabName === 'integrated-lesson') {
+                    selectedTab.style.background = '#ff6b6b';
+                } else if (tabName === 'lesson-plan') {
+                    selectedTab.style.background = '#007bff';
+                } else if (tabName === 'condensed-reading') {
+                    selectedTab.style.background = '#28a745';
+                }
             }
         }
 
@@ -1742,6 +1929,507 @@ Create a reading that eliminates textbook dependency while maintaining education
             const a = document.createElement('a');
             a.href = url;
             a.download = `student-reading-${currentLessonData.title.replace(/\s+/g, '-').toLowerCase()}.html`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Generate complete integrated lesson function
+        async function generateIntegratedLesson() {
+            console.log('🎯 Starting integrated lesson generation...');
+            
+            if (!currentLessonData) {
+                alert('Please select a lesson first by going back to the lesson companion.');
+                return;
+            }
+
+            console.log('📚 Current lesson data for integrated lesson:', currentLessonData);
+
+            // Save user settings
+            saveUserSettings();
+
+            // Switch to integrated lesson tab
+            switchTab('integrated-lesson');
+
+            // Show loading state
+            document.getElementById('integrated-loading').style.display = 'block';
+            document.getElementById('integrated-lesson-output').innerHTML = '';
+            document.getElementById('integrated-export-buttons').style.display = 'none';
+
+            // Disable button and show loading
+            document.getElementById('integrated-lesson-btn').disabled = true;
+            document.getElementById('integrated-lesson-btn').innerHTML = `
+                🔧 Generating Complete Lesson...
+                <div style="font-size: 0.9rem; margin-top: 5px; opacity: 0.9;">
+                    Building reading + lesson + handouts
+                </div>
+            `;
+
+            try {
+                const prompt = buildIntegratedLessonPrompt();
+                console.log('📝 Built integrated lesson prompt, length:', prompt.length);
+
+                const generatedLesson = await callOpenAIAPI(prompt);
+                console.log('✅ Received integrated lesson from AI');
+
+                // Hide loading
+                document.getElementById('integrated-loading').style.display = 'none';
+
+                // Display the generated integrated lesson
+                displayGeneratedIntegratedLesson(generatedLesson);
+
+            } catch (error) {
+                console.error('❌ Error generating integrated lesson:', error);
+                document.getElementById('integrated-loading').style.display = 'none';
+                
+                document.getElementById('integrated-lesson-output').innerHTML = `
+                    <div style="background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 20px; border-radius: 8px; margin: 20px;">
+                        <h3>❌ Error Generating Integrated Lesson</h3>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                        <p>Please check your API settings and try again.</p>
+                    </div>
+                `;
+            } finally {
+                // Re-enable button
+                document.getElementById('integrated-lesson-btn').disabled = false;
+                document.getElementById('integrated-lesson-btn').innerHTML = `
+                    🎯 Generate Complete Integrated Lesson
+                    <div style="font-size: 0.9rem; margin-top: 5px; opacity: 0.9;">
+                        Reading + Lesson Plan + Handouts (One-Click Solution)
+                    </div>
+                `;
+            }
+        }
+
+        // Build the integrated lesson prompt
+        function buildIntegratedLessonPrompt() {
+            const lessonFocus = document.getElementById('lesson-focus').value;
+            const classSize = document.getElementById('class-size').value;
+            const customInstructions = document.getElementById('custom-prompt').value;
+            const complexity = document.getElementById('reading-complexity').value;
+            const length = document.getElementById('reading-length').value;
+            const focus = document.getElementById('reading-focus').value;
+            const includeSupports = document.getElementById('include-supports').checked;
+            const includeAssessment = document.getElementById('include-assessment').checked;
+
+            const teacherContent = document.getElementById('teacher-content').textContent;
+            const studentContent = document.getElementById('student-content').textContent;
+
+            const focusDescriptions = {
+                'balanced': 'balanced mix of instruction, discussion, and activities',
+                'interactive': 'highly interactive with frequent student participation',
+                'discussion': 'discussion-heavy with socratic questioning',
+                'hands-on': 'hands-on activities and experiential learning',
+                'assessment': 'assessment-focused with multiple check-ins',
+                'technology': 'technology integration and digital tools'
+            };
+
+            const readingFocusDescriptions = {
+                'balanced': 'balanced overview with equal attention to all aspects',
+                'geographic': 'geographic emphasis with spatial thinking and environmental factors',
+                'cultural': 'cultural emphasis with social structures and traditions',
+                'historical': 'historical emphasis with chronology and cause-effect relationships',
+                'environmental': 'environmental emphasis with human-environment interactions'
+            };
+
+            const lengthSpecs = {
+                'condensed': '4-5 paragraphs, 150-200 words each',
+                'comprehensive': '6-8 paragraphs, 175-225 words each',
+                'detailed': '8-10 paragraphs, 200-250 words each'
+            };
+
+            return `# 🎯 ONE-CLICK INTEGRATED LESSON GENERATOR
+
+You are an expert educational content developer creating a complete, print-ready lesson package that eliminates all teacher preparation barriers. This integrated lesson must be immediately usable, professionally formatted, and curriculum-independent.
+
+## 📚 SOURCE MATERIALS AND CONTEXT
+
+**LESSON CONTEXT:** Module ${currentLessonData.moduleNumber} - ${currentLessonData.title}
+**CLASS SIZE:** ${classSize} students
+**LESSON FOCUS:** ${focusDescriptions[lessonFocus]}
+**READING FOCUS:** ${readingFocusDescriptions[focus]}
+**READING LENGTH:** ${lengthSpecs[length]}
+**COMPLEXITY LEVEL:** ${complexity}
+${customInstructions ? `**SPECIAL INSTRUCTIONS:** ${customInstructions}` : ''}
+
+**TEACHER GUIDE CONTENT:**
+${teacherContent || 'No teacher guide provided'}
+
+**STUDENT CONTENT:**
+${studentContent || 'No student content provided'}
+
+**CORE VOCABULARY:** ${currentLessonData.vocabulary ? currentLessonData.vocabulary.map(v => v.term).join(', ') : 'None provided'}
+
+---
+
+## 🎯 COMPREHENSIVE LESSON COMPILATION PROTOCOL
+
+### 1. DOCUMENT STRUCTURE INTEGRATION
+• **Create single, continuous document** flowing seamlessly from reading to activities
+• **Maintain consistent formatting** (fonts, spacing, headers, margins)
+• **Use clear section dividers** with visual breaks between components
+• **Include page numbers and section tabs** for navigation during instruction
+• **Ensure printer-friendly layout** (1-inch margins, 12pt minimum fonts)
+
+### 2. READING-TO-LESSON TRANSITION FRAMEWORK
+• **Insert transition section** between reading and lesson plan including:
+  - Reading Completion Checkpoint with quick comprehension questions
+  - Vocabulary Review connecting reading terms to lesson activities
+  - Activity Preview showing how reading content will be used
+• **Cross-reference all paragraph numbers** from reading in lesson activities
+• **Align reading annotations** with lesson activity requirements
+• **Create seamless vocabulary integration** using exact terms from reading
+
+### 3. UNIFIED HEADER SYSTEM
+• **Standardize all headers** with lesson information:
+  - 7th Grade Geography | Module ${currentLessonData.moduleNumber} | 50 Minutes | ${classSize} Students
+  - ${currentLessonData.title}
+  - Date line for teacher completion
+• **Include reading time estimates** in lesson timing breakdown
+• **Add "Materials Included" checklist** showing reading + handouts
+• **Create teacher preparation summary** covering both reading and activities
+
+### 4. INTEGRATED STANDARDS AND OBJECTIVES
+• **Combine reading standards with content standards** in single objectives section
+• **Reference specific reading paragraphs** in each learning objective
+• **Align assessment criteria** to both reading comprehension and content mastery
+• **Include text-dependent question stems** connecting to lesson essential questions
+• **Cross-reference vocabulary tiers** with lesson activity requirements
+
+### 5. SEAMLESS ACTIVITY INTEGRATION
+• **Modify lesson opening** to reference specific reading paragraphs for activation
+• **Insert reading time** into lesson pacing guide with paragraph breakdowns
+• **Align all lesson activities** to use evidence from the condensed reading
+• **Include reading citation requirements** in every activity description
+• **Add "Reading Connection" notes** in margins of lesson activities
+
+### 6. UNIFIED HANDOUT GENERATION
+• **Combine all materials** into single printable packet:
+  - Cover page with lesson information
+  - Condensed reading (pages 2-X)
+  - Lesson plan (pages X+1 to Y)
+  - Student handouts (pages Y+1 to Z)
+  - Answer keys (final pages)
+• **Include handout reference numbers** in lesson plan activities
+• **Create "Handout Distribution Guide"** showing when each page is used
+• **Add page tabs or section markers** for quick teacher reference
+
+### 7. COMPREHENSIVE PACING INTEGRATION
+• **Create unified timing breakdown:**
+  - Reading Time: X minutes (paragraph-by-paragraph breakdown)
+  - Transition/Discussion: X minutes
+  - Activity 1: X minutes (referencing reading paragraphs X-Y)
+  - Activity 2: X minutes (referencing reading paragraphs Y-Z)
+  - Assessment/Closure: X minutes
+• **Include reading comprehension checkpoints** within lesson timing
+• **Add flexible timing options** for different class periods (45, 50, 90 minutes)
+• **Provide "if running behind" modifications** maintaining reading integration
+
+### 8. DIFFERENTIATION UNIFICATION
+• **Align reading levels** with lesson differentiation strategies
+• **Create tiered handout versions** matching reading complexity levels
+• **Include ELL supports** working across both reading and activities
+• **Generate special needs modifications** for both reading and lesson components
+• **Add advanced extension activities** deepening reading analysis
+
+### 9. ASSESSMENT INTEGRATION PROTOCOL
+• **Combine reading comprehension** with content assessment in single rubrics
+• **Include text-dependent questions** throughout lesson activities
+• **Create unified exit tickets** assessing both reading understanding and content mastery
+• **Generate answer keys** referencing specific reading paragraphs
+• **Add formative assessment checkpoints** monitoring both reading and content comprehension
+
+### 10. TEACHER IMPLEMENTATION GUIDE
+• **Create single preparation checklist** covering reading and lesson setup
+• **Include "First Time Teaching" notes** for managing reading + activities
+• **Add troubleshooting guide** for common reading/lesson integration issues
+• **Provide substitute teacher instructions** covering both components
+• **Include extension/homework options** building on reading content
+
+---
+
+## 📋 REQUIRED INTEGRATED LESSON FORMAT
+
+# 🎯 COMPLETE INTEGRATED LESSON PACKAGE
+
+## ${currentLessonData.title}
+**7th Grade Geography | Module ${currentLessonData.moduleNumber} | 50 Minutes | ${classSize} Students**
+
+**Date: _______________**
+
+---
+
+## 📋 LESSON AT A GLANCE
+
+### Integrated Learning Objectives
+Students will be able to:
+1. [Objective combining reading comprehension and content mastery]
+2. [Objective requiring text evidence and geographic analysis]
+3. [Objective demonstrating cultural understanding through reading citations]
+
+### Standards Alignment
+- **National Geography Standards:** [Standards from content]
+- **Common Core Reading:** RI.7.1, RI.7.2, RI.7.4, RI.7.7
+- **Common Core Writing:** W.7.1, W.7.9
+
+### Essential Questions
+1. [Question requiring evidence from reading]
+2. [Question connecting reading to geographic concepts]
+3. [Question bridging reading and contemporary applications]
+
+### Materials Included in This Package
+- [ ] Student Reading (Pages 2-X) - ${lengthSpecs[length]}
+- [ ] Lesson Plan (Pages X+1-Y) - Integrated with reading references
+- [ ] Student Handouts (Pages Y+1-Z) - Text-dependent activities
+- [ ] Answer Keys (Final pages) - With paragraph references
+
+---
+
+## ⏰ INTEGRATED TIMING GUIDE
+
+| Time | Activity | Reading Connection |
+|------|----------|-------------------|
+| 0-5 min | Hook & Activation | Preview reading paragraphs 1-2 |
+| 5-20 min | Guided Reading | ${lengthSpecs[length]} with checkpoints |
+| 20-25 min | Reading Discussion | Text-dependent questions |
+| 25-40 min | Content Activities | Evidence from paragraphs [specific refs] |
+| 40-45 min | Assessment | Reading + content synthesis |
+| 45-50 min | Closure & Preview | Connect to next lesson |
+
+---
+
+## 📚 STUDENT READING SECTION
+
+### Reading Instructions for Students
+"Today you will read about ${currentLessonData.title}. As you read, pay attention to [specific focuses]. You will use information from this reading in all of today's activities, so read carefully and be ready to cite specific evidence."
+
+### Before Reading Activation
+[Questions connecting to prior knowledge and previewing main concepts]
+
+---
+
+# 📖 ${currentLessonData.title}
+
+**Module ${currentLessonData.moduleNumber} Student Reading | ${complexity.charAt(0).toUpperCase() + complexity.slice(1)} Level**
+
+[Generate the complete condensed reading following all 12 condensation requirements, with paragraph numbers, vocabulary integration, and lesson-aligned annotations]
+
+---
+
+## 🔄 READING-TO-LESSON TRANSITION
+
+### Reading Completion Checkpoint
+**Quick Comprehension Check:** [3-4 questions with paragraph references]
+
+### Vocabulary Review
+**Key Terms from Reading:** [Terms with definitions and paragraph locations]
+
+### Activity Preview
+"Now we will use information from your reading to [preview of upcoming activities with specific paragraph references]"
+
+---
+
+## 🚀 INTEGRATED LESSON PLAN
+
+### OPENING HOOK (5 minutes)
+**Teacher Script:** "Based on paragraph 1 of your reading, [specific hook using reading content]"
+**Student Task:** [Activity referencing specific reading content]
+**Materials:** Reading (page X, paragraph 1)
+
+### GUIDED READING TIME (15 minutes)
+**Reading Strategy:** [Specific approach for ${lengthSpecs[length]}]
+**Comprehension Checkpoints:** 
+- After paragraph 2: [Specific question]
+- After paragraph 4: [Specific question]
+**Teacher Circulation:** Look for [specific reading behaviors and annotations]
+
+### READING DISCUSSION (5 minutes)
+**Text-Dependent Questions:**
+1. [Question requiring citation from paragraph X]
+2. [Question requiring synthesis of paragraphs Y-Z]
+**Evidence Requirements:** Students must cite paragraph numbers
+
+### CONTENT ACTIVITIES (15 minutes)
+**Activity 1: [Name]** (8 minutes)
+- **Reading Connection:** Uses evidence from paragraphs [X-Y]
+- **Instructions:** [Detailed steps with reading references]
+- **Student Handout:** Page [Z] - designed to work with reading
+
+**Activity 2: [Name]** (7 minutes)
+- **Reading Connection:** Synthesizes information from paragraphs [Y-Z]
+- **Instructions:** [Detailed steps with reading references]
+- **Assessment Component:** [How this measures both reading and content]
+
+### INTEGRATED ASSESSMENT (5 minutes)
+**Exit Ticket:** [Question requiring both reading evidence and content application]
+**Success Criteria:** Students demonstrate [specific reading and content mastery]
+
+### CLOSURE (5 minutes)
+**Reading Review:** [Summarizing key reading concepts]
+**Content Connection:** [Connecting reading to broader geographic concepts]
+**Next Lesson Preview:** [How today's reading connects to tomorrow]
+
+---
+
+## 📝 STUDENT HANDOUTS
+
+### Handout 1: [Name] - Use with Reading Paragraphs [X-Y]
+[Handout content designed to work seamlessly with reading]
+
+### Handout 2: [Name] - Text-Dependent Analysis
+[Handout requiring specific reading citations and evidence]
+
+---
+
+## ✅ INTEGRATED ASSESSMENT TOOLS
+
+### Reading + Content Rubric
+| Criteria | Excellent | Good | Needs Work |
+|----------|-----------|------|------------|
+| Reading Evidence | Cites specific paragraphs accurately | Some paragraph references | Limited reading evidence |
+| Content Understanding | [Geographic content criteria] | [Geographic content criteria] | [Geographic content criteria] |
+
+### Answer Key with Reading References
+[All answers include specific paragraph citations and evidence locations]
+
+---
+
+## 👨‍🏫 TEACHER IMPLEMENTATION GUIDE
+
+### 15-Minute Preparation Checklist
+- [ ] Read through student reading (5 minutes)
+- [ ] Review lesson activities and reading connections (5 minutes)
+- [ ] Prepare handouts and materials (5 minutes)
+- [ ] No additional research or preparation needed
+
+### First-Time Teaching Notes
+- Reading time may vary by class; allow flexibility
+- Students must have reading in front of them during activities
+- Emphasize paragraph citation requirements throughout
+
+### Troubleshooting Guide
+**If students struggle with reading:** [Specific support strategies]
+**If running behind:** [Modifications maintaining reading integration]
+**If technology fails:** [All activities work without technology]
+
+### Substitute Teacher Instructions
+"Students will read [pages X-Y], then complete activities requiring them to cite specific evidence from the reading. All materials and instructions are included. Students should reference paragraph numbers when answering questions."
+
+---
+
+## 🎯 QUALITY ASSURANCE VERIFICATION
+
+This integrated lesson package includes:
+✅ Reading flows naturally into lesson activities
+✅ All paragraph references are accurate and functional
+✅ Vocabulary is consistent between reading and lesson
+✅ Timing is realistic for combined reading + activities
+✅ All handouts reference appropriate reading sections
+✅ Assessment measures both reading and content objectives
+✅ Differentiation works across all components
+✅ Print formatting is clean and professional
+✅ Teacher can literally print and teach immediately
+✅ No external resources or textbooks required
+
+**Ready to Print:** This complete lesson package is formatted for immediate classroom use.
+
+---
+
+**CONTENT SOPHISTICATION REQUIREMENT:** This integrated lesson must demonstrate complete educational sophistication while eliminating all preparation barriers. Every component should connect seamlessly, with reading content driving all activities and assessments while maintaining grade-appropriate challenge and cultural sensitivity.
+
+Generate a complete, print-ready lesson package that transforms curriculum dependence into educational independence through sophisticated AI-powered content integration.`;
+        }
+
+        // Display the generated integrated lesson
+        function displayGeneratedIntegratedLesson(lesson) {
+            const formattedLesson = formatIntegratedLesson(lesson);
+            document.getElementById('integrated-lesson-output').innerHTML = formattedLesson;
+            document.getElementById('integrated-export-buttons').style.display = 'flex';
+        }
+
+        // Format the integrated lesson with proper HTML structure
+        function formatIntegratedLesson(lessonText) {
+            let formatted = lessonText.replace(/\n/g, '<br>');
+            
+            // Format headers with different levels
+            formatted = formatted.replace(/### (.*?)<br>/g, '<h3 style="color: #ff6b6b; margin: 20px 0 10px 0; font-size: 1.3rem; border-left: 4px solid #ff6b6b; padding-left: 10px;">$1</h3>');
+            formatted = formatted.replace(/## (.*?)<br>/g, '<h2 style="color: #495057; margin: 25px 0 15px 0; font-size: 1.5rem; border-bottom: 2px solid #e9ecef; padding-bottom: 5px;">$1</h2>');
+            formatted = formatted.replace(/# (.*?)<br>/g, '<h1 style="color: #ff6b6b; margin: 30px 0 20px 0; font-size: 1.8rem; text-align: center; border: 3px solid #ff6b6b; padding: 15px; border-radius: 10px; background: #fff5f5;">$1</h1>');
+            
+            // Format bold text
+            formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong style="color: #495057;">$1</strong>');
+            
+            // Format tables
+            formatted = formatted.replace(/\|(.*?)\|/g, (match, content) => {
+                return `<span style="background: #f8f9fa; padding: 2px 8px; border: 1px solid #e9ecef; margin: 2px;">${content.trim()}</span>`;
+            });
+            
+            // Format bullet points
+            formatted = formatted.replace(/(^|\<br\>)• /g, '$1<span style="color: #ff6b6b;">•</span> ');
+            formatted = formatted.replace(/(^|\<br\>)- /g, '$1<span style="color: #ff6b6b;">•</span> ');
+            
+            // Format numbered lists
+            formatted = formatted.replace(/(^|\<br\>)(\d+\.) /g, '$1<span style="color: #ff6b6b; font-weight: bold;">$2</span> ');
+            
+            // Format checkboxes
+            formatted = formatted.replace(/- \[ \]/g, '<input type="checkbox" style="margin-right: 8px;">');
+            formatted = formatted.replace(/- \[x\]/g, '<input type="checkbox" checked style="margin-right: 8px;">');
+            
+            // Wrap in proper structure
+            return `
+                <div class="integrated-lesson-content" style="max-width: 900px; margin: 0 auto; line-height: 1.8; font-size: 1.1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 3px solid #ff6b6b;">
+                        <h2 style="color: #ff6b6b; margin: 0;">🎯 Complete Integrated Lesson Package</h2>
+                        <span style="background: #fff5f5; padding: 8px 15px; border-radius: 20px; font-size: 0.9rem; color: #721c24; font-weight: bold; border: 2px solid #ff6b6b;">
+                            Print-Ready • No Prep Required
+                        </span>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #fff5f5, #ffffff); padding: 30px; border-radius: 15px; border: 1px solid #ff6b6b;">
+                        ${formatted}
+                    </div>
+                    <div style="margin-top: 20px; padding: 15px; background: #d1ecf1; border-left: 5px solid #bee5eb; border-radius: 5px;">
+                        <h4 style="color: #0c5460; margin-bottom: 10px;">🖨️ Ready to Print Instructions:</h4>
+                        <p style="color: #0c5460; margin: 0;">This complete lesson package is formatted for immediate classroom use. Simply print and teach - no additional preparation required!</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Export functions for integrated lesson
+        function printIntegratedLesson() {
+            const content = document.getElementById('integrated-lesson-output').innerHTML;
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>Complete Integrated Lesson - ${currentLessonData.title}</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }
+                        @media print { body { margin: 0.5in; } }
+                    </style>
+                </head>
+                <body>
+                    ${content}
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+        function copyIntegratedLesson() {
+            const content = document.getElementById('integrated-lesson-output').innerText;
+            navigator.clipboard.writeText(content).then(() => {
+                alert('📋 Complete integrated lesson copied to clipboard!');
+            });
+        }
+
+        function saveIntegratedLesson() {
+            const content = document.getElementById('integrated-lesson-output').innerHTML;
+            const blob = new Blob([content], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `integrated-lesson-${currentLessonData.title.replace(/\s+/g, '-').toLowerCase()}.html`;
             a.click();
             URL.revokeObjectURL(url);
         }
