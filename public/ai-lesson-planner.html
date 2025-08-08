@@ -585,6 +585,9 @@
             document.getElementById('student-content').innerHTML = studentContent;
 
             updateAPIStatus('success', '✅ Lesson content loaded successfully');
+            
+            // Re-check API status now that we have lesson data
+            checkAPIStatus();
         }
 
         // Extract teacher-focused content from lesson data
@@ -710,7 +713,45 @@
 
         // Check API status and update UI
         function checkAPIStatus() {
+            // First check if we have an API key from Railway environment
+            fetch('/api/openai-key-status')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.hasKey) {
+                        // Check if we have lesson data before enabling
+                        if (currentLessonData) {
+                            updateAPIStatus('success', '✅ Using OpenAI API key from server environment');
+                            document.getElementById('generate-btn').disabled = false;
+                        } else {
+                            updateAPIStatus('warning', '⚠️ Server API key available, waiting for lesson content...');
+                            document.getElementById('generate-btn').disabled = true;
+                        }
+                        // Hide the API key input section since we're using server key
+                        const apiKeyGroup = document.getElementById('api-key').closest('.control-group');
+                        if (apiKeyGroup) {
+                            apiKeyGroup.style.display = 'none';
+                        }
+                        return;
+                    } else {
+                        // Fall back to local API key
+                        checkLocalAPIKey();
+                    }
+                })
+                .catch(error => {
+                    console.log('No server API key available, checking local key');
+                    checkLocalAPIKey();
+                });
+        }
+
+        function checkLocalAPIKey() {
             const apiKey = document.getElementById('api-key').value;
+            
+            // If no lesson data, disable regardless of API key
+            if (!currentLessonData) {
+                updateAPIStatus('warning', '⚠️ No lesson content loaded');
+                document.getElementById('generate-btn').disabled = true;
+                return;
+            }
             
             if (!apiKey) {
                 updateAPIStatus('warning', '⚠️ Please enter your OpenAI API key in Advanced Settings');
@@ -720,12 +761,6 @@
 
             if (!apiKey.startsWith('sk-')) {
                 updateAPIStatus('error', '❌ Invalid API key format. Should start with "sk-"');
-                document.getElementById('generate-btn').disabled = true;
-                return;
-            }
-
-            if (!currentLessonData) {
-                updateAPIStatus('warning', '⚠️ No lesson content loaded');
                 document.getElementById('generate-btn').disabled = true;
                 return;
             }
@@ -750,16 +785,14 @@
 
         // Main function to generate lesson plan
         async function generateLessonPlan() {
+            console.log('🚀 Starting lesson plan generation...');
+            
             if (!currentLessonData) {
                 alert('Please select a lesson first by going back to the lesson companion.');
                 return;
             }
 
-            const apiKey = document.getElementById('api-key').value;
-            if (!apiKey) {
-                alert('Please enter your OpenAI API key in the Advanced Settings.');
-                return;
-            }
+            console.log('📚 Current lesson data:', currentLessonData);
 
             // Save user settings
             saveUserSettings();
@@ -773,9 +806,11 @@
             try {
                 // Prepare the AI prompt
                 const prompt = buildAIPrompt();
+                console.log('📝 Built AI prompt, length:', prompt.length);
                 
                 // Call OpenAI API
                 const lessonPlan = await callOpenAIAPI(prompt);
+                console.log('✅ Received lesson plan from AI');
                 
                 // Display the generated lesson plan
                 displayGeneratedLessonPlan(lessonPlan);
@@ -783,7 +818,7 @@
                 updateAPIStatus('success', '✅ Lesson plan generated successfully!');
                 
             } catch (error) {
-                console.error('Error generating lesson plan:', error);
+                console.error('❌ Error generating lesson plan:', error);
                 updateAPIStatus('error', '❌ Error generating lesson plan: ' + error.message);
                 
                 // Show error in output panel
@@ -883,9 +918,47 @@ Please make the lesson plan practical, engaging, and easy to implement. Use spec
 
         // Call OpenAI API
         async function callOpenAIAPI(prompt) {
-            const apiKey = document.getElementById('api-key').value;
             const model = document.getElementById('ai-model').value;
             const creativity = parseFloat(document.getElementById('creativity-level').value);
+
+            // First try to use server-side API (Railway environment)
+            try {
+                const response = await fetch('/api/generate-lesson-plan', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        prompt: prompt,
+                        model: model,
+                        temperature: creativity,
+                        max_tokens: 4000
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    return data.content;
+                } else if (response.status === 503) {
+                    // Server API not available, fall back to client-side
+                    return await callOpenAIClientSide(prompt, model, creativity);
+                } else {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || `Server request failed: ${response.status}`);
+                }
+            } catch (error) {
+                console.log('Server API not available, trying client-side:', error.message);
+                return await callOpenAIClientSide(prompt, model, creativity);
+            }
+        }
+
+        // Fallback to client-side OpenAI API
+        async function callOpenAIClientSide(prompt, model, creativity) {
+            const apiKey = document.getElementById('api-key').value;
+            
+            if (!apiKey) {
+                throw new Error('No API key available. Please contact your administrator or enter your own API key.');
+            }
 
             const response = await fetch('https://api.openai.com/v1/chat/completions', {
                 method: 'POST',

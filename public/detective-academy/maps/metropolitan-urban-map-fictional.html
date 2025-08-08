@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Case #5: Metropolitan Urban Planning Map - Geographic Detective Academy</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #f39c12;
+            --urban-blue: #3498db;
+            --danger-color: #e74c3c;
+            --success-color: #27ae60;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+        
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            background: rgba(52,152,219,0.9);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .back-btn:hover {
+            background: rgba(52,152,219,1);
+            transform: translateY(-2px);
+        }
+        
+        .detective-header {
+            background: linear-gradient(135deg, var(--urban-blue) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        
+        .case-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.5rem;
+            font-weight: 900;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            margin-bottom: 10px;
+        }
+        
+        .case-subtitle {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+        
+        .mission-brief {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            line-height: 1.6;
+            backdrop-filter: blur(10px);
+        }
+        
+        #urbanMap {
+            height: 75vh;
+            width: 100%;
+            border: 3px solid var(--urban-blue);
+            border-radius: 15px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+            margin: 20px auto;
+        }
+        
+        .map-container {
+            padding: 20px;
+            background: white;
+            margin: 0;
+            border-radius: 0 0 15px 15px;
+        }
+        
+        .map-controls {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            padding: 15px;
+            background: rgba(255,255,255,0.9);
+            border-bottom: 2px solid var(--urban-blue);
+        }
+        
+        .control-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        
+        .detective-btn {
+            background: linear-gradient(135deg, var(--urban-blue) 0%, var(--secondary-color) 100%);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 20px;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        
+        .detective-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52,152,219,0.4);
+        }
+        
+        .detective-btn.active {
+            background: linear-gradient(135deg, var(--accent-color) 0%, #e67e22 100%);
+            color: #333;
+        }
+        
+        .evidence-counter {
+            background: var(--danger-color);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+        
+        .fictional-city-notice {
+            position: absolute !important;
+            bottom: 10px !important;
+            left: 10px !important;
+            z-index: 1000 !important;
+            background: rgba(44,62,80,0.95) !important;
+            color: white !important;
+            padding: 12px !important;
+            border-radius: 8px !important;
+            font-size: 12px !important;
+            max-width: 280px !important;
+            backdrop-filter: blur(10px) !important;
+            border: 1px solid rgba(255,255,255,0.2) !important;
+        }
+        
+        /* Custom fictional city background */
+        .fictional-city-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(145deg, #ecf0f1 0%, #bdc3c7 50%, #95a5a6 100%);
+            z-index: 1;
+        }
+        
+        /* Grid overlay for city blocks */
+        .city-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(to right, rgba(0,0,0,0.1) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0,0,0,0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: 2;
+        }
+        
+        /* District overlay elements */
+        .district-overlay {
+            position: absolute;
+            border: 2px solid;
+            border-radius: 8px;
+            backdrop-filter: blur(2px);
+            z-index: 10;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .district-overlay:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        
+        .district-label {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255,255,255,0.9);
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+            text-align: center;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+        
+        @media print {
+            .detective-header, .map-controls, .back-btn { display: none; }
+            #urbanMap { height: 100vh; border: none; }
+        }
+    </style>
+</head>
+<body>
+    <button class="back-btn" onclick="window.history.back()">← Back to Maps Central</button>
+    
+    <div class="detective-header">
+        <h1 class="case-title">🏙️ CASE #5: MYSTERY IN THE METROPOLIS</h1>
+        <p class="case-subtitle">Urban Planning Investigation - Vanishing Green Spaces</p>
+        <div class="mission-brief">
+            <strong>MISSION:</strong> The growing city of Urbanopolis (population 2 million) has experienced rapid development over the past 5 years. 
+            Community groups report that green spaces - parks, community gardens, and natural areas - are mysteriously disappearing despite 
+            the city's official plan calling for a 20% increase in green space. Investigate the development patterns and identify who is 
+            responsible for the vanishing green spaces.
+        </div>
+    </div>
+    
+    <div class="map-controls">
+        <div class="control-group">
+            <span class="evidence-counter" id="evidence-count">Evidence Found: 0/8</span>
+        </div>
+        <div class="control-group">
+            <button class="detective-btn" onclick="toggleLayer('zoning')" id="zoning-btn">🏗️ Zoning Districts</button>
+            <button class="detective-btn" onclick="toggleLayer('transportation')" id="transport-btn">🚇 Transportation</button>
+            <button class="detective-btn" onclick="toggleLayer('green_spaces')" id="green-btn">🌳 Green Spaces</button>
+        </div>
+        <div class="control-group">
+            <button class="detective-btn" onclick="toggleLayer('development')" id="dev-btn">📈 Development Projects</button>
+            <button class="detective-btn" onclick="toggleLayer('population')" id="pop-btn">🏘️ Population</button>
+            <button class="detective-btn" onclick="toggleLayer('evidence')" id="evidence-btn">🔍 Evidence</button>
+        </div>
+        <div class="control-group">
+            <button class="detective-btn" onclick="resetInvestigation()">🔄 Reset Investigation</button>
+            <button class="detective-btn" onclick="printMap()">🖨️ Print Map</button>
+        </div>
+    </div>
+    
+    <div class="map-container">
+        <div id="urbanMap">
+            <!-- Fictional city background -->
+            <div class="fictional-city-canvas">
+                <!-- City grid overlay -->
+                <div class="city-grid"></div>
+                
+                <!-- Fictional city notice -->
+                <div class="fictional-city-notice">
+                    <strong>🏙️ FICTIONAL CITY SIMULATION</strong><br>
+                    <strong>Urbanopolis</strong> - Educational Investigation<br>
+                    <em>Population: 2 million residents</em><br>
+                    <small>Geographic features simulated for learning</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Fictional city investigation system
+        let activeLayer = null;
+        let evidenceFound = 0;
+        const totalEvidence = 8;
+        let discoveredEvidence = new Set();
+        
+        // Fictional Urbanopolis districts and features
+        const cityDistricts = {
+            downtown: {
+                name: "Downtown Core",
+                x: 200, y: 150, width: 150, height: 100,
+                color: "#9b59b6",
+                type: "Commercial High-Rise",
+                description: "Major business district with 47-story towers. Originally had Central Park (12 acres) - REMOVED 2022 for Metropolis Tower development.",
+                green_status: "MAJOR DEFICIT - Lost 12 acres, no replacement"
+            },
+            riverside: {
+                name: "Riverside Mixed-Use",
+                x: 50, y: 100, width: 120, height: 80,
+                color: "#3498db", 
+                type: "Mixed-Use Development",
+                description: "Waterfront development zone. Lost Riverside Community Gardens (8 acres) in 2023.",
+                green_status: "SIGNIFICANT LOSS - Gardens replaced by condos"
+            },
+            northside: {
+                name: "Northside Residential",
+                x: 400, y: 50, width: 180, height: 120,
+                color: "#2ecc71",
+                type: "High-Density Residential", 
+                description: "Growing residential area. Oakwood Nature Preserve (15 acres) under threat.",
+                green_status: "THREATENED - Preserve zoned for development"
+            },
+            westend: {
+                name: "West End Suburbs",
+                x: 80, y: 250, width: 200, height: 90,
+                color: "#95a5a6",
+                type: "Low-Density Residential",
+                description: "Established suburban neighborhoods. Maintains some green space.",
+                green_status: "STABLE - Meeting minimum requirements"
+            },
+            industrial: {
+                name: "Industrial Zone",
+                x: 350, y: 300, width: 160, height: 110,
+                color: "#e67e22",
+                type: "Heavy Industrial",
+                description: "Manufacturing and logistics hub. No green space requirements.",
+                green_status: "EXEMPT - Industrial zoning"
+            },
+            commercial: {
+                name: "Commercial Strip",
+                x: 150, y: 350, width: 170, height: 70,
+                color: "#f39c12",
+                type: "Commercial Strip Development",
+                description: "Shopping centers and services. Minimal green space compliance.",
+                green_status: "BELOW STANDARD - 3% vs 15% required"
+            }
+        };
+        
+        const greenSpaces = {
+            disappeared: [
+                {name: "Central Park", x: 240, y: 170, status: "REMOVED 2022", acres: 12, threat: "Metropolis Tower"},
+                {name: "Riverside Gardens", x: 90, y: 130, status: "REMOVED 2023", acres: 8, threat: "Luxury Condos"},
+                {name: "Heritage Square", x: 420, y: 180, status: "REMOVED 2024", acres: 5, threat: "Office Complex"}
+            ],
+            threatened: [
+                {name: "Oakwood Preserve", x: 480, y: 100, status: "UNDER THREAT", acres: 15, threat: "Proposed Mall"},
+                {name: "Maple Grove", x: 180, y: 280, status: "PENDING REMOVAL", acres: 6, threat: "Parking Structure"}
+            ],
+            existing: [
+                {name: "City Park", x: 450, y: 350, status: "PROTECTED", acres: 10, threat: "None"},
+                {name: "Waterfront Trail", x: 30, y: 150, status: "EXISTING", acres: 4, threat: "Monitoring"}
+            ]
+        };
+        
+        const evidenceLocations = [
+            {id: "E001", x: 250, y: 180, type: "Financial Records", description: "Metropolis Corp donation to Mayor's campaign"},
+            {id: "E002", x: 100, y: 140, type: "Zoning Documents", description: "Emergency zoning change for Riverside project"},
+            {id: "E003", x: 430, y: 190, type: "Email Communications", description: "Planning Director private meetings with developers"},
+            {id: "E004", x: 200, y: 300, type: "Construction Permits", description: "Expedited permits bypassing environmental review"},
+            {id: "E005", x: 490, y: 110, type: "Public Records", description: "Oakwood Preserve secretly rezoned commercial"},
+            {id: "E006", x: 180, y: 290, type: "Financial Transfers", description: "$50K payment to city council member"},
+            {id: "E007", x: 280, y: 200, type: "Meeting Minutes", description: "Closed-door sessions on green space policy"},
+            {id: "E008", x: 370, y: 250, type: "Contract Documents", description: "No-bid contracts to Metropolis Corp subsidiaries"}
+        ];
+        
+        // Initialize the fictional city visualization
+        function initializeFictionalCity() {
+            const mapContainer = document.getElementById('urbanMap');
+            mapContainer.style.position = 'relative';
+            mapContainer.style.overflow = 'hidden';
+            
+            // Add districts
+            Object.keys(cityDistricts).forEach(key => {
+                const district = cityDistricts[key];
+                createDistrict(district, key);
+            });
+            
+            // Add green spaces
+            addGreenSpaces();
+            
+            // Add evidence markers
+            addEvidenceMarkers();
+            
+            console.log('🏙️ Fictional Urbanopolis City Initialized');
+            console.log('🔍 Case #5: Metropolitan Urban Planning Investigation Ready');
+            console.log('🌳 Mission: Investigate vanishing green spaces corruption');
+        }
+        
+        function createDistrict(district, id) {
+            const districtDiv = document.createElement('div');
+            districtDiv.className = 'district-overlay';
+            districtDiv.id = `district-${id}`;
+            districtDiv.style.left = district.x + 'px';
+            districtDiv.style.top = district.y + 'px';
+            districtDiv.style.width = district.width + 'px';
+            districtDiv.style.height = district.height + 'px';
+            districtDiv.style.borderColor = district.color;
+            districtDiv.style.backgroundColor = district.color + '20';
+            districtDiv.style.display = 'none'; // Hidden by default
+            
+            const label = document.createElement('div');
+            label.className = 'district-label';
+            label.textContent = district.name;
+            label.style.backgroundColor = district.color + 'CC';
+            label.style.color = 'white';
+            districtDiv.appendChild(label);
+            
+            districtDiv.onclick = () => showDistrictInfo(district);
+            
+            document.getElementById('urbanMap').appendChild(districtDiv);
+        }
+        
+        function addGreenSpaces() {
+            ['disappeared', 'threatened', 'existing'].forEach(category => {
+                greenSpaces[category].forEach(space => {
+                    const spaceDiv = document.createElement('div');
+                    spaceDiv.className = `green-space ${category}`;
+                    spaceDiv.style.position = 'absolute';
+                    spaceDiv.style.left = space.x + 'px';
+                    spaceDiv.style.top = space.y + 'px';
+                    spaceDiv.style.width = '30px';
+                    spaceDiv.style.height = '30px';
+                    spaceDiv.style.borderRadius = '50%';
+                    spaceDiv.style.display = 'none';
+                    spaceDiv.style.cursor = 'pointer';
+                    spaceDiv.style.zIndex = '100';
+                    spaceDiv.style.border = '3px solid white';
+                    spaceDiv.style.display = 'flex';
+                    spaceDiv.style.alignItems = 'center';
+                    spaceDiv.style.justifyContent = 'center';
+                    spaceDiv.style.fontWeight = 'bold';
+                    
+                    if (category === 'disappeared') {
+                        spaceDiv.style.backgroundColor = '#e74c3c';
+                        spaceDiv.innerHTML = '❌';
+                        spaceDiv.title = `${space.name} - REMOVED ${space.status.split(' ')[1]} (${space.acres} acres)`;
+                    } else if (category === 'threatened') {
+                        spaceDiv.style.backgroundColor = '#f39c12';
+                        spaceDiv.innerHTML = '⚠️';
+                        spaceDiv.title = `${space.name} - ${space.status} (${space.acres} acres)`;
+                    } else {
+                        spaceDiv.style.backgroundColor = '#27ae60';
+                        spaceDiv.innerHTML = '🌳';
+                        spaceDiv.title = `${space.name} - ${space.status} (${space.acres} acres)`;
+                    }
+                    
+                    spaceDiv.onclick = () => showGreenSpaceInfo(space);
+                    
+                    document.getElementById('urbanMap').appendChild(spaceDiv);
+                });
+            });
+        }
+        
+        function addEvidenceMarkers() {
+            evidenceLocations.forEach(evidence => {
+                const evidenceDiv = document.createElement('div');
+                evidenceDiv.className = 'evidence-marker';
+                evidenceDiv.style.position = 'absolute';
+                evidenceDiv.style.left = evidence.x + 'px';
+                evidenceDiv.style.top = evidence.y + 'px';
+                evidenceDiv.style.width = '35px';
+                evidenceDiv.style.height = '35px';
+                evidenceDiv.style.borderRadius = '50%';
+                evidenceDiv.style.backgroundColor = '#e74c3c';
+                evidenceDiv.style.color = 'white';
+                evidenceDiv.style.display = 'none';
+                evidenceDiv.style.cursor = 'pointer';
+                evidenceDiv.style.zIndex = '200';
+                evidenceDiv.style.border = '3px solid white';
+                evidenceDiv.style.fontSize = '16px';
+                evidenceDiv.style.display = 'flex';
+                evidenceDiv.style.alignItems = 'center';
+                evidenceDiv.style.justifyContent = 'center';
+                evidenceDiv.style.fontWeight = 'bold';
+                evidenceDiv.innerHTML = '🔍';
+                evidenceDiv.title = `Evidence ${evidence.id}: ${evidence.type}`;
+                
+                evidenceDiv.onclick = () => discoverEvidence(evidence);
+                
+                document.getElementById('urbanMap').appendChild(evidenceDiv);
+            });
+        }
+        
+        function toggleLayer(layerType) {
+            const btn = document.getElementById(layerType === 'zoning' ? 'zoning-btn' : 
+                                               layerType === 'transportation' ? 'transport-btn' :
+                                               layerType === 'green_spaces' ? 'green-btn' :
+                                               layerType === 'development' ? 'dev-btn' :
+                                               layerType === 'population' ? 'pop-btn' : 'evidence-btn');
+            
+            // Toggle button state
+            if (btn.classList.contains('active')) {
+                btn.classList.remove('active');
+                hideLayer(layerType);
+            } else {
+                // Remove active state from other buttons
+                document.querySelectorAll('.detective-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                hideAllLayers();
+                showLayer(layerType);
+            }
+        }
+        
+        function showLayer(layerType) {
+            if (layerType === 'zoning') {
+                document.querySelectorAll('.district-overlay').forEach(el => el.style.display = 'block');
+            } else if (layerType === 'green_spaces') {
+                document.querySelectorAll('.green-space').forEach(el => el.style.display = 'flex');
+            } else if (layerType === 'evidence') {
+                document.querySelectorAll('.evidence-marker').forEach(el => el.style.display = 'flex');
+            }
+            // Add other layer types as needed
+        }
+        
+        function hideLayer(layerType) {
+            if (layerType === 'zoning') {
+                document.querySelectorAll('.district-overlay').forEach(el => el.style.display = 'none');
+            } else if (layerType === 'green_spaces') {
+                document.querySelectorAll('.green-space').forEach(el => el.style.display = 'none');
+            } else if (layerType === 'evidence') {
+                document.querySelectorAll('.evidence-marker').forEach(el => el.style.display = 'none');
+            }
+        }
+        
+        function hideAllLayers() {
+            document.querySelectorAll('.district-overlay, .green-space, .evidence-marker').forEach(el => {
+                el.style.display = 'none';
+            });
+        }
+        
+        function showDistrictInfo(district) {
+            alert(`🏗️ ${district.name}\n\nZoning: ${district.type}\n\nDescription: ${district.description}\n\nGreen Space Status: ${district.green_status}`);
+        }
+        
+        function showGreenSpaceInfo(space) {
+            alert(`🌳 ${space.name}\n\nSize: ${space.acres} acres\nStatus: ${space.status}\nThreat: ${space.threat}\n\n${space.status.includes('REMOVED') ? 'This green space was lost to development - investigate who approved this!' : space.status.includes('THREAT') ? 'This space is at risk - monitor approval processes!' : 'This space is currently protected.'}`);
+        }
+        
+        function discoverEvidence(evidence) {
+            if (!discoveredEvidence.has(evidence.id)) {
+                discoveredEvidence.add(evidence.id);
+                evidenceFound++;
+                updateEvidenceCounter();
+                
+                alert(`🔍 EVIDENCE DISCOVERED!\n\nEvidence ${evidence.id}: ${evidence.type}\n\nDescription: ${evidence.description}\n\nProgress: ${evidenceFound}/${totalEvidence} Evidence Items Found\n\n${evidenceFound >= 6 ? 'You are building a strong case against the corruption network!' : 'Keep investigating to uncover the full conspiracy!'}`);
+            } else {
+                alert(`🔍 Evidence ${evidence.id} already discovered.\n\nType: ${evidence.type}\nDescription: ${evidence.description}`);
+            }
+        }
+        
+        function updateEvidenceCounter() {
+            const counter = document.getElementById('evidence-count');
+            counter.textContent = `Evidence Found: ${evidenceFound}/${totalEvidence}`;
+            
+            if (evidenceFound >= totalEvidence) {
+                counter.style.backgroundColor = '#27ae60';
+                setTimeout(() => {
+                    alert('🎉 INVESTIGATION COMPLETE!\n\nYou have uncovered the coordinated scheme between Metropolis Development Corporation and city officials that is systematically converting green spaces to profitable developments.\n\nKey Findings:\n• $50,000+ in campaign contributions to city officials\n• Emergency zoning changes without public review\n• No-bid contracts to developer subsidiaries\n• 25 acres of green space lost in 2 years\n\nRecommendation: Turn evidence over to state prosecutor for corruption charges!');
+                }, 500);
+            } else if (evidenceFound >= 4) {
+                counter.style.backgroundColor = '#f39c12';
+            }
+        }
+        
+        function resetInvestigation() {
+            discoveredEvidence.clear();
+            evidenceFound = 0;
+            updateEvidenceCounter();
+            hideAllLayers();
+            document.querySelectorAll('.detective-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('evidence-count').style.backgroundColor = '#e74c3c';
+            alert('🔄 Investigation Reset\n\nAll evidence cleared. Begin your investigation by exploring the different layers to uncover the green space conspiracy!');
+        }
+        
+        function printMap() {
+            window.print();
+        }
+        
+        // Initialize the fictional city when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeFictionalCity();
+            
+            // Auto-show zoning layer as starting point
+            setTimeout(() => {
+                document.getElementById('zoning-btn').click();
+            }, 1000);
+            
+            // Welcome message
+            setTimeout(() => {
+                alert('🏙️ Welcome to Urbanopolis Investigation!\n\nMission: Investigate the mysterious disappearance of green spaces in this growing city.\n\n🔍 Investigation Tips:\n• Click layer buttons to explore different city features\n• Click on districts and markers to gather information\n• Look for evidence markers (🔍) to build your case\n• Find all 8 pieces of evidence to solve the case!\n\nStart by exploring the Zoning Districts to understand the city layout.');
+            }, 1500);
+        });
+    </script>
+</body>
+</html>

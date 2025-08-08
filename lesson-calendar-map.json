@@ -1,0 +1,120 @@
+{
+  "module1": {
+    "moduleNumber": 1,
+    "title": "Introduction to Geography",
+    "lessons": [
+      {
+        "lessonNumber": 1,
+        "title": "What is Geography?",
+        "duration": "45 minutes",
+        "content": "Introduction to the field of geography and its importance in understanding our world.",
+        "teacherContent": {
+          "objectives": [
+            "Define geography and its main branches",
+            "Understand the importance of geographic thinking",
+            "Identify key geographic tools and methods"
+          ],
+          "materials": [
+            "Textbook Chapter 1",
+            "World map",
+            "Geographic tools presentation"
+          ],
+          "procedures": [
+            "Opening discussion: What is geography?",
+            "Present key geographic concepts",
+            "Map skills activity",
+            "Wrap-up and preview next lesson"
+          ],
+          "assessments": [
+            "Exit ticket with key terms",
+            "Quick map identification quiz"
+          ],
+          "vocabulary": [
+            {"term": "geography", "definition": "The study of Earth's physical and human features"},
+            {"term": "physical geography", "definition": "The study of Earth's natural features"},
+            {"term": "human geography", "definition": "The study of human activities and their impact on Earth"}
+          ]
+        }
+      }
+    ]
+  },
+  "module2": {
+    "moduleNumber": 2,
+    "title": "Physical Geography",
+    "lessons": [
+      {
+        "lessonNumber": 1,
+        "title": "Earth's Features",
+        "duration": "45 minutes",
+        "content": "Exploring Earth's major physical features and landforms.",
+        "teacherContent": {
+          "objectives": [
+            "Identify major landforms and their characteristics",
+            "Understand how physical features affect human activities",
+            "Analyze the relationship between geography and climate"
+          ],
+          "materials": [
+            "Textbook Chapter 2",
+            "Topographic maps",
+            "Landform images"
+          ],
+          "procedures": [
+            "Review previous lesson",
+            "Introduce major landforms",
+            "Map analysis activity",
+            "Discussion on human-environment interaction"
+          ],
+          "assessments": [
+            "Landform identification worksheet",
+            "Group presentation on local geography"
+          ],
+          "vocabulary": [
+            {"term": "landform", "definition": "A natural feature of Earth's surface"},
+            {"term": "topography", "definition": "The arrangement of natural and artificial features of an area"},
+            {"term": "elevation", "definition": "Height above sea level"}
+          ]
+        }
+      },
+      {
+        "lessonNumber": 2,
+        "title": "Water on Earth",
+        "duration": "50 minutes",
+        "content": "Water is the dominant feature on Earth's surface. This lesson explores the distribution and importance of water resources, including saltwater and freshwater systems, the water cycle, and human impact on water resources.",
+        "teacherContent": {
+          "objectives": [
+            "Understand the distribution of water on Earth",
+            "Identify different types of water bodies and their characteristics",
+            "Explain the water cycle and its importance",
+            "Analyze human impact on water resources"
+          ],
+          "materials": [
+            "Textbook Chapter 2, Section 2",
+            "Water cycle diagram",
+            "World water distribution maps",
+            "Calculator for water statistics"
+          ],
+          "procedures": [
+            "Opening: Quick facts about Earth's water",
+            "Explore saltwater vs. freshwater distribution",
+            "Water cycle review and discussion",
+            "Human impact on water resources",
+            "Case study: Local water issues"
+          ],
+          "assessments": [
+            "Water cycle diagram labeling",
+            "Analysis of local water usage data",
+            "Exit ticket on key water facts"
+          ],
+          "vocabulary": [
+            {"term": "freshwater", "definition": "Water that contains little or no salt"},
+            {"term": "saltwater", "definition": "Water that contains a high concentration of salt"},
+            {"term": "glaciers", "definition": "Large masses of ice that move slowly over land"},
+            {"term": "surface water", "definition": "Water that collects on the surface of the ground"},
+            {"term": "groundwater", "definition": "Water found underground in soil and rock"},
+            {"term": "water cycle", "definition": "The continuous movement of water through Earth's atmosphere, land, and oceans"}
+          ]
+        }
+      }
+    ]
+  }
+}

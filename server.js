@@ -1859,9 +1859,42 @@ app.get('/api/curriculum', async (req, res) => {
 // Get all modules
 app.get('/api/modules', async (req, res) => {
   try {
+    // First try to get from database
     const modules = await Module.find().sort({ moduleNumber: 1 }).populate('curriculum');
-    res.json(modules);
+    
+    if (modules.length > 0) {
+      res.json(modules);
+      return;
+    }
+    
+    // Fallback: get from lesson map file
+    const enhancedMapPath = path.join(__dirname, 'lesson-calendar-map-enhanced.json');
+    const regularMapPath = path.join(__dirname, 'lesson-calendar-map.json');
+    
+    let mapPath = enhancedMapPath;
+    if (!fs.existsSync(enhancedMapPath)) {
+      mapPath = regularMapPath;
+    }
+    
+    if (fs.existsSync(mapPath)) {
+      const lessonMap = JSON.parse(fs.readFileSync(mapPath, 'utf8'));
+      
+      // Convert lesson map to modules array
+      const moduleArray = Object.values(lessonMap).map(moduleData => ({
+        _id: `module-${moduleData.moduleNumber}`,
+        moduleNumber: moduleData.moduleNumber,
+        title: moduleData.title,
+        lessons: moduleData.lessons || []
+      }));
+      
+      res.json(moduleArray);
+      return;
+    }
+    
+    // If no data available, return empty array
+    res.json([]);
   } catch (error) {
+    console.error('Error in /api/modules:', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -1983,6 +2016,57 @@ app.get('/api/modules/:moduleNumber/lessons/:lessonNumber', async (req, res) => 
   } catch (error) {
     console.error('Error fetching lesson:', error);
     res.status(500).json({ error: error.message });
+  }
+});
+
+// OpenAI API integration for AI Lesson Planner
+app.get('/api/openai-key-status', (req, res) => {
+  const hasKey = !!process.env.OPENAI_API_KEY;
+  res.json({ hasKey });
+});
+
+app.post('/api/generate-lesson-plan', async (req, res) => {
+  try {
+    const { prompt, model = 'gpt-4-turbo', temperature = 0.7, max_tokens = 4000 } = req.body;
+    
+    if (!process.env.OPENAI_API_KEY) {
+      return res.status(503).json({ error: 'OpenAI API key not configured on server' });
+    }
+
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: model,
+        messages: [
+          {
+            role: 'system',
+            content: 'You are an expert geography teacher with 20+ years of experience creating engaging, standards-aligned lesson plans. You specialize in 7th-grade geography and understand how to make complex geographic concepts accessible and interesting for middle school students.'
+          },
+          {
+            role: 'user',
+            content: prompt
+          }
+        ],
+        temperature: temperature,
+        max_tokens: max_tokens
+      })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      return res.status(response.status).json({ error: errorData.error?.message || 'OpenAI API request failed' });
+    }
+
+    const data = await response.json();
+    res.json({ content: data.choices[0].message.content });
+    
+  } catch (error) {
+    console.error('Error generating lesson plan:', error);
+    res.status(500).json({ error: 'Internal server error while generating lesson plan' });
   }
 });
 

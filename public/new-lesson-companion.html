@@ -5847,14 +5847,69 @@
             const lessonContent = document.getElementById('lesson-content');
             if (!lessonContent) return 'No student content available';
 
+            console.log('🔍 Extracting student content from lesson display...');
+
             // Try to get the main lesson content, excluding navigation elements
             const contentClone = lessonContent.cloneNode(true);
             
             // Remove any navigation or UI elements
-            const elementsToRemove = contentClone.querySelectorAll('.navigation, .lesson-nav, button, .btn');
+            const elementsToRemove = contentClone.querySelectorAll('.navigation, .lesson-nav, button, .btn, .loading');
             elementsToRemove.forEach(el => el.remove());
 
-            return contentClone.innerHTML || contentClone.textContent || 'No student content available';
+            // Extract specific sections if they exist
+            let structuredContent = '';
+            
+            // Look for "The Big Idea" section
+            const bigIdea = contentClone.querySelector('h2, h3, h4, div');
+            if (bigIdea && bigIdea.textContent.includes('Big Idea')) {
+                const bigIdeaSection = bigIdea.parentElement || bigIdea;
+                structuredContent += '<div class="big-idea">' + bigIdeaSection.innerHTML + '</div>\n';
+            }
+
+            // Look for "Main Ideas" section
+            const mainIdeas = contentClone.querySelector('*');
+            if (mainIdeas) {
+                const allText = contentClone.textContent || contentClone.innerText;
+                if (allText.includes('Main Ideas')) {
+                    // Extract main ideas section
+                    const mainIdeasMatch = allText.match(/Main Ideas(.*?)(?=Key Terms|Earth's|$)/s);
+                    if (mainIdeasMatch) {
+                        structuredContent += '<div class="main-ideas"><h3>Main Ideas</h3>' + mainIdeasMatch[1] + '</div>\n';
+                    }
+                }
+            }
+
+            // Look for "Key Terms and Places" section
+            const keyTerms = contentClone.querySelector('*');
+            if (keyTerms) {
+                const allText = contentClone.textContent || contentClone.innerText;
+                if (allText.includes('Key Terms')) {
+                    const keyTermsMatch = allText.match(/Key Terms and Places(.*?)(?=Earth's|If you|$)/s);
+                    if (keyTermsMatch) {
+                        structuredContent += '<div class="key-terms"><h3>Key Terms and Places</h3>' + keyTermsMatch[1] + '</div>\n';
+                    }
+                }
+            }
+
+            // If we got structured content, use that
+            if (structuredContent) {
+                console.log('✅ Extracted structured student content');
+                return structuredContent;
+            }
+
+            // Otherwise, get the full content but clean it up
+            let content = contentClone.innerHTML || contentClone.textContent || '';
+            
+            // Remove extra whitespace and clean up
+            content = content.replace(/\s+/g, ' ').trim();
+            
+            // Limit length to prevent overwhelming the AI
+            if (content.length > 2000) {
+                content = content.substring(0, 2000) + '...';
+            }
+
+            console.log('📄 Extracted general student content, length:', content.length);
+            return content || 'No student content available';
         }
 
         // Extract objectives from current lesson
