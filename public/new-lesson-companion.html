@@ -1982,6 +1982,16 @@
             const dateStr = date.toISOString().split('T')[0];
             const dayOfWeek = date.getDay();
             
+            // DEBUG: Log September 11 specifically
+            if (dateStr === '2025-09-11') {
+                console.log('🔍 DEBUGGING September 11, 2025:');
+                console.log('Date string:', dateStr);
+                console.log('Day of week:', dayOfWeek);
+                console.log('Is weekend?', dayOfWeek === 0 || dayOfWeek === 6);
+                console.log('Is holiday?', schoolCalendar.holidays.includes(dateStr));
+                console.log('Holidays array:', schoolCalendar.holidays);
+            }
+            
             // Not weekend
             if (dayOfWeek === 0 || dayOfWeek === 6) return false;
             
@@ -1990,6 +2000,11 @@
             
             // Within school year (from school opens to last day)
             if (date < schoolCalendar.schoolOpens || date > schoolCalendar.lastDay) return false;
+            
+            // DEBUG: Final result for September 11
+            if (dateStr === '2025-09-11') {
+                console.log('✅ September 11 FINAL RESULT: SHOULD BE SCHOOL DAY');
+            }
             
             return true;
         }
