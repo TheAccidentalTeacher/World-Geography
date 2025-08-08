@@ -1977,20 +1977,41 @@
             return null;
         }
         
-        // Check if a date is a school day (for calendar display)
+        // Check if a date is a school day using local date components (no timezone conversion)
+        function isSchoolDayLocal(year, month, day) {
+            const localDateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            const dayOfWeek = new Date(year, month, day).getDay();
+            
+            // Not weekend
+            if (dayOfWeek === 0 || dayOfWeek === 6) return false;
+            
+            // Not a holiday
+            if (schoolCalendar.holidays.includes(localDateStr)) return false;
+            
+            // Must be within school year
+            const startDate = new Date(2025, 7, 26); // August 26, 2025
+            const endDate = new Date(2026, 4, 21);   // May 21, 2026
+            const currentDate = new Date(year, month, day);
+            
+            return currentDate >= startDate && currentDate <= endDate;
+        }
+
+        // Check if a date is a lesson day using local date components
+        function isLessonDayLocal(year, month, day) {
+            if (!isSchoolDayLocal(year, month, day)) return false;
+            
+            // Orientation period check
+            const orientationStart = new Date(2025, 7, 26); // August 26, 2025
+            const orientationEnd = new Date(2025, 8, 5);    // September 5, 2025
+            const currentDate = new Date(year, month, day);
+            
+            return !(currentDate >= orientationStart && currentDate <= orientationEnd);
+        }
+
+        // Original timezone-based function for backward compatibility
         function isSchoolDay(date) {
             const dateStr = date.toISOString().split('T')[0];
             const dayOfWeek = date.getDay();
-            
-            // DEBUG: Log September 11 specifically
-            if (dateStr === '2025-09-11') {
-                console.log('🔍 DEBUGGING September 11, 2025:');
-                console.log('Date string:', dateStr);
-                console.log('Day of week:', dayOfWeek);
-                console.log('Is weekend?', dayOfWeek === 0 || dayOfWeek === 6);
-                console.log('Is holiday?', schoolCalendar.holidays.includes(dateStr));
-                console.log('Holidays array:', schoolCalendar.holidays);
-            }
             
             // Not weekend
             if (dayOfWeek === 0 || dayOfWeek === 6) return false;
@@ -2000,11 +2021,6 @@
             
             // Within school year (from school opens to last day)
             if (date < schoolCalendar.schoolOpens || date > schoolCalendar.lastDay) return false;
-            
-            // DEBUG: Final result for September 11
-            if (dateStr === '2025-09-11') {
-                console.log('✅ September 11 FINAL RESULT: SHOULD BE SCHOOL DAY');
-            }
             
             return true;
         }
@@ -2181,75 +2197,38 @@
         
         // Create a single calendar day element
         function createCalendarDay(date) {
-            const dateStr = date.toISOString().split('T')[0];
+            // Fix timezone issue by using local date components
+            const year = date.getFullYear();
+            const month = date.getMonth();
+            const day = date.getDate();
             
-            // DEBUG: Track all calendar day creations around September 11
-            if (dateStr >= '2025-09-10' && dateStr <= '2025-09-12') {
-                console.log(`🗓️ Creating calendar day for ${dateStr} (day ${date.getDate()})`);
-            }
+            // Create a clean local date string for comparison
+            const localDateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
             
             const dayElement = document.createElement('div');
             dayElement.className = 'calendar-day';
             
             const dayNumber = document.createElement('div');
             dayNumber.className = 'day-number';
-            dayNumber.textContent = date.getDate();
-            
-            // DEBUG: Check if we're processing the wrong date
-            if (dateStr === '2025-09-11') {
-                console.log('🗓️ September 11 DATE CHECK:');
-                console.log('Input date object:', date);
-                console.log('Date string:', dateStr);
-                console.log('Day number being displayed:', date.getDate());
-                console.log('Actual date parts:', date.getFullYear(), date.getMonth() + 1, date.getDate());
-            }
+            dayNumber.textContent = day;
             
             const dayContent = document.createElement('div');
             dayContent.className = 'day-content';
             
-            // Determine day type and styling
-            const isSchool = isSchoolDay(date);
-            
-            // DEBUG: Log September 11 specifically in calendar rendering
-            if (dateStr === '2025-09-11') {
-                console.log('📅 CALENDAR RENDERING September 11, 2025:');
-                console.log('isSchoolDay result:', isSchool);
-                console.log('Will add holiday class?', !isSchool);
-            }
+            // Use local date string instead of ISO string for school day check
+            const isSchool = isSchoolDayLocal(year, month, day);
             
             if (!isSchool) {
                 dayElement.classList.add('holiday');
                 dayContent.textContent = 'No School';
-                
-                // DEBUG: Log September 11 DOM changes
-                if (dateStr === '2025-09-11') {
-                    console.log('🏫 September 11 - ADDING holiday class and "No School" text');
-                    console.log('dayElement classes:', dayElement.className);
-                    console.log('dayContent text:', dayContent.textContent);
-                }
-            } else if (!isLessonDay(date)) {
+            } else if (!isLessonDayLocal(year, month, day)) {
                 // School day but not lesson day (orientation period)
                 dayElement.classList.add('orientation');
                 dayContent.textContent = 'Orientation';
+            } else if (lessonAssignments[localDateStr]) {
+                const assignment = lessonAssignments[localDateStr];
                 
-                // DEBUG: Log September 11 orientation path
-                if (dateStr === '2025-09-11') {
-                    console.log('📚 September 11 - Taking ORIENTATION path');
-                    console.log('isLessonDay result:', isLessonDay(date));
-                    console.log('dayElement classes:', dayElement.className);
-                    console.log('dayContent text:', dayContent.textContent);
-                }
-            } else if (lessonAssignments[dateStr]) {
-                const assignment = lessonAssignments[dateStr];
-                
-                // DEBUG: Log September 11 lesson assignment path
-                if (dateStr === '2025-09-11') {
-                    console.log('📖 September 11 - Taking LESSON ASSIGNMENT path');
-                    console.log('Assignment:', assignment);
-                    console.log('Is completed?', completedLessons[dateStr]);
-                }
-                
-                if (completedLessons[dateStr]) {
+                if (completedLessons[localDateStr]) {
                     dayElement.classList.add('completed');
                     
                     // Add checkbox
@@ -2257,7 +2236,7 @@
                     checkbox.type = 'checkbox';
                     checkbox.className = 'lesson-checkbox';
                     checkbox.checked = true;
-                    checkbox.onchange = () => toggleLessonCompletion(dateStr);
+                    checkbox.onchange = () => toggleLessonCompletion(localDateStr);
                     dayElement.appendChild(checkbox);
                 } else {
                     dayElement.classList.add('assigned');
@@ -2266,7 +2245,7 @@
                     const checkbox = document.createElement('input');
                     checkbox.type = 'checkbox';
                     checkbox.className = 'lesson-checkbox';
-                    checkbox.onchange = () => toggleLessonCompletion(dateStr);
+                    checkbox.onchange = () => toggleLessonCompletion(localDateStr);
                     dayElement.appendChild(checkbox);
                 }
                 
@@ -2318,7 +2297,7 @@
                 `;
                 pushBtn.onclick = (e) => {
                     e.stopPropagation();
-                    pushLessonBack(dateStr);
+                    pushLessonBack(localDateStr);
                 };
                 
                 // Remove button
@@ -2336,37 +2315,31 @@
                 `;
                 removeBtn.onclick = (e) => {
                     e.stopPropagation();
-                    removeLessonAssignment(dateStr);
+                    removeLessonAssignment(localDateStr);
                 };
                 
                 managementDiv.appendChild(loadBtn);
                 managementDiv.appendChild(pushBtn);
                 managementDiv.appendChild(removeBtn);
                 dayContent.appendChild(managementDiv);
-            } else if (isLessonDay(date)) {
+            } else if (isLessonDayLocal(year, month, day)) {
                 dayElement.classList.add('available');
                 dayContent.textContent = 'Available';
                 // Remove click functionality - manage through auto-assign tools
             } else {
                 // School day but not available for lessons (e.g., orientation)
-                dayContent.textContent = date < schoolCalendar.curriculumStart ? 'Orientation' : 'School Day';
+                const currentDate = new Date(year, month, day);
+                dayContent.textContent = currentDate < schoolCalendar.curriculumStart ? 'Orientation' : 'School Day';
             }
             
             // Weekend styling
-            if (date.getDay() === 0 || date.getDay() === 6) {
+            const dayOfWeek = new Date(year, month, day).getDay();
+            if (dayOfWeek === 0 || dayOfWeek === 6) {
                 dayElement.classList.add('weekend');
             }
             
             dayElement.appendChild(dayNumber);
             dayElement.appendChild(dayContent);
-            
-            // DEBUG: Final state check for September 11
-            if (dateStr === '2025-09-11') {
-                console.log('🏁 September 11 FINAL CALENDAR ELEMENT STATE:');
-                console.log('Final classes:', dayElement.className);
-                console.log('Final dayContent text:', dayContent.textContent);
-                console.log('Final dayElement HTML:', dayElement.outerHTML);
-            }
             
             return dayElement;
         }
