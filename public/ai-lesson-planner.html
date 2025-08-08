@@ -315,6 +315,70 @@
             display: block;
         }
 
+        /* Tab System Styles */
+        .output-tabs {
+            display: flex;
+            border-bottom: 2px solid #e9ecef;
+            margin-bottom: 20px;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-radius: 8px 8px 0 0;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .tab-button.active {
+            background: #007bff;
+        }
+
+        .tab-button:not(.active) {
+            background: #6c757d;
+        }
+
+        .tab-button:not(.active):hover {
+            background: #5a6268;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .condensed-reading-btn {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            margin-top: 15px;
+        }
+
+        .condensed-reading-btn:hover {
+            background: linear-gradient(135deg, #218838, #1e7e34);
+            transform: translateY(-2px);
+        }
+
+        .reading-options {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
+        }
+
+        .reading-options h4 {
+            margin-bottom: 15px;
+            color: #495057;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
         @media (max-width: 1200px) {
             .main-content {
                 grid-template-columns: 1fr;
@@ -478,46 +542,153 @@
                     <button onclick="generateLessonPlan()" class="generate-button" id="generate-btn">
                         🚀 Generate AI Lesson Plan
                     </button>
+                    
+                    <button onclick="generateCondensedReading()" class="generate-button condensed-reading-btn" id="condensed-reading-btn" 
+                            style="background: linear-gradient(135deg, #28a745, #20c997); margin-top: 15px;">
+                        📚 Generate Condensed Student Reading
+                    </button>
+                    
+                    <div class="reading-options" id="reading-options" style="margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 10px; display: none;">
+                        <h4 style="margin-bottom: 10px; color: #495057;">📖 Reading Generation Options</h4>
+                        
+                        <div class="control-group">
+                            <label for="reading-complexity">Reading Complexity Level:</label>
+                            <select id="reading-complexity" class="control">
+                                <option value="simplified">Simplified (2 grades below)</option>
+                                <option value="standard" selected>Standard (Grade appropriate)</option>
+                                <option value="advanced">Advanced (1 grade above)</option>
+                                <option value="all-levels">All Three Levels</option>
+                            </select>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label for="reading-length">Target Reading Length:</label>
+                            <select id="reading-length" class="control">
+                                <option value="condensed" selected>Condensed (4-5 paragraphs)</option>
+                                <option value="comprehensive">Comprehensive (6-8 paragraphs)</option>
+                                <option value="detailed">Detailed (8-10 paragraphs)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label for="reading-focus">Reading Focus:</label>
+                            <select id="reading-focus" class="control">
+                                <option value="balanced" selected>Balanced Overview</option>
+                                <option value="geographic">Geographic Emphasis</option>
+                                <option value="cultural">Cultural Emphasis</option>
+                                <option value="historical">Historical Emphasis</option>
+                                <option value="environmental">Environmental Emphasis</option>
+                            </select>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label>
+                                <input type="checkbox" id="include-supports" checked style="margin-right: 8px;">
+                                Include Comprehension Supports (pronunciation guides, margin questions, etc.)
+                            </label>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label>
+                                <input type="checkbox" id="include-assessment" checked style="margin-right: 8px;">
+                                Include Assessment Integration (text-dependent questions, citation practice)
+                            </label>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <!-- Output Panel -->
             <div class="output-panel">
-                <div class="panel-title">
-                    🎯 Generated Lesson Plan
+                <div class="output-tabs" style="display: flex; border-bottom: 2px solid #e9ecef; margin-bottom: 20px;">
+                    <button class="tab-button active" onclick="switchTab('lesson-plan')" id="lesson-plan-tab" 
+                            style="flex: 1; padding: 12px; border: none; background: #007bff; color: white; cursor: pointer; border-radius: 8px 8px 0 0;">
+                        🎯 Lesson Plan
+                    </button>
+                    <button class="tab-button" onclick="switchTab('condensed-reading')" id="condensed-reading-tab"
+                            style="flex: 1; padding: 12px; border: none; background: #6c757d; color: white; cursor: pointer; border-radius: 8px 8px 0 0; margin-left: 2px;">
+                        📚 Student Reading
+                    </button>
                 </div>
 
-                <div class="loading" id="loading">
-                    <div class="loading-spinner"></div>
-                    <h3>🤖 AI is crafting your lesson plan...</h3>
-                    <p>Analyzing content and generating personalized activities</p>
-                </div>
+                <!-- Lesson Plan Tab Content -->
+                <div class="tab-content active" id="lesson-plan-content">
+                    <div class="panel-title">
+                        🎯 Generated Lesson Plan
+                    </div>
 
-                <div class="lesson-plan-output" id="lesson-plan-output">
-                    <div style="text-align: center; padding: 60px 20px; color: #6c757d;">
-                        <h3>🚀 Ready to Generate</h3>
-                        <p>Click "Generate AI Lesson Plan" to create a comprehensive 50-minute lesson plan tailored to your content.</p>
-                        
-                        <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 10px; text-align: left;">
-                            <h4 style="color: #495057; margin-bottom: 15px;">✨ What You'll Get:</h4>
-                            <ul style="color: #6c757d; line-height: 1.8;">
-                                <li>📅 <strong>Detailed timing breakdown</strong> (opening, activities, closure)</li>
-                                <li>🎯 <strong>Learning objectives</strong> aligned with content</li>
-                                <li>🗣️ <strong>Discussion questions</strong> and talking points</li>
-                                <li>🎨 <strong>Interactive activities</strong> and engagement strategies</li>
-                                <li>📝 <strong>Assessment opportunities</strong> throughout the lesson</li>
-                                <li>🎪 <strong>Differentiation strategies</strong> for various learning styles</li>
-                                <li>📚 <strong>Materials list</strong> and preparation notes</li>
-                                <li>🔗 <strong>Extensions and connections</strong> to other topics</li>
-                            </ul>
+                    <div class="loading" id="loading">
+                        <div class="loading-spinner"></div>
+                        <h3>🤖 AI is crafting your lesson plan...</h3>
+                        <p>Analyzing content and generating personalized activities</p>
+                    </div>
+
+                    <div class="lesson-plan-output" id="lesson-plan-output">
+                        <div style="text-align: center; padding: 60px 20px; color: #6c757d;">
+                            <h3>🚀 Ready to Generate</h3>
+                            <p>Click "Generate AI Lesson Plan" to create a comprehensive 50-minute lesson plan tailored to your content.</p>
+                            
+                            <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 10px; text-align: left;">
+                                <h4 style="color: #495057; margin-bottom: 15px;">✨ What You'll Get:</h4>
+                                <ul style="color: #6c757d; line-height: 1.8;">
+                                    <li>📅 <strong>Detailed timing breakdown</strong> (opening, activities, closure)</li>
+                                    <li>🎯 <strong>Learning objectives</strong> aligned with content</li>
+                                    <li>🗣️ <strong>Discussion questions</strong> and talking points</li>
+                                    <li>🎨 <strong>Interactive activities</strong> and engagement strategies</li>
+                                    <li>📝 <strong>Assessment opportunities</strong> throughout the lesson</li>
+                                    <li>🎪 <strong>Differentiation strategies</strong> for various learning styles</li>
+                                    <li>📚 <strong>Materials list</strong> and preparation notes</li>
+                                    <li>🔗 <strong>Extensions and connections</strong> to other topics</li>
+                                </ul>
+                            </div>
                         </div>
+                    </div>
+
+                    <div class="export-buttons" id="export-buttons" style="display: none;">
+                        <button onclick="printLessonPlan()" class="export-button print">🖨️ Print</button>
+                        <button onclick="copyLessonPlan()" class="export-button copy">📋 Copy</button>
+                        <button onclick="saveLessonPlan()" class="export-button">💾 Save</button>
                     </div>
                 </div>
 
-                <div class="export-buttons" id="export-buttons" style="display: none;">
-                    <button onclick="printLessonPlan()" class="export-button print">🖨️ Print</button>
-                    <button onclick="copyLessonPlan()" class="export-button copy">📋 Copy</button>
-                    <button onclick="saveLessonPlan()" class="export-button">💾 Save</button>
+                <!-- Condensed Reading Tab Content -->
+                <div class="tab-content" id="condensed-reading-content" style="display: none;">
+                    <div class="panel-title">
+                        📚 Generated Student Reading
+                    </div>
+
+                    <div class="loading" id="reading-loading" style="display: none;">
+                        <div class="loading-spinner"></div>
+                        <h3>📖 AI is creating your condensed reading...</h3>
+                        <p>Analyzing source materials and generating student-friendly content</p>
+                    </div>
+
+                    <div class="condensed-reading-output" id="condensed-reading-output">
+                        <div style="text-align: center; padding: 60px 20px; color: #6c757d;">
+                            <h3>📚 Ready to Generate</h3>
+                            <p>Click "Generate Condensed Student Reading" to create curriculum-independent reading materials.</p>
+                            
+                            <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 10px; text-align: left;">
+                                <h4 style="color: #495057; margin-bottom: 15px;">✨ What You'll Get:</h4>
+                                <ul style="color: #6c757d; line-height: 1.8;">
+                                    <li>📖 <strong>Condensed Reading</strong> (4-5 paragraphs, 150-200 words each)</li>
+                                    <li>🎯 <strong>Multiple Complexity Levels</strong> (simplified, standard, advanced)</li>
+                                    <li>📝 <strong>Comprehension Supports</strong> (pronunciation guides, margin questions)</li>
+                                    <li>🔍 <strong>Text-Dependent Questions</strong> with paragraph references</li>
+                                    <li>📚 <strong>Vocabulary Integration</strong> with context and definitions</li>
+                                    <li>🗺️ <strong>Geographic Analysis Framework</strong> built into reading</li>
+                                    <li>🌍 <strong>Cultural Sensitivity</strong> and contemporary connections</li>
+                                    <li>📊 <strong>Assessment Integration</strong> with citation practice</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="export-buttons" id="reading-export-buttons" style="display: none;">
+                        <button onclick="printCondensedReading()" class="export-button print">🖨️ Print Reading</button>
+                        <button onclick="copyCondensedReading()" class="export-button copy">📋 Copy Reading</button>
+                        <button onclick="saveCondensedReading()" class="export-button">💾 Save Reading</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1055,7 +1226,7 @@
                 '<p style="color: #6c757d;">Student reading content will appear here when a lesson is selected.</p>';
             
             updateAPIStatus('warning', '⚠️ No lesson selected. Please go back and select a lesson first.');
-            document.getElementById('generate-btn').disabled = true;
+            setGenerationButtonsEnabled(false);
         }
 
         // Display error data
@@ -1121,10 +1292,10 @@
                         // Check if we have lesson data before enabling
                         if (currentLessonData) {
                             updateAPIStatus('success', '✅ Using OpenAI API key from server environment');
-                            document.getElementById('generate-btn').disabled = false;
+                            setGenerationButtonsEnabled(true);
                         } else {
                             updateAPIStatus('warning', '⚠️ Server API key available, waiting for lesson content...');
-                            document.getElementById('generate-btn').disabled = true;
+                            setGenerationButtonsEnabled(false);
                         }
                         // Hide the API key input section since we're using server key
                         const apiKeyGroup = document.getElementById('api-key').closest('.control-group');
@@ -1143,30 +1314,36 @@
                 });
         }
 
+        // Helper function to enable/disable generation buttons
+        function setGenerationButtonsEnabled(enabled) {
+            document.getElementById('generate-btn').disabled = !enabled;
+            document.getElementById('condensed-reading-btn').disabled = !enabled;
+        }
+
         function checkLocalAPIKey() {
             const apiKey = document.getElementById('api-key').value;
             
             // If no lesson data, disable regardless of API key
             if (!currentLessonData) {
                 updateAPIStatus('warning', '⚠️ No lesson content loaded');
-                document.getElementById('generate-btn').disabled = true;
+                setGenerationButtonsEnabled(false);
                 return;
             }
             
             if (!apiKey) {
                 updateAPIStatus('warning', '⚠️ Please enter your OpenAI API key in Advanced Settings');
-                document.getElementById('generate-btn').disabled = true;
+                setGenerationButtonsEnabled(false);
                 return;
             }
 
             if (!apiKey.startsWith('sk-')) {
                 updateAPIStatus('error', '❌ Invalid API key format. Should start with "sk-"');
-                document.getElementById('generate-btn').disabled = true;
+                setGenerationButtonsEnabled(false);
                 return;
             }
 
-            updateAPIStatus('success', '✅ Ready to generate lesson plan');
-            document.getElementById('generate-btn').disabled = false;
+            updateAPIStatus('success', '✅ Ready to generate lesson plan and reading materials');
+            setGenerationButtonsEnabled(true);
         }
 
         // Update API status display
@@ -1181,6 +1358,392 @@
         function toggleAdvancedSettings() {
             const content = document.getElementById('advanced-content');
             content.classList.toggle('show');
+        }
+
+        // Tab switching functionality
+        function switchTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.style.display = 'none';
+                content.classList.remove('active');
+            });
+
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+                button.style.background = '#6c757d';
+            });
+
+            // Show selected tab content
+            const selectedContent = document.getElementById(tabName + '-content');
+            if (selectedContent) {
+                selectedContent.style.display = 'block';
+                selectedContent.classList.add('active');
+            }
+
+            // Activate selected tab button
+            const selectedTab = document.getElementById(tabName + '-tab');
+            if (selectedTab) {
+                selectedTab.classList.add('active');
+                selectedTab.style.background = '#007bff';
+            }
+        }
+
+        // Toggle reading options visibility
+        function toggleReadingOptions() {
+            const options = document.getElementById('reading-options');
+            const isVisible = options.style.display !== 'none';
+            options.style.display = isVisible ? 'none' : 'block';
+        }
+
+        // Generate condensed reading function
+        async function generateCondensedReading() {
+            console.log('📚 Starting condensed reading generation...');
+            
+            if (!currentLessonData) {
+                alert('Please select a lesson first by going back to the lesson companion.');
+                return;
+            }
+
+            console.log('📖 Current lesson data for reading:', currentLessonData);
+
+            // Show reading options first time
+            const options = document.getElementById('reading-options');
+            if (options.style.display === 'none' || !options.style.display) {
+                options.style.display = 'block';
+                return;
+            }
+
+            // Save user settings
+            saveUserSettings();
+
+            // Switch to reading tab
+            switchTab('condensed-reading');
+
+            // Show loading state
+            document.getElementById('reading-loading').style.display = 'block';
+            document.getElementById('condensed-reading-output').innerHTML = '';
+            document.getElementById('reading-export-buttons').style.display = 'none';
+
+            // Disable button and show loading
+            document.getElementById('condensed-reading-btn').disabled = true;
+            document.getElementById('condensed-reading-btn').textContent = '📖 Generating Reading...';
+
+            try {
+                const prompt = buildCondensedReadingPrompt();
+                console.log('📝 Built condensed reading prompt, length:', prompt.length);
+
+                const generatedReading = await callOpenAIAPI(prompt);
+                console.log('✅ Received condensed reading from AI');
+
+                // Hide loading
+                document.getElementById('reading-loading').style.display = 'none';
+
+                // Display the generated reading
+                displayGeneratedCondensedReading(generatedReading);
+
+            } catch (error) {
+                console.error('❌ Error generating condensed reading:', error);
+                document.getElementById('reading-loading').style.display = 'none';
+                
+                document.getElementById('condensed-reading-output').innerHTML = `
+                    <div style="background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 20px; border-radius: 8px; margin: 20px;">
+                        <h3>❌ Error Generating Reading</h3>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                        <p>Please check your API settings and try again.</p>
+                    </div>
+                `;
+            } finally {
+                // Re-enable button
+                document.getElementById('condensed-reading-btn').disabled = false;
+                document.getElementById('condensed-reading-btn').textContent = '📚 Generate Condensed Student Reading';
+            }
+        }
+
+        // Build the condensed reading prompt
+        function buildCondensedReadingPrompt() {
+            const complexity = document.getElementById('reading-complexity').value;
+            const length = document.getElementById('reading-length').value;
+            const focus = document.getElementById('reading-focus').value;
+            const includeSupports = document.getElementById('include-supports').checked;
+            const includeAssessment = document.getElementById('include-assessment').checked;
+
+            const teacherContent = document.getElementById('teacher-content').textContent;
+            const studentContent = document.getElementById('student-content').textContent;
+
+            const focusDescriptions = {
+                'balanced': 'balanced overview with equal attention to all aspects',
+                'geographic': 'geographic emphasis with spatial thinking and environmental factors',
+                'cultural': 'cultural emphasis with social structures and traditions',
+                'historical': 'historical emphasis with chronology and cause-effect relationships',
+                'environmental': 'environmental emphasis with human-environment interactions'
+            };
+
+            const lengthSpecs = {
+                'condensed': '4-5 paragraphs, 150-200 words each',
+                'comprehensive': '6-8 paragraphs, 175-225 words each',
+                'detailed': '8-10 paragraphs, 200-250 words each'
+            };
+
+            return `# 📚 SOPHISTICATED CONDENSED READING GENERATOR
+
+You are an expert educational content developer tasked with creating high-quality, curriculum-independent student reading materials. This reading must demonstrate educational sophistication while being accessible and engaging for 7th-grade students.
+
+## 📖 SOURCE MATERIALS ANALYSIS
+
+**LESSON CONTEXT:** Module ${currentLessonData.moduleNumber} - ${currentLessonData.title}
+**READING FOCUS:** ${focusDescriptions[focus]}
+**TARGET LENGTH:** ${lengthSpecs[length]}
+**COMPLEXITY LEVEL:** ${complexity}
+
+**TEACHER GUIDE CONTENT:**
+${teacherContent || 'No teacher guide provided'}
+
+**STUDENT CONTENT:**
+${studentContent || 'No student content provided'}
+
+**CORE VOCABULARY:** ${currentLessonData.vocabulary ? currentLessonData.vocabulary.map(v => v.term).join(', ') : 'None provided'}
+
+---
+
+## 🎯 CONDENSED READING GENERATION REQUIREMENTS
+
+### 1. SOURCE MATERIAL ANALYSIS PROTOCOL
+• **Identify main topics/themes** from source reading (3-7 major concepts)
+• **Extract chronological or logical sequence** of information flow
+• **Determine essential facts, dates, names, and concepts** that cannot be omitted
+• **Locate specific examples and evidence** that support main ideas
+• **Assess content volume** for optimal condensation ratio
+
+### 2. CONDENSATION STRUCTURE REQUIREMENTS
+• **Generate exactly ${length === 'condensed' ? '4-5' : length === 'comprehensive' ? '6-8' : '8-10'} paragraphs** from source material
+• **Organize paragraphs logically:** Foundation/Background → Geographic/Contextual Factors → Peak/Main Characteristics → Achievements/Innovations → Decline/Change/Legacy
+• **Maintain factual accuracy** while eliminating redundancy
+• **Preserve discipline-specific vocabulary** and key terminology
+• **Include concrete examples and evidence** for engagement
+• **Create smooth transitions** showing relationships between concepts
+
+### 3. PARAGRAPH DEVELOPMENT FRAMEWORK
+
+**Paragraph 1 - Foundation/Background**
+• Establish context (time, place, circumstances)
+• Introduce main subject/civilization/concept/process
+• Include key foundational elements or early developments
+• Provide essential background knowledge
+• End with transition to development
+
+**Subsequent Paragraphs** (adapt based on ${focus} focus):
+• Geographic factors and environmental influences
+• Peak period characteristics and achievements
+• Innovations, contributions, and significance
+• Changes, challenges, and lasting impact
+
+### 4. CONTENT PRESERVATION GUIDELINES
+• **Maintain all proper nouns** (names, places, terms)
+• **Preserve specific dates, numbers, measurements**
+• **Include quoted material or key phrases**
+• **Retain cause-and-effect relationships**
+• **Keep comparative information** for scale and significance
+• **Preserve cultural sensitivity** and appropriate terminology
+
+### 5. READING LEVEL ADAPTATION
+${complexity === 'simplified' ? `
+**SIMPLIFIED VERSION REQUIREMENTS:**
+• Use vocabulary 2 grade levels below target
+• Create shorter, clearer sentences
+• Provide context clues and embedded definitions
+• Include parenthetical explanations for technical terms
+• Maintain identical core content with linguistic simplification
+` : complexity === 'advanced' ? `
+**ADVANCED VERSION REQUIREMENTS:**
+• Use vocabulary 1 grade level above target
+• Include complex sentence structures
+• Add supplementary details and connections
+• Provide extended examples and analysis
+• Include connections to broader implications
+` : `
+**STANDARD VERSION REQUIREMENTS:**
+• Use grade-appropriate vocabulary and sentence structure
+• Balance complexity with accessibility
+• Include context clues for new terminology
+• Maintain engaging but clear presentation
+`}
+
+${includeSupports ? `
+### 6. COMPREHENSION SUPPORT FEATURES
+• **Add descriptive paragraph headers** previewing main content
+• **Bold key vocabulary terms** from lesson objectives
+• **Include pronunciation guides** for unfamiliar names and terms
+• **Generate "Before Reading" activation questions**
+• **Include "During Reading" comprehension checkpoints** after each paragraph
+• **Create "After Reading" synthesis prompts**
+• **Add connection prompts** linking to contemporary issues
+` : ''}
+
+${includeAssessment ? `
+### 7. ASSESSMENT INTEGRATION
+• **Number all paragraphs and key sentences** for easy reference
+• **Include margin annotations** connecting to lesson activities
+• **Provide text-marking guides** with symbols for different information types
+• **Add "Evidence Hunt" prompts** directing to supporting details
+• **Include discussion question stems** requiring textual evidence
+• **Create vocabulary-in-context exercises** using reading sentences
+` : ''}
+
+---
+
+## 📋 REQUIRED READING FORMAT
+
+# 📖 STUDENT READING: ${currentLessonData.title}
+
+**Module ${currentLessonData.moduleNumber} | 7th Grade Geography | ${complexity.charAt(0).toUpperCase() + complexity.slice(1)} Level**
+
+---
+
+${includeSupports ? `
+## 🎯 BEFORE READING
+**Activation Questions:**
+1. [Question connecting to prior knowledge]
+2. [Question about geographic thinking]
+3. [Question about cultural connections]
+
+**Key Vocabulary Preview:** [List 5-8 essential terms with pronunciation]
+
+---
+` : ''}
+
+## 📚 MAIN READING
+
+### [Paragraph 1 Header] (${focus === 'geographic' ? 'Geographic Foundation' : focus === 'cultural' ? 'Cultural Background' : focus === 'historical' ? 'Historical Context' : focus === 'environmental' ? 'Environmental Setting' : 'Background and Setting'})
+
+[Comprehensive paragraph establishing foundation - ${lengthSpecs[length].split(',')[1]}]
+
+${includeSupports ? '[During Reading Question: Specific comprehension check]' : ''}
+
+### [Paragraph 2 Header] (Geographic and Environmental Factors)
+
+[Detailed paragraph on environmental influences - ${lengthSpecs[length].split(',')[1]}]
+
+${includeSupports ? '[During Reading Question: Cause-effect analysis]' : ''}
+
+### [Continue for all paragraphs...]
+
+${includeAssessment ? `
+---
+
+## 🔍 TEXT-DEPENDENT QUESTIONS
+
+**Paragraph-Specific Questions:**
+1. [Question requiring citation from paragraph 1]
+2. [Question requiring synthesis across paragraphs 2-3]
+3. [Question requiring interpretation with evidence]
+
+**Synthesis Questions:**
+1. [Question requiring cross-paragraph analysis]
+2. [Question connecting to contemporary issues]
+
+**Evidence Practice:**
+• Find and cite three examples of [specific concept]
+• Compare information from paragraphs [X] and [Y]
+• Use evidence from the reading to support the claim that...
+` : ''}
+
+${includeSupports ? `
+---
+
+## 💡 AFTER READING
+
+**Comprehension Check:**
+• Summarize each paragraph in one sentence
+• Identify the main cause-and-effect relationships
+• Connect three concepts from the reading to modern examples
+
+**Discussion Starters:**
+• How does this information help us understand...?
+• What connections can you make between this and...?
+• Why might this be important for understanding today's world?
+` : ''}
+
+---
+
+**CONTENT SOPHISTICATION REQUIREMENT:** This condensed reading must demonstrate thorough analysis of source materials and maintain academic rigor while being accessible to 7th-grade students. Every paragraph should connect directly to lesson objectives and provide rich content for follow-up activities.
+
+Create a reading that eliminates textbook dependency while maintaining educational sophistication and supporting diverse learning needs through ${complexity} complexity level and ${focus} focus.`;
+        }
+
+        // Display the generated condensed reading
+        function displayGeneratedCondensedReading(reading) {
+            const formattedReading = formatCondensedReading(reading);
+            document.getElementById('condensed-reading-output').innerHTML = formattedReading;
+            document.getElementById('reading-export-buttons').style.display = 'flex';
+        }
+
+        // Format the condensed reading with proper HTML structure
+        function formatCondensedReading(readingText) {
+            let formatted = readingText.replace(/\n/g, '<br>');
+            
+            // Format headers
+            formatted = formatted.replace(/### (.*?)<br>/g, '<h3 style="color: #007bff; margin: 20px 0 10px 0; font-size: 1.3rem;">$1</h3>');
+            formatted = formatted.replace(/## (.*?)<br>/g, '<h2 style="color: #495057; margin: 25px 0 15px 0; font-size: 1.5rem;">$1</h2>');
+            formatted = formatted.replace(/# (.*?)<br>/g, '<h1 style="color: #007bff; margin: 30px 0 20px 0; font-size: 1.8rem; text-align: center; border-bottom: 2px solid #007bff; padding-bottom: 10px;">$1</h1>');
+            
+            // Format bold text
+            formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong style="color: #495057;">$1</strong>');
+            
+            // Format bullet points
+            formatted = formatted.replace(/(^|\<br\>)• /g, '$1<span style="color: #007bff;">•</span> ');
+            
+            // Format numbered lists
+            formatted = formatted.replace(/(^|\<br\>)(\d+\.) /g, '$1<span style="color: #007bff; font-weight: bold;">$2</span> ');
+            
+            // Wrap in proper structure
+            return `
+                <div class="condensed-reading-content" style="max-width: 800px; margin: 0 auto; line-height: 1.8; font-size: 1.1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid #28a745;">
+                        <h2 style="color: #28a745; margin: 0;">📚 Generated Student Reading</h2>
+                        <span style="background: #d4edda; padding: 5px 12px; border-radius: 15px; font-size: 0.8rem; color: #155724; font-weight: bold;">
+                            Curriculum Independent
+                        </span>
+                    </div>
+                    <div style="background: #f8f9fa; padding: 25px; border-radius: 12px; border-left: 4px solid #28a745;">
+                        ${formatted}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Export functions for condensed reading
+        function printCondensedReading() {
+            const content = document.getElementById('condensed-reading-output').innerHTML;
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                <head><title>Student Reading - ${currentLessonData.title}</title></head>
+                <body style="font-family: Arial, sans-serif; margin: 20px;">
+                    ${content}
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+        function copyCondensedReading() {
+            const content = document.getElementById('condensed-reading-output').innerText;
+            navigator.clipboard.writeText(content).then(() => {
+                alert('📋 Student reading copied to clipboard!');
+            });
+        }
+
+        function saveCondensedReading() {
+            const content = document.getElementById('condensed-reading-output').innerHTML;
+            const blob = new Blob([content], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `student-reading-${currentLessonData.title.replace(/\s+/g, '-').toLowerCase()}.html`;
+            a.click();
+            URL.revokeObjectURL(url);
         }
 
         // Main function to generate lesson plan
