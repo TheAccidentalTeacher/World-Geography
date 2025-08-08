@@ -3028,14 +3028,22 @@
         // Extract vocabulary from lesson content "Key Terms and Places" section
         function extractVocabularyFromContent() {
             const contentDiv = document.getElementById('lesson-content');
-            if (!contentDiv) return [];
+            if (!contentDiv) {
+                console.log('❌ No lesson-content div found');
+                return [];
+            }
             
             // Look specifically in the lesson-content-wrapper to avoid supplementary content
             const lessonWrapper = contentDiv.querySelector('.lesson-content-wrapper');
             const content = lessonWrapper ? lessonWrapper.innerHTML : contentDiv.innerHTML;
             const extractedTerms = [];
             
-            if (!content) return extractedTerms;
+            if (!content) {
+                console.log('❌ No content found in lesson wrapper');
+                return extractedTerms;
+            }
+            
+            console.log('🔍 Searching for vocabulary in content...');
             
             // Create a temporary div to parse HTML content
             const tempDiv = document.createElement('div');
@@ -3043,17 +3051,28 @@
             
             // METHOD 1: Look for assessment sections with "Key Terms and Places" (most common format)
             const strongElements = tempDiv.querySelectorAll('strong, b');
+            console.log(`📝 Found ${strongElements.length} strong/bold elements`);
+            
             for (const strong of strongElements) {
                 const strongText = strong.textContent.trim().toLowerCase();
+                console.log(`🔍 Checking strong text: "${strongText}"`);
+                
                 if (strongText === 'key terms and places') {
+                    console.log('✅ Found "Key Terms and Places" section!');
                     // Look for the list that follows this element
                     let current = strong.parentElement;
                     while (current && current.nextElementSibling) {
                         current = current.nextElementSibling;
+                        console.log(`🔍 Checking next element: ${current.tagName}`);
+                        
                         if (current.tagName === 'UL' || current.tagName === 'OL') {
                             const listItems = current.querySelectorAll('li');
+                            console.log(`📋 Found list with ${listItems.length} items`);
+                            
                             for (const item of listItems) {
                                 const itemText = item.textContent.trim();
+                                console.log(`📝 Processing item: "${itemText}"`);
+                                
                                 if (itemText && 
                                     itemText !== 'Write a short definition for each term.' &&
                                     !itemText.toLowerCase().includes('write a') &&
@@ -3061,6 +3080,7 @@
                                     parseVocabularyTerm(itemText, extractedTerms);
                                 }
                             }
+                            console.log(`✅ Extracted ${extractedTerms.length} terms from METHOD 1`);
                             return extractedTerms; // Return immediately after finding the first valid list
                         }
                     }
@@ -3069,16 +3089,27 @@
             
             // METHOD 2: Look for direct "Key Terms and Places" headings (less common but still valid)
             const headings = tempDiv.querySelectorAll('h1, h2, h3, h4, h5, h6');
+            console.log(`📝 Found ${headings.length} heading elements`);
+            
             for (const heading of headings) {
                 const headingText = heading.textContent.toLowerCase().trim();
+                console.log(`🔍 Checking heading: "${headingText}"`);
+                
                 if (headingText === 'key terms and places' || headingText === 'key terms') {
+                    console.log('✅ Found "Key Terms and Places" heading!');
                     let nextElement = heading.nextElementSibling;
                     
                     while (nextElement && !nextElement.matches('h1, h2, h3, h4, h5, h6')) {
+                        console.log(`🔍 Checking next element: ${nextElement.tagName}`);
+                        
                         if (nextElement.tagName === 'UL' || nextElement.tagName === 'OL') {
                             const listItems = nextElement.querySelectorAll('li');
+                            console.log(`📋 Found list with ${listItems.length} items`);
+                            
                             for (const item of listItems) {
                                 const itemText = item.textContent.trim();
+                                console.log(`📝 Processing item: "${itemText}"`);
+                                
                                 if (itemText && 
                                     itemText !== 'Write a short definition for each term.' &&
                                     !itemText.toLowerCase().includes('write a') &&
@@ -3089,12 +3120,15 @@
                                     }
                                 }
                             }
+                            console.log(`✅ Extracted ${extractedTerms.length} terms from METHOD 2`);
                             return extractedTerms; // Return immediately after finding the first valid list
                         }
                         nextElement = nextElement.nextElementSibling;
                     }
                 }
             }
+            
+            console.log(`❌ No vocabulary found. Returning ${extractedTerms.length} terms.`);
             
             return extractedTerms;
             
@@ -3105,11 +3139,15 @@
         function parseVocabularyTerm(termText, extractedTerms) {
             if (!termText || termText === '') return;
             
+            console.log(`🔤 Parsing term: "${termText}"`);
+            
             if (termText.includes(':')) {
-                // Term with definition like "tributary: a smaller river that flows into a larger river"
+                // Term with definition like "geography: the study of the world, its people, and the landscapes they create"
                 const colonIndex = termText.indexOf(':');
                 const term = termText.substring(0, colonIndex).trim();
                 const definition = termText.substring(colonIndex + 1).trim();
+                
+                console.log(`✅ Found term with colon - Term: "${term}", Definition: "${definition}"`);
                 
                 if (term && definition) {
                     extractedTerms.push({ term, definition });
@@ -3120,6 +3158,7 @@
                 if (dashMatch) {
                     const term = dashMatch[1].trim();
                     const definition = dashMatch[2].trim();
+                    console.log(`✅ Found term with dash - Term: "${term}", Definition: "${definition}"`);
                     if (term && definition) {
                         extractedTerms.push({ term, definition });
                     }
@@ -3127,11 +3166,11 @@
             } else {
                 // Just a term name, generate contextual definition
                 const term = termText.trim();
+                console.log(`📝 Just term name: "${term}"`);
                 if (term && !extractedTerms.some(t => t.term.toLowerCase() === term.toLowerCase())) {
-                    extractedTerms.push({ 
-                        term, 
-                        definition: generateDefinitionForTerm(term)
-                    });
+                    const definition = generateDefinitionForTerm(term);
+                    console.log(`✅ Generated definition: "${definition}"`);
+                    extractedTerms.push({ term, definition });
                 }
             }
         }
