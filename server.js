@@ -417,6 +417,11 @@ app.get('/api/slides/:number', async (req, res) => {
   }
 });
 
+// AI Lesson Planner Route
+app.get('/ai-lesson-planner.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'ai-lesson-planner.html'));
+});
+
 // Q1 Geographic Detectives Simulation Routes - Professional Pages
 app.get('/simulation', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'geographic-detective-academy-main.html'));

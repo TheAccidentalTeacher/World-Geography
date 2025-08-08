@@ -1530,12 +1530,32 @@
                         box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
                         transition: all 0.3s;
                         border: 2px solid transparent;
+                        margin: 5px;
                     " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(255, 107, 107, 0.4)'" 
                        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(255, 107, 107, 0.3)'">
                         🚀 Open AI Geography Hub
                     </a>
+                    
+                    <!-- NEW: AI Lesson Planner Link -->
+                    <a href="#" onclick="openAILessonPlanner()" style="
+                        display: inline-block;
+                        background: linear-gradient(135deg, #28a745, #20c997);
+                        color: white;
+                        padding: 12px 20px;
+                        border-radius: 25px;
+                        text-decoration: none;
+                        font-weight: bold;
+                        box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+                        transition: all 0.3s;
+                        border: 2px solid transparent;
+                        margin: 5px;
+                    " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(40, 167, 69, 0.4)'" 
+                       onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(40, 167, 69, 0.3)'">
+                        🤖 AI Lesson Planner
+                    </a>
+                    
                     <p style="font-size: 0.8rem; color: #666; margin-top: 8px;">
-                        Advanced AI tools for content creation & research
+                        Advanced AI tools for content creation, research & lesson planning
                     </p>
                 </div>
 
@@ -5759,6 +5779,127 @@
                 lookupDefinition();
             }
         });
+
+        // =================================
+        // AI LESSON PLANNER INTEGRATION
+        // =================================
+
+        function openAILessonPlanner() {
+            // Get current lesson data
+            const moduleSelect = document.getElementById('moduleSelect');
+            const lessonSelect = document.getElementById('lessonSelect');
+            
+            if (!moduleSelect.value || !lessonSelect.value) {
+                alert('Please select a module and lesson first before opening the AI Lesson Planner.');
+                return;
+            }
+
+            // Prepare lesson data for the AI planner
+            const currentLessonData = {
+                moduleNumber: moduleSelect.value,
+                moduleName: moduleSelect.options[moduleSelect.selectedIndex].text,
+                lessonNumber: lessonSelect.value,
+                title: lessonSelect.options[lessonSelect.selectedIndex].text,
+                teacherContent: extractTeacherContent(),
+                studentContent: extractStudentContent(),
+                objectives: extractObjectives(),
+                materials: extractMaterials(),
+                procedures: extractProcedures(),
+                assessments: extractAssessments(),
+                vocabulary: extractVocabulary()
+            };
+
+            // Save lesson data for the AI planner to access
+            localStorage.setItem('currentAILessonData', JSON.stringify(currentLessonData));
+
+            // Open AI Lesson Planner in new tab
+            const plannerURL = `/ai-lesson-planner.html?module=${moduleSelect.value}&lesson=${lessonSelect.value}`;
+            window.open(plannerURL, '_blank');
+        }
+
+        // Extract current teacher content from the interface
+        function extractTeacherContent() {
+            const elements = [
+                document.getElementById('objectives-list'),
+                document.getElementById('materials-list'),
+                document.getElementById('procedures-list'),
+                document.getElementById('assessments-list'),
+                document.getElementById('activities-list')
+            ];
+
+            let content = '';
+            elements.forEach(element => {
+                if (element && element.innerHTML.trim()) {
+                    content += element.outerHTML + '\n';
+                }
+            });
+
+            return content || 'No teacher content available';
+        }
+
+        // Extract current student content from the lesson display
+        function extractStudentContent() {
+            const lessonContent = document.getElementById('lesson-content');
+            if (!lessonContent) return 'No student content available';
+
+            // Try to get the main lesson content, excluding navigation elements
+            const contentClone = lessonContent.cloneNode(true);
+            
+            // Remove any navigation or UI elements
+            const elementsToRemove = contentClone.querySelectorAll('.navigation, .lesson-nav, button, .btn');
+            elementsToRemove.forEach(el => el.remove());
+
+            return contentClone.innerHTML || contentClone.textContent || 'No student content available';
+        }
+
+        // Extract objectives from current lesson
+        function extractObjectives() {
+            const objectivesList = document.getElementById('objectives-list');
+            if (!objectivesList) return [];
+
+            const items = objectivesList.querySelectorAll('li');
+            return Array.from(items).map(item => item.textContent.trim()).filter(text => text);
+        }
+
+        // Extract materials from current lesson
+        function extractMaterials() {
+            const materialsList = document.getElementById('materials-list');
+            if (!materialsList) return [];
+
+            const items = materialsList.querySelectorAll('li');
+            return Array.from(items).map(item => item.textContent.trim()).filter(text => text);
+        }
+
+        // Extract procedures from current lesson
+        function extractProcedures() {
+            const proceduresList = document.getElementById('procedures-list');
+            if (!proceduresList) return [];
+
+            const items = proceduresList.querySelectorAll('li');
+            return Array.from(items).map(item => item.textContent.trim()).filter(text => text);
+        }
+
+        // Extract assessments from current lesson
+        function extractAssessments() {
+            const assessmentsList = document.getElementById('assessments-list');
+            if (!assessmentsList) return [];
+
+            const items = assessmentsList.querySelectorAll('li');
+            return Array.from(items).map(item => item.textContent.trim()).filter(text => text);
+        }
+
+        // Extract vocabulary from current lesson
+        function extractVocabulary() {
+            const vocabularyContainer = document.getElementById('vocabulary-container');
+            if (!vocabularyContainer) return [];
+
+            const vocabItems = vocabularyContainer.querySelectorAll('.vocab-term, .vocabulary-term');
+            return Array.from(vocabItems).map(item => {
+                const term = item.querySelector('.term, .vocab-word')?.textContent?.trim();
+                const definition = item.querySelector('.definition, .vocab-definition')?.textContent?.trim();
+                return term && definition ? { term, definition } : null;
+            }).filter(item => item);
+        }
     </script>
 </body>
 </html>
