@@ -48,11 +48,11 @@ const schoolCalendar = {
     // Labor Day
     { name: 'Labor Day', date: new Date('2025-09-01') },
     
-    // Fall Break
-    { name: 'Fall Break', start: new Date('2025-10-14'), end: new Date('2025-10-15') },
+    // Fall Break (October 12-15)
+    { name: 'Fall Break', start: new Date('2025-10-12'), end: new Date('2025-10-15') },
     
     // Parent/Teacher Conferences (no school)
-    { name: 'Parent/Teacher Conferences', date: new Date('2025-10-23') },
+    { name: 'Parent/Teacher Conferences', date: new Date('2025-10-21') },
     
     // Thanksgiving Break
     { name: 'Thanksgiving Break', start: new Date('2025-11-27'), end: new Date('2025-11-28') },
@@ -60,11 +60,11 @@ const schoolCalendar = {
     // Winter Break (12/22 - 1/2)
     { name: 'Winter Break', start: new Date('2025-12-22'), end: new Date('2026-01-02') },
     
-    // MLK Day 
+    // Martin Luther King Jr. Day 
     { name: 'Martin Luther King Jr. Day', date: new Date('2026-01-20') },
     
     // Parent/Teacher Conferences
-    { name: 'Parent/Teacher Conferences', date: new Date('2026-01-23') },
+    { name: 'Parent/Teacher Conferences', date: new Date('2026-01-12') },
     
     // Presidents Day
     { name: 'Presidents Day', date: new Date('2026-02-17') },
@@ -72,8 +72,8 @@ const schoolCalendar = {
     // Spring Break
     { name: 'Spring Break', start: new Date('2026-03-09'), end: new Date('2026-03-13') },
     
-    // Good Friday
-    { name: 'Good Friday', date: new Date('2026-04-03') },
+    // Parent/Teacher Conferences  
+    { name: 'Parent/Teacher Conferences', date: new Date('2026-04-01') },
     
     // End of year activities (various locations)
     { name: 'Slana Activities', date: new Date('2026-05-12') },
@@ -82,22 +82,23 @@ const schoolCalendar = {
     { name: 'Glennallen Activities', date: new Date('2026-05-15') }
   ],
   
-  // Early Release Days (shortened instruction)
+  // Early Release Days (shortened instruction) - from official calendar
   earlyReleaseDays: [
-    new Date('2025-10-17'),
-    new Date('2025-12-19'), 
-    new Date('2026-02-13'),
-    new Date('2026-05-16')
+    new Date('2025-08-29'), // End of first week
+    new Date('2025-10-17'), // October early release 
+    new Date('2025-12-19'), // Before winter break
+    new Date('2026-02-13'), // February early release
+    new Date('2026-05-16')  // Before last day
   ],
   
   // Teacher work days, conferences (no student days)
   teacherDays: [
     { name: 'New Teacher Inservice', date: new Date('2025-08-12') },
     { name: 'Teacher Workday', start: new Date('2025-08-13'), end: new Date('2025-08-15') },
-    { name: 'Parent/Teacher Conferences', date: new Date('2025-10-23') },
+    { name: 'Parent/Teacher Conferences', date: new Date('2025-10-21') },
     { name: 'Teacher Workday', date: new Date('2025-10-25') },
-    { name: 'Parent/Teacher Conferences', date: new Date('2026-01-23') },
-    { name: 'Teacher Workday', date: new Date('2026-04-01') }
+    { name: 'Parent/Teacher Conferences', date: new Date('2026-01-12') },
+    { name: 'Parent/Teacher Conferences', date: new Date('2026-04-01') }
   ]
 };
 

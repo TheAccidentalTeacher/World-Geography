@@ -1931,15 +1931,17 @@
             // Official holidays from PDF
             holidays: [
                 '2025-09-01', // Labor Day
-                '2025-10-12', '2025-10-13', '2025-10-14', '2025-10-15', // Fall Break
+                '2025-10-12', '2025-10-13', '2025-10-14', '2025-10-15', // Fall Break (Oct 12-15)
                 '2025-10-21', // Parent/Teacher Conferences
                 '2025-11-27', '2025-11-28', // Thanksgiving Break
                 '2025-12-22', '2025-12-23', '2025-12-24', '2025-12-25', '2025-12-26',
                 '2025-12-27', '2025-12-28', '2025-12-29', '2025-12-30', '2025-12-31',
                 '2026-01-01', '2026-01-02', // Winter Break (Dec 22 - Jan 2)
-                '2026-01-12', // Parent/Teacher Conferences
+                '2026-01-12', // Parent/Teacher Conferences (Jan 12, not 23)
+                '2026-01-20', // Martin Luther King Jr. Day  
+                '2026-02-17', // Presidents Day
                 '2026-03-09', '2026-03-10', '2026-03-11', '2026-03-12', '2026-03-13', // Spring Break
-                '2026-04-01', // Parent/Teacher Conferences
+                '2026-04-01', // Parent/Teacher Conferences (Apr 1, not Good Friday)
                 '2026-05-12', // Slana Graduation
                 '2026-05-13', // Upstream Learning Graduation
                 '2026-05-14', // Kenny Lake Graduation
@@ -1948,7 +1950,7 @@
             
             // Early Release days from PDF
             earlyRelease: [
-                '2025-08-17', // Early release before school opens
+                '2025-08-29', // End of first week
                 '2025-10-17', // October early release
                 '2025-12-19', // Before winter break
                 '2026-02-13', // February early release
@@ -1958,9 +1960,9 @@
         
         // Quarter system for simulation day planning (aligned with actual school calendar)
         const quarters = {
-            q1: { start: new Date('2025-09-02'), end: new Date('2025-10-11') }, // Before Fall Break
+            q1: { start: new Date('2025-09-02'), end: new Date('2025-10-11') }, // Before Fall Break (Oct 12-15)
             q2: { start: new Date('2025-10-16'), end: new Date('2025-12-19') }, // After Fall Break to Winter Break
-            q3: { start: new Date('2026-01-06'), end: new Date('2026-03-07') }, // After Winter Break to Spring Break
+            q3: { start: new Date('2026-01-06'), end: new Date('2026-03-07') }, // After Winter Break to Spring Break  
             q4: { start: new Date('2026-03-17'), end: new Date('2026-05-09') }  // After Spring Break, before graduation activities
         };
         
