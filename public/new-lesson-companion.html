@@ -2205,12 +2205,35 @@
             if (!isSchool) {
                 dayElement.classList.add('holiday');
                 dayContent.textContent = 'No School';
+                
+                // DEBUG: Log September 11 DOM changes
+                if (dateStr === '2025-09-11') {
+                    console.log('🏫 September 11 - ADDING holiday class and "No School" text');
+                    console.log('dayElement classes:', dayElement.className);
+                    console.log('dayContent text:', dayContent.textContent);
+                }
             } else if (!isLessonDay(date)) {
                 // School day but not lesson day (orientation period)
                 dayElement.classList.add('orientation');
                 dayContent.textContent = 'Orientation';
+                
+                // DEBUG: Log September 11 orientation path
+                if (dateStr === '2025-09-11') {
+                    console.log('📚 September 11 - Taking ORIENTATION path');
+                    console.log('isLessonDay result:', isLessonDay(date));
+                    console.log('dayElement classes:', dayElement.className);
+                    console.log('dayContent text:', dayContent.textContent);
+                }
             } else if (lessonAssignments[dateStr]) {
                 const assignment = lessonAssignments[dateStr];
+                
+                // DEBUG: Log September 11 lesson assignment path
+                if (dateStr === '2025-09-11') {
+                    console.log('📖 September 11 - Taking LESSON ASSIGNMENT path');
+                    console.log('Assignment:', assignment);
+                    console.log('Is completed?', completedLessons[dateStr]);
+                }
+                
                 if (completedLessons[dateStr]) {
                     dayElement.classList.add('completed');
                     
@@ -2321,6 +2344,14 @@
             
             dayElement.appendChild(dayNumber);
             dayElement.appendChild(dayContent);
+            
+            // DEBUG: Final state check for September 11
+            if (dateStr === '2025-09-11') {
+                console.log('🏁 September 11 FINAL CALENDAR ELEMENT STATE:');
+                console.log('Final classes:', dayElement.className);
+                console.log('Final dayContent text:', dayContent.textContent);
+                console.log('Final dayElement HTML:', dayElement.outerHTML);
+            }
             
             return dayElement;
         }
