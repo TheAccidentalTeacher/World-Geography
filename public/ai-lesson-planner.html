@@ -1970,6 +1970,15 @@ Create a reading that eliminates textbook dependency while maintaining education
 
                 const generatedLesson = await callOpenAIAPI(prompt);
                 console.log('✅ Received integrated lesson from AI');
+                
+                // Validate the response
+                if (!generatedLesson || typeof generatedLesson !== 'string') {
+                    throw new Error('Invalid response from AI - no content received');
+                }
+                
+                if (generatedLesson.length < 100) {
+                    throw new Error('AI response too short - may be incomplete');
+                }
 
                 // Hide loading
                 document.getElementById('integrated-loading').style.display = 'none';
@@ -2354,13 +2363,29 @@ Generate a complete, print-ready lesson package that transforms curriculum depen
 
         // Display the generated integrated lesson
         function displayGeneratedIntegratedLesson(lesson) {
-            const formattedLesson = formatIntegratedLesson(lesson);
-            document.getElementById('integrated-lesson-output').innerHTML = formattedLesson;
-            document.getElementById('integrated-export-buttons').style.display = 'flex';
+            try {
+                const formattedLesson = formatIntegratedLesson(lesson);
+                document.getElementById('integrated-lesson-output').innerHTML = formattedLesson;
+                document.getElementById('integrated-export-buttons').style.display = 'flex';
+            } catch (error) {
+                console.error('❌ Error formatting integrated lesson:', error);
+                // Fallback to simple display
+                document.getElementById('integrated-lesson-output').innerHTML = `
+                    <div style="padding: 20px; background: #fff; border-radius: 8px; line-height: 1.6;">
+                        <h2 style="color: #ff6b6b; margin-bottom: 20px;">🎯 Complete Integrated Lesson Package</h2>
+                        <div style="white-space: pre-wrap; font-family: 'Times New Roman', serif;">${lesson}</div>
+                    </div>
+                `;
+                document.getElementById('integrated-export-buttons').style.display = 'flex';
+            }
         }
 
         // Format the integrated lesson with proper HTML structure and page breaks
         function formatIntegratedLesson(lessonText) {
+            if (!lessonText || typeof lessonText !== 'string') {
+                throw new Error('Invalid lesson text provided to formatter');
+            }
+            
             let formatted = lessonText.replace(/\n/g, '<br>');
             
             // Add page break classes for major sections
@@ -2384,6 +2409,7 @@ Generate a complete, print-ready lesson package that transforms curriculum depen
             
             // Format timing guide as a proper table
             formatted = formatted.replace(/⏰ INTEGRATED TIMING GUIDE<br><br>\| Time \| Activity \| Reading Connection \|<br>\|------|----------|-------------------|<br>(.*?)<br><br>/gs, function(match, tableContent) {
+                if (!tableContent) return match; // Safety check
                 let tableRows = tableContent.split('<br>').filter(row => row.trim() && row.includes('|'));
                 let tableHTML = '<div class="timing-table page-break-avoid"><h3>⏰ INTEGRATED TIMING GUIDE</h3><table><thead><tr><th>Time</th><th>Activity</th><th>Reading Connection</th></tr></thead><tbody>';
                 
@@ -2400,6 +2426,7 @@ Generate a complete, print-ready lesson package that transforms curriculum depen
             
             // Format rubric tables
             formatted = formatted.replace(/\| Criteria \| Excellent \| Good \| Needs Work \|<br>\|----------|-----------|------|------------|<br>(.*?)<br><br>/gs, function(match, tableContent) {
+                if (!tableContent) return match; // Safety check
                 let tableRows = tableContent.split('<br>').filter(row => row.trim() && row.includes('|'));
                 let tableHTML = '<div class="assessment-rubric page-break-avoid"><table><thead><tr><th>Criteria</th><th>Excellent</th><th>Good</th><th>Needs Work</th></tr></thead><tbody>';
                 
