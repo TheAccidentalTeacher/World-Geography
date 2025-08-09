@@ -2819,9 +2819,10 @@ CRITICAL: Generate slides following the EXACT three-section format shown above. 
                         }
                         currentSection = 'stock';
                         content = '';
-                    } else if (trimmed && !trimmed.startsWith('**') && !trimmed.startsWith('---')) {
+                    } else if (trimmed && !trimmed.startsWith('**') && !trimmed.startsWith('---') && !trimmed.startsWith('SLIDE')) {
                         // Add content to current section
                         content += (content ? '\n' : '') + trimmed;
+                        console.log(`📝 Added to ${currentSection}:`, trimmed);
                     }
                 });
 
@@ -2845,6 +2846,7 @@ CRITICAL: Generate slides following the EXACT three-section format shown above. 
 
         // Helper function to assign content to the correct slide section
         function assignContentToSection(slide, section, content) {
+            console.log(`🎯 Assigning to ${section}:`, content.substring(0, 100) + '...');
             switch (section) {
                 case 'content':
                     slide.content = content;
