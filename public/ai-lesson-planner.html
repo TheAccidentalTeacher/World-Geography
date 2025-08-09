@@ -3082,8 +3082,344 @@ Generate 8-12 slides following this EXACT format. Each slide should be comprehen
 
         // COMPREHENSIVE AI-DRIVEN PRESENTATION SYSTEM
         async function generateFullVisualPresentation() {
-            // Use the proven working system
-            await generateSmartPresentation(true);
+            console.log('🎨 Starting Gamma-Style Visual Presentation generation...');
+            
+            // Check if lesson content exists
+            const lessonOutput = document.getElementById('integrated-lesson-output');
+            if (!lessonOutput || !lessonOutput.innerHTML.trim()) {
+                alert('Please generate a complete lesson first before creating a presentation.');
+                return;
+            }
+            
+            // More robust check for actual generated content
+            const content = lessonOutput.innerHTML.trim();
+            if (content.includes('Ready to Generate') || content.includes('Ready to Create') || content.length < 500) {
+                alert('Please generate a complete lesson first before creating a presentation.');
+                return;
+            }
+
+            try {
+                // Show professional loading state
+                lessonOutput.innerHTML = `
+                    <div style="text-align: center; padding: 40px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 16px; margin: 20px 0;">
+                        <div style="margin-bottom: 30px;">
+                            <div style="font-size: 48px; margin-bottom: 16px;">🎨</div>
+                            <h2 style="margin: 0; font-size: 28px; font-weight: 600;">Creating Gamma-Style Presentation</h2>
+                            <p style="margin: 16px 0 0 0; opacity: 0.9; font-size: 18px;">Generating beautiful, visual slides with professional layouts...</p>
+                        </div>
+                        <div style="display: flex; justify-content: center; gap: 8px; margin-bottom: 20px;">
+                            <div style="width: 16px; height: 16px; background: rgba(255,255,255,0.8); border-radius: 50%; animation: gammaLoad 1.5s ease-in-out infinite;" id="dot1"></div>
+                            <div style="width: 16px; height: 16px; background: rgba(255,255,255,0.6); border-radius: 50%; animation: gammaLoad 1.5s ease-in-out 0.2s infinite;" id="dot2"></div>
+                            <div style="width: 16px; height: 16px; background: rgba(255,255,255,0.4); border-radius: 50%; animation: gammaLoad 1.5s ease-in-out 0.4s infinite;" id="dot3"></div>
+                        </div>
+                        <div id="generation-status" style="font-size: 16px; opacity: 0.8;">Preparing presentation structure...</div>
+                    </div>
+                    <style>
+                        @keyframes gammaLoad {
+                            0%, 100% { transform: scale(1); opacity: 0.4; }
+                            50% { transform: scale(1.2); opacity: 1; }
+                        }
+                    </style>
+                `;
+                
+                // Update status
+                const updateStatus = (message) => {
+                    const statusEl = document.getElementById('generation-status');
+                    if (statusEl) statusEl.textContent = message;
+                };
+                
+                // Get current lesson data
+                const currentModule = document.getElementById('module-select').value;
+                const currentLesson = document.getElementById('lesson-select').value;
+                
+                updateStatus('Analyzing lesson content...');
+                
+                // Generate the presentation structure using OpenAI
+                const presentationData = await generateGammaStyleContent();
+                
+                updateStatus('Creating visual layouts...');
+                
+                // Generate images for each slide
+                const slidesWithImages = await generateSlideImages(presentationData.slides);
+                
+                updateStatus('Finalizing presentation...');
+                
+                // Display the beautiful presentation
+                displayGammaStylePresentation(presentationData.title, slidesWithImages);
+                
+            } catch (error) {
+                console.error('❌ Error generating Gamma-style presentation:', error);
+                lessonOutput.innerHTML = `
+                    <div style="text-align: center; padding: 40px; background: #dc3545; color: white; border-radius: 12px;">
+                        <h3>❌ Error Creating Presentation</h3>
+                        <p>${error.message}</p>
+                        <button onclick="location.reload()" style="background: white; color: #dc3545; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; margin-top: 15px; cursor: pointer;">Retry</button>
+                    </div>
+                `;
+            }
+        }
+
+        // Generate Gamma-style presentation content
+        async function generateGammaStyleContent() {
+            const currentModule = document.getElementById('module-select').value;
+            const currentLesson = document.getElementById('lesson-select').value;
+            
+            // Get lesson data
+            const moduleData = await fetch(`/api/modules/${currentModule}`).then(r => r.json());
+            const lesson = moduleData.lessons.find(l => l.lessonNumber == currentLesson);
+            
+            const prompt = `Create a stunning, professional presentation in the style of Gamma AI for this geography lesson:
+
+LESSON: ${lesson.title}
+MODULE: ${moduleData.title}
+
+Create 8-10 high-quality slides with the following structure:
+
+1. Title slide with compelling subtitle
+2. Hook/Opening question slide  
+3. Main concept slides (4-5 slides)
+4. Visual comparison or case study slide
+5. Interactive/Discussion slide
+6. Key takeaways slide
+7. Next steps/Preview slide
+
+For each slide, provide:
+- Title (engaging, not boring)
+- Subtitle (compelling hook)
+- Main content (2-4 key points max, punchy and visual)
+- Visual suggestion (specific, detailed description for image generation)
+- Layout style (hero, split, grid, focus, etc.)
+
+Make it visually stunning like Gamma AI - focus on:
+- Compelling titles that grab attention
+- Visual hierarchy with bold typography
+- Minimal text, maximum impact
+- Professional color schemes
+- Modern, clean layouts
+- Specific visual elements that enhance understanding
+
+Return as JSON with this structure:
+{
+  "title": "presentation title",
+  "subtitle": "engaging subtitle",
+  "slides": [
+    {
+      "slideNumber": 1,
+      "title": "Compelling Title",
+      "subtitle": "Engaging subtitle",
+      "content": ["Key point 1", "Key point 2"],
+      "visualSuggestion": "Detailed description for image",
+      "layout": "hero",
+      "backgroundColor": "#color",
+      "textColor": "#color"
+    }
+  ]
+}`;
+
+            const response = await fetch('/api/generate-lesson-plan', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    prompt: prompt,
+                    maxTokens: 3000
+                })
+            });
+
+            const data = await response.json();
+            
+            // Parse JSON from AI response
+            try {
+                const jsonMatch = data.content.match(/\{[\s\S]*\}/);
+                return JSON.parse(jsonMatch[0]);
+            } catch (e) {
+                // Fallback structure if parsing fails
+                return {
+                    title: lesson.title,
+                    subtitle: "An Interactive Geography Exploration",
+                    slides: [
+                        {
+                            slideNumber: 1,
+                            title: lesson.title,
+                            subtitle: "An Interactive Geography Exploration",
+                            content: ["Explore the fascinating world of geography", "Discover connections across cultures and landscapes"],
+                            visualSuggestion: "Beautiful landscape showing diverse geographical features",
+                            layout: "hero",
+                            backgroundColor: "#667eea",
+                            textColor: "#ffffff"
+                        }
+                    ]
+                };
+            }
+        }
+
+        // Generate images for slides using your APIs
+        async function generateSlideImages(slides) {
+            const slidesWithImages = [];
+            
+            for (let i = 0; i < slides.length; i++) {
+                const slide = slides[i];
+                console.log(`🖼️ Generating image for slide ${i + 1}: ${slide.title}`);
+                
+                try {
+                    // Use your existing image generation API
+                    const imageResponse = await fetch('/api/generate-image', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            prompt: `${slide.visualSuggestion}, professional photography, high quality, educational, clean composition, modern style`,
+                            style: 'professional',
+                            width: 1200,
+                            height: 800
+                        })
+                    });
+
+                    let imageUrl = null;
+                    if (imageResponse.ok) {
+                        const imageData = await imageResponse.json();
+                        imageUrl = imageData.imageUrl;
+                    }
+
+                    // Fallback to photo search if generation fails
+                    if (!imageUrl) {
+                        const photoResponse = await fetch('/api/ai/search-photos', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ 
+                                query: slide.title + " " + slide.visualSuggestion.split(',')[0],
+                                count: 1
+                            })
+                        });
+
+                        if (photoResponse.ok) {
+                            const photoData = await photoResponse.json();
+                            imageUrl = photoData.photos?.[0]?.url;
+                        }
+                    }
+
+                    slidesWithImages.push({
+                        ...slide,
+                        imageUrl: imageUrl || 'https://via.placeholder.com/1200x800/667eea/ffffff?text=Visual+Coming+Soon'
+                    });
+
+                } catch (error) {
+                    console.error(`Error generating image for slide ${i + 1}:`, error);
+                    slidesWithImages.push({
+                        ...slide,
+                        imageUrl: 'https://via.placeholder.com/1200x800/667eea/ffffff?text=Visual+Coming+Soon'
+                    });
+                }
+
+                // Small delay to avoid rate limiting
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+            
+            return slidesWithImages;
+        }
+
+        // Display the beautiful Gamma-style presentation
+        function displayGammaStylePresentation(title, slides) {
+            const outputDiv = document.getElementById('integrated-lesson-output');
+            
+            let presentationHTML = `
+                <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 1200px; margin: 0 auto; background: #f8f9fa; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.1);">
+                    <!-- Header -->
+                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px; text-align: center;">
+                        <h1 style="margin: 0; font-size: 32px; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">${title}</h1>
+                        <p style="margin: 16px 0 0 0; font-size: 18px; opacity: 0.9;">Professional Geography Presentation • ${slides.length} Slides</p>
+                        <div style="margin-top: 20px; display: flex; justify-content: center; gap: 15px;">
+                            <button onclick="printPresentation()" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s;">🖨️ Print</button>
+                            <button onclick="exportPresentation()" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s;">📤 Export</button>
+                        </div>
+                    </div>
+
+                    <!-- Slides -->
+                    <div style="padding: 0;">
+            `;
+
+            slides.forEach((slide, index) => {
+                const isEven = index % 2 === 0;
+                const bgColor = slide.backgroundColor || (isEven ? '#ffffff' : '#f8f9fa');
+                const textColor = slide.textColor || '#2c3e50';
+                
+                presentationHTML += `
+                    <div style="min-height: 600px; background: ${bgColor}; color: ${textColor}; display: flex; align-items: center; border-bottom: 1px solid #e9ecef; position: relative; overflow: hidden;">
+                        ${slide.layout === 'hero' ? `
+                            <!-- Hero Layout -->
+                            <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: url('${slide.imageUrl}'); background-size: cover; background-position: center; opacity: 0.3;"></div>
+                            <div style="position: relative; z-index: 2; text-align: center; padding: 60px; width: 100%;">
+                                <h2 style="margin: 0 0 20px 0; font-size: 48px; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">${slide.title}</h2>
+                                ${slide.subtitle ? `<p style="margin: 0 0 30px 0; font-size: 24px; opacity: 0.9; text-shadow: 0 1px 2px rgba(0,0,0,0.2);">${slide.subtitle}</p>` : ''}
+                                <div style="max-width: 800px; margin: 0 auto;">
+                                    ${slide.content.map(point => `<div style="margin: 15px 0; font-size: 20px; background: rgba(255,255,255,0.9); color: #2c3e50; padding: 15px 30px; border-radius: 12px; display: inline-block; margin: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">${point}</div>`).join('')}
+                                </div>
+                            </div>
+                        ` : `
+                            <!-- Split Layout -->
+                            <div style="flex: 1; padding: 60px;">
+                                <h2 style="margin: 0 0 20px 0; font-size: 42px; font-weight: 700; line-height: 1.2;">${slide.title}</h2>
+                                ${slide.subtitle ? `<p style="margin: 0 0 30px 0; font-size: 20px; opacity: 0.8; font-weight: 500;">${slide.subtitle}</p>` : ''}
+                                <div style="space-y: 20px;">
+                                    ${slide.content.map(point => `<div style="margin: 20px 0; font-size: 18px; display: flex; align-items: center;"><div style="width: 8px; height: 8px; background: #667eea; border-radius: 50%; margin-right: 16px; flex-shrink: 0;"></div><span>${point}</span></div>`).join('')}
+                                </div>
+                            </div>
+                            <div style="flex: 1; background-image: url('${slide.imageUrl}'); background-size: cover; background-position: center; min-height: 500px; border-radius: 16px; margin: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);"></div>
+                        `}
+                    </div>
+                `;
+            });
+
+            presentationHTML += `
+                    </div>
+
+                    <!-- Footer -->
+                    <div style="background: #2c3e50; color: white; padding: 30px; text-align: center;">
+                        <p style="margin: 0; font-size: 16px; opacity: 0.8;">Created with AI-Powered Geography Curriculum • World Geography Project</p>
+                    </div>
+                </div>
+
+                <style>
+                    @media print {
+                        body * { visibility: hidden; }
+                        #integrated-lesson-output, #integrated-lesson-output * { visibility: visible; }
+                        #integrated-lesson-output { position: absolute; left: 0; top: 0; width: 100%; }
+                    }
+                </style>
+            `;
+
+            outputDiv.innerHTML = presentationHTML;
+            
+            // Smooth scroll to view
+            outputDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // Export presentation function
+        function exportPresentation() {
+            const content = document.getElementById('integrated-lesson-output').innerHTML;
+            const blob = new Blob([`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Geography Presentation</title>
+                    <meta charset="utf-8">
+                    <style>
+                        body { margin: 0; padding: 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+                        @media print { body { margin: 0; padding: 0; } }
+                    </style>
+                </head>
+                <body>
+                    ${content}
+                </body>
+                </html>
+            `], { type: 'text/html' });
+            
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'geography-presentation.html';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
         }
 
         // Generate image for individual slide
