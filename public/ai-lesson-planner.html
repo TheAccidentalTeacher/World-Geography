@@ -2520,9 +2520,9 @@ Create an engaging, classroom-ready presentation that brings this geography topi
 
         // Build comprehensive prompt for slide generation
         function buildAdvancedPresentationPrompt(lessonContent) {
-            return `# 🎨 ADVANCED PRESENTATION GENERATOR - Gamma.ai Quality
+            return `# 🎨 ADVANCED PRESENTATION GENERATOR - Professional Slide Format
 
-You are an expert presentation designer specializing in creating visually stunning, educationally sophisticated geography presentations. Your task is to analyze the lesson content and create 8-15 detailed slide prompts that will rival the quality of Gamma.ai presentations.
+You are an expert presentation designer creating engaging geography presentations. Your task is to analyze the lesson content and create 8-12 detailed slides following the EXACT format shown in the example.
 
 ## 📚 LESSON CONTENT ANALYSIS
 
@@ -2545,97 +2545,55 @@ ${lessonContent.vocabulary.map(v => `${v.term}: ${v.definition}`).join('\n')}
 
 ## 🎯 SLIDE GENERATION REQUIREMENTS
 
-### CONTENT DEPTH
-- Each slide prompt must be 200-400 words
-- Focus primarily on student reading content
-- Create engaging, educational narratives
-- Include specific geographic details and examples
+### CRITICAL FORMAT RULES:
+- Each slide should be 200-400 words TOTAL (all sections combined)
+- Use bullet points for easy reading (NO paragraph walls)
+- Include Content, Visual Suggestion, and Teacher Notes sections
+- Make slides scannable and presentation-friendly
+- Focus on engaging, interactive content
 
-### VISUAL THEME SELECTION
-- Analyze the lesson topic and select ONE cohesive visual theme for the entire presentation
-- Theme should reflect the geographic/cultural content (e.g., "Ancient Chinese Architecture" for dynasties, "Desert Landscapes" for Middle East, etc.)
-- Provide specific visual direction for consistency
+### EXACT FORMAT TO FOLLOW:
 
-### SLIDE STRUCTURE
-Generate 8-15 slides with the following types:
-1. **Title Slide** - Compelling introduction with theme
-2. **Overview/Hook Slides** - Engage students with the topic
-3. **Content Slides** - Deep dive into reading material (MAJORITY)
-4. **Visual Exploration Slides** - Geographic features, maps, imagery
-5. **Cultural Connection Slides** - Human geography elements
-6. **Synthesis/Conclusion Slides** - Tie concepts together
+**SLIDE [NUMBER]: [Engaging Title]**
 
-### IMAGE INTEGRATION REQUIREMENTS
-For each slide, provide:
-- **Stability AI Prompt:** Detailed description for custom illustration (geography, culture, concepts)
-- **Stock Photo Search:** Specific terms for Unsplash/Pexels (real places, artifacts, people)
-- **Visual Layout:** How images should be integrated with text
+**Content:** 
+• [Main bullet point with key concept]
+• [Second bullet point with details or examples]  
+• [Third bullet point connecting to student experience]
+• [Interactive element or thought-provoking question]
 
-### STYLE SPECIFICATIONS
-- Choose color palette that matches geographic theme
-- Specify typography that enhances the cultural connection
-- Provide layout guidance (text placement, image positioning)
-- Ensure professional, educational aesthetic
+**Visual Suggestion:** [Brief description of background image and layout]
+
+**Teacher Notes:** [Specific delivery tips and classroom engagement strategies]
 
 ---
 
-## 📋 REQUIRED OUTPUT FORMAT
+## 📋 EXAMPLE FORMAT (FOLLOW EXACTLY):
 
-For each slide, provide this exact structure:
+**SLIDE 1: Early China and the Han Dynasty**
 
-**SLIDE [NUMBER]: [Title]**
+**Content:** 
+• Explore the geography and achievements of early Chinese civilizations 
+• Understand the rise and culture of the Han Dynasty 
+• Connect geography to daily life and historical change
 
-**Content Prompt (250-400 words):**
-[Detailed educational content that will appear on the slide - rich, engaging, specific to the reading material]
+**Visual Suggestion:** Background image of the Great Wall of China with a map inset showing ancient Chinese territory
 
-**Visual Theme:**
-[How this slide fits the overall presentation theme]
-
-**Stability AI Image Prompt:**
-[Detailed prompt for custom illustration - be specific about style, composition, colors, geographic elements]
-
-**Stock Photo Keywords:**
-[Specific search terms for real photography - places, objects, people]
-
-**Layout Direction:**
-[How to arrange text and images - positioning, sizing, visual hierarchy]
-
-**Style Notes:**
-[Color scheme, typography, cultural design elements that match the theme]
+**Teacher Notes:** Welcome students! Highlight today's focus on how geography shaped early China and how the Han Dynasty influenced Chinese culture and innovation.
 
 ---
 
-## 🎨 EXAMPLE SLIDE FORMAT
+## 🎨 IMAGE PROMPT GENERATION
 
-**SLIDE 3: The Yellow River's Geographic Impact**
+After creating each slide in the above format, also provide these technical details:
 
-**Content Prompt (347 words):**
-The Yellow River, known as China's "Mother River," has shaped Chinese civilization for over 4,000 years through its unique geographic characteristics. Flowing 3,395 miles from the Tibetan Plateau to the Bohai Sea, this river carries more sediment than any other river in the world - earning its distinctive yellow color from the loess soil it picks up in the Loess Plateau region.
-
-This geographic feature created both opportunities and challenges for early Chinese settlers. The river's annual flooding deposited nutrient-rich silt across the North China Plain, creating some of the world's most fertile agricultural land. This allowed early Chinese civilizations to develop sophisticated farming techniques and support large populations, leading to the rise of powerful dynasties.
-
-However, the Yellow River's tendency to change course dramatically - sometimes by hundreds of miles - earned it the nickname "China's Sorrow." These catastrophic floods could destroy entire cities and farmlands, forcing massive population migrations and contributing to the fall of dynasties when they failed to manage the waterways effectively.
-
-The geographic isolation created by the river, combined with other natural barriers like the Gobi Desert and Himalayan Mountains, allowed Chinese culture to develop distinctively. Unlike civilizations that developed along more stable rivers like the Nile, Chinese societies had to become experts in water management and flood control, leading to innovations in engineering and government administration that would define Chinese civilization for millennia.
-
-**Visual Theme:**
-Ancient Chinese landscape with traditional architectural elements reflecting water management and agricultural development
-
-**Stability AI Image Prompt:**
-Create a sweeping landscape illustration showing the Yellow River winding through terraced farmlands in ancient China, with traditional Chinese architecture (pagodas, bridges) visible in the distance. Use warm earth tones - yellows, browns, and golds - to reflect the river's sediment. Include agricultural terraces, small villages, and mountains in the background. Style should be artistic but educational, combining realistic geography with cultural elements. Soft, natural lighting suggesting dawn or dusk.
-
-**Stock Photo Keywords:**
-"Yellow River China aerial", "Chinese terraced farmland", "ancient Chinese irrigation", "loess plateau China"
-
-**Layout Direction:**
-Large landscape image spanning 60% of slide width on the right, with text in elegant columns on the left. Use warm color overlay to unify image and text areas.
-
-**Style Notes:**
-Earth tone palette (yellow ochre, burnt sienna, warm browns), traditional Chinese-inspired typography for headers, subtle geometric patterns reminiscent of Chinese art as background elements.
+**Stability AI Prompt:** [Detailed description for custom illustration]
+**Stock Photo Keywords:** [Specific search terms for real photography]
 
 ---
 
-Generate slides following this exact format. Focus on making each slide educationally rich, visually compelling, and thematically consistent. The goal is to create presentation content that rivals Gamma.ai in quality and educational impact.`;
+CRITICAL: Generate slides following the EXACT three-section format shown above. Keep total word count per slide between 200-400 words across ALL sections. Make content bullet-pointed and scannable, NOT paragraph heavy. Focus on student engagement and visual learning.`;
+        }
         }
 
         // Extract content from lesson for presentation
