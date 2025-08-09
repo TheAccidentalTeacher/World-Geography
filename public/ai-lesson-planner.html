@@ -2956,6 +2956,9 @@ Generate 8-12 slides following this EXACT format. Focus on the lesson content pr
                     </div>
                     
                     <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px; text-align: center;">
+                        <button onclick="generateFullVisualPresentation()" style="background: linear-gradient(45deg, #ff6b6b, #ee5a24); color: white; border: none; padding: 15px 30px; border-radius: 6px; font-weight: bold; margin-right: 10px; cursor: pointer; font-size: 16px;">
+                            🎨 Create Gamma-Style Presentation
+                        </button>
                         <button onclick="copyMarkdownToClipboard()" style="background: linear-gradient(45deg, #28a745, #20c997); color: white; border: none; padding: 12px 24px; border-radius: 6px; font-weight: 600; margin-right: 10px; cursor: pointer;">
                             📋 Copy Markdown
                         </button>
@@ -3008,6 +3011,208 @@ Generate 8-12 slides following this EXACT format. Focus on the lesson content pr
                     </html>
                 `);
             }
+        }
+
+        // Generate Full Visual Presentation (Gamma-style with real images)
+        async function generateFullVisualPresentation() {
+            if (!window.currentSlideData || window.currentSlideData.length === 0) {
+                alert('No slide data available! Please generate slides first.');
+                return;
+            }
+
+            const button = event.target;
+            const originalText = button.innerHTML;
+            button.innerHTML = '🎨 Creating Visual Presentation...';
+            button.disabled = true;
+
+            try {
+                const outputDiv = document.getElementById('integrated-lesson-output');
+                
+                // Show progress
+                outputDiv.innerHTML = `
+                    <div style="text-align: center; padding: 40px; font-family: Georgia, serif;">
+                        <div style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%); color: white; padding: 30px; border-radius: 12px; margin-bottom: 20px;">
+                            <h2 style="margin: 0;">🎨 Creating Gamma-Style Presentation</h2>
+                            <p style="margin: 10px 0 0 0; opacity: 0.9;">Generating images and building visual slides...</p>
+                        </div>
+                        <div style="display: flex; justify-content: center; gap: 10px;">
+                            <div style="width: 12px; height: 12px; background: #ff6b6b; border-radius: 50%; animation: bounce 1.4s ease-in-out 0s infinite both;"></div>
+                            <div style="width: 12px; height: 12px; background: #ff6b6b; border-radius: 50%; animation: bounce 1.4s ease-in-out 0.16s infinite both;"></div>
+                            <div style="width: 12px; height: 12px; background: #ff6b6b; border-radius: 50%; animation: bounce 1.4s ease-in-out 0.32s infinite both;"></div>
+                        </div>
+                    </div>
+                    <style>
+                        @keyframes bounce {
+                            0%, 80%, 100% { transform: scale(0); }
+                            40% { transform: scale(1); }
+                        }
+                    </style>
+                `;
+
+                // Generate visual presentation with images
+                const visualPresentation = await createGammaStylePresentation(window.currentSlideData, window.currentPresentationTitle);
+                
+                // Display the complete visual presentation
+                outputDiv.innerHTML = visualPresentation;
+                
+                button.innerHTML = '✅ Presentation Created!';
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                }, 2000);
+
+            } catch (error) {
+                console.error('Error generating visual presentation:', error);
+                button.innerHTML = '❌ Error - Try Again';
+                button.disabled = false;
+                alert('Error generating visual presentation. Please check your API settings and try again.');
+            }
+        }
+
+        // Create Gamma-Style Presentation with real images
+        async function createGammaStylePresentation(slides, title) {
+            let presentationHTML = `
+                <div style="max-width: 1200px; margin: 0 auto; font-family: Georgia, serif;">
+                    <div style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%); color: white; padding: 30px; border-radius: 12px; margin-bottom: 30px; text-align: center;">
+                        <h1 style="margin: 0; font-size: 28px;">🎬 ${title}</h1>
+                        <p style="margin: 15px 0 0 0; font-size: 18px; opacity: 0.9;">${slides.length} Professional Visual Slides</p>
+                    </div>
+            `;
+
+            // Generate each slide with images
+            for (let i = 0; i < slides.length; i++) {
+                const slide = slides[i];
+                
+                // Try to get an image for this slide
+                let imageHTML = '';
+                try {
+                    const imageUrl = await generateImageForSlide(slide);
+                    if (imageUrl) {
+                        imageHTML = `
+                            <div style="text-align: center; margin-bottom: 20px;">
+                                <img src="${imageUrl}" alt="${slide.title}" style="max-width: 100%; max-height: 300px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+                            </div>
+                        `;
+                    }
+                } catch (error) {
+                    console.error('Image generation failed for slide:', slide.title, error);
+                    // Continue without image
+                }
+
+                presentationHTML += `
+                    <div style="background: white; border-radius: 12px; margin-bottom: 25px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; text-align: center;">
+                            <h2 style="margin: 0; font-size: 22px;">SLIDE ${i + 1}: ${slide.title}</h2>
+                        </div>
+                        
+                        <div style="padding: 30px;">
+                            ${imageHTML}
+                            
+                            <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                                <h3 style="color: #333; margin: 0 0 15px 0;">📚 Content</h3>
+                                <div style="line-height: 1.6; color: #555;">${formatSlideContent(slide.content)}</div>
+                            </div>
+                            
+                            ${slide.visualSuggestion ? `
+                                <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #28a745;">
+                                    <h4 style="color: #155724; margin: 0 0 10px 0;">🎨 Visual Suggestion</h4>
+                                    <p style="color: #155724; margin: 0; font-style: italic;">${slide.visualSuggestion}</p>
+                                </div>
+                            ` : ''}
+                            
+                            ${slide.teacherNotes ? `
+                                <div style="background: #fff3cd; padding: 15px; border-radius: 8px; border-left: 4px solid #ffc107;">
+                                    <h4 style="color: #856404; margin: 0 0 10px 0;">👨‍🏫 Teacher Notes</h4>
+                                    <p style="color: #856404; margin: 0;">${slide.teacherNotes}</p>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }
+
+            presentationHTML += `
+                <div style="text-align: center; margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 12px;">
+                    <button onclick="printPresentation()" style="background: linear-gradient(135deg, #28a745, #20c997); color: white; border: none; padding: 15px 30px; border-radius: 6px; cursor: pointer; margin-right: 15px; font-weight: bold;">
+                        🖨️ Print Presentation
+                    </button>
+                    <button onclick="sharePresentation()" style="background: linear-gradient(135deg, #007bff, #0056b3); color: white; border: none; padding: 15px 30px; border-radius: 6px; cursor: pointer; font-weight: bold;">
+                        📤 Share Presentation
+                    </button>
+                </div>
+            </div>
+            `;
+
+            return presentationHTML;
+        }
+
+        // Generate image for individual slide
+        async function generateImageForSlide(slide) {
+            try {
+                // Use the visual suggestion or create one from the title
+                const imagePrompt = slide.visualSuggestion || `Educational illustration showing ${slide.title}`;
+                
+                // Try Stability AI first
+                const response = await fetch('/api/generate-image', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        prompt: imagePrompt,
+                        style: 'educational illustration'
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    return data.imageUrl;
+                } else {
+                    // Fallback to stock photos
+                    const stockResponse = await fetch('/api/search-images', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            query: slide.title,
+                            type: 'educational'
+                        })
+                    });
+
+                    if (stockResponse.ok) {
+                        const stockData = await stockResponse.json();
+                        return stockData.images?.[0]?.url;
+                    }
+                }
+            } catch (error) {
+                console.error('Image generation failed:', error);
+            }
+            return null;
+        }
+
+        // Format slide content (convert bullet points to HTML)
+        function formatSlideContent(content) {
+            if (!content) return '';
+            
+            return content
+                .split('\n')
+                .map(line => {
+                    line = line.trim();
+                    if (line.startsWith('•')) {
+                        return `<div style="margin-bottom: 8px;">• ${line.substring(1).trim()}</div>`;
+                    }
+                    return line ? `<p style="margin-bottom: 10px;">${line}</p>` : '';
+                })
+                .join('');
+        }
+
+        // Print presentation
+        function printPresentation() {
+            window.print();
+        }
+
+        // Share presentation (opens in new window)
+        function sharePresentation() {
+            const newWindow = window.open('', '_blank');
+            newWindow.document.write(document.getElementById('integrated-lesson-output').innerHTML);
+            newWindow.document.title = window.currentPresentationTitle || 'Geography Presentation';
         }
 
         // Simple image generation for slides
