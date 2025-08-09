@@ -3022,6 +3022,153 @@ function generateAtlasHTML(isPrint = false, isDownload = false) {
 </html>`;
 }
 
+// ==============================================
+// IMAGE GENERATION ENDPOINTS
+// ==============================================
+
+// Generate image using Stability AI
+app.post('/api/generate-image', async (req, res) => {
+  try {
+    const { prompt, provider = 'stability', width = 800, height = 600 } = req.body;
+    
+    if (!prompt) {
+      return res.status(400).json({ error: 'Prompt is required' });
+    }
+
+    console.log(`🎨 Generating ${provider} image: ${prompt}`);
+
+    if (provider === 'stability') {
+      // Use Stability AI API
+      const stabilityKey = process.env.STABILITY_API_KEY;
+      
+      if (!stabilityKey) {
+        console.warn('⚠️ STABILITY_API_KEY not configured');
+        return res.status(503).json({ error: 'Image generation service not available' });
+      }
+
+      const response = await axios.post(
+        'https://api.stability.ai/v1/generation/stable-diffusion-xl-1024-v1-0/text-to-image',
+        {
+          text_prompts: [{ text: prompt, weight: 1 }],
+          cfg_scale: 7,
+          height: height,
+          width: width,
+          steps: 20,
+          samples: 1,
+          style_preset: 'photographic'
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${stabilityKey}`,
+            'Accept': 'application/json'
+          }
+        }
+      );
+
+      if (response.data.artifacts && response.data.artifacts.length > 0) {
+        const imageData = response.data.artifacts[0].base64;
+        const imageUrl = `data:image/png;base64,${imageData}`;
+        
+        console.log('✅ Stability AI image generated successfully');
+        return res.json({ imageUrl, prompt, provider: 'stability-ai' });
+      }
+    }
+
+    res.status(500).json({ error: 'Failed to generate image' });
+    
+  } catch (error) {
+    console.error('Image generation error:', error.message);
+    res.status(500).json({ error: 'Image generation failed' });
+  }
+});
+
+// Search for stock photos
+app.post('/api/search-images', async (req, res) => {
+  try {
+    const { query, providers = ['unsplash'], count = 3, width = 800, height = 600 } = req.body;
+    
+    if (!query) {
+      return res.status(400).json({ error: 'Query is required' });
+    }
+
+    console.log(`📷 Searching images: ${query} via ${providers.join(', ')}`);
+    
+    let images = [];
+
+    // Try Unsplash first
+    if (providers.includes('unsplash')) {
+      const unsplashKey = process.env.UNSPLASH_ACCESS_KEY;
+      
+      if (unsplashKey) {
+        try {
+          const response = await axios.get('https://api.unsplash.com/search/photos', {
+            params: {
+              query: query,
+              per_page: count,
+              orientation: 'landscape',
+              client_id: unsplashKey
+            }
+          });
+
+          if (response.data.results) {
+            images = images.concat(response.data.results.map(photo => ({
+              url: photo.urls.regular,
+              provider: 'unsplash',
+              description: photo.description || photo.alt_description || query,
+              photographer: photo.user.name
+            })));
+          }
+        } catch (error) {
+          console.warn('Unsplash search failed:', error.message);
+        }
+      } else {
+        console.warn('⚠️ UNSPLASH_ACCESS_KEY not configured');
+      }
+    }
+
+    // Try Pexels if needed
+    if (providers.includes('pexels') && images.length < count) {
+      const pexelsKey = process.env.PEXELS_API_KEY;
+      
+      if (pexelsKey) {
+        try {
+          const response = await axios.get('https://api.pexels.com/v1/search', {
+            params: {
+              query: query,
+              per_page: count - images.length,
+              orientation: 'landscape'
+            },
+            headers: {
+              'Authorization': pexelsKey
+            }
+          });
+
+          if (response.data.photos) {
+            images = images.concat(response.data.photos.map(photo => ({
+              url: photo.src.large,
+              provider: 'pexels',
+              description: photo.alt || query,
+              photographer: photo.photographer
+            })));
+          }
+        } catch (error) {
+          console.warn('Pexels search failed:', error.message);
+        }
+      } else {
+        console.warn('⚠️ PEXELS_API_KEY not configured');
+      }
+    }
+
+    console.log(`✅ Found ${images.length} stock photos`);
+    res.json({ images: images.slice(0, count) });
+    
+  } catch (error) {
+    console.error('Stock photo search error:', error.message);
+    res.status(500).json({ error: 'Stock photo search failed' });
+  }
+});
+
 // Start the server
 const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`);
