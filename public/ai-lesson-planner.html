@@ -2404,21 +2404,48 @@ Create an engaging, classroom-ready presentation that brings this geography topi
             }
 
             try {
-                // Show advanced loading
-                showAdvancedPresentationLoading();
+                // Show progress using existing function
+                const outputDiv = document.getElementById('integrated-lesson-output');
+                outputDiv.innerHTML = `
+                    <div style="text-align: center; padding: 40px;">
+                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 12px; margin-bottom: 20px;">
+                            <h2 style="margin: 0;">🎨 Generating Advanced Presentation</h2>
+                            <p style="margin: 10px 0 0 0; opacity: 0.9;">Analyzing lesson content and creating detailed slide prompts...</p>
+                        </div>
+                        <div style="display: flex; justify-content: center; gap: 10px;">
+                            <div style="width: 12px; height: 12px; background: #667eea; border-radius: 50%; animation: bounce 1.4s ease-in-out 0s infinite both;"></div>
+                            <div style="width: 12px; height: 12px; background: #667eea; border-radius: 50%; animation: bounce 1.4s ease-in-out 0.16s infinite both;"></div>
+                            <div style="width: 12px; height: 12px; background: #667eea; border-radius: 50%; animation: bounce 1.4s ease-in-out 0.32s infinite both;"></div>
+                        </div>
+                    </div>
+                    <style>
+                        @keyframes bounce {
+                            0%, 80%, 100% { transform: scale(0); }
+                            40% { transform: scale(1); }
+                        }
+                    </style>
+                `;
                 
                 // Step 1: Analyze lesson content and generate detailed slide prompts
                 const slidePrompts = await generateDetailedSlidePrompts();
                 
                 // Step 2: Display prompts for user review and editing
-                displaySlidePrompts(slidePrompts);
-                
-                hideAdvancedPresentationLoading();
+                displaySlidePrompts(slidePrompts.slides, slidePrompts.title);
                 
             } catch (error) {
                 console.error('❌ Error generating advanced presentation:', error);
-                hideAdvancedPresentationLoading();
-                alert('Error creating presentation: ' + error.message);
+                const outputDiv = document.getElementById('integrated-lesson-output');
+                outputDiv.innerHTML = `
+                    <div style="text-align: center; padding: 40px;">
+                        <div style="background: #dc3545; color: white; padding: 20px; border-radius: 8px;">
+                            <h3>❌ Error Creating Presentation</h3>
+                            <p>${error.message}</p>
+                            <button onclick="location.reload()" style="background: rgba(255,255,255,0.2); border: 1px solid white; color: white; padding: 10px 20px; border-radius: 4px; cursor: pointer;">
+                                Try Again
+                            </button>
+                        </div>
+                    </div>
+                `;
             }
         }
 
@@ -2431,7 +2458,12 @@ Create an engaging, classroom-ready presentation that brings this geography topi
             // Call OpenAI for detailed slide analysis
             const response = await callOpenAIForSlideGeneration(prompt);
             
-            return parseSlidePrompts(response);
+            const slides = parseSlidePrompts(response);
+            
+            return {
+                title: lessonContent.title || 'Geography Presentation',
+                slides: slides
+            };
         }
 
         // Extract comprehensive lesson content for analysis
