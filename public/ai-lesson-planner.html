@@ -556,8 +556,10 @@
 
                             <div class="control-group">
                                 <label for="api-key">OpenAI API Key</label>
-                                <input type="password" id="api-key" name="api-key" placeholder="sk-..." 
-                                       value="" autocomplete="off" />
+                                <form onsubmit="return false;">
+                                    <input type="password" id="api-key" name="api-key" placeholder="sk-..." 
+                                           value="" autocomplete="off" />
+                                </form>
                                 <small style="color: #6c757d; font-size: 0.8rem; margin-top: 5px; display: block;">
                                     Your API key is stored locally and never sent to our servers
                                 </small>
@@ -2428,7 +2430,7 @@ Create an engaging, classroom-ready presentation that brings this geography topi
                 </head>
                 <body>
                     ${presentationHTML}
-                    <script>
+                    <${'script'}>
                         function copyPresentationToClipboard() {
                             const content = document.querySelector('div[style*="white-space: pre-wrap"]').textContent;
                             navigator.clipboard.writeText(content).then(() => {
@@ -2613,7 +2615,7 @@ Create an engaging, classroom-ready presentation that brings this geography topi
             <button class="btn" onclick="window.close()">Close</button>
         </div>
     </div>
-    <script>
+    <${'script'}>
         let currentSlide = 1;
         const totalSlides = ${data.slides.length};
         
@@ -2637,7 +2639,7 @@ Create an engaging, classroom-ready presentation that brings this geography topi
             if (e.key === 'ArrowLeft') previousSlide();
             if (e.key === 'Escape') window.close();
         });
-    </script>
+    </${'script'}>
 </body>
 </html>`;
         }
