@@ -2446,11 +2446,11 @@ Create an engaging, classroom-ready presentation that brings this geography topi
             presentationWindow.document.close();
         }
 
-        // Smart Presentation System - Full Implementation
+        // Smart Presentation System - Fixed and Simplified
         async function generateSmartPresentation() {
             console.log('🎨 Starting Smart Presentation generation...');
             
-            // Get lesson content
+            // Check if lesson content exists
             const lessonOutput = document.getElementById('integrated-lesson-output');
             if (!lessonOutput || !lessonOutput.innerHTML.trim()) {
                 alert('Please generate a complete lesson first before creating a smart presentation.');
@@ -2461,483 +2461,208 @@ Create an engaging, classroom-ready presentation that brings this geography topi
                 // Show loading
                 showPresentationLoading();
                 
-                // Step 1: Extract content from the lesson
-                const lessonData = extractLessonContent();
-                
-                // Step 2: Create slide structure
-                const slides = createSlideStructure(lessonData);
-                
-                // Step 3: Generate and display presentation
-                const presentationHTML = buildPresentationHTML(slides);
-                displayPresentation(presentationHTML);
+                // Extract and create presentation
+                setTimeout(() => {
+                    const presentationData = extractLessonForPresentation();
+                    createAndDisplayPresentation(presentationData);
+                    hidePresentationLoading();
+                }, 1000);
                 
             } catch (error) {
                 console.error('❌ Error generating presentation:', error);
-                alert('Error creating presentation: ' + error.message);
-            } finally {
                 hidePresentationLoading();
+                alert('Error creating presentation: ' + error.message);
             }
         }
 
-        // Extract structured content from the generated lesson
-        function extractLessonContent() {
+        // Extract content from lesson for presentation
+        function extractLessonForPresentation() {
             const currentLesson = getCurrentLessonData();
             const lessonHTML = document.getElementById('integrated-lesson-output').innerHTML;
             
-            // Extract sections using regex patterns
-            const sections = {
-                title: currentLesson.title || 'Geography Lesson',
-                module: currentLesson.moduleName || 'Geography Module',
-                objectives: extractSection(lessonHTML, 'Learning Objectives', 'Standards'),
-                standards: extractSection(lessonHTML, 'Standards', 'Timing'),
-                activities: extractSection(lessonHTML, 'Activity', 'Assessment'),
-                vocabulary: extractSection(lessonHTML, 'Key Terms', 'Implementation'),
-                assessment: extractSection(lessonHTML, 'Assessment', 'Conclusion')
-            };
+            // Simple content extraction
+            const title = currentLesson.title || 'Geography Lesson';
+            const module = currentLesson.moduleName || 'Geography Module';
             
-            return sections;
-        }
-
-        // Extract content between two headers
-        function extractSection(html, startHeader, endHeader) {
-            const startPattern = new RegExp(`<h[234][^>]*>${startHeader}[^<]*</h[234]>`, 'i');
-            const endPattern = endHeader ? new RegExp(`<h[234][^>]*>${endHeader}[^<]*</h[234]>`, 'i') : null;
+            // Extract text content and create simple slides
+            const textContent = lessonHTML.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+            const sentences = textContent.split(/[.!?]+/).filter(s => s.trim().length > 10);
             
-            const startMatch = html.match(startPattern);
-            if (!startMatch) return [];
-            
-            const startIndex = startMatch.index + startMatch[0].length;
-            const endIndex = endPattern ? (html.match(endPattern)?.index || html.length) : html.length;
-            
-            const sectionHTML = html.substring(startIndex, endIndex);
-            
-            // Extract bullet points or paragraphs
-            const bullets = sectionHTML.match(/<li[^>]*>([^<]+)</g) || [];
-            if (bullets.length > 0) {
-                return bullets.map(bullet => bullet.replace(/<[^>]*>/g, '').trim()).filter(text => text.length > 0);
-            }
-            
-            // Fall back to paragraphs
-            const paragraphs = sectionHTML.match(/<p[^>]*>([^<]+)</g) || [];
-            return paragraphs.map(p => p.replace(/<[^>]*>/g, '').trim()).filter(text => text.length > 0).slice(0, 4);
-        }
-
-        // Create intelligent slide structure
-        function createSlideStructure(lessonData) {
-            const slides = [];
-            
-            // Slide 1: Title slide
-            slides.push({
-                type: 'title',
-                title: lessonData.title,
-                subtitle: lessonData.module,
-                content: [],
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-            });
-
-            // Slide 2: Learning objectives
-            if (lessonData.objectives.length > 0) {
-                slides.push({
+            const slides = [
+                {
+                    type: 'title',
+                    title: title,
+                    subtitle: module,
+                    content: []
+                },
+                {
                     type: 'content',
-                    title: 'Learning Objectives',
-                    content: lessonData.objectives.slice(0, 4),
-                    icon: '🎯'
-                });
-            }
-
-            // Slide 3: Key vocabulary
-            if (lessonData.vocabulary.length > 0) {
-                slides.push({
-                    type: 'vocabulary',
-                    title: 'Key Terms',
-                    content: lessonData.vocabulary.slice(0, 6),
-                    icon: '📚'
-                });
-            }
-
-            // Slides 4-6: Main content from activities
-            if (lessonData.activities.length > 0) {
-                const activityChunks = chunkArray(lessonData.activities, 3);
-                activityChunks.forEach((chunk, index) => {
-                    slides.push({
-                        type: 'content',
-                        title: `Key Concepts ${index > 0 ? '(' + (index + 1) + ')' : ''}`,
-                        content: chunk,
-                        icon: index === 0 ? '🌍' : index === 1 ? '🗺️' : '📍'
-                    });
-                });
-            }
-
-            // Slide 7: Assessment
-            if (lessonData.assessment.length > 0) {
-                slides.push({
-                    type: 'assessment',
-                    title: 'Check Your Understanding',
-                    content: lessonData.assessment.slice(0, 4),
-                    icon: '✅'
-                });
-            }
-
-            // Final slide: Summary
-            slides.push({
-                type: 'conclusion',
-                title: 'Lesson Complete!',
-                content: ['Review key concepts', 'Practice with activities', 'Prepare for next lesson'],
-                icon: '🎉'
-            });
-
-            return slides;
-        }
-
-        // Utility function to chunk arrays
-        function chunkArray(array, chunkSize) {
-            const chunks = [];
-            for (let i = 0; i < array.length; i += chunkSize) {
-                chunks.push(array.slice(i, i + chunkSize));
-            }
-            return chunks;
-        }
-
-        // Build complete presentation HTML
-        function buildPresentationHTML(slides) {
-            const slidesHTML = slides.map((slide, index) => generateSlideHTML(slide, index + 1)).join('');
+                    title: 'Learning Focus',
+                    content: sentences.slice(0, 4)
+                },
+                {
+                    type: 'content',
+                    title: 'Key Concepts',
+                    content: sentences.slice(4, 8)
+                },
+                {
+                    type: 'conclusion',
+                    title: 'Lesson Summary',
+                    content: ['Review the material', 'Complete activities', 'Prepare for assessment']
+                }
+            ];
             
-            return `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geography Presentation</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f8fafc;
-            overflow: hidden;
-            height: 100vh;
-        }
-        
-        .presentation-container {
-            width: 100vw;
-            height: 100vh;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .slide {
-            width: 90vw;
-            max-width: 1200px;
-            height: 80vh;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
-            padding: 60px;
-            display: none;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .slide.active { display: flex; flex-direction: column; }
-        
-        .slide-title {
-            font-size: 3.5rem;
-            font-weight: 800;
-            color: #1a365d;
-            margin-bottom: 20px;
-            line-height: 1.1;
-        }
-        
-        .slide-subtitle {
-            font-size: 1.8rem;
-            color: #4a5568;
-            margin-bottom: 40px;
-            font-weight: 400;
-        }
-        
-        .slide-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-        
-        .slide-icon {
-            font-size: 4rem;
-            margin-bottom: 30px;
-            text-align: center;
-        }
-        
-        .content-list {
-            list-style: none;
-            padding: 0;
-        }
-        
-        .content-list li {
-            font-size: 1.4rem;
-            line-height: 1.6;
-            margin: 20px 0;
-            padding: 15px 0;
-            border-bottom: 1px solid #e2e8f0;
-            color: #2d3748;
-            position: relative;
-            padding-left: 40px;
-        }
-        
-        .content-list li::before {
-            content: "→";
-            position: absolute;
-            left: 0;
-            color: #4299e1;
-            font-weight: bold;
-            font-size: 1.2em;
-        }
-        
-        .slide-title-type {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            text-align: center;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .slide-title-type .slide-title {
-            color: white;
-            font-size: 5rem;
-            text-shadow: 0 4px 20px rgba(0,0,0,0.3);
-        }
-        
-        .slide-title-type .slide-subtitle {
-            color: rgba(255,255,255,0.9);
-            font-size: 2.2rem;
-        }
-        
-        .slide-vocabulary .content-list {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-        }
-        
-        .slide-vocabulary .content-list li {
-            background: #f7fafc;
-            padding: 20px;
-            border-radius: 12px;
-            border: none;
-            font-weight: 600;
-            color: #2d3748;
-        }
-        
-        .slide-vocabulary .content-list li::before {
-            content: "📖";
-            font-size: 1.5rem;
-        }
-        
-        .controls {
-            position: fixed;
-            bottom: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 20px;
-            z-index: 1000;
-        }
-        
-        .control-btn {
-            padding: 15px 25px;
-            background: rgba(255,255,255,0.95);
-            border: none;
-            border-radius: 30px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            color: #2d3748;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-        }
-        
-        .control-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-        }
-        
-        .control-btn:active {
-            transform: translateY(0);
-        }
-        
-        .slide-counter {
-            position: fixed;
-            top: 40px;
-            right: 40px;
-            background: rgba(255,255,255,0.95);
-            padding: 15px 25px;
-            border-radius: 25px;
-            font-weight: 600;
-            color: #2d3748;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-        }
-        
-        .progress-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #667eea, #764ba2);
-            transition: width 0.3s ease;
-            z-index: 1001;
-        }
-    </style>
-</head>
-<body>
-    <div class="progress-bar" id="progress-bar"></div>
-    <div class="presentation-container">
-        ${slidesHTML}
-        
-        <div class="slide-counter">
-            <span id="current-slide">1</span> / <span id="total-slides">${slides.length}</span>
-        </div>
-        
-        <div class="controls">
-            <button class="control-btn" onclick="previousSlide()">← Previous</button>
-            <button class="control-btn" onclick="nextSlide()">Next →</button>
-            <button class="control-btn" onclick="window.close()">✕ Close</button>
-        </div>
-    </div>
-    
-    <script>
-        let currentSlide = 1;
-        const totalSlides = ${slides.length};
-        
-        function showSlide(n) {
-            if (n < 1) n = 1;
-            if (n > totalSlides) n = totalSlides;
-            
-            document.querySelectorAll('.slide').forEach(slide => slide.classList.remove('active'));
-            document.getElementById('slide-' + n).classList.add('active');
-            document.getElementById('current-slide').textContent = n;
-            
-            // Update progress bar
-            const progress = (n / totalSlides) * 100;
-            document.getElementById('progress-bar').style.width = progress + '%';
-            
-            currentSlide = n;
-        }
-        
-        function nextSlide() {
-            if (currentSlide < totalSlides) {
-                showSlide(currentSlide + 1);
-            }
-        }
-        
-        function previousSlide() {
-            if (currentSlide > 1) {
-                showSlide(currentSlide - 1);
-            }
-        }
-        
-        // Keyboard navigation
-        document.addEventListener('keydown', function(e) {
-            switch(e.key) {
-                case 'ArrowRight':
-                case ' ':
-                    e.preventDefault();
-                    nextSlide();
-                    break;
-                case 'ArrowLeft':
-                    e.preventDefault();
-                    previousSlide();
-                    break;
-                case 'Escape':
-                    window.close();
-                    break;
-            }
-        });
-        
-        // Initialize
-        showSlide(1);
-        
-        // Auto-focus for keyboard navigation
-        document.body.focus();
-    </script>
-</body>
-</html>`;
+            return { title, slides };
         }
 
-        // Generate HTML for individual slide
-        function generateSlideHTML(slide, slideNumber) {
-            const slideClass = `slide slide-${slide.type}`;
+        // Create and display the presentation
+        function createAndDisplayPresentation(data) {
+            const html = buildSimplePresentation(data);
+            const newWindow = window.open('', '_blank', 'width=1200,height=800');
             
-            if (slide.type === 'title') {
-                return `
-                    <div id="slide-${slideNumber}" class="${slideClass} slide-title-type">
-                        <h1 class="slide-title">${slide.title}</h1>
-                        <p class="slide-subtitle">${slide.subtitle}</p>
-                    </div>
-                `;
-            }
-            
-            const iconHTML = slide.icon ? `<div class="slide-icon">${slide.icon}</div>` : '';
-            const contentHTML = slide.content.length > 0 ? 
-                `<ul class="content-list">${slide.content.map(item => `<li>${item}</li>`).join('')}</ul>` : 
-                '<p style="text-align: center; font-size: 1.5rem; color: #718096;">Content loading...</p>';
-            
-            return `
-                <div id="slide-${slideNumber}" class="${slideClass}">
-                    ${iconHTML}
-                    <h1 class="slide-title">${slide.title}</h1>
-                    <div class="slide-content">
-                        ${contentHTML}
-                    </div>
-                </div>
-            `;
-        }
-
-        // Display the presentation in a new window
-        function displayPresentation(html) {
-            const presentationWindow = window.open('', '_blank', 'width=1400,height=900');
-            if (presentationWindow) {
-                presentationWindow.document.write(html);
-                presentationWindow.document.close();
-                presentationWindow.focus();
+            if (newWindow) {
+                newWindow.document.write(html);
+                newWindow.document.close();
+                newWindow.focus();
             } else {
                 alert('Please allow pop-ups to view the presentation');
             }
         }
 
+        // Build simple, working presentation HTML
+        function buildSimplePresentation(data) {
+            const slidesHTML = data.slides.map((slide, index) => {
+                const slideId = `slide-${index + 1}`;
+                const activeClass = index === 0 ? ' active' : '';
+                
+                if (slide.type === 'title') {
+                    return `
+                        <div id="${slideId}" class="slide title-slide${activeClass}">
+                            <h1>${slide.title}</h1>
+                            <h2>${slide.subtitle}</h2>
+                        </div>
+                    `;
+                }
+                
+                const contentList = slide.content.map(item => `<li>${item}</li>`).join('');
+                return `
+                    <div id="${slideId}" class="slide content-slide${activeClass}">
+                        <h1>${slide.title}</h1>
+                        <ul>${contentList}</ul>
+                    </div>
+                `;
+            }).join('');
+
+            return `<!DOCTYPE html>
+<html>
+<head>
+    <title>${data.title} - Presentation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh; overflow: hidden; 
+        }
+        .container { 
+            width: 100%; height: 100%; 
+            display: flex; align-items: center; justify-content: center; 
+        }
+        .slide { 
+            width: 90%; max-width: 1000px; height: 80%; 
+            background: white; border-radius: 20px; 
+            padding: 60px; display: none; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        .slide.active { display: flex; flex-direction: column; justify-content: center; }
+        .title-slide { text-align: center; }
+        .title-slide h1 { font-size: 4rem; color: #2d3748; margin-bottom: 20px; }
+        .title-slide h2 { font-size: 2rem; color: #4a5568; }
+        .content-slide h1 { font-size: 3rem; color: #2d3748; margin-bottom: 40px; }
+        .content-slide ul { list-style: none; }
+        .content-slide li { 
+            font-size: 1.5rem; margin: 20px 0; padding: 15px 0; 
+            border-bottom: 2px solid #e2e8f0; color: #2d3748;
+        }
+        .controls { 
+            position: fixed; bottom: 30px; left: 50%; 
+            transform: translateX(-50%); display: flex; gap: 20px; 
+        }
+        .btn { 
+            padding: 15px 30px; background: rgba(255,255,255,0.9); 
+            border: none; border-radius: 30px; cursor: pointer; 
+            font-size: 16px; font-weight: 600; 
+        }
+        .btn:hover { background: white; }
+        .counter { 
+            position: fixed; top: 30px; right: 30px; 
+            background: rgba(255,255,255,0.9); padding: 15px 25px; 
+            border-radius: 20px; font-weight: 600; 
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        ${slidesHTML}
+        <div class="counter">
+            <span id="current">1</span> / <span id="total">${data.slides.length}</span>
+        </div>
+        <div class="controls">
+            <button class="btn" onclick="previousSlide()">← Previous</button>
+            <button class="btn" onclick="nextSlide()">Next →</button>
+            <button class="btn" onclick="window.close()">Close</button>
+        </div>
+    </div>
+    <script>
+        let currentSlide = 1;
+        const totalSlides = ${data.slides.length};
+        
+        function showSlide(n) {
+            document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+            document.getElementById('slide-' + n).classList.add('active');
+            document.getElementById('current').textContent = n;
+            currentSlide = n;
+        }
+        
+        function nextSlide() {
+            if (currentSlide < totalSlides) showSlide(currentSlide + 1);
+        }
+        
+        function previousSlide() {
+            if (currentSlide > 1) showSlide(currentSlide - 1);
+        }
+        
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+            if (e.key === 'ArrowLeft') previousSlide();
+            if (e.key === 'Escape') window.close();
+        });
+    </script>
+</body>
+</html>`;
+        }
+
         // Loading functions
         function showPresentationLoading() {
-            if (document.getElementById('presentation-loading')) return;
-            
             const loadingHTML = `
                 <div id="presentation-loading" style="
                     position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
                     background: rgba(0,0,0,0.8); z-index: 10000; display: flex; 
                     align-items: center; justify-content: center; color: white;
-                    backdrop-filter: blur(5px);
                 ">
-                    <div style="text-align: center; padding: 50px; background: rgba(255,255,255,0.1); border-radius: 20px; backdrop-filter: blur(10px);">
-                        <div style="font-size: 60px; margin-bottom: 30px; animation: spin 2s linear infinite;">🎨</div>
-                        <h2 style="margin-bottom: 20px;">Creating Your Presentation</h2>
-                        <p style="opacity: 0.8;">Analyzing lesson content and building slides...</p>
+                    <div style="text-align: center; padding: 40px; background: rgba(255,255,255,0.1); border-radius: 20px;">
+                        <div style="font-size: 48px; margin-bottom: 20px;">🎨</div>
+                        <h2>Creating Your Presentation</h2>
+                        <p>Analyzing lesson content...</p>
                     </div>
                 </div>
-                <style>
-                    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-                </style>
             `;
-            
             document.body.insertAdjacentHTML('beforeend', loadingHTML);
         }
 
         function hidePresentationLoading() {
             const loading = document.getElementById('presentation-loading');
-            if (loading) {
-                loading.remove();
-            }
+            if (loading) loading.remove();
         }
 
         // Format the integrated lesson with proper HTML structure and page breaks
