@@ -2460,10 +2460,14 @@ Create an engaging, classroom-ready presentation that brings this geography topi
                 `;
                 
                 // Step 1: Analyze lesson content and generate detailed slide prompts
+                console.log('🎯 Step 1: Generating detailed slide prompts...');
                 const slidePrompts = await generateDetailedSlidePrompts();
+                console.log('✅ Step 1 complete, received:', slidePrompts);
                 
                 // Step 2: Display prompts for user review and editing
+                console.log('🎯 Step 2: Displaying slide prompts...');
                 displaySlidePrompts(slidePrompts.slides, slidePrompts.title);
+                console.log('✅ Step 2 complete');
                 
             } catch (error) {
                 console.error('❌ Error generating advanced presentation:', error);
@@ -2484,19 +2488,31 @@ Create an engaging, classroom-ready presentation that brings this geography topi
 
         // Generate detailed slide prompts (200-400 words each)
         async function generateDetailedSlidePrompts() {
+            console.log('🔍 Starting generateDetailedSlidePrompts...');
+            
             const lessonContent = extractLessonForAdvancedPresentation();
+            console.log('📚 Extracted lesson content:', lessonContent);
             
             const prompt = buildAdvancedPresentationPrompt(lessonContent);
+            console.log('📝 Built prompt, length:', prompt.length);
             
-            // Call OpenAI for detailed slide analysis
-            const response = await callOpenAIForSlideGeneration(prompt);
-            
-            const slides = parseSlidePrompts(response);
-            
-            return {
-                title: lessonContent.title || 'Geography Presentation',
-                slides: slides
-            };
+            try {
+                // Call OpenAI for detailed slide analysis
+                console.log('🌐 Calling OpenAI for slide generation...');
+                const response = await callOpenAIForSlideGeneration(prompt);
+                console.log('✅ Received response from OpenAI, length:', response?.length);
+                
+                const slides = parseSlidePrompts(response);
+                console.log('🎯 Parsed slides:', slides?.length, 'slides');
+                
+                return {
+                    title: lessonContent.title || 'Geography Presentation',
+                    slides: slides
+                };
+            } catch (error) {
+                console.error('❌ Error in generateDetailedSlidePrompts:', error);
+                throw error;
+            }
         }
 
         // Extract comprehensive lesson content for analysis
