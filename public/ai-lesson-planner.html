@@ -2269,9 +2269,16 @@ Generate the lesson following the exact format above.`;
 
         // Get current lesson data for PowerPoint generation
         function getCurrentLessonData() {
-            // Return the global currentLessonData if available
+            // First try the global variable
             if (window.currentLessonData) {
+                console.log('🎯 Using window.currentLessonData:', window.currentLessonData);
                 return window.currentLessonData;
+            }
+            
+            // Second try the local variable
+            if (typeof currentLessonData !== 'undefined' && currentLessonData) {
+                console.log('🎯 Using local currentLessonData:', currentLessonData);
+                return currentLessonData;
             }
             
             // Fallback: try to get from the displayed lesson info
@@ -2279,6 +2286,7 @@ Generate the lesson following the exact format above.`;
             const lessonElement = document.querySelector('[data-lesson]');
             
             if (moduleElement && lessonElement) {
+                console.log('🎯 Using DOM element data');
                 return {
                     title: lessonElement.textContent || 'Selected Lesson',
                     moduleNumber: moduleElement.getAttribute('data-module') || '1',
@@ -2286,9 +2294,10 @@ Generate the lesson following the exact format above.`;
                 };
             }
             
-            // Final fallback
+            // Final fallback - generic data
+            console.log('🎯 Using fallback data');
             return {
-                title: document.querySelector('#current-lesson .lesson-title')?.textContent || 'Geography Lesson',
+                title: 'Geography Lesson',
                 moduleNumber: '1',
                 moduleName: 'Geography Module'
             };
@@ -2328,11 +2337,15 @@ Generate the lesson following the exact format above.`;
 
         // Build presentation prompt
         function buildPresentationPrompt(lessonData) {
+            // Get grade level safely with fallback
+            const gradeLevelElement = document.getElementById('grade-level');
+            const gradeLevel = gradeLevelElement ? gradeLevelElement.value : '7th Grade';
+            
             return `Create a PowerPoint-style presentation for this geography lesson:
 
 **LESSON TOPIC:** ${lessonData.title}
 **MODULE:** ${lessonData.moduleNumber} - ${lessonData.moduleName}
-**GRADE LEVEL:** ${document.getElementById('grade-level').value}
+**GRADE LEVEL:** ${gradeLevel}
 
 **PRESENTATION REQUIREMENTS:**
 - Create 8-12 slides maximum
