@@ -50,7 +50,7 @@
             grid-template-columns: 400px 1fr;
             gap: 30px;
             padding: 30px;
-            min-height: 600px;
+            min-height: 800px;
         }
 
         .input-panel {
@@ -193,7 +193,9 @@
             padding: 25px;
             border: 1px solid #dee2e6;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            min-height: 400px;
+            min-height: 600px;
+            max-height: 800px;
+            overflow-y: auto;
         }
 
         .lesson-plan-section {
@@ -878,6 +880,9 @@
         // Global variables
         let currentLessonData = null;
         let generatedLessonPlan = null;
+        
+        // Make currentLessonData available globally
+        window.currentLessonData = currentLessonData;
 
         // Initialize page
         document.addEventListener('DOMContentLoaded', function() {
@@ -1028,6 +1033,7 @@
                     if (savedLesson) {
                         console.log('📱 Loading lesson data from localStorage');
                         currentLessonData = JSON.parse(savedLesson);
+                        window.currentLessonData = currentLessonData;
                         displayLessonData();
                     } else {
                         // Default placeholder data
@@ -1083,12 +1089,14 @@
                     if (fallbackLesson) {
                         console.log(`⚠️ Lesson ${lessonNum} not found, using Lesson ${fallbackLesson.lessonNumber} as fallback`);
                         currentLessonData = formatLessonForAI(targetModule, fallbackLesson);
+                        window.currentLessonData = currentLessonData;
                     } else {
                         throw new Error(`No lessons found in Module ${moduleNum}`);
                     }
                 } else {
                     console.log(`✅ Found Lesson ${lessonNum}: ${targetLesson.title}`);
                     currentLessonData = formatLessonForAI(targetModule, targetLesson);
+                    window.currentLessonData = currentLessonData;
                 }
                 
                 console.log('📝 Formatted lesson data for AI:', currentLessonData);
@@ -1105,6 +1113,7 @@
                 if (savedLesson) {
                     console.log('🔄 Using cached lesson data as fallback');
                     currentLessonData = JSON.parse(savedLesson);
+                    window.currentLessonData = currentLessonData;
                     displayLessonData();
                     updateAPIStatus('warning', '⚠️ Using cached lesson data - some content may be outdated');
                 } else {
@@ -2256,6 +2265,33 @@ Generate the lesson following the exact format above.`;
                 
                 exportButtons.appendChild(powerpointBtn);
             }
+        }
+
+        // Get current lesson data for PowerPoint generation
+        function getCurrentLessonData() {
+            // Return the global currentLessonData if available
+            if (window.currentLessonData) {
+                return window.currentLessonData;
+            }
+            
+            // Fallback: try to get from the displayed lesson info
+            const moduleElement = document.querySelector('[data-module]');
+            const lessonElement = document.querySelector('[data-lesson]');
+            
+            if (moduleElement && lessonElement) {
+                return {
+                    title: lessonElement.textContent || 'Selected Lesson',
+                    moduleNumber: moduleElement.getAttribute('data-module') || '1',
+                    moduleName: moduleElement.textContent || 'Geography Module'
+                };
+            }
+            
+            // Final fallback
+            return {
+                title: document.querySelector('#current-lesson .lesson-title')?.textContent || 'Geography Lesson',
+                moduleNumber: '1',
+                moduleName: 'Geography Module'
+            };
         }
 
         // Generate PowerPoint presentation
