@@ -690,6 +690,7 @@
                         <button onclick="printIntegratedLesson()" class="export-button print">🖨️ Print Complete Lesson</button>
                         <button onclick="copyIntegratedLesson()" class="export-button copy">📋 Copy Complete Lesson</button>
                         <button onclick="saveIntegratedLesson()" class="export-button">💾 Save Complete Lesson</button>
+                        <button onclick="generateSmartPresentation()" class="export-button" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; font-weight: bold;">🎨 Generate Smart Presentation</button>
                     </div>
                 </div>
 
@@ -2443,6 +2444,682 @@ Create an engaging, classroom-ready presentation that brings this geography topi
                 </html>
             `);
             presentationWindow.document.close();
+        }
+
+        // ========================================
+        // SMART PRESENTATION SYSTEM (Gamma.ai Style)
+        // ========================================
+
+        // Generate Smart Presentation (Main Function)
+        async function generateSmartPresentation() {
+            console.log('🎨 Starting Smart Presentation generation...');
+            
+            // Check if we have lesson content
+            const lessonContent = document.getElementById('integrated-lesson-output').innerHTML;
+            if (!lessonContent || lessonContent.trim() === '') {
+                alert('Please generate a complete lesson first before creating a smart presentation.');
+                return;
+            }
+
+            try {
+                // Show loading overlay
+                showSmartPresentationLoading();
+                
+                // Step 1: Analyze lesson content and create slide structure
+                console.log('📊 Analyzing lesson content...');
+                const slideStructure = await analyzeContentForSlides(lessonContent);
+                
+                // Step 2: Generate visual recommendations for each slide
+                console.log('🖼️ Planning visual content...');
+                const visualPlan = await planSlideVisuals(slideStructure);
+                
+                // Step 3: Fetch images and create presentation
+                console.log('🎯 Building smart presentation...');
+                const smartPresentation = await buildSmartPresentation(slideStructure, visualPlan);
+                
+                // Step 4: Display the presentation
+                displaySmartPresentation(smartPresentation);
+                
+            } catch (error) {
+                console.error('❌ Error generating smart presentation:', error);
+                hideSmartPresentationLoading();
+                alert('Error generating smart presentation: ' + error.message);
+            }
+        }
+
+        // Analyze lesson content and create intelligent slide structure
+        async function analyzeContentForSlides(lessonContent) {
+            const currentLessonData = getCurrentLessonData();
+            
+            const analysisPrompt = `Analyze this complete geography lesson and create an intelligent slide structure for a Gamma.ai style presentation:
+
+LESSON CONTENT:
+${lessonContent}
+
+LESSON DETAILS:
+- Topic: ${currentLessonData.title}
+- Module: ${currentLessonData.moduleNumber} - ${currentLessonData.moduleName}
+
+Create a slide-by-slide breakdown that follows presentation best practices:
+
+REQUIREMENTS:
+- 8-12 slides maximum for optimal engagement
+- Each slide should have ONE clear focus
+- Include engaging hooks, smooth transitions
+- Balance content delivery with interactive elements
+- Include visual suggestions for each slide
+- Speaker notes for teaching guidance
+
+FORMAT YOUR RESPONSE AS JSON:
+{
+  "presentationTitle": "Engaging title for the presentation",
+  "totalSlides": 10,
+  "slides": [
+    {
+      "slideNumber": 1,
+      "slideType": "title",
+      "title": "Slide title",
+      "content": ["Key point 1", "Key point 2", "Key point 3"],
+      "visualSuggestion": "Description of ideal visual (photo/map/diagram)",
+      "speakerNotes": "Teaching notes and discussion prompts",
+      "transition": "How to transition to next slide"
+    }
+  ]
+}
+
+SLIDE TYPES to use: "title", "hook", "content", "activity", "assessment", "conclusion"
+
+Generate an engaging, pedagogically sound presentation structure.`;
+
+            const response = await callOpenAIAPI(analysisPrompt);
+            return JSON.parse(response);
+        }
+
+        // Plan visual content for each slide using visual intelligence
+        async function planSlideVisuals(slideStructure) {
+            console.log('🎨 Planning visuals for', slideStructure.slides.length, 'slides...');
+            
+            const visualPlan = {
+                presentationId: Date.now(),
+                slides: []
+            };
+
+            for (const slide of slideStructure.slides) {
+                const visualInfo = await planSlideVisual(slide);
+                visualPlan.slides.push({
+                    slideNumber: slide.slideNumber,
+                    visualType: visualInfo.type,
+                    searchQuery: visualInfo.searchQuery,
+                    mapRequired: visualInfo.mapRequired,
+                    customGraphic: visualInfo.customGraphic
+                });
+            }
+
+            return visualPlan;
+        }
+
+        // Plan visual for individual slide
+        async function planSlideVisual(slide) {
+            // Determine visual type based on slide content
+            const content = slide.content.join(' ').toLowerCase();
+            const visualSuggestion = slide.visualSuggestion.toLowerCase();
+            
+            let visualType = 'photo';
+            let searchQuery = '';
+            let mapRequired = false;
+            let customGraphic = false;
+
+            // Geographic content detection
+            if (content.includes('map') || content.includes('location') || content.includes('region') || 
+                content.includes('country') || content.includes('continent') || content.includes('geographic')) {
+                visualType = 'map';
+                mapRequired = true;
+                searchQuery = extractLocationFromContent(content);
+            }
+            // Photo content detection
+            else if (visualSuggestion.includes('photo') || visualSuggestion.includes('image')) {
+                visualType = 'photo';
+                searchQuery = generatePhotoSearchQuery(slide);
+            }
+            // Diagram content detection
+            else if (visualSuggestion.includes('diagram') || visualSuggestion.includes('chart') || 
+                     visualSuggestion.includes('graphic')) {
+                visualType = 'custom';
+                customGraphic = true;
+                searchQuery = generateDiagramPrompt(slide);
+            }
+            else {
+                // Default to relevant geography photo
+                visualType = 'photo';
+                searchQuery = generatePhotoSearchQuery(slide);
+            }
+
+            return {
+                type: visualType,
+                searchQuery: searchQuery,
+                mapRequired: mapRequired,
+                customGraphic: customGraphic
+            };
+        }
+
+        // Extract location information from content
+        function extractLocationFromContent(content) {
+            const currentLessonData = getCurrentLessonData();
+            // Use lesson title and module for location context
+            return `${currentLessonData.title} ${currentLessonData.moduleName} geography map`;
+        }
+
+        // Generate photo search query for Unsplash
+        function generatePhotoSearchQuery(slide) {
+            const currentLessonData = getCurrentLessonData();
+            const keywords = slide.content.join(' ');
+            
+            // Extract key geographic terms
+            const geoTerms = extractGeographicTerms(keywords);
+            return `${currentLessonData.moduleName} ${geoTerms} geography landscape`.replace(/\s+/g, ' ').trim();
+        }
+
+        // Extract geographic terms from content
+        function extractGeographicTerms(content) {
+            const geoKeywords = ['mountain', 'river', 'ocean', 'desert', 'forest', 'climate', 'culture', 
+                               'population', 'city', 'rural', 'urban', 'agriculture', 'industry', 'trade'];
+            
+            const foundTerms = geoKeywords.filter(term => 
+                content.toLowerCase().includes(term)
+            );
+            
+            return foundTerms.slice(0, 3).join(' ');
+        }
+
+        // Build the complete smart presentation
+        async function buildSmartPresentation(slideStructure, visualPlan) {
+            console.log('🏗️ Building presentation with', slideStructure.slides.length, 'slides...');
+            
+            const presentation = {
+                title: slideStructure.presentationTitle,
+                totalSlides: slideStructure.totalSlides,
+                slides: [],
+                generatedAt: new Date().toISOString()
+            };
+
+            // Build each slide with content and visuals
+            for (let i = 0; i < slideStructure.slides.length; i++) {
+                const slide = slideStructure.slides[i];
+                const visual = visualPlan.slides[i];
+                
+                console.log(`🔨 Building slide ${slide.slideNumber}: ${slide.title}`);
+                
+                // Fetch visual content based on type
+                let visualContent = null;
+                if (visual.visualType === 'photo') {
+                    visualContent = await fetchUnsplashImage(visual.searchQuery);
+                } else if (visual.visualType === 'map') {
+                    visualContent = await generateMapboxMap(visual.searchQuery);
+                } else if (visual.visualType === 'custom') {
+                    visualContent = await generateCustomGraphic(visual.searchQuery);
+                }
+
+                presentation.slides.push({
+                    ...slide,
+                    visual: visualContent || getDefaultVisual(slide.slideType),
+                    visualType: visual.visualType
+                });
+            }
+
+            return presentation;
+        }
+
+        // Show loading overlay for smart presentation generation
+        function showSmartPresentationLoading() {
+            const loadingHTML = `
+                <div id="smart-presentation-loading" style="
+                    position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+                    background: rgba(0,0,0,0.8); z-index: 10000; display: flex; 
+                    align-items: center; justify-content: center; color: white;
+                ">
+                    <div style="text-align: center; padding: 40px; background: #333; border-radius: 15px;">
+                        <div style="font-size: 48px; margin-bottom: 20px;">🎨</div>
+                        <h2>Generating Smart Presentation</h2>
+                        <div id="loading-progress" style="margin: 20px 0;">
+                            <div>📊 Analyzing lesson content...</div>
+                        </div>
+                        <div style="width: 300px; height: 4px; background: #555; border-radius: 2px; margin: 20px auto;">
+                            <div id="progress-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #667eea, #764ba2); border-radius: 2px; transition: width 0.3s;"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', loadingHTML);
+            
+            // Simulate progress updates
+            setTimeout(() => updateLoadingProgress('🖼️ Planning visual content...', 25), 1000);
+            setTimeout(() => updateLoadingProgress('🎯 Fetching images and maps...', 50), 3000);
+            setTimeout(() => updateLoadingProgress('🏗️ Building presentation layout...', 75), 5000);
+        }
+
+        // Update loading progress
+        function updateLoadingProgress(message, percentage) {
+            const progressElement = document.getElementById('loading-progress');
+            const progressBar = document.getElementById('progress-bar');
+            
+            if (progressElement) progressElement.innerHTML = `<div>${message}</div>`;
+            if (progressBar) progressBar.style.width = percentage + '%';
+        }
+
+        // Hide loading overlay
+        function hideSmartPresentationLoading() {
+            const loading = document.getElementById('smart-presentation-loading');
+            if (loading) loading.remove();
+        }
+
+        // ========================================
+        // VISUAL API INTEGRATIONS
+        // ========================================
+
+        // Fetch image from Unsplash API
+        async function fetchUnsplashImage(searchQuery) {
+            try {
+                console.log('📸 Fetching Unsplash image for:', searchQuery);
+                
+                const response = await fetch(`/api/unsplash-image?query=${encodeURIComponent(searchQuery)}`);
+                if (!response.ok) throw new Error('Unsplash API error');
+                
+                const imageData = await response.json();
+                return {
+                    type: 'image',
+                    url: imageData.url,
+                    alt: imageData.alt || searchQuery,
+                    credit: imageData.credit || 'Unsplash',
+                    thumbnail: imageData.thumbnail
+                };
+            } catch (error) {
+                console.warn('⚠️ Unsplash fetch failed:', error);
+                return getDefaultVisual('photo');
+            }
+        }
+
+        // Generate Mapbox map
+        async function generateMapboxMap(locationQuery) {
+            try {
+                console.log('🗺️ Generating Mapbox map for:', locationQuery);
+                
+                const response = await fetch(`/api/mapbox-map?query=${encodeURIComponent(locationQuery)}`);
+                if (!response.ok) throw new Error('Mapbox API error');
+                
+                const mapData = await response.json();
+                return {
+                    type: 'map',
+                    url: mapData.staticUrl,
+                    interactive: mapData.interactiveUrl,
+                    coordinates: mapData.coordinates,
+                    zoom: mapData.zoom
+                };
+            } catch (error) {
+                console.warn('⚠️ Mapbox generation failed:', error);
+                return getDefaultVisual('map');
+            }
+        }
+
+        // Generate custom graphic using Stability AI
+        async function generateCustomGraphic(promptText) {
+            try {
+                console.log('🎨 Generating custom graphic for:', promptText);
+                
+                const response = await fetch(`/api/generate-graphic`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt: promptText })
+                });
+                
+                if (!response.ok) throw new Error('Graphics generation error');
+                
+                const graphicData = await response.json();
+                return {
+                    type: 'custom',
+                    url: graphicData.imageUrl,
+                    prompt: promptText,
+                    style: 'educational'
+                };
+            } catch (error) {
+                console.warn('⚠️ Custom graphic generation failed:', error);
+                return getDefaultVisual('diagram');
+            }
+        }
+
+        // Get default visual for fallback
+        function getDefaultVisual(slideType) {
+            const defaults = {
+                'title': { type: 'gradient', url: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', alt: 'Title background' },
+                'photo': { type: 'placeholder', url: 'https://via.placeholder.com/800x450/4a90e2/ffffff?text=Geography+Image', alt: 'Geography placeholder' },
+                'map': { type: 'placeholder', url: 'https://via.placeholder.com/800x450/2ecc71/ffffff?text=Map+Visualization', alt: 'Map placeholder' },
+                'diagram': { type: 'placeholder', url: 'https://via.placeholder.com/800x450/e74c3c/ffffff?text=Diagram', alt: 'Diagram placeholder' },
+                'default': { type: 'gradient', url: 'linear-gradient(135deg, #74b9ff 0%, #0984e3 100%)', alt: 'Default background' }
+            };
+            
+            return defaults[slideType] || defaults['default'];
+        }
+
+        // ========================================
+        // SMART PRESENTATION DISPLAY SYSTEM
+        // ========================================
+
+        // Display the completed smart presentation
+        function displaySmartPresentation(presentation) {
+            console.log('🎉 Displaying smart presentation:', presentation.title);
+            hideSmartPresentationLoading();
+            
+            const presentationHTML = generatePresentationHTML(presentation);
+            
+            // Open in new window
+            const presentationWindow = window.open('', '_blank');
+            presentationWindow.document.write(presentationHTML);
+            presentationWindow.document.close();
+            
+            // Setup navigation controls
+            setupPresentationControls(presentationWindow, presentation);
+        }
+
+        // Generate complete presentation HTML
+        function generatePresentationHTML(presentation) {
+            const slidesHTML = presentation.slides.map(slide => generateSlideHTML(slide)).join('');
+            
+            return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${presentation.title}</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1a1a;
+            overflow: hidden;
+        }
+        
+        .presentation-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+        
+        .slide {
+            width: 100%;
+            height: 100%;
+            display: none;
+            padding: 60px;
+            background: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .slide-header {
+            margin-bottom: 40px;
+        }
+        
+        .slide-title {
+            font-size: 3.5em;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+        
+        .slide-content {
+            flex: 1;
+            display: flex;
+            gap: 40px;
+            align-items: center;
+        }
+        
+        .content-text {
+            flex: 1;
+            font-size: 1.4em;
+            line-height: 1.6;
+            color: #34495e;
+        }
+        
+        .content-text ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .content-text li {
+            margin: 15px 0;
+            padding: 15px 0;
+            border-bottom: 1px solid #ecf0f1;
+            font-size: 1.2em;
+        }
+        
+        .content-text li::before {
+            content: "▶";
+            color: #3498db;
+            margin-right: 15px;
+            font-weight: bold;
+        }
+        
+        .content-visual {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            max-height: 500px;
+        }
+        
+        .content-visual img {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .slide-title-type {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .slide-title-type .slide-title {
+            color: white;
+            font-size: 4.5em;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        
+        .presentation-controls {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+        
+        .control-btn {
+            padding: 12px 20px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .control-btn:hover {
+            background: rgba(0,0,0,0.9);
+            transform: scale(1.05);
+        }
+        
+        .slide-counter {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            z-index: 1000;
+        }
+        
+        .speaker-notes {
+            position: fixed;
+            bottom: 80px;
+            left: 30px;
+            right: 30px;
+            max-height: 100px;
+            background: rgba(255,255,255,0.95);
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 14px;
+            color: #2c3e50;
+            display: none;
+            overflow-y: auto;
+        }
+        
+        .speaker-notes.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        ${slidesHTML}
+        
+        <div class="slide-counter">
+            <span id="current-slide">1</span> / <span id="total-slides">${presentation.totalSlides}</span>
+        </div>
+        
+        <div class="presentation-controls">
+            <button class="control-btn" onclick="previousSlide()">◀ Previous</button>
+            <button class="control-btn" onclick="toggleNotes()">📝 Notes</button>
+            <button class="control-btn" onclick="nextSlide()">Next ▶</button>
+        </div>
+        
+        <div class="speaker-notes" id="speaker-notes"></div>
+    </div>
+    
+    <script>
+        let currentSlide = 1;
+        const totalSlides = ${presentation.totalSlides};
+        
+        function showSlide(n) {
+            document.querySelectorAll('.slide').forEach(slide => slide.classList.remove('active'));
+            document.getElementById('slide-' + n).classList.add('active');
+            document.getElementById('current-slide').textContent = n;
+            
+            // Update speaker notes
+            const notes = slideNotes[n] || '';
+            document.getElementById('speaker-notes').textContent = notes;
+        }
+        
+        function nextSlide() {
+            if (currentSlide < totalSlides) {
+                currentSlide++;
+                showSlide(currentSlide);
+            }
+        }
+        
+        function previousSlide() {
+            if (currentSlide > 1) {
+                currentSlide--;
+                showSlide(currentSlide);
+            }
+        }
+        
+        function toggleNotes() {
+            const notes = document.getElementById('speaker-notes');
+            notes.classList.toggle('show');
+        }
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+            if (e.key === 'ArrowLeft') previousSlide();
+            if (e.key === 'n' || e.key === 'N') toggleNotes();
+        });
+        
+        // Speaker notes data
+        const slideNotes = {
+            ${presentation.slides.map(slide => `${slide.slideNumber}: ${JSON.stringify(slide.speakerNotes || '')}`).join(',\n            ')}
+        };
+        
+        // Initialize presentation
+        showSlide(1);
+    </script>
+</body>
+</html>
+            `;
+        }
+
+        // Generate HTML for individual slide
+        function generateSlideHTML(slide) {
+            const isTitle = slide.slideType === 'title';
+            const visualHTML = generateVisualHTML(slide.visual);
+            
+            if (isTitle) {
+                return `
+                    <div id="slide-${slide.slideNumber}" class="slide slide-title-type">
+                        <h1 class="slide-title">${slide.title}</h1>
+                        ${slide.content.length > 0 ? `<p style="font-size: 1.5em; margin-top: 30px; opacity: 0.9;">${slide.content.join(' • ')}</p>` : ''}
+                    </div>
+                `;
+            }
+            
+            return `
+                <div id="slide-${slide.slideNumber}" class="slide">
+                    <div class="slide-header">
+                        <h1 class="slide-title">${slide.title}</h1>
+                    </div>
+                    <div class="slide-content">
+                        <div class="content-text">
+                            <ul>
+                                ${slide.content.map(point => `<li>${point}</li>`).join('')}
+                            </ul>
+                        </div>
+                        <div class="content-visual">
+                            ${visualHTML}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Generate visual HTML based on type
+        function generateVisualHTML(visual) {
+            if (!visual) return '<div style="color: #bdc3c7;">Visual content loading...</div>';
+            
+            switch (visual.type) {
+                case 'image':
+                    return `<img src="${visual.url}" alt="${visual.alt}" />`;
+                case 'map':
+                    return `<img src="${visual.url}" alt="Geographic map" style="border-radius: 10px;" />`;
+                case 'custom':
+                    return `<img src="${visual.url}" alt="Custom diagram" />`;
+                case 'gradient':
+                    return `<div style="width: 100%; height: 300px; background: ${visual.url}; border-radius: 15px;"></div>`;
+                case 'placeholder':
+                    return `<img src="${visual.url}" alt="${visual.alt}" />`;
+                default:
+                    return '<div style="color: #bdc3c7;">Visual content unavailable</div>';
+            }
+        }
+
+        // Setup presentation controls (called after window opens)
+        function setupPresentationControls(presentationWindow, presentation) {
+            // Additional setup can be added here if needed
+            console.log('🎮 Presentation controls ready');
         }
 
         // Format the integrated lesson with proper HTML structure and page breaks

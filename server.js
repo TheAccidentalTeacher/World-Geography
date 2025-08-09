@@ -4087,6 +4087,198 @@ app.get('/admin', (req, res) => {
   `);
 });
 
+// ========================================
+// SMART PRESENTATION VISUAL API ENDPOINTS
+// ========================================
+
+// Unsplash Image API endpoint
+app.get('/api/unsplash-image', async (req, res) => {
+  try {
+    const { query } = req.query;
+    
+    if (!query) {
+      return res.status(400).json({ error: 'Query parameter required' });
+    }
+
+    console.log('📸 Fetching Unsplash image for:', query);
+    
+    // Use Unsplash API if key available, otherwise return placeholder
+    if (process.env.UNSPLASH_ACCESS_KEY) {
+      const response = await axios.get('https://api.unsplash.com/search/photos', {
+        params: {
+          query: query,
+          per_page: 1,
+          orientation: 'landscape'
+        },
+        headers: {
+          'Authorization': `Client-ID ${process.env.UNSPLASH_ACCESS_KEY}`
+        }
+      });
+
+      if (response.data.results && response.data.results.length > 0) {
+        const photo = response.data.results[0];
+        res.json({
+          url: photo.urls.regular,
+          thumbnail: photo.urls.small,
+          alt: photo.alt_description || query,
+          credit: `Photo by ${photo.user.name} on Unsplash`
+        });
+        return;
+      }
+    }
+
+    // Fallback to Picsum placeholder
+    res.json({
+      url: `https://picsum.photos/800/450?random=${Date.now()}`,
+      thumbnail: `https://picsum.photos/400/225?random=${Date.now()}`,
+      alt: query,
+      credit: 'Placeholder image'
+    });
+
+  } catch (error) {
+    console.error('❌ Unsplash API error:', error.message);
+    
+    // Return placeholder on error
+    res.json({
+      url: `https://picsum.photos/800/450?random=${Date.now()}`,
+      thumbnail: `https://picsum.photos/400/225?random=${Date.now()}`,
+      alt: req.query.query || 'Geography image',
+      credit: 'Placeholder image'
+    });
+  }
+});
+
+// Mapbox Map API endpoint
+app.get('/api/mapbox-map', async (req, res) => {
+  try {
+    const { query } = req.query;
+    
+    if (!query) {
+      return res.status(400).json({ error: 'Query parameter required' });
+    }
+
+    console.log('🗺️ Generating Mapbox map for:', query);
+    
+    // Use Mapbox API if key available
+    if (process.env.MAPBOX_ACCESS_TOKEN) {
+      // Geocode the location first
+      const geocodeResponse = await axios.get(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json`, {
+        params: {
+          access_token: process.env.MAPBOX_ACCESS_TOKEN,
+          limit: 1
+        }
+      });
+
+      if (geocodeResponse.data.features && geocodeResponse.data.features.length > 0) {
+        const location = geocodeResponse.data.features[0];
+        const [lng, lat] = location.center;
+        const zoom = 8;
+
+        // Generate static map URL
+        const staticUrl = `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${lng},${lat},${zoom}/800x450@2x?access_token=${process.env.MAPBOX_ACCESS_TOKEN}`;
+        
+        res.json({
+          staticUrl: staticUrl,
+          interactiveUrl: `https://api.mapbox.com/styles/v1/mapbox/streets-v12.html?access_token=${process.env.MAPBOX_ACCESS_TOKEN}#${zoom}/${lat}/${lng}`,
+          coordinates: { lat, lng },
+          zoom: zoom,
+          location: location.place_name
+        });
+        return;
+      }
+    }
+
+    // Fallback to placeholder map
+    res.json({
+      staticUrl: 'https://via.placeholder.com/800x450/2ecc71/ffffff?text=Geographic+Map',
+      interactiveUrl: null,
+      coordinates: { lat: 0, lng: 0 },
+      zoom: 2,
+      location: query
+    });
+
+  } catch (error) {
+    console.error('❌ Mapbox API error:', error.message);
+    
+    // Return placeholder on error
+    res.json({
+      staticUrl: 'https://via.placeholder.com/800x450/2ecc71/ffffff?text=Geographic+Map',
+      interactiveUrl: null,
+      coordinates: { lat: 0, lng: 0 },
+      zoom: 2,
+      location: req.query.query || 'Unknown location'
+    });
+  }
+});
+
+// Stability AI Graphics generation endpoint
+app.post('/api/generate-graphic', async (req, res) => {
+  try {
+    const { prompt } = req.body;
+    
+    if (!prompt) {
+      return res.status(400).json({ error: 'Prompt required' });
+    }
+
+    console.log('🎨 Generating custom graphic for:', prompt);
+    
+    // Use Stability AI if key available
+    if (process.env.STABILITY_API_KEY) {
+      const response = await axios.post(
+        'https://api.stability.ai/v1/generation/stable-diffusion-xl-1024-v1-0/text-to-image',
+        {
+          text_prompts: [
+            {
+              text: `Educational geography diagram: ${prompt}, clean design, professional style, educational illustration`,
+              weight: 1
+            }
+          ],
+          cfg_scale: 7,
+          height: 450,
+          width: 800,
+          samples: 1,
+          steps: 20
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${process.env.STABILITY_API_KEY}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      if (response.data.artifacts && response.data.artifacts.length > 0) {
+        const artifact = response.data.artifacts[0];
+        const imageData = `data:image/png;base64,${artifact.base64}`;
+        
+        res.json({
+          imageUrl: imageData,
+          prompt: prompt,
+          style: 'educational'
+        });
+        return;
+      }
+    }
+
+    // Fallback to placeholder
+    res.json({
+      imageUrl: 'https://via.placeholder.com/800x450/e74c3c/ffffff?text=Educational+Diagram',
+      prompt: prompt,
+      style: 'placeholder'
+    });
+
+  } catch (error) {
+    console.error('❌ Stability AI error:', error.message);
+    
+    // Return placeholder on error
+    res.json({
+      imageUrl: 'https://via.placeholder.com/800x450/e74c3c/ffffff?text=Educational+Diagram',
+      prompt: req.body.prompt || 'Diagram',
+      style: 'placeholder'
+    });
+  }
+});
+
 // Graceful shutdown handling
 process.on('SIGTERM', () => {
   console.log('Received SIGTERM, shutting down gracefully');
