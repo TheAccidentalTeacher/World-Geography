@@ -2756,11 +2756,18 @@ CRITICAL: Generate slides following the EXACT three-section format shown above. 
 
         // Parse the AI response into structured slide data
         function parseSlidePrompts(aiResponse) {
+            console.log('🔍 Parsing AI response:', aiResponse.substring(0, 500) + '...');
+            
             const slides = [];
+            
+            // Look for our new slide format: **SLIDE X: Title**
             const slideBlocks = aiResponse.split(/\*\*SLIDE \d+:/);
+            console.log('📊 Found', slideBlocks.length - 1, 'slide blocks');
             
             slideBlocks.forEach((block, index) => {
                 if (index === 0) return; // Skip the intro text
+                
+                console.log('🔍 Processing slide block', index, ':', block.substring(0, 200) + '...');
                 
                 const lines = block.trim().split('\n');
                 const title = lines[0].replace(/\*\*/g, '').trim();
@@ -2768,12 +2775,11 @@ CRITICAL: Generate slides following the EXACT three-section format shown above. 
                 let slide = {
                     id: `slide-${index}`,
                     title: title,
-                    contentPrompt: '',
-                    visualTheme: '',
+                    content: '',
+                    visualSuggestion: '',
+                    teacherNotes: '',
                     stabilityPrompt: '',
-                    stockKeywords: '',
-                    layoutDirection: '',
-                    styleNotes: ''
+                    stockKeywords: ''
                 };
 
                 let currentSection = '';
@@ -2781,43 +2787,81 @@ CRITICAL: Generate slides following the EXACT three-section format shown above. 
 
                 lines.forEach(line => {
                     const trimmed = line.trim();
-                    if (trimmed.includes('Content Prompt')) {
+                    
+                    // Look for our new section headers
+                    if (trimmed.startsWith('**Content:**') || trimmed.startsWith('Content:')) {
+                        if (currentSection && content) {
+                            assignContentToSection(slide, currentSection, content.trim());
+                        }
                         currentSection = 'content';
                         content = '';
-                    } else if (trimmed.includes('Visual Theme')) {
-                        if (currentSection === 'content') slide.contentPrompt = content.trim();
-                        currentSection = 'theme';
+                    } else if (trimmed.startsWith('**Visual Suggestion:**') || trimmed.startsWith('Visual Suggestion:')) {
+                        if (currentSection && content) {
+                            assignContentToSection(slide, currentSection, content.trim());
+                        }
+                        currentSection = 'visual';
                         content = '';
-                    } else if (trimmed.includes('Stability AI')) {
-                        if (currentSection === 'theme') slide.visualTheme = content.trim();
+                    } else if (trimmed.startsWith('**Teacher Notes:**') || trimmed.startsWith('Teacher Notes:')) {
+                        if (currentSection && content) {
+                            assignContentToSection(slide, currentSection, content.trim());
+                        }
+                        currentSection = 'teacher';
+                        content = '';
+                    } else if (trimmed.startsWith('**Stability AI Prompt:**') || trimmed.startsWith('Stability AI Prompt:')) {
+                        if (currentSection && content) {
+                            assignContentToSection(slide, currentSection, content.trim());
+                        }
                         currentSection = 'stability';
                         content = '';
-                    } else if (trimmed.includes('Stock Photo')) {
-                        if (currentSection === 'stability') slide.stabilityPrompt = content.trim();
+                    } else if (trimmed.startsWith('**Stock Photo Keywords:**') || trimmed.startsWith('Stock Photo Keywords:')) {
+                        if (currentSection && content) {
+                            assignContentToSection(slide, currentSection, content.trim());
+                        }
                         currentSection = 'stock';
                         content = '';
-                    } else if (trimmed.includes('Layout Direction')) {
-                        if (currentSection === 'stock') slide.stockKeywords = content.trim();
-                        currentSection = 'layout';
-                        content = '';
-                    } else if (trimmed.includes('Style Notes')) {
-                        if (currentSection === 'layout') slide.layoutDirection = content.trim();
-                        currentSection = 'style';
-                        content = '';
-                    } else if (trimmed && !trimmed.includes('**')) {
-                        content += (content ? ' ' : '') + trimmed;
+                    } else if (trimmed && !trimmed.startsWith('**') && !trimmed.startsWith('---')) {
+                        // Add content to current section
+                        content += (content ? '\n' : '') + trimmed;
                     }
                 });
 
                 // Don't forget the last section
-                if (currentSection === 'style') slide.styleNotes = content.trim();
+                if (currentSection && content) {
+                    assignContentToSection(slide, currentSection, content.trim());
+                }
 
-                if (slide.title && slide.contentPrompt) {
+                // Only add slides that have meaningful content
+                if (slide.title && (slide.content || slide.visualSuggestion)) {
                     slides.push(slide);
+                    console.log('✅ Added slide:', slide.title);
+                } else {
+                    console.log('⚠️ Skipped incomplete slide:', slide.title);
                 }
             });
 
+            console.log('🎯 Total parsed slides:', slides.length);
             return slides;
+        }
+
+        // Helper function to assign content to the correct slide section
+        function assignContentToSection(slide, section, content) {
+            switch (section) {
+                case 'content':
+                    slide.content = content;
+                    break;
+                case 'visual':
+                    slide.visualSuggestion = content;
+                    break;
+                case 'teacher':
+                    slide.teacherNotes = content;
+                    break;
+                case 'stability':
+                    slide.stabilityPrompt = content;
+                    break;
+                case 'stock':
+                    slide.stockKeywords = content;
+                    break;
+            }
         }
 
         // Display slide prompts for user review and editing
