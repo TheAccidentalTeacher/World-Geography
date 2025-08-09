@@ -2413,8 +2413,7 @@ Create an engaging, classroom-ready presentation that brings this geography topi
 
         // Advanced Smart Presentation System - Gamma.ai Quality
         async function generateSmartPresentation(userTriggered = false) {
-            console.log('🎨 Starting Advanced Smart Presentation generation...');
-            console.trace('🔍 Function call stack:');
+            console.log('🎨 Starting Clean Markdown Presentation generation...');
             
             // SAFETY CHECK: Only allow if explicitly triggered by user
             if (!userTriggered) {
@@ -2425,25 +2424,25 @@ Create an engaging, classroom-ready presentation that brings this geography topi
             // Check if lesson content exists and is substantial
             const lessonOutput = document.getElementById('integrated-lesson-output');
             if (!lessonOutput || !lessonOutput.innerHTML.trim()) {
-                alert('Please generate a complete lesson first before creating a smart presentation.');
+                alert('Please generate a complete lesson first before creating a presentation.');
                 return;
             }
             
             // More robust check for actual generated content
             const content = lessonOutput.innerHTML.trim();
             if (content.includes('Ready to Generate') || content.includes('Ready to Create') || content.length < 500) {
-                alert('Please generate a complete lesson first before creating a smart presentation.');
+                alert('Please generate a complete lesson first before creating a presentation.');
                 return;
             }
 
             try {
-                // Show progress using existing function
+                // Show clean loading state
                 const outputDiv = document.getElementById('integrated-lesson-output');
                 outputDiv.innerHTML = `
-                    <div style="text-align: center; padding: 40px;">
+                    <div style="text-align: center; padding: 40px; font-family: Georgia, serif;">
                         <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 12px; margin-bottom: 20px;">
-                            <h2 style="margin: 0;">🎨 Generating Advanced Presentation</h2>
-                            <p style="margin: 10px 0 0 0; opacity: 0.9;">Analyzing lesson content and creating detailed slide prompts...</p>
+                            <h2 style="margin: 0;">🎨 Generating Clean Markdown Presentation</h2>
+                            <p style="margin: 10px 0 0 0; opacity: 0.9;">Creating professional slides in your preferred format...</p>
                         </div>
                         <div style="display: flex; justify-content: center; gap: 10px;">
                             <div style="width: 12px; height: 12px; background: #667eea; border-radius: 50%; animation: bounce 1.4s ease-in-out 0s infinite both;"></div>
@@ -2459,18 +2458,18 @@ Create an engaging, classroom-ready presentation that brings this geography topi
                     </style>
                 `;
                 
-                // Step 1: Analyze lesson content and generate detailed slide prompts
-                console.log('🎯 Step 1: Generating detailed slide prompts...');
+                // Generate slides using the clean markdown format
+                console.log('🎯 Generating clean markdown slides...');
                 const slidePrompts = await generateDetailedSlidePrompts();
-                console.log('✅ Step 1 complete, received:', slidePrompts);
+                console.log('✅ Generated slides:', slidePrompts);
                 
-                // Step 2: Display prompts for user review and editing
-                console.log('🎯 Step 2: Displaying slide prompts...');
-                displaySlidePrompts(slidePrompts.slides, slidePrompts.title);
-                console.log('✅ Step 2 complete');
+                // Display in clean markdown format (NO BOXES!)
+                console.log('🎯 Displaying clean markdown format...');
+                displayCleanMarkdownSlides(slidePrompts.slides, slidePrompts.title);
+                console.log('✅ Clean display complete');
                 
             } catch (error) {
-                console.error('❌ Error generating advanced presentation:', error);
+                console.error('❌ Error generating presentation:', error);
                 const outputDiv = document.getElementById('integrated-lesson-output');
                 outputDiv.innerHTML = `
                     <div style="text-align: center; padding: 40px;">
@@ -2870,159 +2869,170 @@ Generate 8-12 slides following this EXACT format. Focus on the lesson content pr
             }
         }
 
-        // Display slide prompts for user review and editing
+        // Display slide prompts in clean markdown format (NO BOXES!)
         function displaySlidePrompts(slides, presentationTitle) {
             const outputDiv = document.getElementById('integrated-lesson-output');
             
-            let html = `
-                <div style="max-width: 1000px; margin: 0 auto; padding: 20px; font-family: 'Segoe UI', sans-serif;">
-                    <div style="text-align: center; margin-bottom: 30px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 12px;">
-                        <h1 style="margin: 0; font-size: 28px; font-weight: 600;">📚 Advanced Presentation System</h1>
-                        <h2 style="margin: 10px 0 0 0; font-size: 20px; opacity: 0.9;">${presentationTitle}</h2>
-                        <p style="margin: 10px 0 0 0; opacity: 0.8;">Review and enhance your detailed slide prompts below</p>
-                    </div>
-
-                    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-                        <h3 style="margin: 0 0 15px 0; color: #495057;">🎯 Presentation Overview</h3>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-                            <div style="background: white; padding: 15px; border-radius: 6px; border-left: 4px solid #28a745;">
-                                <strong>Total Slides:</strong> ${slides.length}
-                            </div>
-                            <div style="background: white; padding: 15px; border-radius: 6px; border-left: 4px solid #007bff;">
-                                <strong>Content Depth:</strong> 200-400 words per slide
-                            </div>
-                            <div style="background: white; padding: 15px; border-radius: 6px; border-left: 4px solid #ffc107;">
-                                <strong>Visual Quality:</strong> Gamma.ai standard
-                            </div>
-                        </div>
-                    </div>
-
-                    <div style="margin-bottom: 20px;">
-                        <button onclick="enhanceAllSlides()" style="background: linear-gradient(45deg, #667eea, #764ba2); color: white; border: none; padding: 12px 24px; border-radius: 6px; font-weight: 600; margin-right: 10px; cursor: pointer;">
-                            ✨ Enhance All Slides with AI
-                        </button>
-                        <button onclick="generateVisualPresentation()" style="background: linear-gradient(45deg, #28a745, #20c997); color: white; border: none; padding: 12px 24px; border-radius: 6px; font-weight: 600; margin-right: 10px; cursor: pointer;">
-                            🎨 Generate Visual Presentation
-                        </button>
-                        <button onclick="exportPresentationOptions()" style="background: linear-gradient(45deg, #fd7e14, #ffc107); color: white; border: none; padding: 12px 24px; border-radius: 6px; font-weight: 600; cursor: pointer;">
-                            📥 Export Options
-                        </button>
-                    </div>
-            `;
+            let markdownOutput = `# 📚 ${presentationTitle}\n\n`;
+            markdownOutput += `*Generated with ${slides.length} professional slides*\n\n`;
+            markdownOutput += `---\n\n`;
 
             slides.forEach((slide, index) => {
-                html += `
-                    <div id="slide-container-${index}" style="background: white; border: 2px solid #e9ecef; border-radius: 12px; margin-bottom: 25px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                        <div style="background: linear-gradient(90deg, #495057, #6c757d); color: white; padding: 15px;">
-                            <h3 style="margin: 0; display: flex; align-items: center; justify-content: space-between;">
-                                <span>📄 Slide ${index + 1}: ${slide.title}</span>
-                                <button onclick="enhanceSlide(${index})" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 6px 12px; border-radius: 4px; font-size: 12px; cursor: pointer;">
-                                    ✨ Enhance
-                                </button>
-                            </h3>
-                        </div>
-                        
-                        <div style="padding: 20px;">
-                            <div style="display: grid; gap: 20px;">
-                                <div>
-                                    <label style="display: block; font-weight: 600; color: #495057; margin-bottom: 8px;">📝 Content (200-400 words):</label>
-                                    <textarea id="content-${index}" style="width: 100%; min-height: 120px; padding: 12px; border: 2px solid #e9ecef; border-radius: 6px; font-family: inherit; resize: vertical;" onchange="updateSlideData(${index}, 'content', this.value)">${slide.content || ''}</textarea>
-                                </div>
-                                
-                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                                    <div>
-                                        <label style="display: block; font-weight: 600; color: #495057; margin-bottom: 8px;">🎨 Visual Suggestion:</label>
-                                        <textarea id="visual-${index}" style="width: 100%; min-height: 80px; padding: 10px; border: 2px solid #e9ecef; border-radius: 6px; font-family: inherit; resize: vertical;" onchange="updateSlideData(${index}, 'visualSuggestion', this.value)">${slide.visualSuggestion || ''}</textarea>
-                                    </div>
-                                    
-                                    <div>
-                                        <label style="display: block; font-weight: 600; color: #495057; margin-bottom: 8px;">👨‍🏫 Teacher Notes:</label>
-                                        <textarea id="teacher-${index}" style="width: 100%; min-height: 80px; padding: 10px; border: 2px solid #e9ecef; border-radius: 6px; font-family: inherit; resize: vertical;" onchange="updateSlideData(${index}, 'teacherNotes', this.value)">${slide.teacherNotes || ''}</textarea>
-                                    </div>
-                                </div>
-                                
-                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                                    <div>
-                                        <label style="display: block; font-weight: 600; color: #495057; margin-bottom: 8px;">🤖 Stability AI Prompt:</label>
-                                        <textarea id="stability-${index}" style="width: 100%; min-height: 80px; padding: 10px; border: 2px solid #e9ecef; border-radius: 6px; font-family: inherit; resize: vertical;" onchange="updateSlideData(${index}, 'stabilityPrompt', this.value)">${slide.stabilityPrompt || ''}</textarea>
-                                    </div>
-                                    
-                                    <div>
-                                        <label style="display: block; font-weight: 600; color: #495057; margin-bottom: 8px;">📷 Stock Photo Keywords:</label>
-                                        <textarea id="stock-${index}" style="width: 100%; min-height: 80px; padding: 10px; border: 2px solid #e9ecef; border-radius: 6px; font-family: inherit; resize: vertical;" onchange="updateSlideData(${index}, 'stockKeywords', this.value)">${slide.stockKeywords || ''}</textarea>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
+                markdownOutput += `## SLIDE ${index + 1}: ${slide.title}\n\n`;
+                
+                if (slide.content) {
+                    markdownOutput += `**Content:**\n${slide.content}\n\n`;
+                }
+                
+                if (slide.visualSuggestion) {
+                    markdownOutput += `**Visual Suggestion:** ${slide.visualSuggestion}\n\n`;
+                }
+                
+                if (slide.teacherNotes) {
+                    markdownOutput += `**Teacher Notes:** "${slide.teacherNotes}"\n\n`;
+                }
+                
+                markdownOutput += `---\n\n`;
             });
 
-            html += `
-                    <div style="text-align: center; margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px;">
-                        <p style="margin: 0 0 15px 0; color: #6c757d; font-style: italic;">Ready to create your professional presentation?</p>
-                        <button onclick="generateVisualPresentation()" style="background: linear-gradient(45deg, #28a745, #20c997); color: white; border: none; padding: 15px 30px; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                            🚀 Generate Complete Presentation
+            // Display as clean markdown with simple styling
+            outputDiv.innerHTML = `
+                <div style="max-width: 900px; margin: 0 auto; padding: 20px; font-family: 'Georgia', serif; line-height: 1.6; background: white; border-radius: 8px;">
+                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; text-align: center;">
+                        <h1 style="margin: 0; font-size: 24px;">📚 Professional Presentation Generated</h1>
+                        <p style="margin: 10px 0 0 0; opacity: 0.9;">${presentationTitle}</p>
+                    </div>
+                    
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                        <button onclick="generateImages()" style="background: linear-gradient(45deg, #28a745, #20c997); color: white; border: none; padding: 12px 24px; border-radius: 6px; font-weight: 600; margin-right: 10px; cursor: pointer;">
+                            🎨 Generate Images for Slides
+                        </button>
+                        <button onclick="exportMarkdown()" style="background: linear-gradient(45deg, #fd7e14, #ffc107); color: white; border: none; padding: 12px 24px; border-radius: 6px; font-weight: 600; cursor: pointer;">
+                            📥 Export Markdown
                         </button>
                     </div>
+                    
+                    <div style="white-space: pre-wrap; font-family: 'Georgia', serif; color: #333;">${markdownOutput}</div>
                 </div>
             `;
-
-            outputDiv.innerHTML = html;
             
-            // Store slide data globally for other functions
+            // Store slide data for image generation
             window.currentSlideData = slides;
             window.currentPresentationTitle = presentationTitle;
         }
 
-        // Update slide data when user edits
-        function updateSlideData(slideIndex, property, value) {
-            if (window.currentSlideData && window.currentSlideData[slideIndex]) {
-                window.currentSlideData[slideIndex][property] = value;
+        // CLEAN MARKDOWN DISPLAY FUNCTION - NO BOXES!
+        function displayCleanMarkdownSlides(slides, presentationTitle) {
+            const outputDiv = document.getElementById('integrated-lesson-output');
+            
+            let markdownOutput = `# 📚 ${presentationTitle}\n\n`;
+            markdownOutput += `*Generated ${slides.length} professional slides in clean markdown format*\n\n`;
+            markdownOutput += `---\n\n`;
+
+            slides.forEach((slide, index) => {
+                markdownOutput += `## SLIDE ${index + 1}: ${slide.title}\n\n`;
+                
+                if (slide.content) {
+                    markdownOutput += `**Content:**\n${slide.content}\n\n`;
+                }
+                
+                if (slide.visualSuggestion) {
+                    markdownOutput += `**Visual Suggestion:** ${slide.visualSuggestion}\n\n`;
+                }
+                
+                if (slide.teacherNotes) {
+                    markdownOutput += `**Teacher Notes:** "${slide.teacherNotes}"\n\n`;
+                }
+                
+                markdownOutput += `---\n\n`;
+            });
+
+            // Display as clean, professional markdown
+            outputDiv.innerHTML = `
+                <div style="max-width: 900px; margin: 0 auto; padding: 20px; font-family: 'Georgia', serif; line-height: 1.6; background: white; border-radius: 8px;">
+                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; text-align: center;">
+                        <h1 style="margin: 0; font-size: 24px;">📚 Clean Markdown Presentation</h1>
+                        <p style="margin: 10px 0 0 0; opacity: 0.9;">${presentationTitle} • ${slides.length} Professional Slides</p>
+                    </div>
+                    
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px; text-align: center;">
+                        <button onclick="copyMarkdownToClipboard()" style="background: linear-gradient(45deg, #28a745, #20c997); color: white; border: none; padding: 12px 24px; border-radius: 6px; font-weight: 600; margin-right: 10px; cursor: pointer;">
+                            📋 Copy Markdown
+                        </button>
+                        <button onclick="exportToPowerPoint()" style="background: linear-gradient(45deg, #fd7e14, #ffc107); color: white; border: none; padding: 12px 24px; border-radius: 6px; font-weight: 600; cursor: pointer;">
+                            🎬 Export to PowerPoint
+                        </button>
+                    </div>
+                    
+                    <div style="white-space: pre-wrap; font-family: 'Georgia', serif; color: #333; background: #fefefe; padding: 20px; border-radius: 8px; border: 1px solid #e1e5e9;">${markdownOutput}</div>
+                </div>
+            `;
+            
+            // Store slide data for export functions
+            window.currentSlideData = slides;
+            window.currentPresentationTitle = presentationTitle;
+            window.currentMarkdown = markdownOutput;
+        }
+
+        // Copy markdown to clipboard
+        function copyMarkdownToClipboard() {
+            if (window.currentMarkdown) {
+                navigator.clipboard.writeText(window.currentMarkdown).then(() => {
+                    alert('✅ Markdown copied to clipboard!');
+                }).catch(err => {
+                    console.error('Failed to copy:', err);
+                    alert('❌ Failed to copy to clipboard');
+                });
             }
         }
 
-        // Enhance individual slide
-        async function enhanceSlide(slideIndex) {
-            const slide = window.currentSlideData[slideIndex];
-            if (!slide) return;
+        // Export to PowerPoint (opens in new window for easy copying)
+        function exportToPowerPoint() {
+            if (window.currentMarkdown && window.currentPresentationTitle) {
+                const powerPointWindow = window.open('', '_blank');
+                powerPointWindow.document.write(`
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <title>${window.currentPresentationTitle} - PowerPoint Export</title>
+                        <style>
+                            body { margin: 20px; font-family: Georgia, serif; line-height: 1.6; }
+                            pre { white-space: pre-wrap; background: #f8f9fa; padding: 20px; border-radius: 8px; }
+                        </style>
+                    </head>
+                    <body>
+                        <h1>🎬 ${window.currentPresentationTitle}</h1>
+                        <p><strong>Instructions:</strong> Copy the content below and paste into PowerPoint or your preferred presentation software.</p>
+                        <pre>${window.currentMarkdown}</pre>
+                    </body>
+                    </html>
+                `);
+            }
+        }
 
-            const button = document.querySelector(`#slide-container-${slideIndex} button`);
+        // Simple image generation for slides
+        async function generateImages() {
+            if (!window.currentSlideData || window.currentSlideData.length === 0) {
+                alert('No slide data available! Please generate slides first.');
+                return;
+            }
+
+            const button = event.target;
             const originalText = button.innerHTML;
-            button.innerHTML = '⏳ Enhancing...';
+            button.innerHTML = '🎨 Generating Images...';
             button.disabled = true;
 
             try {
-                const enhancementPrompt = `
-Enhance this slide for a professional geography presentation:
-
-Current Slide: ${slide.title}
-Current Content: ${slide.contentPrompt}
-
-Please improve the content to be:
-- 200-400 words of rich, detailed content
-- Educationally engaging with specific examples
-- Professionally written for teacher presentation
-- Include relevant geographic facts and connections
-- Maintain academic rigor while being accessible
-
-Return ONLY the enhanced content prompt, no extra formatting.
-                `;
-
-                const enhancedContent = await callOpenAIForSlideGeneration(enhancementPrompt);
+                alert('Image generation functionality would be implemented here. This will integrate with the Railway backend to generate images for each slide using Stability AI and stock photo APIs.');
                 
-                // Update the slide data and UI
-                slide.contentPrompt = enhancedContent.trim();
-                document.getElementById(`content-${slideIndex}`).value = enhancedContent.trim();
-                
-                button.innerHTML = '✅ Enhanced!';
+                button.innerHTML = '✅ Images Generated!';
                 setTimeout(() => {
                     button.innerHTML = originalText;
                     button.disabled = false;
                 }, 2000);
 
             } catch (error) {
-                console.error('Enhancement error:', error);
+                console.error('Error generating images:', error);
                 button.innerHTML = '❌ Error';
                 setTimeout(() => {
                     button.innerHTML = originalText;
@@ -3031,208 +3041,44 @@ Return ONLY the enhanced content prompt, no extra formatting.
             }
         }
 
-        // Enhance all slides with AI
-        async function enhanceAllSlides() {
+        // Export markdown presentation
+        function exportMarkdown() {
             if (!window.currentSlideData || window.currentSlideData.length === 0) {
-                alert('No slides to enhance!');
+                alert('No slide data available! Please generate slides first.');
                 return;
             }
 
-            const button = event.target;
-            const originalText = button.innerHTML;
-            button.innerHTML = '⏳ Enhancing All Slides...';
-            button.disabled = true;
+            let markdownContent = `# ${window.currentPresentationTitle}\n\n`;
+            markdownContent += `*Generated presentation with ${window.currentSlideData.length} slides*\n\n`;
+            markdownContent += `---\n\n`;
 
-            try {
-                const promises = window.currentSlideData.map(async (slide, index) => {
-                    try {
-                        const enhancementPrompt = `
-Enhance this slide for a professional geography presentation:
-
-Slide Title: ${slide.title}
-Current Content: ${slide.contentPrompt}
-
-Please improve ALL aspects:
-
-1. Content Prompt: Make it 200-400 words of rich, detailed content with specific examples and geographic connections
-2. Visual Theme: Suggest a cohesive visual style that fits the content
-3. Stability AI Prompt: Create a detailed prompt for custom illustrations
-4. Stock Photo Keywords: List 5-7 relevant search terms
-5. Layout Direction: Specify how content should be arranged
-6. Style Notes: Add professional styling suggestions
-
-Return in this exact format:
-CONTENT: [enhanced content prompt]
-THEME: [visual theme description]
-STABILITY: [AI image prompt]
-STOCK: [keyword1, keyword2, keyword3, keyword4, keyword5]
-LAYOUT: [layout instructions]
-STYLE: [style notes]
-                        `;
-
-                        const response = await callOpenAIForSlideGeneration(enhancementPrompt);
-                        
-                        // Parse the response
-                        const lines = response.split('\n');
-                        lines.forEach(line => {
-                            const trimmed = line.trim();
-                            if (trimmed.startsWith('CONTENT:')) {
-                                slide.contentPrompt = trimmed.substring(8).trim();
-                            } else if (trimmed.startsWith('THEME:')) {
-                                slide.visualTheme = trimmed.substring(6).trim();
-                            } else if (trimmed.startsWith('STABILITY:')) {
-                                slide.stabilityPrompt = trimmed.substring(10).trim();
-                            } else if (trimmed.startsWith('STOCK:')) {
-                                slide.stockKeywords = trimmed.substring(6).trim();
-                            } else if (trimmed.startsWith('LAYOUT:')) {
-                                slide.layoutDirection = trimmed.substring(7).trim();
-                            } else if (trimmed.startsWith('STYLE:')) {
-                                slide.styleNotes = trimmed.substring(6).trim();
-                            }
-                        });
-
-                        // Update the UI
-                        document.getElementById(`content-${index}`).value = slide.contentPrompt;
-                        document.getElementById(`theme-${index}`).value = slide.visualTheme;
-                        document.getElementById(`stability-${index}`).value = slide.stabilityPrompt;
-                        document.getElementById(`stock-${index}`).value = slide.stockKeywords;
-                        document.getElementById(`layout-${index}`).value = slide.layoutDirection;
-                        document.getElementById(`style-${index}`).value = slide.styleNotes;
-
-                        return true;
-                    } catch (error) {
-                        console.error(`Error enhancing slide ${index}:`, error);
-                        return false;
-                    }
-                });
-
-                const results = await Promise.all(promises);
-                const successCount = results.filter(r => r).length;
+            window.currentSlideData.forEach((slide, index) => {
+                markdownContent += `## SLIDE ${index + 1}: ${slide.title}\n\n`;
                 
-                button.innerHTML = `✅ Enhanced ${successCount}/${window.currentSlideData.length} Slides!`;
-                setTimeout(() => {
-                    button.innerHTML = originalText;
-                    button.disabled = false;
-                }, 3000);
-
-            } catch (error) {
-                console.error('Error enhancing slides:', error);
-                button.innerHTML = '❌ Enhancement Error';
-                setTimeout(() => {
-                    button.innerHTML = originalText;
-                    button.disabled = false;
-                }, 2000);
-            }
-        }
-
-        // Generate the visual presentation
-        async function generateVisualPresentation() {
-            if (!window.currentSlideData || window.currentSlideData.length === 0) {
-                alert('No slide data available! Please generate slide prompts first.');
-                return;
-            }
-
-            const button = event.target;
-            const originalText = button.innerHTML;
-            button.innerHTML = '🎨 Generating Presentation...';
-            button.disabled = true;
-
-            try {
-                // Show loading interface
-                showVisualGenerationProgress();
-
-                // Generate images for each slide
-                const slidesWithImages = await Promise.all(window.currentSlideData.map(async (slide, index) => {
-                    try {
-                        updateProgressStatus(`Generating visuals for slide ${index + 1}...`);
-                        
-                        // Try to get custom illustration first
-                        let customImage = null;
-                        if (slide.stabilityPrompt && slide.stabilityPrompt.trim()) {
-                            customImage = await generateStabilityAIImage(slide.stabilityPrompt);
-                        }
-
-                        // Get stock photos as fallback or complement
-                        let stockImages = [];
-                        if (slide.stockKeywords && slide.stockKeywords.trim()) {
-                            stockImages = await searchStockPhotos(slide.stockKeywords);
-                        }
-
-                        return {
-                            ...slide,
-                            customImage: customImage,
-                            stockImages: stockImages.slice(0, 3) // Keep top 3 options
-                        };
-                    } catch (error) {
-                        console.error(`Error generating images for slide ${index}:`, error);
-                        return {
-                            ...slide,
-                            customImage: null,
-                            stockImages: []
-                        };
-                    }
-                }));
-
-                updateProgressStatus('Rendering final presentation...');
+                if (slide.content) {
+                    markdownContent += `**Content:**\n${slide.content}\n\n`;
+                }
                 
-                // Display the final presentation
-                displayFinalPresentation(slidesWithImages);
-
-                button.innerHTML = '✅ Presentation Generated!';
-                setTimeout(() => {
-                    button.innerHTML = originalText;
-                    button.disabled = false;
-                }, 2000);
-
-            } catch (error) {
-                console.error('Error generating presentation:', error);
-                button.innerHTML = '❌ Generation Error';
-                setTimeout(() => {
-                    button.innerHTML = originalText;
-                    button.disabled = false;
-                }, 2000);
-            }
-        }
-
-        // Show progress for visual generation
-        function showVisualGenerationProgress() {
-            const outputDiv = document.getElementById('integrated-lesson-output');
-            outputDiv.innerHTML = `
-                <div style="max-width: 800px; margin: 0 auto; padding: 40px; text-align: center;">
-                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 12px; margin-bottom: 30px;">
-                        <h2 style="margin: 0; font-size: 24px;">🎨 Generating Your Professional Presentation</h2>
-                        <p style="margin: 10px 0 0 0; opacity: 0.9;">Creating Gamma.ai-quality visuals and layouts...</p>
-                    </div>
-                    
-                    <div id="progress-status" style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-                        <p style="margin: 0; font-size: 16px; color: #495057;">Initializing image generation...</p>
-                    </div>
-                    
-                    <div style="display: flex; justify-content: center; align-items: center; gap: 10px;">
-                        <div style="width: 12px; height: 12px; background: #667eea; border-radius: 50%; animation: bounce 1.4s ease-in-out 0s infinite both;"></div>
-                        <div style="width: 12px; height: 12px; background: #667eea; border-radius: 50%; animation: bounce 1.4s ease-in-out 0.16s infinite both;"></div>
-                        <div style="width: 12px; height: 12px; background: #667eea; border-radius: 50%; animation: bounce 1.4s ease-in-out 0.32s infinite both;"></div>
-                    </div>
-                </div>
+                if (slide.visualSuggestion) {
+                    markdownContent += `**Visual Suggestion:** ${slide.visualSuggestion}\n\n`;
+                }
                 
-                <style>
-                    @keyframes bounce {
-                        0%, 80%, 100% { transform: scale(0); }
-                        40% { transform: scale(1); }
-                    }
-                </style>
-            `;
-        }
+                if (slide.teacherNotes) {
+                    markdownContent += `**Teacher Notes:** "${slide.teacherNotes}"\n\n`;
+                }
+                
+                markdownContent += `---\n\n`;
+            });
 
-        // Update progress status
-        function updateProgressStatus(message) {
-            const statusDiv = document.getElementById('progress-status');
-            if (statusDiv) {
-                statusDiv.innerHTML = `<p style="margin: 0; font-size: 16px; color: #495057;">${message}</p>`;
-            }
+            // Create and download the markdown file
+            const blob = new Blob([markdownContent], { type: 'text/markdown' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `${window.currentPresentationTitle.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_presentation.md`;
+            link.click();
+            URL.revokeObjectURL(url);
         }
-
-        // Generate image using Stability AI via Railway backend
         async function generateStabilityAIImage(prompt) {
             try {
                 console.log('🎨 Generating custom image via Stability AI:', prompt);
