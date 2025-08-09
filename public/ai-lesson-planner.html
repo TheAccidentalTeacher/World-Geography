@@ -3708,7 +3708,25 @@ Generate 8-12 slides following this EXACT format. Each slide should be comprehen
                 throw new Error('Invalid lesson text provided to formatter');
             }
             
-            let formatted = lessonText.replace(/\n/g, '<br>');
+            // First, clean up any repetitive content
+            let cleaned = lessonText;
+            
+            // Remove repetitive timing guide sections
+            const timingGuidePattern = /⏰ INTEGRATED TIMING GUIDE\s*Time\s*Activity\s*Reading Connection\s*/g;
+            const matches = [...cleaned.matchAll(timingGuidePattern)];
+            if (matches.length > 1) {
+                // Keep only the first occurrence
+                const firstMatch = matches[0];
+                const firstIndex = firstMatch.index;
+                const beforeFirst = cleaned.substring(0, firstIndex);
+                const afterFirst = cleaned.substring(firstIndex);
+                const nextOccurrence = afterFirst.indexOf('⏰ INTEGRATED TIMING GUIDE', 50);
+                if (nextOccurrence > 0) {
+                    cleaned = beforeFirst + afterFirst.substring(0, nextOccurrence);
+                }
+            }
+            
+            let formatted = cleaned.replace(/\n/g, '<br>');
             
             // Add page break classes for major sections
             formatted = formatted.replace(/# 📖 (.*?)<br>/g, '<div class="section-break"><h1 class="lesson-title">📖 $1</h1></div>');
@@ -3730,7 +3748,7 @@ Generate 8-12 slides following this EXACT format. Each slide should be comprehen
             formatted = formatted.replace(/### Integrated Learning Objectives<br>(.*?)### Standards Alignment/gs, '<div class="content-box"><h4>Integrated Learning Objectives</h4>$1</div><h4>Standards Alignment</h4>');
             
             // Format timing guide as a proper table
-            formatted = formatted.replace(/⏰ INTEGRATED TIMING GUIDE<br><br>\| Time \| Activity \| Reading Connection \|<br>\|------|----------|-------------------|<br>(.*?)<br><br>/gs, function(match, tableContent) {
+            formatted = formatted.replace(/⏰ INTEGRATED TIMING GUIDE<br>Time\s*\|\s*Activity\s*\|\s*Reading Connection<br>-+\|-+\|-+<br>(.*?)<br><br>/gs, function(match, tableContent) {
                 if (!tableContent) return match; // Safety check
                 let tableRows = tableContent.split('<br>').filter(row => row.trim() && row.includes('|'));
                 let tableHTML = '<div class="timing-table page-break-avoid"><h3>⏰ INTEGRATED TIMING GUIDE</h3><table><thead><tr><th>Time</th><th>Activity</th><th>Reading Connection</th></tr></thead><tbody>';
