@@ -2564,15 +2564,16 @@ ${lessonContent.vocabulary.map(v => `${v.term}: ${v.definition}`).join('\n')}
 ### CRITICAL FORMAT RULES:
 - Each slide should be 200-400 words TOTAL (all sections combined)
 - Use bullet points for easy reading (NO paragraph walls)
-- Include Content, Visual Suggestion, and Teacher Notes sections
+- Include ALL THREE sections: Content, Visual Suggestion, and Teacher Notes
 - Make slides scannable and presentation-friendly
 - Focus on engaging, interactive content
 
-### EXACT FORMAT TO FOLLOW:
+### EXACT FORMAT TO FOLLOW (COPY THIS STYLE EXACTLY):
 
-**SLIDE [NUMBER]: [Engaging Title]**
+---
+## SLIDE 1: [Engaging Title]
 
-**Content:** 
+**Content:**
 • [Main bullet point with key concept]
 • [Second bullet point with details or examples]  
 • [Third bullet point connecting to student experience]
@@ -2580,35 +2581,39 @@ ${lessonContent.vocabulary.map(v => `${v.term}: ${v.definition}`).join('\n')}
 
 **Visual Suggestion:** [Brief description of background image and layout]
 
-**Teacher Notes:** [Specific delivery tips and classroom engagement strategies]
+**Teacher Notes:** "[Specific delivery tips and classroom engagement strategies]"
 
 ---
 
-## 📋 EXAMPLE FORMAT (FOLLOW EXACTLY):
+### EXAMPLE SLIDE (FOLLOW THIS EXACT FORMAT):
 
-**SLIDE 1: Early China and the Han Dynasty**
+---
+## SLIDE 1: Early China and the Han Dynasty
 
-**Content:** 
-• Explore the geography and achievements of early Chinese civilizations 
-• Understand the rise and culture of the Han Dynasty 
-• Connect geography to daily life and historical change
+**Content:**
+• Explore the geography of early China and its first civilizations  
+• Understand the rise and achievements of the Han Dynasty  
+• Analyze how geography shaped Chinese society and culture  
 
-**Visual Suggestion:** Background image of the Great Wall of China with a map inset showing ancient Chinese territory
+**Visual Suggestion:** Map of ancient China highlighting major rivers (Yellow and Yangtze), mountain ranges, and early civilization areas
 
-**Teacher Notes:** Welcome students! Highlight today's focus on how geography shaped early China and how the Han Dynasty influenced Chinese culture and innovation.
+**Teacher Notes:** "Today we'll discover how China's geography influenced its early civilizations and learn about the Han Dynasty's impact on history."
 
 ---
 
-## 🎨 IMAGE PROMPT GENERATION
+## 🎨 IMPORTANT REQUIREMENTS:
 
-After creating each slide in the above format, also provide these technical details:
+1. **MUST include ALL THREE sections for every slide**: Content, Visual Suggestion, Teacher Notes
+2. **Use the exact markdown format**: ## SLIDE X: Title, **Content:**, **Visual Suggestion:**, **Teacher Notes:**
+3. **Each slide separated by --- lines**
+4. **Teacher Notes must be in quotes**
+5. **Content must be bullet points starting with •**
+6. **Keep total word count per slide between 200-400 words**
+7. **Make content engaging and interactive**
+8. **Include variety**: map activities, think-pair-share, quick checks, etc.
 
-**Stability AI Prompt:** [Detailed description for custom illustration]
-**Stock Photo Keywords:** [Specific search terms for real photography]
-
----
-
-CRITICAL: Generate slides following the EXACT three-section format shown above. Keep total word count per slide between 200-400 words across ALL sections. Make content bullet-pointed and scannable, NOT paragraph heavy. Focus on student engagement and visual learning.`;
+Generate 8-12 slides following this EXACT format. Focus on the lesson content provided and make each slide educational, engaging, and classroom-ready.`;
+        }
         }
 
         // Extract content from lesson for presentation
@@ -2760,8 +2765,8 @@ CRITICAL: Generate slides following the EXACT three-section format shown above. 
             
             const slides = [];
             
-            // Look for our new slide format: **SLIDE X: Title**
-            const slideBlocks = aiResponse.split(/\*\*SLIDE \d+:/);
+            // Look for our new markdown slide format: ## SLIDE X: Title
+            const slideBlocks = aiResponse.split(/## SLIDE \d+:/);
             console.log('📊 Found', slideBlocks.length - 1, 'slide blocks');
             
             slideBlocks.forEach((block, index) => {
@@ -2770,7 +2775,7 @@ CRITICAL: Generate slides following the EXACT three-section format shown above. 
                 console.log('🔍 Processing slide block', index, ':', block.substring(0, 200) + '...');
                 
                 const lines = block.trim().split('\n');
-                const title = lines[0].replace(/\*\*/g, '').trim();
+                const title = lines[0].trim();
                 
                 let slide = {
                     id: `slide-${index}`,
@@ -2788,38 +2793,38 @@ CRITICAL: Generate slides following the EXACT three-section format shown above. 
                 lines.forEach(line => {
                     const trimmed = line.trim();
                     
-                    // Look for our new section headers
-                    if (trimmed.startsWith('**Content:**') || trimmed.startsWith('Content:')) {
+                    // Look for our markdown section headers
+                    if (trimmed.startsWith('**Content:**')) {
                         if (currentSection && content) {
                             assignContentToSection(slide, currentSection, content.trim());
                         }
                         currentSection = 'content';
                         content = '';
-                    } else if (trimmed.startsWith('**Visual Suggestion:**') || trimmed.startsWith('Visual Suggestion:')) {
+                    } else if (trimmed.startsWith('**Visual Suggestion:**')) {
                         if (currentSection && content) {
                             assignContentToSection(slide, currentSection, content.trim());
                         }
                         currentSection = 'visual';
                         content = '';
-                    } else if (trimmed.startsWith('**Teacher Notes:**') || trimmed.startsWith('Teacher Notes:')) {
+                    } else if (trimmed.startsWith('**Teacher Notes:**')) {
                         if (currentSection && content) {
                             assignContentToSection(slide, currentSection, content.trim());
                         }
                         currentSection = 'teacher';
                         content = '';
-                    } else if (trimmed.startsWith('**Stability AI Prompt:**') || trimmed.startsWith('Stability AI Prompt:')) {
+                    } else if (trimmed.startsWith('**Stability AI Prompt:**')) {
                         if (currentSection && content) {
                             assignContentToSection(slide, currentSection, content.trim());
                         }
                         currentSection = 'stability';
                         content = '';
-                    } else if (trimmed.startsWith('**Stock Photo Keywords:**') || trimmed.startsWith('Stock Photo Keywords:')) {
+                    } else if (trimmed.startsWith('**Stock Photo Keywords:**')) {
                         if (currentSection && content) {
                             assignContentToSection(slide, currentSection, content.trim());
                         }
                         currentSection = 'stock';
                         content = '';
-                    } else if (trimmed && !trimmed.startsWith('**') && !trimmed.startsWith('---') && !trimmed.startsWith('SLIDE')) {
+                    } else if (trimmed && !trimmed.startsWith('**') && !trimmed.startsWith('---') && !trimmed.startsWith('##') && trimmed !== '') {
                         // Add content to current section
                         content += (content ? '\n' : '') + trimmed;
                         console.log(`📝 Added to ${currentSection}:`, trimmed);
