@@ -2446,9 +2446,498 @@ Create an engaging, classroom-ready presentation that brings this geography topi
             presentationWindow.document.close();
         }
 
-        // Smart Presentation System - Simplified and Fixed
+        // Smart Presentation System - Full Implementation
         async function generateSmartPresentation() {
-            alert('🎨 Smart Presentation feature will be available soon!\n\nFor now, you can use the PowerPoint generation feature above.');
+            console.log('🎨 Starting Smart Presentation generation...');
+            
+            // Get lesson content
+            const lessonOutput = document.getElementById('integrated-lesson-output');
+            if (!lessonOutput || !lessonOutput.innerHTML.trim()) {
+                alert('Please generate a complete lesson first before creating a smart presentation.');
+                return;
+            }
+
+            try {
+                // Show loading
+                showPresentationLoading();
+                
+                // Step 1: Extract content from the lesson
+                const lessonData = extractLessonContent();
+                
+                // Step 2: Create slide structure
+                const slides = createSlideStructure(lessonData);
+                
+                // Step 3: Generate and display presentation
+                const presentationHTML = buildPresentationHTML(slides);
+                displayPresentation(presentationHTML);
+                
+            } catch (error) {
+                console.error('❌ Error generating presentation:', error);
+                alert('Error creating presentation: ' + error.message);
+            } finally {
+                hidePresentationLoading();
+            }
+        }
+
+        // Extract structured content from the generated lesson
+        function extractLessonContent() {
+            const currentLesson = getCurrentLessonData();
+            const lessonHTML = document.getElementById('integrated-lesson-output').innerHTML;
+            
+            // Extract sections using regex patterns
+            const sections = {
+                title: currentLesson.title || 'Geography Lesson',
+                module: currentLesson.moduleName || 'Geography Module',
+                objectives: extractSection(lessonHTML, 'Learning Objectives', 'Standards'),
+                standards: extractSection(lessonHTML, 'Standards', 'Timing'),
+                activities: extractSection(lessonHTML, 'Activity', 'Assessment'),
+                vocabulary: extractSection(lessonHTML, 'Key Terms', 'Implementation'),
+                assessment: extractSection(lessonHTML, 'Assessment', 'Conclusion')
+            };
+            
+            return sections;
+        }
+
+        // Extract content between two headers
+        function extractSection(html, startHeader, endHeader) {
+            const startPattern = new RegExp(`<h[234][^>]*>${startHeader}[^<]*</h[234]>`, 'i');
+            const endPattern = endHeader ? new RegExp(`<h[234][^>]*>${endHeader}[^<]*</h[234]>`, 'i') : null;
+            
+            const startMatch = html.match(startPattern);
+            if (!startMatch) return [];
+            
+            const startIndex = startMatch.index + startMatch[0].length;
+            const endIndex = endPattern ? (html.match(endPattern)?.index || html.length) : html.length;
+            
+            const sectionHTML = html.substring(startIndex, endIndex);
+            
+            // Extract bullet points or paragraphs
+            const bullets = sectionHTML.match(/<li[^>]*>([^<]+)</g) || [];
+            if (bullets.length > 0) {
+                return bullets.map(bullet => bullet.replace(/<[^>]*>/g, '').trim()).filter(text => text.length > 0);
+            }
+            
+            // Fall back to paragraphs
+            const paragraphs = sectionHTML.match(/<p[^>]*>([^<]+)</g) || [];
+            return paragraphs.map(p => p.replace(/<[^>]*>/g, '').trim()).filter(text => text.length > 0).slice(0, 4);
+        }
+
+        // Create intelligent slide structure
+        function createSlideStructure(lessonData) {
+            const slides = [];
+            
+            // Slide 1: Title slide
+            slides.push({
+                type: 'title',
+                title: lessonData.title,
+                subtitle: lessonData.module,
+                content: [],
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+            });
+
+            // Slide 2: Learning objectives
+            if (lessonData.objectives.length > 0) {
+                slides.push({
+                    type: 'content',
+                    title: 'Learning Objectives',
+                    content: lessonData.objectives.slice(0, 4),
+                    icon: '🎯'
+                });
+            }
+
+            // Slide 3: Key vocabulary
+            if (lessonData.vocabulary.length > 0) {
+                slides.push({
+                    type: 'vocabulary',
+                    title: 'Key Terms',
+                    content: lessonData.vocabulary.slice(0, 6),
+                    icon: '📚'
+                });
+            }
+
+            // Slides 4-6: Main content from activities
+            if (lessonData.activities.length > 0) {
+                const activityChunks = chunkArray(lessonData.activities, 3);
+                activityChunks.forEach((chunk, index) => {
+                    slides.push({
+                        type: 'content',
+                        title: `Key Concepts ${index > 0 ? '(' + (index + 1) + ')' : ''}`,
+                        content: chunk,
+                        icon: index === 0 ? '🌍' : index === 1 ? '🗺️' : '📍'
+                    });
+                });
+            }
+
+            // Slide 7: Assessment
+            if (lessonData.assessment.length > 0) {
+                slides.push({
+                    type: 'assessment',
+                    title: 'Check Your Understanding',
+                    content: lessonData.assessment.slice(0, 4),
+                    icon: '✅'
+                });
+            }
+
+            // Final slide: Summary
+            slides.push({
+                type: 'conclusion',
+                title: 'Lesson Complete!',
+                content: ['Review key concepts', 'Practice with activities', 'Prepare for next lesson'],
+                icon: '🎉'
+            });
+
+            return slides;
+        }
+
+        // Utility function to chunk arrays
+        function chunkArray(array, chunkSize) {
+            const chunks = [];
+            for (let i = 0; i < array.length; i += chunkSize) {
+                chunks.push(array.slice(i, i + chunkSize));
+            }
+            return chunks;
+        }
+
+        // Build complete presentation HTML
+        function buildPresentationHTML(slides) {
+            const slidesHTML = slides.map((slide, index) => generateSlideHTML(slide, index + 1)).join('');
+            
+            return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geography Presentation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            overflow: hidden;
+            height: 100vh;
+        }
+        
+        .presentation-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .slide {
+            width: 90vw;
+            max-width: 1200px;
+            height: 80vh;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            padding: 60px;
+            display: none;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .slide.active { display: flex; flex-direction: column; }
+        
+        .slide-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: #1a365d;
+            margin-bottom: 20px;
+            line-height: 1.1;
+        }
+        
+        .slide-subtitle {
+            font-size: 1.8rem;
+            color: #4a5568;
+            margin-bottom: 40px;
+            font-weight: 400;
+        }
+        
+        .slide-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .slide-icon {
+            font-size: 4rem;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .content-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .content-list li {
+            font-size: 1.4rem;
+            line-height: 1.6;
+            margin: 20px 0;
+            padding: 15px 0;
+            border-bottom: 1px solid #e2e8f0;
+            color: #2d3748;
+            position: relative;
+            padding-left: 40px;
+        }
+        
+        .content-list li::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #4299e1;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        
+        .slide-title-type {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .slide-title-type .slide-title {
+            color: white;
+            font-size: 5rem;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        
+        .slide-title-type .slide-subtitle {
+            color: rgba(255,255,255,0.9);
+            font-size: 2.2rem;
+        }
+        
+        .slide-vocabulary .content-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        
+        .slide-vocabulary .content-list li {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 12px;
+            border: none;
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        .slide-vocabulary .content-list li::before {
+            content: "📖";
+            font-size: 1.5rem;
+        }
+        
+        .controls {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 1000;
+        }
+        
+        .control-btn {
+            padding: 15px 25px;
+            background: rgba(255,255,255,0.95);
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            color: #2d3748;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .control-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+        
+        .control-btn:active {
+            transform: translateY(0);
+        }
+        
+        .slide-counter {
+            position: fixed;
+            top: 40px;
+            right: 40px;
+            background: rgba(255,255,255,0.95);
+            padding: 15px 25px;
+            border-radius: 25px;
+            font-weight: 600;
+            color: #2d3748;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+        }
+        
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.3s ease;
+            z-index: 1001;
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progress-bar"></div>
+    <div class="presentation-container">
+        ${slidesHTML}
+        
+        <div class="slide-counter">
+            <span id="current-slide">1</span> / <span id="total-slides">${slides.length}</span>
+        </div>
+        
+        <div class="controls">
+            <button class="control-btn" onclick="previousSlide()">← Previous</button>
+            <button class="control-btn" onclick="nextSlide()">Next →</button>
+            <button class="control-btn" onclick="window.close()">✕ Close</button>
+        </div>
+    </div>
+    
+    <script>
+        let currentSlide = 1;
+        const totalSlides = ${slides.length};
+        
+        function showSlide(n) {
+            if (n < 1) n = 1;
+            if (n > totalSlides) n = totalSlides;
+            
+            document.querySelectorAll('.slide').forEach(slide => slide.classList.remove('active'));
+            document.getElementById('slide-' + n).classList.add('active');
+            document.getElementById('current-slide').textContent = n;
+            
+            // Update progress bar
+            const progress = (n / totalSlides) * 100;
+            document.getElementById('progress-bar').style.width = progress + '%';
+            
+            currentSlide = n;
+        }
+        
+        function nextSlide() {
+            if (currentSlide < totalSlides) {
+                showSlide(currentSlide + 1);
+            }
+        }
+        
+        function previousSlide() {
+            if (currentSlide > 1) {
+                showSlide(currentSlide - 1);
+            }
+        }
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            switch(e.key) {
+                case 'ArrowRight':
+                case ' ':
+                    e.preventDefault();
+                    nextSlide();
+                    break;
+                case 'ArrowLeft':
+                    e.preventDefault();
+                    previousSlide();
+                    break;
+                case 'Escape':
+                    window.close();
+                    break;
+            }
+        });
+        
+        // Initialize
+        showSlide(1);
+        
+        // Auto-focus for keyboard navigation
+        document.body.focus();
+    </script>
+</body>
+</html>`;
+        }
+
+        // Generate HTML for individual slide
+        function generateSlideHTML(slide, slideNumber) {
+            const slideClass = `slide slide-${slide.type}`;
+            
+            if (slide.type === 'title') {
+                return `
+                    <div id="slide-${slideNumber}" class="${slideClass} slide-title-type">
+                        <h1 class="slide-title">${slide.title}</h1>
+                        <p class="slide-subtitle">${slide.subtitle}</p>
+                    </div>
+                `;
+            }
+            
+            const iconHTML = slide.icon ? `<div class="slide-icon">${slide.icon}</div>` : '';
+            const contentHTML = slide.content.length > 0 ? 
+                `<ul class="content-list">${slide.content.map(item => `<li>${item}</li>`).join('')}</ul>` : 
+                '<p style="text-align: center; font-size: 1.5rem; color: #718096;">Content loading...</p>';
+            
+            return `
+                <div id="slide-${slideNumber}" class="${slideClass}">
+                    ${iconHTML}
+                    <h1 class="slide-title">${slide.title}</h1>
+                    <div class="slide-content">
+                        ${contentHTML}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Display the presentation in a new window
+        function displayPresentation(html) {
+            const presentationWindow = window.open('', '_blank', 'width=1400,height=900');
+            if (presentationWindow) {
+                presentationWindow.document.write(html);
+                presentationWindow.document.close();
+                presentationWindow.focus();
+            } else {
+                alert('Please allow pop-ups to view the presentation');
+            }
+        }
+
+        // Loading functions
+        function showPresentationLoading() {
+            if (document.getElementById('presentation-loading')) return;
+            
+            const loadingHTML = `
+                <div id="presentation-loading" style="
+                    position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+                    background: rgba(0,0,0,0.8); z-index: 10000; display: flex; 
+                    align-items: center; justify-content: center; color: white;
+                    backdrop-filter: blur(5px);
+                ">
+                    <div style="text-align: center; padding: 50px; background: rgba(255,255,255,0.1); border-radius: 20px; backdrop-filter: blur(10px);">
+                        <div style="font-size: 60px; margin-bottom: 30px; animation: spin 2s linear infinite;">🎨</div>
+                        <h2 style="margin-bottom: 20px;">Creating Your Presentation</h2>
+                        <p style="opacity: 0.8;">Analyzing lesson content and building slides...</p>
+                    </div>
+                </div>
+                <style>
+                    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+                </style>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', loadingHTML);
+        }
+
+        function hidePresentationLoading() {
+            const loading = document.getElementById('presentation-loading');
+            if (loading) {
+                loading.remove();
+            }
         }
 
         // Format the integrated lesson with proper HTML structure and page breaks
