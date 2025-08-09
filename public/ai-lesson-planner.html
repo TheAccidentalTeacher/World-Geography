@@ -2196,6 +2196,7 @@ Generate the lesson following the exact format above.`;
         // Display the generated integrated lesson
         function displayGeneratedIntegratedLesson(lesson) {
             try {
+                console.log('🔍 Raw AI response:', lesson.substring(0, 500) + '...');
                 const formattedLesson = formatIntegratedLesson(lesson);
                 document.getElementById('integrated-lesson-output').innerHTML = formattedLesson;
                 document.getElementById('integrated-export-buttons').style.display = 'flex';
@@ -2205,6 +2206,7 @@ Generate the lesson following the exact format above.`;
                 
             } catch (error) {
                 console.error('❌ Error formatting integrated lesson:', error);
+                console.log('📝 Fallback - Raw lesson content:', lesson);
                 // Fallback to simple display
                 document.getElementById('integrated-lesson-output').innerHTML = `
                     <div style="padding: 20px; background: #fff; border-radius: 8px; line-height: 1.6;">
@@ -3708,6 +3710,8 @@ Generate 8-12 slides following this EXACT format. Each slide should be comprehen
                 throw new Error('Invalid lesson text provided to formatter');
             }
             
+            console.log('🔧 Formatting lesson text, length:', lessonText.length);
+            
             // First, clean up any repetitive content
             let cleaned = lessonText;
             
@@ -3728,82 +3732,44 @@ Generate 8-12 slides following this EXACT format. Each slide should be comprehen
             
             let formatted = cleaned.replace(/\n/g, '<br>');
             
-            // Add page break classes for major sections
-            formatted = formatted.replace(/# 📖 (.*?)<br>/g, '<div class="section-break"><h1 class="lesson-title">📖 $1</h1></div>');
-            formatted = formatted.replace(/## 🚀 INTEGRATED LESSON PLAN<br>/g, '<div class="lesson-section"><h2>🚀 INTEGRATED LESSON PLAN</h2></div>');
-            formatted = formatted.replace(/## 📝 STUDENT HANDOUTS<br>/g, '<div class="handout-section"><h2>📝 STUDENT HANDOUTS</h2></div>');
-            formatted = formatted.replace(/## ✅ INTEGRATED ASSESSMENT TOOLS<br>/g, '<div class="page-break-before"><h2>✅ INTEGRATED ASSESSMENT TOOLS</h2></div>');
+            // Only apply table formatting if we detect actual table structures
             
             // Format headers with different levels and page break controls
             formatted = formatted.replace(/### (.*?)<br>/g, '<h3 class="page-break-avoid" style="color: #ff6b6b; margin: 20px 0 10px 0; font-size: 1.3rem; border-left: 4px solid #ff6b6b; padding-left: 10px;">$1</h3>');
-            formatted = formatted.replace(/## (.*?)<br>/g, '<h2 class="page-break-avoid" style="color: #495057; margin: 25px 0 15px 0; font-size: 1.5rem; border-bottom: 2px solid #e9ecef; padding-bottom: 5px;">$2</h2>');
+            formatted = formatted.replace(/## (.*?)<br>/g, '<h2 class="page-break-avoid" style="color: #495057; margin: 25px 0 15px 0; font-size: 1.5rem; border-bottom: 2px solid #e9ecef; padding-bottom: 5px;">$1</h2>');
             formatted = formatted.replace(/# (.*?)<br>/g, '<h1 class="lesson-header page-break-avoid" style="color: #ff6b6b; margin: 30px 0 20px 0; font-size: 1.8rem; text-align: center; border: 3px solid #ff6b6b; padding: 15px; border-radius: 10px; background: #fff5f5;">$1</h1>');
             
-            // Format paragraphs with proper spacing and orphan/widow control
-            formatted = formatted.replace(/Paragraph (\d+)<br>/g, '<div class="reading-paragraph"><strong>Paragraph $1</strong><br>');
-            formatted = formatted.replace(/(.*?<\/strong><br>.*?)<br><br>/g, '$1</div><br>');
-            
-            // Format lesson at a glance section
-            formatted = formatted.replace(/📋 LESSON AT A GLANCE<br>/g, '<div class="objectives-box"><h3>📋 LESSON AT A GLANCE</h3>');
-            formatted = formatted.replace(/### Integrated Learning Objectives<br>(.*?)### Standards Alignment/gs, '<div class="content-box"><h4>Integrated Learning Objectives</h4>$1</div><h4>Standards Alignment</h4>');
-            
-            // Format timing guide as a proper table
-            formatted = formatted.replace(/⏰ INTEGRATED TIMING GUIDE<br>Time\s*\|\s*Activity\s*\|\s*Reading Connection<br>-+\|-+\|-+<br>(.*?)<br><br>/gs, function(match, tableContent) {
-                if (!tableContent) return match; // Safety check
-                let tableRows = tableContent.split('<br>').filter(row => row.trim() && row.includes('|'));
-                let tableHTML = '<div class="timing-table page-break-avoid"><h3>⏰ INTEGRATED TIMING GUIDE</h3><table><thead><tr><th>Time</th><th>Activity</th><th>Reading Connection</th></tr></thead><tbody>';
-                
-                tableRows.forEach(row => {
-                    let cells = row.split('|').map(cell => cell.trim()).filter(cell => cell);
-                    if (cells.length >= 3) {
-                        tableHTML += `<tr><td>${cells[0]}</td><td>${cells[1]}</td><td>${cells[2]}</td></tr>`;
-                    }
-                });
-                
-                tableHTML += '</tbody></table></div>';
-                return tableHTML;
-            });
-            
-            // Format rubric tables
-            formatted = formatted.replace(/\| Criteria \| Excellent \| Good \| Needs Work \|<br>\|----------|-----------|------|------------|<br>(.*?)<br><br>/gs, function(match, tableContent) {
-                if (!tableContent) return match; // Safety check
-                let tableRows = tableContent.split('<br>').filter(row => row.trim() && row.includes('|'));
-                let tableHTML = '<div class="assessment-rubric page-break-avoid"><table><thead><tr><th>Criteria</th><th>Excellent</th><th>Good</th><th>Needs Work</th></tr></thead><tbody>';
-                
-                tableRows.forEach(row => {
-                    let cells = row.split('|').map(cell => cell.trim()).filter(cell => cell);
-                    if (cells.length >= 4) {
-                        tableHTML += `<tr><td>${cells[0]}</td><td>${cells[1]}</td><td>${cells[2]}</td><td>${cells[3]}</td></tr>`;
-                    }
-                });
-                
-                tableHTML += '</tbody></table></div>';
-                return tableHTML;
-            });
-            
-            // Format vocabulary sections
-            formatted = formatted.replace(/\*\*Key Terms from Reading:\*\* (.*?)<br>/g, '<div class="vocabulary-box"><strong>Key Terms from Reading:</strong> $1</div>');
-            
-            // Format implementation guides with page break avoidance
-            formatted = formatted.replace(/### (15-Minute Preparation Checklist|First-Time Teaching Notes|Troubleshooting Guide|Substitute Teacher Instructions)<br>/g, '<div class="content-box page-break-avoid"><h4>$1</h4>');
-            formatted = formatted.replace(/✅ QUALITY ASSURANCE VERIFICATION<br>/g, '<div class="page-break-avoid"><h3>✅ QUALITY ASSURANCE VERIFICATION</h3>');
+            // Format paragraphs with proper spacing
+            formatted = formatted.replace(/Paragraph (\d+)\. (.*?)<br>/g, '<div class="reading-paragraph" style="margin: 15px 0; padding: 15px; background: #f8f9fa; border-left: 4px solid #007bff; border-radius: 5px;"><strong style="color: #007bff;">Paragraph $1:</strong> $2</div>');
             
             // Format bold text
             formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong style="color: #495057;">$1</strong>');
             
-            // Format bullet points with proper structure
-            formatted = formatted.replace(/(^|\<br\>)• /g, '$1<li style="margin: 4px 0;">');
-            formatted = formatted.replace(/(^|\<br\>)- /g, '$1<li style="margin: 4px 0;">');
+            // Format bullet points
+            formatted = formatted.replace(/(^|<br>)• /g, '$1<li style="margin: 4px 0; list-style-type: disc; margin-left: 20px;">');
+            formatted = formatted.replace(/(^|<br>)- /g, '$1<li style="margin: 4px 0; list-style-type: disc; margin-left: 20px;">');
             
-            // Format numbered lists
-            formatted = formatted.replace(/(^|\<br\>)(\d+\.) /g, '$1<div class="numbered-item"><span style="color: #ff6b6b; font-weight: bold;">$2</span> ');
+            // Only format actual rubric tables with proper headers and separators
+            formatted = formatted.replace(/\| Criteria \| Excellent \| Good \| Needs Work \|<br>\|[-\s]+\|[-\s]+\|[-\s]+\|[-\s]+\|<br>((?:\|[^|]*\|[^|]*\|[^|]*\|[^|]*\|<br>)+)/g, function(match, tableContent) {
+                console.log('🔍 Found rubric table:', match.substring(0, 100));
+                if (!tableContent) return match;
+                
+                let tableRows = tableContent.split('<br>').filter(row => row.trim() && row.includes('|') && row.split('|').length >= 5);
+                let tableHTML = '<div class="assessment-rubric page-break-avoid" style="margin: 20px 0;"><table style="width: 100%; border-collapse: collapse; border: 1px solid #ddd;"><thead><tr style="background: #f8f9fa;"><th style="border: 1px solid #ddd; padding: 10px;">Criteria</th><th style="border: 1px solid #ddd; padding: 10px;">Excellent</th><th style="border: 1px solid #ddd; padding: 10px;">Good</th><th style="border: 1px solid #ddd; padding: 10px;">Needs Work</th></tr></thead><tbody>';
+                
+                tableRows.forEach(row => {
+                    let cells = row.split('|').map(cell => cell.trim()).filter(cell => cell);
+                    if (cells.length >= 4) {
+                        tableHTML += `<tr><td style="border: 1px solid #ddd; padding: 10px;">${cells[0]}</td><td style="border: 1px solid #ddd; padding: 10px;">${cells[1]}</td><td style="border: 1px solid #ddd; padding: 10px;">${cells[2]}</td><td style="border: 1px solid #ddd; padding: 10px;">${cells[3]}</td></tr>`;
+                    }
+                });
+                
+                tableHTML += '</tbody></table></div>';
+                return tableHTML;
+            });
             
-            // Format checkboxes
-            formatted = formatted.replace(/- \[ \]/g, '<div class="checkbox-item"><input type="checkbox" style="margin-right: 8px;">');
-            formatted = formatted.replace(/- \[x\]/g, '<div class="checkbox-item"><input type="checkbox" checked style="margin-right: 8px;">');
-            
-            // Clean up and structure the content properly
-            formatted = formatted.replace(/<br><br>/g, '</p><p>');
+            // Clean up extra line breaks
+            formatted = formatted.replace(/<br><br>/g, '<br>');
             formatted = formatted.replace(/^<br>|<br>$/g, '');
             
             // Wrap in proper structure with print-friendly classes
