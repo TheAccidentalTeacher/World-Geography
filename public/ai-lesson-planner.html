@@ -3080,14 +3080,9 @@ Generate 8-12 slides following this EXACT format. Each slide should be comprehen
 
         // COMPREHENSIVE AI-DRIVEN PRESENTATION SYSTEM
         async function generateFullVisualPresentation() {
-            if (!window.currentSlideData || window.currentSlideData.length === 0) {
-                alert('No slide data available! Please generate slides first.');
-                return;
-            }
-
-            const button = event.target;
-            const originalText = button.innerHTML;
-            button.innerHTML = '🤖 AI Pipeline Starting...';
+            // Use the working clean markdown slide generation
+            await generateCleanMarkdownPresentation();
+        }
             button.disabled = true;
 
             try {
@@ -3118,86 +3113,19 @@ Generate 8-12 slides following this EXACT format. Each slide should be comprehen
                 await updatePipelineStatus('✨ <strong>Stage 4:</strong> Creating enhanced slide content...');
                 const enhancedSlides = await performAIContentEnhancement(optimizedPrompts);
                 
-                // Stage 4: AI-Powered Gamma-Quality Presentation Generator
-        async function createAIPoweredGammaStylePresentation(slides) {
-            // Create professional Gamma.ai-style presentation with modern design
-            let presentationHTML = `
-                <div style="max-width: 1400px; margin: 0 auto; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; background: #f8fafc;">
-                    <!-- Title Slide -->
-                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 60px 40px; border-radius: 16px; margin-bottom: 40px; text-align: center; position: relative; overflow: hidden;">
-                        <div style="position: absolute; top: 0; right: 0; width: 200px; height: 200px; background: rgba(255,255,255,0.1); border-radius: 50%; transform: translate(50%, -50%);"></div>
-                        <div style="position: absolute; bottom: 0; left: 0; width: 150px; height: 150px; background: rgba(255,255,255,0.05); border-radius: 50%; transform: translate(-50%, 50%);"></div>
-                        <div style="position: relative; z-index: 2;">
-                            <h1 style="margin: 0; font-size: 42px; font-weight: 700; letter-spacing: -0.5px;">${window.currentPresentationTitle || 'Geography Presentation'}</h1>
-                            <p style="margin: 20px 0 0 0; font-size: 20px; opacity: 0.9; font-weight: 300;">${slides.length} Professional Slides • AI-Generated Geography Content</p>
-                        </div>
-                    </div>
-            `;
-
-            // Generate each slide with professional Gamma-style layouts
-            for (let i = 0; i < slides.length; i++) {
-                const slide = slides[i];
+                // Stage 4: Parse enhanced slides and create final presentation
+                await updatePipelineStatus('🎨 <strong>Stage 5:</strong> Generating final visual presentation...');
                 
-                // Get image for this slide
-                let imageHTML = '';
-                try {
-                    const imageUrl = await generateImageForSlide(slide);
-                    if (imageUrl) {
-                        imageHTML = `
-                            <div style="flex: 1; min-height: 300px; background: url('${imageUrl}') center/cover; border-radius: 12px; position: relative;">
-                                <div style="position: absolute; inset: 0; background: linear-gradient(45deg, rgba(0,0,0,0.1), rgba(0,0,0,0.3)); border-radius: 12px;"></div>
-                            </div>
-                        `;
-                    }
-                } catch (error) {
-                    console.error('Image generation failed for slide:', slide.title, error);
-                    // Fallback to gradient background
-                    imageHTML = `
-                        <div style="flex: 1; min-height: 300px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 12px; position: relative; display: flex; align-items: center; justify-content: center;">
-                            <div style="color: white; font-size: 24px; font-weight: 600; text-align: center; opacity: 0.8;">🌍<br>Geography Slide</div>
-                        </div>
-                    `;
-                }
-
-                // Create professional slide layout
-                presentationHTML += `
-                    <div style="background: white; border-radius: 16px; margin-bottom: 32px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.08); border: 1px solid #e2e8f0;">
-                        <!-- Slide Header -->
-                        <div style="background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); padding: 24px 32px; border-bottom: 1px solid #e2e8f0;">
-                            <div style="display: flex; align-items: center; justify-content: between;">
-                                <div style="flex: 1;">
-                                    <div style="color: #64748b; font-size: 14px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Slide ${i + 1}</div>
-                                    <h2 style="margin: 0; font-size: 28px; font-weight: 700; color: #1e293b; line-height: 1.2;">${slide.title}</h2>
-                                </div>
-                                <div style="background: #667eea; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px;">
-                                    ${i + 1}
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Slide Content -->
-                        <div style="display: flex; gap: 32px; padding: 32px;">
-                            <!-- Image Section -->
-                            ${imageHTML}
-                            
-                            <!-- Content Section -->
-                            <div style="flex: 1; display: flex; flex-direction: column; gap: 24px;">
-                                <!-- Main Content -->
-                                <div style="background: #f8fafc; padding: 24px; border-radius: 12px; border-left: 4px solid #667eea;">
-                                    <h3 style="margin: 0 0 16px 0; color: #1e293b; font-size: 18px; font-weight: 600; display: flex; align-items: center; gap: 8px;">
-                                        📚 Content
-                                    </h3>
-                                    <div style="color: #475569; line-height: 1.7; font-size: 16px;">
-                                        ${formatGammaStyleContent(slide.content)}
-                                    </div>
-                                </div>
-                                
-                                <!-- Visual Suggestion & Teacher Notes -->
-                                <div style="display: flex; gap: 16px;">
-                                    ${slide.visualSuggestion ? `
-                                        <div style="flex: 1; background: #ecfdf5; padding: 20px; border-radius: 12px; border-left: 4px solid #10b981;">
-                                            <h4 style="margin: 0 0 12px 0; color: #065f46; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;">
-                                                🎨 Visual
+                // Parse the enhanced slides from AI response
+                const parsedSlides = parseEnhancedSlides(enhancedSlides);
+                
+                // Generate final presentation with images
+                const finalPresentation = await createAIPoweredGammaStylePresentation(parsedSlides);
+                
+                await updatePipelineStatus('✅ <strong>Complete!</strong> AI presentation generated successfully!');
+                
+                // Display the final AI-generated presentation
+                outputDiv.innerHTML = finalPresentation;
                                             </h4>
                                             <p style="margin: 0; color: #047857; font-size: 14px; line-height: 1.5;">${slide.visualSuggestion}</p>
                                         </div>
@@ -3343,6 +3271,106 @@ Include specific facts, examples, and interactive elements that will translate i
                 return response;
             } catch (error) {
                 console.error('AI Lesson Synthesis failed:', error);
+                throw error;
+            }
+        }
+
+        // Stage 2: AI-Driven Prompt Optimization
+        async function performAIPromptOptimization(synthesizedLesson) {
+            const optimizationPrompt = `
+# AI PROMPT OPTIMIZATION FOR VISUAL GEOGRAPHY PRESENTATIONS
+
+Based on the synthesized lesson content below, create optimized prompts for generating 8-12 professional presentation slides.
+
+## SYNTHESIZED LESSON CONTENT:
+${synthesizedLesson}
+
+## OPTIMIZATION REQUIREMENTS:
+
+Generate detailed slide prompts that include:
+
+1. **Content Structure**: Clear learning objectives and key points for each slide
+2. **Visual Design Specifications**: Detailed descriptions for images, maps, infographics
+3. **Interactive Elements**: Specific engagement activities for middle school students
+4. **Assessment Integration**: Built-in check-for-understanding opportunities
+5. **Professional Aesthetics**: Modern, clean design elements that enhance learning
+
+## OUTPUT FORMAT:
+For each slide, provide:
+- **Title**: Engaging and educational
+- **Content Outline**: 4-6 main points with supporting details
+- **Visual Specifications**: Exact image descriptions, map requirements, graphic elements
+- **Interactive Components**: Student engagement activities
+- **Assessment Elements**: Quick checks or discussion prompts
+
+Create prompts that will generate Gamma.ai-quality professional educational slides.
+`;
+
+            try {
+                const response = await callOpenAIAPI(optimizationPrompt);
+                return response;
+            } catch (error) {
+                console.error('AI Prompt Optimization failed:', error);
+                throw error;
+            }
+        }
+
+        // Stage 3: AI Content Enhancement
+        async function performAIContentEnhancement(optimizedPrompts) {
+            const enhancementPrompt = `
+# AI CONTENT ENHANCEMENT FOR PROFESSIONAL GEOGRAPHY PRESENTATIONS
+
+Transform the optimized prompts below into final, enhanced slide content with rich detail and professional presentation quality.
+
+## OPTIMIZED PROMPTS:
+${optimizedPrompts}
+
+## ENHANCEMENT REQUIREMENTS:
+
+Create enhanced slide content that includes:
+
+1. **Rich Content Development**: Expand each point to 400-600 words with specific facts, examples, and engaging details
+2. **Professional Formatting**: Use bullet points, subheadings, and clear hierarchies
+3. **Visual Design Prompts**: Include detailed specifications for every visual element
+4. **Interactive Learning**: Specific activities, discussion prompts, and hands-on opportunities
+5. **Assessment Integration**: Built-in formative assessment opportunities
+6. **Modern Educational Approach**: Incorporate current best practices in geography education
+
+## OUTPUT FORMAT:
+Return slides in this exact format:
+
+---
+## SLIDE X: [Title]
+
+**Content:**
+• [Detailed bullet point with rich content]
+• [Detailed bullet point with rich content]
+• [Continue for 6-8 comprehensive points]
+
+**Visual Suggestions:**
+• **Exact Image Description**: [Specific, detailed description of required image]
+• **Map Requirements**: [Specific geographic visualization needs]
+• **Infographic Elements**: [Data visualization specifications]
+• **Artistic Representation**: [Creative visual elements]
+• **Interactive Features**: [User engagement components]
+• **Design Aesthetics**: [Color schemes, typography, layout specifications]
+
+**Student Engagement:**
+• [Specific interactive activity]
+• [Discussion prompt or question]
+• [Real-world connection]
+• [Assessment opportunity]
+
+---
+
+Create 8-12 slides with this enhanced format that will generate truly professional, engaging geography presentations.
+`;
+
+            try {
+                const response = await callOpenAIAPI(enhancementPrompt);
+                return response;
+            } catch (error) {
+                console.error('AI Content Enhancement failed:', error);
                 throw error;
             }
         }
