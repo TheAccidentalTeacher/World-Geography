@@ -3080,14 +3080,9 @@ Generate 8-12 slides following this EXACT format. Each slide should be comprehen
 
         // COMPREHENSIVE AI-DRIVEN PRESENTATION SYSTEM
         async function generateFullVisualPresentation() {
-            if (!window.currentSlideData || window.currentSlideData.length === 0) {
-                alert('No slide data available! Please generate slides first.');
-                return;
-            }
-
-            const button = event.target;
-            const originalText = button.innerHTML;
-            button.innerHTML = '🤖 AI Pipeline Starting...';
+            // Use the proven working system
+            await generateSmartPresentation(true);
+        }
             button.disabled = true;
 
             try {
