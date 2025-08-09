@@ -3186,9 +3186,9 @@ STYLE: [style notes]
             try {
                 const apiKey = 'sk-proj-...'; // Would need actual API key
                 // This would be the actual Stability AI API call
-                // For now, return a placeholder
+                // For now, return a placeholder using Picsum for reliable images
                 return {
-                    url: 'https://via.placeholder.com/800x600/667eea/ffffff?text=Custom+Generated+Image',
+                    url: `https://picsum.photos/800/600?random=${Math.floor(Math.random() * 1000)}`,
                     prompt: prompt
                 };
             } catch (error) {
@@ -3204,20 +3204,20 @@ STYLE: [style notes]
                 const unsplashKey = 'your-unsplash-key'; // Would need actual API key
                 const searchTerms = keywords.split(',').map(k => k.trim()).join(' ');
                 
-                // For now, return placeholder images
+                // Use Picsum for reliable placeholder images
                 return [
                     {
-                        url: `https://via.placeholder.com/800x600/28a745/ffffff?text=${encodeURIComponent(searchTerms)}`,
+                        url: `https://picsum.photos/800/600?random=${Math.floor(Math.random() * 1000)}`,
                         source: 'placeholder',
                         description: searchTerms
                     },
                     {
-                        url: `https://via.placeholder.com/800x600/007bff/ffffff?text=${encodeURIComponent(searchTerms)}`,
+                        url: `https://picsum.photos/800/600?random=${Math.floor(Math.random() * 1000)}`,
                         source: 'placeholder',
                         description: searchTerms
                     },
                     {
-                        url: `https://via.placeholder.com/800x600/ffc107/ffffff?text=${encodeURIComponent(searchTerms)}`,
+                        url: `https://picsum.photos/800/600?random=${Math.floor(Math.random() * 1000)}`,
                         source: 'placeholder',
                         description: searchTerms
                     }
