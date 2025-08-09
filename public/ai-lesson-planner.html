@@ -2919,37 +2919,32 @@ CRITICAL: Generate slides following the EXACT three-section format shown above. 
                         <div style="padding: 20px;">
                             <div style="display: grid; gap: 20px;">
                                 <div>
-                                    <label style="display: block; font-weight: 600; color: #495057; margin-bottom: 8px;">📝 Content Prompt (200-400 words):</label>
-                                    <textarea id="content-${index}" style="width: 100%; min-height: 120px; padding: 12px; border: 2px solid #e9ecef; border-radius: 6px; font-family: inherit; resize: vertical;" onchange="updateSlideData(${index}, 'contentPrompt', this.value)">${slide.contentPrompt}</textarea>
+                                    <label style="display: block; font-weight: 600; color: #495057; margin-bottom: 8px;">📝 Content (200-400 words):</label>
+                                    <textarea id="content-${index}" style="width: 100%; min-height: 120px; padding: 12px; border: 2px solid #e9ecef; border-radius: 6px; font-family: inherit; resize: vertical;" onchange="updateSlideData(${index}, 'content', this.value)">${slide.content || ''}</textarea>
                                 </div>
                                 
                                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                                     <div>
-                                        <label style="display: block; font-weight: 600; color: #495057; margin-bottom: 8px;">🎨 Visual Theme:</label>
-                                        <textarea id="theme-${index}" style="width: 100%; min-height: 80px; padding: 10px; border: 2px solid #e9ecef; border-radius: 6px; font-family: inherit; resize: vertical;" onchange="updateSlideData(${index}, 'visualTheme', this.value)">${slide.visualTheme}</textarea>
+                                        <label style="display: block; font-weight: 600; color: #495057; margin-bottom: 8px;">🎨 Visual Suggestion:</label>
+                                        <textarea id="visual-${index}" style="width: 100%; min-height: 80px; padding: 10px; border: 2px solid #e9ecef; border-radius: 6px; font-family: inherit; resize: vertical;" onchange="updateSlideData(${index}, 'visualSuggestion', this.value)">${slide.visualSuggestion || ''}</textarea>
                                     </div>
                                     
                                     <div>
-                                        <label style="display: block; font-weight: 600; color: #495057; margin-bottom: 8px;">🖼️ Layout Direction:</label>
-                                        <textarea id="layout-${index}" style="width: 100%; min-height: 80px; padding: 10px; border: 2px solid #e9ecef; border-radius: 6px; font-family: inherit; resize: vertical;" onchange="updateSlideData(${index}, 'layoutDirection', this.value)">${slide.layoutDirection}</textarea>
+                                        <label style="display: block; font-weight: 600; color: #495057; margin-bottom: 8px;">👨‍🏫 Teacher Notes:</label>
+                                        <textarea id="teacher-${index}" style="width: 100%; min-height: 80px; padding: 10px; border: 2px solid #e9ecef; border-radius: 6px; font-family: inherit; resize: vertical;" onchange="updateSlideData(${index}, 'teacherNotes', this.value)">${slide.teacherNotes || ''}</textarea>
                                     </div>
                                 </div>
                                 
                                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                                     <div>
                                         <label style="display: block; font-weight: 600; color: #495057; margin-bottom: 8px;">🤖 Stability AI Prompt:</label>
-                                        <textarea id="stability-${index}" style="width: 100%; min-height: 80px; padding: 10px; border: 2px solid #e9ecef; border-radius: 6px; font-family: inherit; resize: vertical;" onchange="updateSlideData(${index}, 'stabilityPrompt', this.value)">${slide.stabilityPrompt}</textarea>
+                                        <textarea id="stability-${index}" style="width: 100%; min-height: 80px; padding: 10px; border: 2px solid #e9ecef; border-radius: 6px; font-family: inherit; resize: vertical;" onchange="updateSlideData(${index}, 'stabilityPrompt', this.value)">${slide.stabilityPrompt || ''}</textarea>
                                     </div>
                                     
                                     <div>
                                         <label style="display: block; font-weight: 600; color: #495057; margin-bottom: 8px;">📷 Stock Photo Keywords:</label>
-                                        <textarea id="stock-${index}" style="width: 100%; min-height: 80px; padding: 10px; border: 2px solid #e9ecef; border-radius: 6px; font-family: inherit; resize: vertical;" onchange="updateSlideData(${index}, 'stockKeywords', this.value)">${slide.stockKeywords}</textarea>
+                                        <textarea id="stock-${index}" style="width: 100%; min-height: 80px; padding: 10px; border: 2px solid #e9ecef; border-radius: 6px; font-family: inherit; resize: vertical;" onchange="updateSlideData(${index}, 'stockKeywords', this.value)">${slide.stockKeywords || ''}</textarea>
                                     </div>
-                                </div>
-                                
-                                <div>
-                                    <label style="display: block; font-weight: 600; color: #495057; margin-bottom: 8px;">💡 Style Notes:</label>
-                                    <textarea id="style-${index}" style="width: 100%; min-height: 60px; padding: 10px; border: 2px solid #e9ecef; border-radius: 6px; font-family: inherit; resize: vertical;" onchange="updateSlideData(${index}, 'styleNotes', this.value)">${slide.styleNotes}</textarea>
                                 </div>
                             </div>
                         </div>
