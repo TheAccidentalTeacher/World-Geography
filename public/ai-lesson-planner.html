@@ -692,7 +692,7 @@
                         <button onclick="printIntegratedLesson()" class="export-button print">🖨️ Print Complete Lesson</button>
                         <button onclick="copyIntegratedLesson()" class="export-button copy">📋 Copy Complete Lesson</button>
                         <button onclick="saveIntegratedLesson()" class="export-button">💾 Save Complete Lesson</button>
-                        <button onclick="generateSmartPresentation()" class="export-button" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; font-weight: bold;">🎨 Generate Smart Presentation</button>
+                        <button onclick="generateSmartPresentation(true)" class="export-button" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; font-weight: bold;">🎨 Generate Smart Presentation</button>
                     </div>
                 </div>
 
@@ -796,76 +796,6 @@
                                 <li>✅ Assessment tools (reading + content integration)</li>
                                 <li>🖨️ Print-ready format (no prep required)</li>
                             </ul>
-                        </div>
-                    </div>
-
-                    <div class="integrated-lesson-output" id="integrated-lesson-output">
-                        <div style="text-align: center; padding: 60px 20px; color: #6c757d;">
-                            <h3>🎯 Ready to Create Complete Lesson</h3>
-                            <p>Click "Generate Complete Integrated Lesson" to create a comprehensive, print-ready lesson package.</p>
-                            
-                            <div style="margin-top: 30px; padding: 25px; background: linear-gradient(135deg, #fff5f5, #ffffff); border: 2px solid #ff6b6b; border-radius: 15px; text-align: left;">
-                                <h4 style="color: #721c24; margin-bottom: 20px; text-align: center;">🎯 ONE-CLICK LESSON INTEGRATION</h4>
-                                
-                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
-                                    <div style="background: #ffffff; padding: 15px; border-radius: 10px; border: 1px solid #ff6b6b;">
-                                        <h5 style="color: #721c24; margin-bottom: 10px;">📚 Student Reading Section</h5>
-                                        <ul style="color: #6c757d; font-size: 0.9rem; line-height: 1.6;">
-                                            <li>Condensed, curriculum-independent content</li>
-                                            <li>Paragraph numbering for lesson references</li>
-                                            <li>Integrated vocabulary and supports</li>
-                                            <li>Text-dependent question preparation</li>
-                                        </ul>
-                                    </div>
-                                    <div style="background: #ffffff; padding: 15px; border-radius: 10px; border: 1px solid #ff6b6b;">
-                                        <h5 style="color: #721c24; margin-bottom: 10px;">📝 Lesson Plan Section</h5>
-                                        <ul style="color: #6c757d; font-size: 0.9rem; line-height: 1.6;">
-                                            <li>Activities reference specific reading paragraphs</li>
-                                            <li>Unified timing including reading time</li>
-                                            <li>Text-dependent questions throughout</li>
-                                            <li>Assessment aligned to reading + content</li>
-                                        </ul>
-                                    </div>
-                                </div>
-
-                                <div style="background: #fff8e6; padding: 15px; border-radius: 10px; border: 1px solid #ffc107;">
-                                    <h5 style="color: #856404; margin-bottom: 10px;">📄 Complete Package Includes</h5>
-                                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; font-size: 0.9rem;">
-                                        <div>
-                                            <strong style="color: #721c24;">📖 Reading Materials</strong>
-                                            <ul style="color: #6c757d; margin-top: 5px;">
-                                                <li>Student reading text</li>
-                                                <li>Vocabulary integration</li>
-                                                <li>Comprehension supports</li>
-                                            </ul>
-                                        </div>
-                                        <div>
-                                            <strong style="color: #721c24;">🚀 Lesson Components</strong>
-                                            <ul style="color: #6c757d; margin-top: 5px;">
-                                                <li>Hook activities</li>
-                                                <li>Reading discussion</li>
-                                                <li>Content activities</li>
-                                                <li>Assessment tools</li>
-                                            </ul>
-                                        </div>
-                                        <div>
-                                            <strong style="color: #721c24;">📋 Teacher Resources</strong>
-                                            <ul style="color: #6c757d; margin-top: 5px;">
-                                                <li>Student handouts</li>
-                                                <li>Answer keys</li>
-                                                <li>Implementation guide</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div style="text-align: center; margin-top: 20px; padding: 15px; background: #d4edda; border-radius: 10px; border: 1px solid #c3e6cb;">
-                                    <h4 style="color: #155724; margin-bottom: 10px;">🎯 CURRICULUM INDEPENDENCE ACHIEVED</h4>
-                                    <p style="color: #155724; margin: 0; font-weight: 500;">
-                                        Print and teach immediately • No textbook required • Complete content package • Professional formatting
-                                    </p>
-                                </div>
-                            </div>
                         </div>
                     </div>
 
@@ -2449,12 +2379,26 @@ Create an engaging, classroom-ready presentation that brings this geography topi
         }
 
         // Smart Presentation System - Fixed and Simplified
-        async function generateSmartPresentation() {
+        async function generateSmartPresentation(userTriggered = false) {
             console.log('🎨 Starting Smart Presentation generation...');
+            console.trace('🔍 Function call stack:'); // Add stack trace to see what called this
             
-            // Check if lesson content exists
+            // SAFETY CHECK: Only allow if explicitly triggered by user
+            if (!userTriggered) {
+                console.warn('🚫 Presentation generation blocked - must be user triggered');
+                return;
+            }
+            
+            // Check if lesson content exists and is substantial (not just placeholder)
             const lessonOutput = document.getElementById('integrated-lesson-output');
             if (!lessonOutput || !lessonOutput.innerHTML.trim()) {
+                alert('Please generate a complete lesson first before creating a smart presentation.');
+                return;
+            }
+            
+            // More robust check - make sure it's actual generated content, not placeholder
+            const content = lessonOutput.innerHTML.trim();
+            if (content.includes('Ready to Generate') || content.includes('Ready to Create') || content.length < 500) {
                 alert('Please generate a complete lesson first before creating a smart presentation.');
                 return;
             }
