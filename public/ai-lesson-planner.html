@@ -2748,6 +2748,72 @@ Generate slides following this exact format. Focus on making each slide educatio
             return data.choices[0].message.content;
         }
 
+        // Parse the AI response into structured slide data
+        function parseSlidePrompts(aiResponse) {
+            const slides = [];
+            const slideBlocks = aiResponse.split(/\*\*SLIDE \d+:/);
+            
+            slideBlocks.forEach((block, index) => {
+                if (index === 0) return; // Skip the intro text
+                
+                const lines = block.trim().split('\n');
+                const title = lines[0].replace(/\*\*/g, '').trim();
+                
+                let slide = {
+                    id: `slide-${index}`,
+                    title: title,
+                    contentPrompt: '',
+                    visualTheme: '',
+                    stabilityPrompt: '',
+                    stockKeywords: '',
+                    layoutDirection: '',
+                    styleNotes: ''
+                };
+
+                let currentSection = '';
+                let content = '';
+
+                lines.forEach(line => {
+                    const trimmed = line.trim();
+                    if (trimmed.includes('Content Prompt')) {
+                        currentSection = 'content';
+                        content = '';
+                    } else if (trimmed.includes('Visual Theme')) {
+                        if (currentSection === 'content') slide.contentPrompt = content.trim();
+                        currentSection = 'theme';
+                        content = '';
+                    } else if (trimmed.includes('Stability AI')) {
+                        if (currentSection === 'theme') slide.visualTheme = content.trim();
+                        currentSection = 'stability';
+                        content = '';
+                    } else if (trimmed.includes('Stock Photo')) {
+                        if (currentSection === 'stability') slide.stabilityPrompt = content.trim();
+                        currentSection = 'stock';
+                        content = '';
+                    } else if (trimmed.includes('Layout Direction')) {
+                        if (currentSection === 'stock') slide.stockKeywords = content.trim();
+                        currentSection = 'layout';
+                        content = '';
+                    } else if (trimmed.includes('Style Notes')) {
+                        if (currentSection === 'layout') slide.layoutDirection = content.trim();
+                        currentSection = 'style';
+                        content = '';
+                    } else if (trimmed && !trimmed.includes('**')) {
+                        content += (content ? ' ' : '') + trimmed;
+                    }
+                });
+
+                // Don't forget the last section
+                if (currentSection === 'style') slide.styleNotes = content.trim();
+
+                if (slide.title && slide.contentPrompt) {
+                    slides.push(slide);
+                }
+            });
+
+            return slides;
+        }
+
         // Display slide prompts for user review and editing
         function displaySlidePrompts(slides, presentationTitle) {
             const outputDiv = document.getElementById('integrated-lesson-output');
