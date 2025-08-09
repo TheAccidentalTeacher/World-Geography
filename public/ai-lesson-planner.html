@@ -2537,14 +2537,14 @@ Create an engaging, classroom-ready presentation that brings this geography topi
         function buildAdvancedPresentationPrompt(lessonContent) {
             return `# 🎨 ADVANCED PRESENTATION GENERATOR - Professional Slide Format
 
-You are an expert presentation designer creating engaging geography presentations. Your task is to analyze the lesson content and create 8-12 detailed slides following the EXACT format shown in the example.
+You are an expert geography educator creating comprehensive, engaging presentations for middle school students. Your task is to analyze the lesson content and create 8-12 detailed, educational slides that provide thorough coverage of the geographic and cultural concepts.
 
 ## 📚 LESSON CONTENT ANALYSIS
 
 **Lesson Title:** ${lessonContent.title}
 **Module:** ${lessonContent.module}
 
-**Student Reading Content (PRIMARY FOCUS):**
+**Student Reading Content (PRIMARY FOCUS FOR COMPREHENSIVE COVERAGE):**
 ${lessonContent.studentReading}
 
 **Teacher Notes:**
@@ -2558,25 +2558,37 @@ ${lessonContent.vocabulary.map(v => `${v.term}: ${v.definition}`).join('\n')}
 
 ---
 
-## 🎯 SLIDE GENERATION REQUIREMENTS
+## 🎯 COMPREHENSIVE SLIDE GENERATION REQUIREMENTS
 
-### CRITICAL FORMAT RULES:
-- Each slide should be 200-400 words TOTAL (all sections combined)
-- Use bullet points for easy reading (NO paragraph walls)
-- Include ALL THREE sections: Content, Visual Suggestion, and Teacher Notes
-- Make slides scannable and presentation-friendly
-- Focus on engaging, interactive content
+### CRITICAL CONTENT DEPTH REQUIREMENTS:
+- Each slide should contain 400-600 words total (substantially more than previous attempts)
+- Include 6-8 comprehensive bullet points per slide that thoroughly explain concepts
+- Provide specific historical facts, geographic details, and cultural information
+- Include dates, names, places, and concrete examples that bring concepts to life
+- Add cause-and-effect explanations and geographic influences on human development
+- Reference specific primary sources, artifacts, or cultural practices when relevant
 
-### EXACT FORMAT TO FOLLOW (COPY THIS STYLE EXACTLY):
+### EDUCATIONAL ENGAGEMENT REQUIREMENTS:
+- Include multiple interactive elements per slide (Think-Pair-Share, Quick Checks, Map Activities)
+- Provide discussion questions that encourage critical thinking
+- Add real-world connections that help students relate to the content
+- Include assessment opportunities and comprehension checks
+- Suggest hands-on activities or visual learning opportunities
+
+### EXACT FORMAT TO FOLLOW (EXPANDED CONTENT STYLE):
 
 ---
-## SLIDE 1: [Engaging Title]
+## SLIDE 1: [Descriptive, Engaging Title that Captures Key Concept]
 
 **Content:**
-• [Main bullet point with key concept]
-• [Second bullet point with details or examples]  
-• [Third bullet point connecting to student experience]
-• [Interactive element or thought-provoking question]
+• [Comprehensive opening statement that introduces the main concept with specific details and context]
+• [Detailed explanation of geographic features, including specific names, locations, and their significance to human development]
+• [Historical context with specific dates, events, and cause-and-effect relationships that shaped the region]
+• [Cultural or technological developments with concrete examples and their lasting impact]
+• [Interactive element: Think-Pair-Share question that encourages students to analyze or compare concepts]
+• [Real-world connection that helps students understand how these concepts affect modern life]
+• [Assessment opportunity: Quick Check question or exit ticket prompt to gauge understanding]
+• [Extension activity or discussion prompt that deepens learning and encourages critical thinking]
 
 **Visual Suggestion:** [Brief description of background image and layout]
 
@@ -2600,18 +2612,48 @@ ${lessonContent.vocabulary.map(v => `${v.term}: ${v.definition}`).join('\n')}
 
 ---
 
-## 🎨 IMPORTANT REQUIREMENTS:
+## 🎨 DETAILED SLIDE REQUIREMENTS:
 
-1. **MUST include ALL THREE sections for every slide**: Content, Visual Suggestion, Teacher Notes
-2. **Use the exact markdown format**: ## SLIDE X: Title, **Content:**, **Visual Suggestion:**, **Teacher Notes:**
-3. **Each slide separated by --- lines**
-4. **Teacher Notes must be in quotes**
-5. **Content must be bullet points starting with •**
-6. **Keep total word count per slide between 200-400 words**
-7. **Make content engaging and interactive**
-8. **Include variety**: map activities, think-pair-share, quick checks, etc.
+**CONTENT DEPTH:** Each slide must be comprehensive and educational for middle school students:
+- 6-8 substantial bullet points per slide (not just 3-4 short ones)
+- Each bullet point should be a complete educational statement with specific details
+- Include specific facts, examples, and explanations that teach the concepts thoroughly
+- Add interactive elements: Think-Pair-Share, Quick Checks, Discussion Questions, Activities
+- Reference specific geographic features, historical events, cultural practices, and technological achievements
+- Use vocabulary appropriate for 7th grade but with clear explanations of key terms
 
-Generate 8-12 slides following this EXACT format. Focus on the lesson content provided and make each slide educational, engaging, and classroom-ready.`;
+**VISUAL SUGGESTIONS:** Provide specific, detailed descriptions:
+- Describe exact maps, images, or illustrations that would enhance learning
+- Include specific geographic features, historical artifacts, or cultural elements to show
+- Suggest interactive map activities or visual comparisons
+- Reference primary source images or authentic cultural representations
+
+**TEACHER NOTES:** Include practical classroom guidance:
+- Suggest discussion prompts and follow-up questions
+- Provide background information teachers need to know
+- Include tips for engaging students and checking understanding
+- Suggest connections to prior learning or real-world applications
+
+**CONTENT EXPECTATIONS:**
+- Each slide should contain 300-500 words total (much more substantial than current output)
+- Include specific historical dates, names, places, and achievements
+- Explain cause-and-effect relationships and geographic influences
+- Provide concrete examples students can relate to and understand
+- Include assessment opportunities (exit tickets, quick checks, discussions)
+
+**INTERACTIVE ELEMENTS TO INCLUDE:**
+- Think-Pair-Share activities with specific questions
+- Quick Check questions for understanding
+- Map activities and geographic analysis
+- Cultural comparison opportunities
+- Historical timeline connections
+- Real-world application discussions
+
+**EXAMPLE OF EXPECTED DEPTH:**
+Instead of: "• Rivers were important for farming"
+Provide: "• The Yellow River (Huang He) provided fertile loess soil through annual flooding, allowing early Chinese farmers to develop advanced irrigation systems and support growing populations, but these same floods could be devastating, earning the river the nickname 'China's Sorrow' when it changed course and destroyed entire communities"
+
+Generate 8-12 slides following this EXACT format. Each slide should be comprehensive enough to support 5-7 minutes of classroom instruction with rich content, engaging activities, and clear learning objectives.`;
         }
 
         // Extract content from lesson for presentation
